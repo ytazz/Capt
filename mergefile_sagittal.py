@@ -14,11 +14,12 @@ def lexsort_based(data):#get array removed duplicate rows
 #
 # data = mergefile("Biped", 1, 4)
 # print data[0][1]
+#
 
-data_1 = np.loadtxt("Biped_1.csv",delimiter=",")
-data_2 = np.loadtxt("Biped_2.csv",delimiter=",")
-data_3 = np.loadtxt("Biped_3.csv",delimiter=",")
-data_4 = np.loadtxt("Biped_4.csv",delimiter=",")
+data_1 = np.loadtxt("Biped_1_sim.csv",delimiter=",")
+data_2 = np.loadtxt("Biped_2_sim.csv",delimiter=",")
+data_3 = np.loadtxt("Biped_3_sim.csv",delimiter=",")
+data_4 = np.loadtxt("Biped_4_sim.csv",delimiter=",")
 
 data_1_o = np.empty((0,4), float)
 data_2_o = np.empty((0,4), float)
@@ -40,5 +41,8 @@ for i in range(len(data_4)):
         data_4_o = np.vstack((data_4_o, np.append(data_4[i], 4)))
 
 merged_data = np.vstack((data_1_o, data_2_o, data_3_o, data_4_o))
+# sorted_data = merged_data[merged_data[:,0].argsort(), :]
+ind = np.lexsort((merged_data[:,2], merged_data[:,1], merged_data[:,0]))
+sorted_data = merged_data[ind]
 
-np.savetxt('temp.csv', merged_data, delimiter=',')
+np.savetxt('temp.csv', sorted_data, delimiter=',')

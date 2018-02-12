@@ -12,7 +12,7 @@ class Lateral_Capturability(object):
         self.FOOTSIZE = 0.05
         self.OMEGA = math.sqrt(9.81/0.50)
         self.VELOCITY_OF_FOOT = 1.0
-        self.MINIMUM_DELTA_T = 0.05
+        self.MINIMUM_DELTA_T = 0.1
         self.CONSTANT_DELTA_T = delta_t
         self.GRID = 100
         self.count = 0
@@ -111,7 +111,7 @@ class Lateral_Capturability(object):
                 self.function(step=self.F[i][0], cp=self.F[i][1], j=j)
                 F_NEXT = np.array([self.L_STEP_NEXT, self.L_CP_NEXT])
                 flag = self.set_squareframe(F_NEXT)
-                if flag == 1:
+                if flag == 1 and (self.F[i][1] > 0.05 or self.F[i][1] < -0.05):
                     if self.check_frame(self.P):
                         row = np.append(self.F[i], self.L_STRIDE[j])
                         TEMP = np.append(TEMP,np.array([row]) , axis = 0)

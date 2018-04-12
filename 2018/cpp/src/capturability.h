@@ -2,7 +2,7 @@
 #define __caputarability_H__
 #include <stdio.h>
 #include <cuda.h>
-// #include "/common/nvidia.h"
+#include "common/nvidia.h"
 
 
 

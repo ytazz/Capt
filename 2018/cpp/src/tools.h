@@ -1,6 +1,7 @@
 #ifndef __tools_H__
 #define __tools_H__
 #include <stdio.h>
+#include <vector>
 
 template <typename T>
 std::vector<T> linspace(T a, T b, size_t N) {

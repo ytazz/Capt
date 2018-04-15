@@ -14,5 +14,6 @@ std::vector<T> linspace(T a, T b, size_t N) {
     return xs;
 }
 
+
 #else
 #endif

@@ -1,15 +1,19 @@
-#ifndef __robotParam_H__
-#define __robotParam_H__
+#ifndef __param_H__
+#define __param_H__
 
 #include <stdio.h>
 #include <math.h>
-#include <iostream>
-#include <vector>
+
+#define G 9.81
+#define heightOfCOM 0.50
+#define omega sqrt(G/heightOfCOM)
 
 const int numGrid = 50;
+const long int N = (long int)numGrid*numGrid*numGrid*numGrid;
+const int M = 4;
 
-const float heightOfCOM = 0.50;
-const float omega = sqrt(9.81/heightOfCOM);
+const int threadsPerBlock = 512;
+const int blocksPerGrid = 128;
 
 const float step_max_x = 0.3;
 const float step_min_x = -0.3;

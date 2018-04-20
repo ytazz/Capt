@@ -5,8 +5,8 @@
 #include <math.h>
 
 #define G 9.81
-#define heightOfCOM 0.50
-#define omega sqrt(G/heightOfCOM)
+#define HEIGHTOFCOM 0.50
+#define OMEGA sqrt(G/HEIGHTOFCOM)
 
 const int numGrid = 50;
 const long int N = (long int)numGrid*numGrid*numGrid*numGrid;

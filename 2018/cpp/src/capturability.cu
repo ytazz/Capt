@@ -37,8 +37,11 @@ void stateSpace4(float set[], float a[], float b[], float c[], float d[] ) {
     }
 }
 
-__device__ bool inPreviousSet( float cpx, float cpy ){
-    if (cpx > -0.1 && cpx < 0.1 && cpy > -0.1 && cpy < 0.1) {
+__device__ bool zeroCapturability( float cpx, float cpy, float stx=0.0, float sty=0.0 ){
+    // float distance = sqrt((cpx - stx)*(cpx - stx) + (cpy - sty)*(cpy - sty));
+    float distance_x = fabsf(cpx - stx);
+    float distance_y = fabsf(cpy - sty);
+    if (distance_x < 0.1 && distance_y < 0.05) {
         return 1;
     }else{
         return 0;
@@ -48,9 +51,9 @@ __device__ bool inPreviousSet( float cpx, float cpy ){
 __device__ void calcStates( float *ncpx, float *ncpy,
                             float cpx, float cpy, float stx, float sty,
                             float input_x, float input_y ) {
-    float deltaT = sqrt((input_x - stx)*(input_x - stx) + (input_y-sty)*(input_y-sty))/1.4;
-    *ncpx = (cpx - input_x)*expf(omega*deltaT) + input_x;
-    *ncpy = (cpy - input_y)*expf(omega*deltaT) + input_y;
+    float deltaT = sqrtf((input_x - stx)*(input_x - stx) + (input_y-sty)*(input_y-sty))/1.4;
+    *ncpx = (cpx - input_x)*expf(OMEGA*deltaT) + input_x;
+    *ncpy = (cpy - input_y)*expf(OMEGA*deltaT) + input_y;
 }
 
 
@@ -65,7 +68,7 @@ __global__ void kernel(float *oset, float *iset, float *hat_input_x, float *hat_
                             iset[tid*4 + 0], iset[tid*4 + 1], iset[tid*4 + 2], iset[tid*4 + 3],
                             hat_input_x[i], hat_input_y[j]);
 
-                if (inPreviousSet(ncpx, ncpy)) {
+                if (inPreviousSet(ncpx, ncpy, hat_input_x[i], hat_input_y[j])) {
                     oset[tid*4 + 0] = iset[tid*4 + 0];
                     oset[tid*4 + 1] = iset[tid*4 + 1];
                     oset[tid*4 + 2] = iset[tid*4 + 2];

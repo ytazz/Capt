@@ -1,16 +1,16 @@
 #include <../src/capturability.h>
-#include <../src/param.h>
 #include <iostream>
 
 int main(void)
 {
-    TwoDim p1 = {1.0, 1.0};
-    float resultX;
-    float resultY;
+    TwoDim p1 = {1.0, 0.0};
+    TwoDim r1;
 
-    rotation_inv(&resultX, &resultY, p1.x, p1.y, 45*PI/180);
+    rotation_inv(&r1, p1, 45*PI/180);
 
-    std::cout << resultX << ',' << resultY << '\n';
+    std::cout << r1.x << ',' << r1.y << '\n';
+    std::cout << calcTheta(p1) * 180/PI << '\n';
+
 
     return 0;
 }

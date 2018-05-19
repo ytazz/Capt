@@ -7,8 +7,10 @@ include_directories(
 )
 
 cuda_add_executable(
-  test_exe
-  test/test.cu
+  # test_exe
+  # test/test.cu
+  first
+  first.cu
   src/capturability.cu
   src/capturability.h
 )

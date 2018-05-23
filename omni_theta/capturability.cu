@@ -88,3 +88,17 @@ __device__ int zeroStepCapt(States p){
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+//EndOfFile

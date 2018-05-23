@@ -1,2 +1,2 @@
 
-splot "../build/csv/statesSpace.csv" t 1:2:4 with lines
+splot "csv/statesSpace.csv" u 1:2:4 with points palette pointsize 0.5 pointtype 7

@@ -1,24 +1,21 @@
 #ifndef __capturability_H__
 #define __capturability_H__
 
-#include "common/nvidia.h"
-#include <cuda.h>
+#include <stdio.h>
 #include <vector>
 #include <math.h>
 
 using namespace std;
 
-struct TwoDim {
-  float x, y;
+#define sq(x) ((x) * (x))
+
+struct PolarCoord {
+  float r, th;
 };
 
-struct CaptruePoint {
-  float r, theta
-}
-
 struct States {
-  TwoDim step;
-  CaptruePoint cp;
+  PolarCoord step;
+  PolarCoord cp;
 };
 
 //////////////////////////////// parameter ////////////////////////////////////
@@ -32,31 +29,34 @@ struct States {
 #define OMEGA sqrt(9.81/HEIGHTOFCOM)
 #define PI 3.141592
 
-
-
-const int numGrid = 10;
+const int numGrid = 50;
 const long int N = (long int)numGrid*numGrid*numGrid*numGrid;
 
 const int threadsPerBlock = 1024;
 const int blocksPerGrid = 1024;
 
-const CapturePoint CP_MAX = {0.5, 2*PI};
-const CapturePoint CP_MIN = {0.0, 0.0};
-const TwoDim FOOT_MAX = {0.3, 0.3};
-const TwoDim FOOT_MIN = {0.1, 0.1};
+const PolarCoord CP_MAX = {0.5, 2*PI};
+const PolarCoord CP_MIN = {0.0, 0.0};
+const PolarCoord FOOT_MAX = {0.5, PI};
+const PolarCoord FOOT_MIN = {2*FOOTSIZE, 0};
 ////////////////////////////////////////////////////////////////////////////////
 
 void linspace(float result[], float min, float max);
 
 void makeStatesSpace(States* result,
-                        float stepX[], float stepY[], float cpX[], float cpY[] );
+                        float cpR[], float cpTh[], float stepR[], float stepTh[]);
+
+void makeInputSpace(PolarCoord* result, float stepR[], float stepTh[]);
 
 void writeFile(States* data);
 
-__device__ TwoDim rotation_inv(TwoDim in, float theta);
+void step_1(States *result_set, States *set, PolarCoord *input );
 
-__device__ float calcTheta (TwoDim p);
+States oneStepAfter (States p0, PolarCoord u);
 
-__global__ void transf(States *hat_set, States *set );
+bool isZeroStepCapt(States p);
+
+float distanceTwoPolar (PolarCoord a, PolarCoord b);
+
 #else
 #endif

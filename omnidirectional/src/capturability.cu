@@ -26,6 +26,7 @@ void makeStatesSpace(States* result,
                     result[ind].cp.th = cpTh[j];
                     result[ind].step.r = stepR[k];
                     result[ind].step.th = stepTh[l];
+                    result[ind].c = FAILED;
                     ind++;
                 }
             }
@@ -44,54 +45,16 @@ void makeInputSpace(PolarCoord* result, float stepR[], float stepTh[]) {
     }
 }
 
-void writeFile(States* data, int length, std::string str){
+void writeFile(std::vector<States> data, std::string str){
     FILE *fp;
     fp = fopen(str.c_str(), "w");
 
-    for (long int i = 0; i < length; i++) {
-        fprintf(fp, "%lf, %lf, %lf, %lf\n",
-                data[i].cp.r, data[i].cp.th, data[i].step.r, data[i].step.th);
+    for (long int i = 0; i < data.size(); i++) {
+        fprintf(fp, "%lf, %lf, %lf, %lf, %d \n",
+                data[i].cp.r, data[i].cp.th, data[i].step.r, data[i].step.th, data[i].c);
     }
     fclose(fp);
 }
-
-int getLength(States *temp, int prevLength){
-    int length = 0;
-    for (size_t i = 0; i < prevLength; i++) {
-        if (temp[i].step.r != FAILED) {
-            length++;
-        }
-    }
-    return length;
-}
-
-void getSortedArray(States *array, States *temp, int prevLength){
-    int ind = 0;
-    for (size_t i = 0; i < prevLength; i++) {
-        if (temp[i].step.r != FAILED) {
-            array[ind] = temp[i];
-            ind++;
-        }
-    }
-}
-
-// __global__ void step_0(States *result_set, States *statesSpace ){
-//     int tid = threadIdx.x + blockIdx.x * blockDim.x;
-//
-//     while (tid < N_ENTIRE) {
-//         for (size_t i = 0; i < N_INPUT; i++) {
-//             if (isZeroStepCapt(statesSpace[tid])) {
-//                 result_set[tid] = statesSpace[tid];
-//             }else{
-//                 result_set[tid].step.r = FAILED;
-//                 result_set[tid].step.th = FAILED;
-//                 result_set[tid].cp.r = FAILED;
-//                 result_set[tid].cp.th = FAILED;
-//             }
-//         }
-//         tid += blockDim.x * gridDim.x;
-//     }
-// }
 
 __global__ void step_0(States *statesSpace){
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
@@ -104,45 +67,18 @@ __global__ void step_0(States *statesSpace){
     }
 }
 
-__global__ void step_1(States *result_set, States *statesSpace, PolarCoord *input ){
-    int tid = threadIdx.x + blockIdx.x * blockDim.x;
-    States oneStepAfterState;
-
-    while (tid < N_ENTIRE) {
-        for (size_t i = 0; i < N_INPUT; i++) {
-            oneStepAfterState = stepping(statesSpace[tid], input[i]);
-
-            if (isZeroStepCapt(oneStepAfterState) || isZeroStepCapt(statesSpace[tid])) {
-                result_set[tid] = statesSpace[tid];
-            }else{
-                result_set[tid].step.r = FAILED;
-                result_set[tid].step.th = FAILED;
-                result_set[tid].cp.r = FAILED;
-                result_set[tid].cp.th = FAILED;
-            }
-        }
-        tid += blockDim.x * gridDim.x;
-    }
-}
-
-__global__ void step_N(States *result_set, States *statesSpace, PolarCoord *input,
-                       States *prevSet, int prevSetLength,
+__global__ void step_N(States *statesSpace, PolarCoord input, int n_step,
                        float *cpR, float *cpTh, float *stepR, float *stepTh){
 
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
     States oneStepAfterState;
 
     while (tid < N_ENTIRE) {
-        for (size_t i = 0; i < N_INPUT; i++) {
-            oneStepAfterState = stepping(statesSpace[tid], input[i]);
-
-            if (isInPrevSet(prevSet, prevSetLength, oneStepAfterState, cpR, cpTh, stepR, stepTh)) {
-                result_set[tid] = statesSpace[tid];
-            }else{
-                result_set[tid].step.r = FAILED;
-                result_set[tid].step.th = FAILED;
-                result_set[tid].cp.r = FAILED;
-                result_set[tid].cp.th = FAILED;
+        if (statesSpace[tid].c == FAILED) {
+            oneStepAfterState = stepping(statesSpace[tid], input);
+            if (isInPrevSet(statesSpace, oneStepAfterState,
+                            n_step, cpR, cpTh, stepR, stepTh)) {
+                statesSpace[tid].c = n_step;
             }
         }
         tid += blockDim.x * gridDim.x;
@@ -179,10 +115,9 @@ __device__ float distanceTwoPolar (PolarCoord a, PolarCoord b){
     return sqrtf(sq(a.r) + sq(b.r) - 2*a.r*b.r*cos(a.th-b.th));
 }
 
-__device__ bool isInPrevSet(States *prevSet, int lengthOfArray, States p,
+__device__ bool isInPrevSet(States *statesSpace, States p, int n_step,
                             float cpR[], float cpTh[], float stepR[], float stepTh[]){
-
-    if (p.cp.r > CP_MAX_R) {
+    if (p.cp.r >= CP_MAX_R) {
         return false;
     }else{
         States bound[16]; //2^4 = 16
@@ -190,21 +125,25 @@ __device__ bool isInPrevSet(States *prevSet, int lengthOfArray, States p,
 
         setBound(bound, p, cpR, cpTh, stepR, stepTh);
 
-        for (size_t i = 0; i < lengthOfArray; i++) {
-            for (size_t j = 0; j < 16; j++) {
-                if (prevSet[i].cp.r == bound[j].cp.r &&
-                    prevSet[i].cp.th == bound[j].cp.th &&
-                    prevSet[i].step.r == bound[j].step.r &&
-                    prevSet[i].step.th == bound[j].step.th) {
-                    flag[j] = 1;
+        for (size_t i = 0; i < 16; i++) {
+            for (size_t j = 0; j < N_ENTIRE; j++) {
+                if (statesSpace[j].cp.r == bound[i].cp.r &&
+                    statesSpace[j].cp.th == bound[i].cp.th &&
+                    statesSpace[j].step.r == bound[i].step.r &&
+                    statesSpace[j].step.th == bound[i].step.th) {
+
+                    flag[i] = statesSpace[j].c;
+                    if (statesSpace[j].c == FAILED) {
+                        return false;
+                    }
+                    break;
                 }
             }
         }
-
-        if (flag[0] == 1 && flag[1] == 1 && flag[2] == 1 && flag[3] == 1 &&
-            flag[4] == 1 && flag[5] == 1 && flag[6] == 1&& flag[7] == 1 &&
-            flag[8] == 1 && flag[9] == 1 && flag[10] == 1&& flag[11] == 1 &&
-            flag[12] == 1 && flag[13] == 1 && flag[14] == 1&& flag[15] == 1) {
+        if (flag[0] < n_step && flag[1] < n_step && flag[2] < n_step && flag[3] < n_step &&
+            flag[4] < n_step && flag[5] < n_step && flag[6] < n_step && flag[7] < n_step &&
+            flag[8] < n_step && flag[9] < n_step && flag[10] < n_step && flag[11] < n_step &&
+            flag[12] < n_step && flag[13] < n_step && flag[14] < n_step && flag[15] < n_step) {
             return true;
         }else{
             return false;
@@ -227,40 +166,44 @@ __device__ void setBound(States *bound, States p,
 
     int ind_cpR, ind_cpTh, ind_stepR, ind_stepTh;
 
-    int i= 0;
-    while (1) {
-        if (cpR[i] > p.cp.r) {
+    for (size_t i = 0; i < N_CP_R; i++) {
+        if (cpR[i] >= p.cp.r) {
             ind_cpR = i;
             break;
         }
-        i++;
+    }
+    if (ind_cpR == 0) {
+        ind_cpR = 1;
     }
 
-    i = 0;
-    while (1) {
-        if (cpTh[i] > p.cp.th) {
+    for (size_t i = 0; i < N_CP_TH; i++) {
+        if (cpTh[i] >= p.cp.th) {
             ind_cpTh = i;
             break;
         }
-        i++;
+    }
+    if (ind_cpTh == 0) {
+        ind_cpTh = 1;
     }
 
-    i = 0;
-    while (1) {
-        if (stepR[i] > p.step.r) {
+    for (size_t i = 0; i < N_FOOT_R; i++) {
+        if (stepR[i] >= p.step.r) {
             ind_stepR = i;
             break;
         }
-        i++;
+    }
+    if (ind_stepR == 0) {
+        ind_stepR = 1;
     }
 
-    i = 0;
-    while (1) {
-        if (stepTh[i] > p.step.th) {
+    for (size_t i = 0; i < N_FOOT_TH; i++) {
+        if (stepTh[i] >= p.step.th) {
             ind_stepTh = i;
             break;
         }
-        i++;
+    }
+    if (ind_stepTh == 0) {
+        ind_stepTh = 1;
     }
 
     int ind = 0;
@@ -367,5 +310,87 @@ __device__ void setBound(States *bound, States p,
 
     fclose(fp);
    }
+
+
+   void testStepping (void){
+       States test;
+
+       test.cp.r = 0.3;
+       test.cp.th = PI/2;
+       test.step.r = 0.3;
+       // test.step.th = PI/6.0;
+       test.step.th = PI*5.0/6.0;
+
+       // PolarCoord testinput = {0.3, PI*5.0/6.0};
+       PolarCoord testinput = {0.3, 0.0};
+       States oneStepAfterState;
+
+       oneStepAfterState = stepping(test, testinput);
+       std::cout << oneStepAfterState.cp.r <<',' << oneStepAfterState.cp.th
+                 <<',' << oneStepAfterState.step.r <<',' << oneStepAfterState.step.th <<'\n';
+   }
+
+   void testBound(void) {
+       States test;
+
+       test.cp.r = CP_MIN_R;
+       test.cp.th = CP_MIN_TH;
+       test.step.r = FOOT_MIN_R;
+       test.step.th = FOOT_MIN_TH;
+
+       float cpR[N_CP_R], cpTh[N_CP_TH], stepR[N_FOOT_R], stepTh[N_FOOT_TH];
+       linspace(cpR, CP_MIN_R, CP_MAX_R, N_CP_R);
+       linspace(cpTh, CP_MIN_TH, CP_MAX_TH, N_CP_TH);
+       linspace(stepR, FOOT_MIN_R, FOOT_MAX_R, N_FOOT_R);
+       linspace(stepTh, FOOT_MIN_TH, FOOT_MAX_TH, N_FOOT_TH);
+
+
+       States bound[16];
+
+       setBound(bound, test, cpR, cpTh, stepR, stepTh);
+
+       for (size_t i = 0; i < 16; i++) {
+           std::cout << bound[i].cp.r <<',' << bound[i].cp.th
+                     <<',' << bound[i].step.r <<',' << bound[i].step.th <<'\n';
+       }
+
+   }
+
+   void prevset_test(void){
+       States test;
+
+       test.cp.r = 0.06;
+       test.cp.th = 4.2;
+       test.step.r = FOOT_MIN_R;
+       test.step.th = FOOT_MIN_TH;
+
+       float cpR[N_CP_R], cpTh[N_CP_TH], stepR[N_FOOT_R], stepTh[N_FOOT_TH];
+       linspace(cpR, CP_MIN_R, CP_MAX_R, N_CP_R);
+       linspace(cpTh, CP_MIN_TH, CP_MAX_TH, N_CP_TH);
+       linspace(stepR, FOOT_MIN_R, FOOT_MAX_R, N_FOOT_R);
+       linspace(stepTh, FOOT_MIN_TH, FOOT_MAX_TH, N_FOOT_TH);
+
+       States *statesSpace = new States[N_ENTIRE];
+       makeStatesSpace(statesSpace, cpR, cpTh, stepR, stepTh);
+       States *dev_StatesSpace;
+       HANDLE_ERROR(cudaMalloc((void **)&dev_StatesSpace, N_ENTIRE*sizeof(States)));
+       HANDLE_ERROR(cudaMemcpy(dev_StatesSpace, statesSpace, N_ENTIRE*sizeof(States),
+                               cudaMemcpyHostToDevice));
+
+
+       // 0-step Capturable Basin
+       step_0<<<BPG,TPB>>>(dev_StatesSpace);
+       HANDLE_ERROR(cudaMemcpy(statesSpace, dev_StatesSpace, N_ENTIRE*sizeof(States),
+                               cudaMemcpyDeviceToHost));
+
+       int result;
+       result = isInPrevSet(statesSpace, test, 0, cpR, cpTh, stepR, stepTh);
+       printf("%d\n", result);
+
+
+       cudaFree( dev_StatesSpace );
+       delete [] statesSpace;
+   }
+
 
  *******************************************************************************/

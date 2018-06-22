@@ -1,4 +1,4 @@
-#include "src/capturability.h"
+#include "capturability.h"
 
 int main(void)
 {
@@ -34,28 +34,29 @@ int main(void)
 
     // 0-step Capturable Basin
     step_0<<<BPG,TPB>>>(dev_StatesSpace);
-    HANDLE_ERROR(cudaMemcpy(statesSpace, dev_StatesSpace, N_ENTIRE*sizeof(States),
-                            cudaMemcpyDeviceToHost));
-                            
 
     // 1-step Capturable Basin
-    // States *temp1 = new States[N_ENTIRE];
-    // States *dev_Temp1;
-    // HANDLE_ERROR( cudaMalloc( (void **)&dev_Temp1, N_ENTIRE*sizeof(States) ) );
-    // step_N<<<BPG,TPB>>>(dev_Temp1, dev_StatesSpace, dev_InputSpace,
-    //                     set0, n0,
-    //                     dev_cpR, dev_cpTh, dev_stepR, dev_stepTh);
-    // HANDLE_ERROR( cudaMemcpy( temp1, dev_Temp1, N_ENTIRE*sizeof(States),
-    //                           cudaMemcpyDeviceToHost ) );
-    // int n1 = getLength(temp1, N_ENTIRE);
-    // States *set1 = new States[n1];
-    // getSortedArray(set1, temp1, N_ENTIRE);
-    // cudaFree( dev_Temp1 );
-    // delete [] temp1;
+    for (size_t i = 0; i < N_INPUT; i++) {
+        step_N<<<BPG,TPB>>>(dev_StatesSpace, inputSpace[i], 1,
+                            dev_cpR, dev_cpTh, dev_stepR, dev_stepTh);
+    }
+
+    // 2-step Capturable Basin
+    for (size_t i = 0; i < N_INPUT; i++) {
+        step_N<<<BPG,TPB>>>(dev_StatesSpace, inputSpace[i], 2,
+                            dev_cpR, dev_cpTh, dev_stepR, dev_stepTh);
+    }
+
+    HANDLE_ERROR(cudaMemcpy(statesSpace, dev_StatesSpace, N_ENTIRE*sizeof(States),
+                            cudaMemcpyDeviceToHost));
 
 
-    writeFile(set0, n0, "zero_.csv");
-    // writeFile(set1, n1, "one_n.csv");
+    std::vector<States> entire;
+    for (size_t i = 0; i < N_ENTIRE; i++) {
+        entire.push_back(statesSpace[i]);
+    }
+
+    writeFile(entire, "entire.csv");
 
 
     cudaFree( dev_StatesSpace );
@@ -67,8 +68,7 @@ int main(void)
 
     delete [] statesSpace;
     delete [] inputSpace;
-    delete [] set0;
-    // delete [] set1;
+
 
     return 0;
 

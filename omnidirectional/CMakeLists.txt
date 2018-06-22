@@ -3,14 +3,11 @@ find_package(CUDA QUIET REQUIRED)
 
 include_directories(
   src
-  test
 )
 
 cuda_add_executable(
-  # test_exe
-  # test/test.cu
-  first
-  first.cu
+  capturability_based_analysis
+  src/root.cu
   src/capturability.cu
   src/capturability.h
 )

@@ -12,27 +12,14 @@ using namespace std;
 
 #define sq(x) ((x) * (x))
 
-const int TPB = 256;
-const int BPG = 256;
-
-struct PolarCoord {
-    float r, th;
-};
-
-struct States {
-    PolarCoord cp;
-    PolarCoord step;
-    int c;
-};
+const int TPB = 1024;
+const int BPG = 1024;
 
 //////////////////////////////// parameter ////////////////////////////////////
-////////////  [m]  ////////////
-#define HEIGHTOFCOM 0.50
-#define FOOTVEL 1.4
-#define FOOTSIZE 0.1
-////////////  [s]  ////////////
-#define MINIMUM_STEPPING_TIME 0.05
-///////////////////////////////
+#define HEIGHTOFCOM 0.50            //[m]
+#define FOOTVEL 1.0                 //[m]
+#define FOOTSIZE 0.1                //[m]
+#define MINIMUM_STEPPING_TIME 0.05  //[s]
 #define OMEGA sqrt(9.81/HEIGHTOFCOM)
 #define PI 3.141
 
@@ -45,7 +32,7 @@ const int N_FOOT_TH = 20;
 const int N_INPUT = N_FOOT_R*N_FOOT_TH;
 const long int N_ENTIRE = (long int)N_CP_R * N_CP_TH * N_FOOT_R * N_FOOT_TH;
 
-#define CP_MIN_R 0.0
+#define CP_MIN_R FOOTSIZE
 #define CP_MAX_R 0.5
 
 #define CP_MIN_TH 0.0
@@ -57,22 +44,46 @@ const long int N_ENTIRE = (long int)N_CP_R * N_CP_TH * N_FOOT_R * N_FOOT_TH;
 #define FOOT_MIN_TH 0.0
 #define FOOT_MAX_TH PI
 ////////////////////////////////////////////////////////////////////////////////
+struct PolarCoord {
+    float r, th;
+};
+
+struct State {
+  PolarCoord icp;
+  PolarCoord sfPos;
+};
+
+struct Input {
+  PolarCoord step;
+  int c_r;
+};
+
+struct Data {
+    State state;
+    Input input[N_INPUT];
+    int n;
+};
+////////////////////////////////////////////////////////////////////////////////
 
 void linspace(float result[], float min, float max, int n);
-void makeStatesSpace(States* result, float cpR[], float cpTh[], float stepR[], float stepTh[] );
-void makeInputSpace(PolarCoord* result, float stepR[], float stepTh[]);
-void writeFile(std::vector<States> data, std::string str);
+void initializing(Data *dataSet,
+                  float cpR[], float cpTh[], float stepR[], float stepTh[]);
+void writeData(Data* data, std::string str);
 
-__global__ void step_0(States *statesSpace);
-__global__ void step_N(States *statesSpace, PolarCoord input, int n_step,
+
+// __global__ void step_0(Data *dataSet);
+__global__ void step_N(Data *dataSet, int n_step,
                        float *cpR, float *cpTh, float *stepR, float *stepTh);
-__device__ States stepping (States p0, PolarCoord u);
+__device__ State stepping (State p0, PolarCoord u);
+__device__ bool isZeroStepCapt(State p);
 __device__ float distanceTwoPolar (PolarCoord a, PolarCoord b);
-__device__ bool isZeroStepCapt(States p);
-__device__ bool isInPrevSet(States *statesSpace, States p, int n_step,
-                            float cpR[], float cpTh[], float stepR[], float stepTh[]);
-__device__ void setBound(States *bound, States p,
-                         float cpR[], float cpTh[], float stepR[], float stepTh[]);
+__device__ bool isInPrevSet(Data *dataSet, State p, int n_step,
+                            float cpR[], float cpTh[],
+                            float stepR[], float stepTh[]);
+__device__ void setBound(State *bound, State p,
+                         float cpR[], float cpTh[],
+                         float stepR[], float stepTh[]);
+
 
 #else
 #endif

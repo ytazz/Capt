@@ -49,7 +49,7 @@ void writeData(Data* data, std::string str){
     FILE *fp;
     fp = fopen(str.c_str(), "w");
 
-    for (long int i = 0; i < N_ENTIRE*N_INPUT; i++) {
+    for (long int i = 0; i < N_STATE*N_INPUT; i++) {
         int a = i/N_INPUT;
         int b = i%N_INPUT;
         if (data[a].input[b].c_r != FAILED) {
@@ -63,24 +63,12 @@ void writeData(Data* data, std::string str){
     fclose(fp);
 }
 
-// __global__ void step_0(Data *dataSet){
-//     int tid = threadIdx.x + blockIdx.x * blockDim.x;
-//
-//     while (tid < N_ENTIRE) {
-//         if (isZeroStepCapt(dataSet[tid].state)) {
-//             dataSet[tid].n = 0;
-//         }
-//         tid += blockDim.x * gridDim.x;
-//     }
-// }
-
-
 __global__ void step_1(Data *dataSet){
 
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
     State oneStepAfterState;
 
-    while (tid < (N_ENTIRE*N_INPUT)) {
+    while (tid < (N_STATE*N_INPUT)) {
         int a = tid/N_INPUT;
         int b = tid%N_INPUT;
 
@@ -88,9 +76,8 @@ __global__ void step_1(Data *dataSet){
 
         if (isZeroStepCapt(oneStepAfterState)) {
             dataSet[a].input[b].c_r = 1;
-            if (dataSet[a].n == FAILED) {
-                dataSet[a].n = n_step;
-            }
+            dataSet[a].n = 1;
+
         }
         tid += blockDim.x * gridDim.x;
     }
@@ -102,11 +89,11 @@ __global__ void step_N(Data *dataSet, int n_step,
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
     State oneStepAfterState;
 
-    while (tid < (N_ENTIRE*N_INPUT)) {
+    while (tid < (N_STATE*N_INPUT)) {
         int a = tid/N_INPUT;
         int b = tid%N_INPUT;
 
-        if (dataSet[a].n != 0 && dataSet[a].input[b].c_r == FAILED) {
+        if (dataSet[a].input[b].c_r == FAILED) {
             oneStepAfterState = stepping(dataSet[a].state, dataSet[a].input[b].step);
 
             if (isInPrevSet(dataSet, oneStepAfterState,
@@ -162,7 +149,7 @@ __device__ bool isInPrevSet(Data *dataSet, State p, int n_step,
         setBound(bound, p, cpR, cpTh, stepR, stepTh);
 
         for (size_t i = 0; i < 16; i++) {
-            for (size_t j = 0; j < N_ENTIRE; j++) {
+            for (size_t j = 0; j < N_STATE; j++) {
                 if (dataSet[j].state.icp.r == bound[i].icp.r &&
                     dataSet[j].state.icp.th == bound[i].icp.th &&
                     dataSet[j].state.sfPos.r == bound[i].sfPos.r &&

@@ -26,19 +26,15 @@ int main(void)
     HANDLE_ERROR(cudaMemcpy(dev_stepTh, stepTh, N_FOOT_TH*sizeof(float),
                             cudaMemcpyHostToDevice));
 
-    Data *dataSet = new Data[N_ENTIRE];
+    Data *dataSet = new Data[N_STATE];
     initializing(dataSet, cpR, cpTh, stepR, stepTh);
-    
+
     Data *dev_dataSet;
-    HANDLE_ERROR(cudaMalloc((void **)&dev_dataSet, N_ENTIRE*sizeof(Data)));
-    HANDLE_ERROR(cudaMemcpy(dev_dataSet, dataSet, N_ENTIRE*sizeof(Data),
+    HANDLE_ERROR(cudaMalloc((void **)&dev_dataSet, N_STATE*sizeof(Data)));
+    HANDLE_ERROR(cudaMemcpy(dev_dataSet, dataSet, N_STATE*sizeof(Data),
                             cudaMemcpyHostToDevice));
 
-    // 0-step Capturable Basin
-    step_0<<<BPG,TPB>>>(dev_dataSet);
-
-    // 1-step Capturable Basin
-    step_N<<<BPG,TPB>>>(dev_dataSet, 1, dev_cpR, dev_cpTh, dev_stepR, dev_stepTh);
+    step_1<<<BPG,TPB>>>(dev_dataSet);
 
     // 2-step Capturable Basin
     step_N<<<BPG,TPB>>>(dev_dataSet, 2, dev_cpR, dev_cpTh, dev_stepR, dev_stepTh);
@@ -46,8 +42,11 @@ int main(void)
     // 3-step Capturable Basin
     step_N<<<BPG,TPB>>>(dev_dataSet, 3, dev_cpR, dev_cpTh, dev_stepR, dev_stepTh);
 
+    // 4-step Capturable Basin
+    step_N<<<BPG,TPB>>>(dev_dataSet, 4, dev_cpR, dev_cpTh, dev_stepR, dev_stepTh);
 
-    HANDLE_ERROR(cudaMemcpy(dataSet, dev_dataSet, N_ENTIRE*sizeof(Data),
+
+    HANDLE_ERROR(cudaMemcpy(dataSet, dev_dataSet, N_STATE*sizeof(Data),
     cudaMemcpyDeviceToHost));
 
     writeData(dataSet, "data.csv");

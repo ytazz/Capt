@@ -16,10 +16,10 @@ const int TPB = 1024;
 const int BPG = 1024;
 
 //////////////////////////////// parameter ////////////////////////////////////
-#define HEIGHTOFCOM 0.50            //[m]
-#define FOOTVEL 1.0                 //[m]
-#define FOOTSIZE 0.1                //[m]
-#define MINIMUM_STEPPING_TIME 0.05  //[s]
+#define HEIGHTOFCOM 0.225            //[m]
+#define FOOTVEL 0.5                 //[m/s]
+#define FOOTSIZE 0.045                //[m]
+#define MINIMUM_STEPPING_TIME 0.1  //[s]
 #define OMEGA sqrt(9.81/HEIGHTOFCOM)
 #define PI 3.141
 
@@ -30,16 +30,16 @@ const int N_CP_TH = 20;
 const int N_FOOT_R = 20;
 const int N_FOOT_TH = 20;
 const int N_INPUT = N_FOOT_R*N_FOOT_TH;
-const long int N_ENTIRE = (long int)N_CP_R * N_CP_TH * N_FOOT_R * N_FOOT_TH;
+const long int N_STATE = (long int)N_CP_R * N_CP_TH * N_FOOT_R * N_FOOT_TH;
 
 #define CP_MIN_R FOOTSIZE
-#define CP_MAX_R 0.5
+#define CP_MAX_R 0.2
 
 #define CP_MIN_TH 0.0
 #define CP_MAX_TH 2*PI
 
 #define FOOT_MIN_R 2*FOOTSIZE
-#define FOOT_MAX_R 0.5
+#define FOOT_MAX_R 0.15
 
 #define FOOT_MIN_TH 0.0
 #define FOOT_MAX_TH PI
@@ -71,7 +71,7 @@ void initializing(Data *dataSet,
 void writeData(Data* data, std::string str);
 
 
-// __global__ void step_0(Data *dataSet);
+__global__ void step_1(Data *dataSet);
 __global__ void step_N(Data *dataSet, int n_step,
                        float *cpR, float *cpTh, float *stepR, float *stepTh);
 __device__ State stepping (State p0, PolarCoord u);

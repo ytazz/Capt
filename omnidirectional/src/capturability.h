@@ -17,7 +17,7 @@ const int BPG = 1024;
 
 //////////////////////////////// parameter ////////////////////////////////////
 #define HEIGHTOFCOM 0.225            //[m]
-#define FOOTVEL 0.5                 //[m/s]
+#define FOOTVEL 1.0                 //[m/s]
 #define FOOTSIZE 0.045                //[m]
 #define MINIMUM_STEPPING_TIME 0.1  //[s]
 #define OMEGA sqrt(9.81/HEIGHTOFCOM)
@@ -38,8 +38,8 @@ const long int N_STATE = (long int)N_CP_R * N_CP_TH * N_FOOT_R * N_FOOT_TH;
 #define CP_MIN_TH 0.0
 #define CP_MAX_TH 2*PI
 
-#define FOOT_MIN_R 2*FOOTSIZE
-#define FOOT_MAX_R 0.15
+#define FOOT_MIN_R 0.1
+#define FOOT_MAX_R 0.2
 
 #define FOOT_MIN_TH 0.0
 #define FOOT_MAX_TH PI

@@ -1,0 +1,11 @@
+set xrange [-0.20:0.20]
+set yrange [-0.10:0.20]
+set size ratio -1
+set polar
+set grid polar 30
+
+plot "data/1step.csv" u 7:6 t '1step' with points pointsize 1.5 pointtype 7 lc "blue", \
+     "data/2step.csv" u 7:6 t '2step' with points pointsize 1.5 pointtype 7 lc "red", \
+     "data/3step.csv" u 7:6 t '3step' with points pointsize 1.5 pointtype 7 lc "yellow", \
+     "data/2step.csv" u 2:1 t 'Capture Point' with points pointsize 2.0 pointtype 7 lc "orange", \
+     "data/2step.csv" u 4:3 t 'Swing Foot' with points pointsize 2.0 pointtype 7 lc "green"

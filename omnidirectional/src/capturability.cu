@@ -14,6 +14,18 @@ void linspace(float result[], float min, float max, int n) {
     }
 }
 
+void makeGridsTable(float cpR[], float cpTh[], float stepR[], float stepTh[]){
+    FILE *fp;
+    fp = fopen("gridsTable.csv", "w");
+
+    for (int i = 0; i < N_CP_R; i++) {
+        fprintf(fp, "%lf, %lf, %lf, %lf \n",
+                cpR[i], cpTh[i], stepR[i], stepTh[i]);
+    }
+    fclose(fp);
+
+}
+
 void initializing(Data *dataSet,
                   float cpR[], float cpTh[], float stepR[], float stepTh[]){
     long int a = 0;
@@ -26,8 +38,8 @@ void initializing(Data *dataSet,
                 for (size_t l = 0; l < N_FOOT_TH; l++) {
                     dataSet[a].state.icp.r = cpR[i];
                     dataSet[a].state.icp.th = cpTh[j];
-                    dataSet[a].state.sfPos.r = stepR[k];
-                    dataSet[a].state.sfPos.th = stepTh[l];
+                    dataSet[a].state.swf.r = stepR[k];
+                    dataSet[a].state.swf.th = stepTh[l];
                     dataSet[a].n = FAILED;
                     b = 0;
                     for (size_t n = 0; n < N_FOOT_R; n++) {
@@ -55,7 +67,7 @@ void writeData(Data* data, std::string str){
         if (data[a].input[b].c_r != FAILED) {
             fprintf(fp, "%lf, %lf, %lf, %lf, %d, %lf, %lf, %d \n",
                     data[a].state.icp.r, data[a].state.icp.th,
-                    data[a].state.sfPos.r, data[a].state.sfPos.th, data[a].n,
+                    data[a].state.swf.r, data[a].state.swf.th, data[a].n,
                     data[a].input[b].step.r, data[a].input[b].step.th,
                     data[a].input[b].c_r);
         }
@@ -113,15 +125,15 @@ __device__ State stepping (State p0, PolarCoord u){
     State p1;
     float tau;
 
-    tau =  distanceTwoPolar(p0.sfPos, u) / FOOTVEL + MINIMUM_STEPPING_TIME; //所要時間
+    tau =  distanceTwoPolar(p0.swf, u) / FOOTVEL + MINIMUM_STEPPING_TIME; //所要時間
 
     //所要時間後の状態
     hatCP.r = (p0.icp.r - FOOTSIZE) * expf(OMEGA * tau) + FOOTSIZE;
     hatCP.th = p0.icp.th;
 
     //reset
-    p1.sfPos.r = u.r;
-    p1.sfPos.th = PI - u.th;
+    p1.swf.r = u.r;
+    p1.swf.th = PI - u.th;
     p1.icp.r = distanceTwoPolar(u, hatCP);
     float alpha = hatCP.r * cos(hatCP.th) - u.r * cos(u.th);
     float beta =  -hatCP.r * sin(hatCP.th) + u.r * sin(u.th);
@@ -152,8 +164,8 @@ __device__ bool isInPrevSet(Data *dataSet, State p, int n_step,
             for (size_t j = 0; j < N_STATE; j++) {
                 if (dataSet[j].state.icp.r == bound[i].icp.r &&
                     dataSet[j].state.icp.th == bound[i].icp.th &&
-                    dataSet[j].state.sfPos.r == bound[i].sfPos.r &&
-                    dataSet[j].state.sfPos.th == bound[i].sfPos.th) {
+                    dataSet[j].state.swf.r == bound[i].swf.r &&
+                    dataSet[j].state.swf.th == bound[i].swf.th) {
 
                     flag[i] = dataSet[j].n;
                     if (dataSet[j].n == FAILED) {
@@ -210,7 +222,7 @@ __device__ void setBound(State *bound, State p,
     }
 
     for (size_t i = 0; i < N_FOOT_R; i++) {
-        if (stepR[i] >= p.sfPos.r) {
+        if (stepR[i] >= p.swf.r) {
             ind_stepR = i;
             break;
         }
@@ -220,7 +232,7 @@ __device__ void setBound(State *bound, State p,
     }
 
     for (size_t i = 0; i < N_FOOT_TH; i++) {
-        if (stepTh[i] >= p.sfPos.th) {
+        if (stepTh[i] >= p.swf.th) {
             ind_stepTh = i;
             break;
         }
@@ -237,8 +249,8 @@ __device__ void setBound(State *bound, State p,
                 for (size_t l = 0; l < 2; l++) {
                     bound[ind].icp.r = cpR[ind_cpR-1 + i];
                     bound[ind].icp.th = cpTh[ind_cpTh-1 + j];
-                    bound[ind].sfPos.r = stepR[ind_stepR-1 + k];
-                    bound[ind].sfPos.th = stepTh[ind_stepTh-1 + l];
+                    bound[ind].swf.r = stepR[ind_stepR-1 + k];
+                    bound[ind].swf.th = stepTh[ind_stepTh-1 + l];
                     ind++;
                 }
             }

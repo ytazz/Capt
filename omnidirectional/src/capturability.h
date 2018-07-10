@@ -16,7 +16,7 @@ const int TPB = 1024;
 const int BPG = 1024;
 
 //////////////////////////////// parameter ////////////////////////////////////
-#define HEIGHTOFCOM 0.225            //[m]
+#define HEIGHTOFCOM 0.25            //[m]
 #define FOOTVEL 1.0                 //[m/s]
 #define FOOTSIZE 0.045                //[m]
 #define MINIMUM_STEPPING_TIME 0.1  //[s]
@@ -50,7 +50,7 @@ struct PolarCoord {
 
 struct State {
   PolarCoord icp;
-  PolarCoord sfPos;
+  PolarCoord swf;
 };
 
 struct Input {
@@ -69,6 +69,7 @@ void linspace(float result[], float min, float max, int n);
 void initializing(Data *dataSet,
                   float cpR[], float cpTh[], float stepR[], float stepTh[]);
 void writeData(Data* data, std::string str);
+void makeGridsTable(float cpR[], float cpTh[], float stepR[], float stepTh[]);
 
 
 __global__ void step_1(Data *dataSet);

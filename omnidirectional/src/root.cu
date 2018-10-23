@@ -11,7 +11,7 @@ int main(void)
     linspace(stepR, FOOT_MIN_R, FOOT_MAX_R, N_FOOT_R);
     linspace(stepTh, FOOT_MIN_TH, FOOT_MAX_TH, N_FOOT_TH);
     makeGridsTable(cpR, cpTh, stepR, stepTh);
-    
+
     float *dev_cpR, *dev_cpTh, *dev_stepR, *dev_stepTh;
     HANDLE_ERROR(cudaMalloc((void **)&dev_cpR, N_CP_R*sizeof(float)));
     HANDLE_ERROR(cudaMalloc((void **)&dev_cpTh, N_CP_TH*sizeof(float)));

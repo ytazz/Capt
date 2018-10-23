@@ -16,9 +16,9 @@ const int TPB = 1024;
 const int BPG = 1024;
 
 //////////////////////////////// parameter ////////////////////////////////////
-#define HEIGHTOFCOM 0.25            //[m]
+#define HEIGHTOFCOM 0.30            //[m]
 #define FOOTVEL 1.0                 //[m/s]
-#define FOOTSIZE 0.045                //[m]
+#define FOOTSIZE 0.040                //[m]
 #define MINIMUM_STEPPING_TIME 0.1  //[s]
 #define OMEGA sqrt(9.81/HEIGHTOFCOM)
 #define PI 3.141
@@ -38,11 +38,11 @@ const long int N_STATE = (long int)N_CP_R * N_CP_TH * N_FOOT_R * N_FOOT_TH;
 #define CP_MIN_TH 0.0
 #define CP_MAX_TH 2*PI
 
-#define FOOT_MIN_R 0.1
-#define FOOT_MAX_R 0.2
+#define FOOT_MIN_R 0.09
+#define FOOT_MAX_R 0.22
 
-#define FOOT_MIN_TH 0.0
-#define FOOT_MAX_TH PI
+#define FOOT_MIN_TH (20)*PI/180.0
+#define FOOT_MAX_TH (180.0-20.0)*PI/180.0
 ////////////////////////////////////////////////////////////////////////////////
 struct PolarCoord {
     float r, th;

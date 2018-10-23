@@ -186,10 +186,18 @@ __device__ bool isInPrevSet(Data *dataSet, State p, int n_step,
     }
 }
 
+__device__ float distanceToLineSegment(PolarCoord step, PolarCoord cp){
+    PolarCoord h;
+    const float xi = fminf(fmaxf(cp.r * cos(step.th - cp.th) / step.r, 0), 1);
+    h.r = xi*step.r;
+    h.th = step.th;
+    return distanceTwoPolar(h, cp);
+}
+
 __device__ bool isZeroStepCapt(State p){
     float threshold = FOOTSIZE;
 
-    if (p.icp.r <= threshold) {
+    if (distanceToLineSegment(p.swf, p.icp) <= threshold) {
         return true;
     }else{
         return false;

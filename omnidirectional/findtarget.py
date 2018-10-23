@@ -6,7 +6,7 @@ data = np.loadtxt('build/data.csv', dtype='float', delimiter=',')
 
 deleted_data = np.delete(data, [4, 5, 6, 7], 1)
 
-target = np.array([0.053158, 3.636947, 0.131579, 2.810369])
+target = np.array([0.056842, 2.645053, 0.158421, 1.120474])
 
 ind = np.where(np.all(deleted_data == target, axis = 1))
 

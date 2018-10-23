@@ -17,7 +17,7 @@ using namespace std;
 #define PI 3.141
 ////////////////////////////////////////////////////////////////////////////////
 struct PolarCoord {
-    float r, th;
+    float r, th;z
 };
 struct State {
     PolarCoord icp;

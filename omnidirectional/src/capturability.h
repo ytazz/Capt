@@ -45,23 +45,23 @@ const long int N_STATE = (long int)N_CP_R * N_CP_TH * N_FOOT_R * N_FOOT_TH;
 #define FOOT_MAX_TH (180.0-20.0)*PI/180.0
 ////////////////////////////////////////////////////////////////////////////////
 struct PolarCoord {
-    float r, th;
+        float r, th;
 };
 
 struct State {
-  PolarCoord icp;
-  PolarCoord swf;
+        PolarCoord icp;
+        PolarCoord swf;
 };
 
 struct Input {
-  PolarCoord step;
-  int c_r;
+        PolarCoord step;
+        int c_r;
 };
 
 struct Data {
-    State state;
-    Input input[N_INPUT];
-    int n;
+        State state;
+        Input input[N_INPUT];
+        int n;
 };
 ////////////////////////////////////////////////////////////////////////////////
 

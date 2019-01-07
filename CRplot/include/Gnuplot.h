@@ -1,4 +1,7 @@
-#pragma once
+/*
+    author G. KIM
+*/
+
 #ifndef GNUPLOT_H
 #define GNUPLOT_H
 #include <stdio.h>

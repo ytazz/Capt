@@ -187,11 +187,11 @@ __device__ bool isInPrevSet(Data *dataSet, State p, int n_step,
 }
 
 __device__ float distanceToLineSegment(PolarCoord step, PolarCoord cp){
-    PolarCoord h;
+    PolarCoord phi;
     const float xi = fminf(fmaxf(cp.r * cos(step.th - cp.th) / step.r, 0), 1);
-    h.r = xi*step.r;
-    h.th = step.th;
-    return distanceTwoPolar(h, cp);
+    phi.r = xi*step.r;
+    phi.th = step.th;
+    return distanceTwoPolar(phi, cp);
 }
 
 __device__ bool isZeroStepCapt(State p){

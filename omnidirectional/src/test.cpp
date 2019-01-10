@@ -17,7 +17,7 @@ using namespace std;
 #define PI 3.141
 ////////////////////////////////////////////////////////////////////////////////
 struct PolarCoord {
-    float r, th;z
+    float r, th;
 };
 struct State {
     PolarCoord icp;
@@ -51,33 +51,37 @@ State stepping (State p0, PolarCoord u){
     }else{
         p1.icp.th = 2*PI - acosf(alpha/p1.icp.r);
     }
-    if (p1.icp.th > 6.28){
-      p1.icp.th = 0.0;
+    if (p1.icp.th > 6.28) {
+        p1.icp.th = 0.0;
     }
 
 
     return p1;
 }
 
-bool isZeroStepCapt(State p){
-    float threshold = FOOTSIZE;
-
-    if (p.icp.r <= threshold) {
-        return true;
-    }else if (p.icp.r < p.swf.r &&
-              p.swf.th - atanf(FOOTSIZE/p.swf.r) < p.icp.th &&
-              p.icp.th < p.swf.th + atanf(FOOTSIZE/p.swf.r)){
-        return true;
-    }else{
-      return false;
-    }
+float distanceToLineSegment(PolarCoord step, PolarCoord cp){
+    PolarCoord phi;
+    const float xi = fminf(fmaxf(cp.r * cos(step.th - cp.th) / step.r, 0), 1);
+    phi.r = xi*step.r;
+    phi.th = step.th;
+    return distanceTwoPolar(phi, cp);
 }
 
 
+bool isZeroStepCapt(State p){
+  float threshold = FOOTSIZE;
+
+  if (distanceToLineSegment(p.swf, p.icp) <= threshold) {
+    return true;
+  }else{
+    return false;
+  }
+}
+
 int main(void) {
     State testp1;
-    testp1.icp.r = 0.05;
-    testp1.icp.th = 0.0;
+    testp1.icp.r = 0.01;
+    testp1.icp.th = 1.1;
     testp1.swf.r = 0.09;
     testp1.swf.th = 0.0;
 
@@ -94,7 +98,7 @@ int main(void) {
     printf("%lf %lf\n",testp1.swf.th, 180*(atanf(FOOTSIZE/testp1.swf.r))/PI);
 
     printf("%lf, %lf, %lf, %lf\n",result2.icp.r, result2.icp.th,
-                                  result2.swf.r, result2.swf.th);
+           result2.swf.r, result2.swf.th);
     printf("%d\n", result1);
 
     return 0;

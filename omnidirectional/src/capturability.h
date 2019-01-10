@@ -16,8 +16,8 @@ const int TPB = 1024;
 const int BPG = 1024;
 
 //////////////////////////////// parameter ////////////////////////////////////
-#define HEIGHTOFCOM 0.30            //[m]
-#define FOOTVEL 1.0                 //[m/s]
+#define HEIGHTOFCOM 0.27            //[m]
+#define FOOTVEL 0.44                 //[m/s]
 #define FOOTSIZE 0.040                //[m]
 #define MINIMUM_STEPPING_TIME 0.1  //[s]
 #define OMEGA sqrt(9.81/HEIGHTOFCOM)
@@ -38,11 +38,11 @@ const long int N_STATE = (long int)N_CP_R * N_CP_TH * N_FOOT_R * N_FOOT_TH;
 #define CP_MIN_TH 0.0
 #define CP_MAX_TH 2*PI
 
-#define FOOT_MIN_R 0.09
-#define FOOT_MAX_R 0.22
+#define FOOT_MIN_R 0.088
+#define FOOT_MAX_R 0.14
 
-#define FOOT_MIN_TH (20)*PI/180.0
-#define FOOT_MAX_TH (180.0-20.0)*PI/180.0
+#define FOOT_MIN_TH (65.57)*PI/180.0
+#define FOOT_MAX_TH (180.0-65.57)*PI/180.0
 ////////////////////////////////////////////////////////////////////////////////
 struct PolarCoord {
         float r, th;
@@ -78,6 +78,7 @@ __global__ void step_N(Data *dataSet, int n_step,
 __device__ State stepping (State p0, PolarCoord u);
 __device__ bool isZeroStepCapt(State p);
 __device__ float distanceTwoPolar (PolarCoord a, PolarCoord b);
+__device__ float distanceToLineSegment(PolarCoord step, PolarCoord cp);
 __device__ bool isInPrevSet(Data *dataSet, State p, int n_step,
                             float cpR[], float cpTh[],
                             float stepR[], float stepTh[]);

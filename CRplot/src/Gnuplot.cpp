@@ -2,16 +2,12 @@
     author G. KIM
 */
 
-#include <Gnuplot.h>
+#include "../include/Gnuplot.h"
 
 gnuplot::gnuplot()
 {
-	#ifdef LINUX
 	gp = popen("gnuplot -persist", "w");
-	#endif
-	#ifdef WINDOWS
-	gp = _popen("gnuplot -persist", "w");
-	#endif
+
 	if (!gp)
 	{
 		cerr << ("gnuplot not found");
@@ -32,12 +28,7 @@ gnuplot::gnuplot()
 gnuplot::~gnuplot()
 {
 	fprintf(gp, "exit\n");
-	#ifdef LINUX
 	pclose(gp);
-	#endif
-	#ifdef WINDOWS
-	_pclose(gp);
-	#endif
 }
 
 void gnuplot::operator() (const string &command)

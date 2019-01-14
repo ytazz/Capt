@@ -1,60 +1,46 @@
-#include <CRplot.h>
-
-#include <DataLoader.h>
-#include <DataStruct.h>
-#include <BalanceMonitor.h>
-
-#include <algorithm>
-#include <ctime>
-#include <iostream>
-#include <string>
+#include "../include/CRplot.h"
+#include <stdlib.h>
 #include <vector>
-
-#ifdef LINUX
-#include <unistd.h>
-#endif
-#ifdef WINDOWS
-#include <windows.h>
-#endif
 
 float PI = 3.1415;
 
 using namespace std;
 using namespace nkk;
 
-int main() {
-    DataLoader loader("data.csv");
-    vector<Data> dataList = loader.getData();
 
+int main() {
     BalanceMonitor mod;
 
-    State test_state;
-    test_state.icp.r  = 0.056;
-    test_state.icp.th = 0.0;
-    test_state.swf.r  = 0.158;
-    test_state.swf.th = (90.0) * PI / 180.0;
+    string home_dir  = getenv("HOME");
+    string data_dir  = home_dir + "/ca_data/balanceData.csv";
+    string table_dir = home_dir + "/ca_data/gridsTable.csv";
+
+    mod.loadData(data_dir, table_dir);
+
+    CAstate test_state;
+    test_state.icp.r  = 0.05;
+    test_state.icp.th = 0.33;
+    test_state.swf.r  = 0.09;
+    test_state.swf.th = 1.349;
 
     PolarCoord test_swf;
     test_swf.r  = 0.152;
     test_swf.th = 2.406;
 
-    mod.setCurrent(test_state, test_swf);
-    mod.findCaptureRegion(&dataList);
-
     CRplot pp;
     int    count = 0;
 
+    std::vector<CAinput> cr;
+
     while (count < 19) {
         test_state.icp.th += ((360.0) * PI / 180.0) / 20;
-        mod.setCurrent(test_state, test_swf);
-        mod.findCaptureRegion(&dataList);
-        pp.plot(test_state, mod.captureRegion);
-#ifdef LINUX
+        mod.set_polar(test_state, test_swf);
+        mod.findCaptureRegion();
+        cr  = mod.getCurrentCR();
+        pp.plot(test_state, cr);
+
         usleep(500 * 1000);  // usleep takes sleep time in us
-#endif
-#ifdef WINDOWS
-        Sleep(500);
-#endif
+
         count++;
     }
 

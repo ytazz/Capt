@@ -6,20 +6,26 @@
 #ifndef STEP_MODIFIER_H
 #define STEP_MODIFIER_H
 
-#include <DataStruct.h>
-#include <vector>
-#include <string>
-#include <algorithm>
+#include <BalanceMonitor.h>
+#include <CA.h>
 
 #include "Gnuplot.h"
 
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <ctime>
+#include <iostream>
+#include <unistd.h>
+
+
 class CRplot {
-    gnuplot       p;
+    gnuplot p;
 
 public:
     CRplot();
     ~CRplot();
-    void plot(nkk::State current_state, std::vector<nkk::Input> captureRegion);
+    void plot(CAstate current_state, std::vector<CAinput> captureRegion);
 };
 
 #endif  // STEP_MODIFIER_H

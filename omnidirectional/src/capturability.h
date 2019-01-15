@@ -25,15 +25,15 @@ const int BPG = 1024;
 
 #define FAILED 100.0
 
-const int N_CP_R = 20;
-const int N_CP_TH = 20;
-const int N_FOOT_R = 20;
-const int N_FOOT_TH = 20;
+const int N_CP_R = 15;
+const int N_CP_TH = 15;
+const int N_FOOT_R = 15;
+const int N_FOOT_TH = 15;
 const int N_INPUT = N_FOOT_R*N_FOOT_TH;
 const long int N_STATE = (long int)N_CP_R * N_CP_TH * N_FOOT_R * N_FOOT_TH;
 
-#define CP_MIN_R FOOTSIZE
-#define CP_MAX_R 0.2
+#define CP_MIN_R FOOTSIZE+0.01
+#define CP_MAX_R 0.6
 
 #define CP_MIN_TH 0.0
 #define CP_MAX_TH 2*PI

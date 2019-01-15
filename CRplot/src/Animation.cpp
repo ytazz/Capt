@@ -25,24 +25,36 @@ int main() {
 
     PolarCoord test_swf;
     test_swf.r  = 0.152;
-    test_swf.th = 2.406;
+    test_swf.th = 0.4;
 
-    CRplot pp;
-    int    count = 0;
+    // CRplot pp;
+    // int    count = 0;
 
     std::vector<CAinput> cr;
 
-    while (count < 19) {
-        test_state.icp.th += ((360.0) * PI / 180.0) / 20;
-        mod.set_polar(test_state, test_swf);
-        mod.findCaptureRegion();
-        cr  = mod.getCurrentCR();
-        pp.plot(test_state, cr);
+    mod.set_polar(test_state, test_swf);
+    std::cout << mod.safe() << "\n";
+    PolarCoord landingPlace = mod.getLP_polar();
 
-        usleep(500 * 1000);  // usleep takes sleep time in us
+    std::cout << landingPlace.r << "\n";
+    std::cout << landingPlace.th << "\n";
 
-        count++;
-    }
+    // for (int i = 0; i < landingPlace.size(); i++)
+    // {
+    //     std::cout << landingPlace[i] << "\n";
+    // }
+
+    // while (count < 19) {
+    //     test_state.icp.th += ((360.0) * PI / 180.0) / 20;
+    //     mod.set_polar(test_state, test_swf);
+    //     mod.findCaptureRegion();
+    //     cr  = mod.getCurrentCR();
+    //     pp.plot(test_state, cr);
+    //
+    //     usleep(500 * 1000);  // usleep takes sleep time in us
+    //
+    //     count++;
+    // }
 
     return 0;
 }

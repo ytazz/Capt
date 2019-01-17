@@ -18,10 +18,10 @@ int main() {
     mod.loadData(data_dir, table_dir);
 
     CAstate test_state;
-    test_state.icp.r  = 0.05;
+    test_state.icp.r  = 0.043;
     test_state.icp.th = 1.3;
-    test_state.swf.r  = 0.11;
-    test_state.swf.th = 1.349;
+    test_state.swf.r  = 0.10;
+    test_state.swf.th = 1.8;
 
     PolarCoord test_swf;
     test_swf.r  = 0.152;
@@ -32,18 +32,16 @@ int main() {
     std::vector<CAinput> cr;
 
     while (count < 19) {
-        test_state.swf.th += ((360.0) * PI / 180.0) / 20;
+        test_state.icp.th += ((360.0) * PI / 180.0) / 20;
+        if (test_state.icp.th > 2*PI)
+        {
+            test_state.icp.th = test_state.icp.th - 2*PI;
+        }
         mod.set_polar(test_state, test_swf);
         mod.findCaptureRegion();
         cr = mod.getCurrentCR();
         std::cout << cr.size() << ',' << count << "\n";
-        // for (int i = 0; i < cr.size(); i++)
-        // {
-        //     std::cout << cr[i].swf.r << ',' <<  cr[i].swf.th <<"\n";
-        // }
         pp.plot(test_state, cr);
-        cr.clear();
-        std::cout << cr.size() << ',' << count << "\n";
         usleep(500 * 1000);  // usleep takes sleep time in us
 
         count++;

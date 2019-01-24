@@ -11,21 +11,24 @@
 
 #include "Gnuplot.h"
 
-#include <string>
-#include <vector>
 #include <algorithm>
 #include <ctime>
 #include <iostream>
+#include <string>
 #include <unistd.h>
+#include <vector>
 
 
 class CRplot {
-    gnuplot p;
 
 public:
     CRplot();
     ~CRplot();
     void plot(CAstate current_state, std::vector<CAinput> captureRegion);
+
+private:
+    void drawReachableRegion();
+    gnuplot p;
 };
 
 #endif  // STEP_MODIFIER_H

@@ -14,7 +14,7 @@ CRplot::CRplot() {
     p("set encoding utf8");
     p("set size ratio -1");
     p("set polar");
-    p("set grid polar 0");
+    // p("set grid polar 0");
 
     if (output == "file") {
         p("set terminal gif animate optimize delay 50 size 600,900");
@@ -47,17 +47,42 @@ CRplot::CRplot() {
     p("set rtics format \"\"");
     p("unset raxis");
 
-    //circle (foot)
+    // circle (foot)
     p("set style fs transparent solid 0.15 noborder");
     p("set style circle radius 0.04");
+
+    drawReachableRegion();
 
     p("unset key");
 }
 
 CRplot::~CRplot() {}
 
+void CRplot::drawReachableRegion() {
+
+    float foot_min_r  = 0.09;
+    float foot_max_r  = 0.22;
+    float foot_min_th = 20.0;
+    float foot_max_th = 160.0;
+    fprintf(p.gp, "set object 1 circle at 0.0, 0.0 arc [%f:%f] size %f fc rgb "
+                  "\"red\" lw 4 \n",
+            (foot_min_th-90), (foot_max_th-90), foot_max_r);
+
+    fprintf(
+        p.gp,
+        "set object 2 circle at 0.0, 0.0 arc [%f:%f] size %f fc rgb \"white\" "
+        "lw 4 \n",
+        (foot_min_th-90), (foot_max_th-90), foot_min_r);
+
+    fflush(p.gp);
+
+}
+
 void CRplot::plot(CAstate current_state, std::vector<CAinput> captureRegion) {
+
     fprintf(p.gp, "plot");
+
+    fprintf(p.gp, "'-' t 'Current Swing Foot' with circles lc \"green\",");
 
     if (!captureRegion.empty()) {
         sort(captureRegion.begin(), captureRegion.end(),
@@ -70,15 +95,16 @@ void CRplot::plot(CAstate current_state, std::vector<CAinput> captureRegion) {
         while (step_num != 0) {
             fprintf(
                 p.gp,
-                "'-' t '%d' with points pointsize 1.5 pointtype 7 lc \"%s\",",
+                "'-' t '%d' with points pointsize 2.5 pointtype 7 lc \"%s\",",
                 step_num, p.int_color[step_num].c_str());
             step_num--;
         }
-
         fprintf(p.gp, "'-' t 'Capture Point' with points pointsize 3.0 "
-                      "pointtype 7 lc \"orange\",");
-        fprintf(p.gp,
-                "'-' t 'Current Swing Foot' with circles lc \"green\" \n");
+                      "pointtype 7 lc \"orange\"\n");
+
+        fprintf(p.gp, "%f %f\n", current_state.swf.th, current_state.swf.r);
+        fprintf(p.gp, "%f %f\n", 0.0, 0.0);
+        fprintf(p.gp, "e\n");
 
         size_t ind = 0;
         step_num   = captureRegion[0].n;
@@ -94,15 +120,14 @@ void CRplot::plot(CAstate current_state, std::vector<CAinput> captureRegion) {
         }
     } else {
         fprintf(p.gp, "'-' t 'Capture Point' with points pointsize 3.0 "
-                      "pointtype 7 lc \"orange\",");
-        fprintf(p.gp,
-                "'-' t 'Current Swing Foot' with circles lc \"green\" \n");
+                      "pointtype 7 lc \"orange\"\n");
+
+        fprintf(p.gp, "%f %f\n", current_state.swf.th, current_state.swf.r);
+        fprintf(p.gp, "%f %f\n", 0.0, 0.0);
+        fprintf(p.gp, "e\n");
     }
 
     fprintf(p.gp, "%f %f\n", current_state.icp.th, current_state.icp.r);
-    fprintf(p.gp, "e\n");
-    fprintf(p.gp, "%f %f\n", current_state.swf.th, current_state.swf.r);
-    fprintf(p.gp, "%f %f\n", 0.0, 0.0);
     fprintf(p.gp, "e\n");
 
     fflush(p.gp);

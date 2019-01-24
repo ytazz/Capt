@@ -13,10 +13,10 @@ gnuplot::gnuplot()
 		cerr << ("gnuplot not found");
 	}
 	int_color = {
-		{ 1, "grey80" },
+		{ 1, "grey20" },
 		{ 2, "grey50" },
-		{ 3, "grey20" },
-		{ 4, "black" },
+		{ 3, "grey80" },
+		{ 4, "grey90" },
 		{ 5, "gold" },
 		{ 6, "cyan" },
 		{ 7, "violet" },

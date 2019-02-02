@@ -18,3 +18,10 @@ add_executable(make_animation
                src/Gnuplot.cpp)
 
 target_link_libraries(make_animation libnkk.so)
+
+add_executable(B14Plot
+               src/B14Plot.cpp
+               src/CRplot.cpp
+               src/Gnuplot.cpp)
+
+target_link_libraries(B14Plot libnkk.so)

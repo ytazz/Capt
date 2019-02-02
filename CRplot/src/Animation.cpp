@@ -9,56 +9,63 @@ using namespace nkk;
 
 
 int main() {
-    BalanceMonitor mod;
-
     string home_dir  = getenv("HOME");
-    string data_dir  = home_dir + "/ca_data/humanoids_d/data.csv";
-    string table_dir = home_dir + "/ca_data/humanoids_d/gridsTable.csv";
+    string data_dir  = home_dir + "/ca_data/nao/data.csv";
+    string table_dir = home_dir + "/ca_data/nao/gridsTable.csv";
 
-    mod.loadData(data_dir, table_dir);
+    BalanceMonitor testMonitor;
 
-    CAstate test_state;
-    test_state.icp.r  = 0.07;
-    test_state.icp.th = 0.5;
-    test_state.swf.r  = 0.152;
-    test_state.swf.th = 0.349;
+    // std::vector<float> suFt_p_icp;
+    // suFt_p_icp.push_back(0.0436);
+    // suFt_p_icp.push_back(0.02);
 
-    PolarCoord test_swf;
-    test_swf.r  = 0.152;
-    test_swf.th = 0.349;
+    // std::vector<float> suFt_p_swFt;
+    // suFt_p_swFt.push_back(0.0);
+    // suFt_p_swFt.push_back(0.10);
 
-    CRplot               pp;
-    int                  count = 0;
+    std::vector<float> suFt_p_refLP;
+    suFt_p_refLP.push_back(0.0);
+    suFt_p_refLP.push_back(0.12);
+
+    CAstate current_state;
+    current_state.icp.r = 0.05;
+    current_state.icp.th = 0.5;
+    current_state.swf.r = 0.11;
+    current_state.swf.th = 1.56;
+
+    PolarCoord refLP;
+    refLP.r = 0.12;
+    refLP.th = 1.56;
+
+    testMonitor.loadData(data_dir, table_dir);
+    // testMonitor.set_xy(suFt_p_icp, suFt_p_swFt, suFt_p_refLP);
+    testMonitor.set_polar(current_state, refLP);
+
+    std::vector<float>   modifiedLandingPosition;
     std::vector<CAinput> cr;
+    CRplot               pp;
 
-    // while (count < 19) {
-    //     test_state.icp.th += ((360.0) * PI / 180.0) / 20;
-    //     if (test_state.icp.th > 2*PI)
-    //     {
-    //         test_state.icp.th = test_state.icp.th - 2*PI;
-    //     }
-    //     mod.set_polar(test_state, test_swf);
-    //     mod.findCaptureRegion();
-    //     cr = mod.getCurrentCR();
-    //     std::cout << cr.size() << ',' << count << "\n";
-    //     pp.plot(test_state, cr);
-    //     usleep(500 * 1000);  // usleep takes sleep time in us
-    //
-    //     count++;
-    // }
+    int count = 0;
 
-    while (count < 19) {
-        test_state.swf.th += (2.792 - 0.349) / 20;
-        if (test_state.swf.th > 2*PI)
-        {
-            test_state.swf.th = test_state.swf.th - 2*PI;
-        }
-        mod.set_polar(test_state, test_swf);
-        mod.findCaptureRegion();
-        cr = mod.getCurrentCR();
+
+    while (count < 20) {
+        // if (testMonitor.current_state.icp.th > 2 * PI) {
+        //     testMonitor.current_state.icp.th =
+        //         testMonitor.current_state.icp.th - 2 * PI;
+        // }
+        current_state.icp.th += 0.1;
+        testMonitor.findCaptureRegion();
+        cr                      = testMonitor.getCurrentCR();
+        modifiedLandingPosition = testMonitor.getLP_xy();
+        std::cout << modifiedLandingPosition[0] << ", "
+                  << modifiedLandingPosition[1] << "\n";
+        std::cout << "safe :" << testMonitor.safe() << "\n";
         std::cout << cr.size() << ',' << count << "\n";
-        pp.plot(test_state, cr);
+
+        pp.plot(testMonitor.current_state, cr);
+
         usleep(500 * 1000);  // usleep takes sleep time in us
+        testMonitor.current_state.icp.th += ((180.0) * PI / 180.0) / 10;
 
         count++;
     }

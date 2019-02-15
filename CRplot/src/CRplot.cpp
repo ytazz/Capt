@@ -8,7 +8,7 @@ using namespace std;
 using namespace nkk;
 
 CRplot::CRplot() {
-    string output      = "file";
+    string output      = "fileVector";
     string supportfoot = "right";
 
     p("set encoding utf8");
@@ -21,9 +21,14 @@ CRplot::CRplot() {
         p("set output 'plot.gif'");
     }
 
-    p("set yrange [-0.22:0.22]");
+    if (output == "fileVector") {
+        p("set terminal svg size 600,900");
+        p("set output 'B14Plot.svg'");
+    }
+
+    p("set yrange [-0.15:0.15]");
     if (supportfoot == "right") {
-        p("set xrange [0.22:-0.1]");
+        p("set xrange [0.17:-0.05]");
         p("set link y2");
         p("set y2tics");
         p("set ytics scale 0");
@@ -61,9 +66,9 @@ CRplot::~CRplot() {}
 void CRplot::drawReachableRegion() {
 
     float foot_min_r  = 0.09;
-    float foot_max_r  = 0.22;
-    float foot_min_th = 20.0;
-    float foot_max_th = 160.0;
+    float foot_max_r  = 0.16;
+    float foot_min_th = 45.0;
+    float foot_max_th = 135.0;
     fprintf(p.gp, "set object 1 circle at 0.0, 0.0 arc [%f:%f] size %f fc rgb "
                   "\"red\" lw 4 \n",
             (foot_min_th-90), (foot_max_th-90), foot_max_r);

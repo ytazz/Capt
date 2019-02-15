@@ -23,15 +23,15 @@ int main() {
     // suFt_p_swFt.push_back(0.0);
     // suFt_p_swFt.push_back(0.10);
 
-    std::vector<float> suFt_p_refLP;
-    suFt_p_refLP.push_back(0.0);
-    suFt_p_refLP.push_back(0.12);
+    // std::vector<float> suFt_p_refLP;
+    // suFt_p_refLP.push_back(0.0);
+    // suFt_p_refLP.push_back(0.12);
 
     CAstate current_state;
     current_state.icp.r = 0.05;
     current_state.icp.th = 0.5;
     current_state.swf.r = 0.11;
-    current_state.swf.th = 1.56;
+    current_state.swf.th = 1.96;
 
     PolarCoord refLP;
     refLP.r = 0.12;
@@ -49,11 +49,11 @@ int main() {
 
 
     while (count < 20) {
-        // if (testMonitor.current_state.icp.th > 2 * PI) {
-        //     testMonitor.current_state.icp.th =
-        //         testMonitor.current_state.icp.th - 2 * PI;
-        // }
-        current_state.icp.th += 0.1;
+        if (testMonitor.current_state.icp.th > 2 * PI) {
+            testMonitor.current_state.icp.th =
+                testMonitor.current_state.icp.th - 2 * PI;
+        }
+        testMonitor.current_state.icp.th += PI/20;
         testMonitor.findCaptureRegion();
         cr                      = testMonitor.getCurrentCR();
         modifiedLandingPosition = testMonitor.getLP_xy();
@@ -65,8 +65,6 @@ int main() {
         pp.plot(testMonitor.current_state, cr);
 
         usleep(500 * 1000);  // usleep takes sleep time in us
-        testMonitor.current_state.icp.th += ((180.0) * PI / 180.0) / 10;
-
         count++;
     }
 

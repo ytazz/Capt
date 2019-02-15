@@ -16,8 +16,8 @@ int main() {
     BalanceMonitor testMonitor;
 
     std::vector<float> suFt_p_icp;
-    suFt_p_icp.push_back(-0.0089355);
-    suFt_p_icp.push_back(0.00840);
+    suFt_p_icp.push_back(0.02);
+    suFt_p_icp.push_back(0.04);
 
     std::vector<float> suFt_p_swFt;
     suFt_p_swFt.push_back(-0.02146);

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<robot name="parallel_biped">
+  <unit length="mm" mass="kg" angle="deg"/>
+
+  <link name="foot_r">
+    <visual>
+      <shape type="box" trn="0 0" rot="10" size="0.2 0.1"/>
+      <shape type="circle" radius="0.2"/>
+    </visual>
+    <collision>
+      <shape type="box" trn="0 0" rot="10" size="0.2 0.1"/>
+      <shape type="circle" radius="0.2"/>
+    </collision>
+  </link>
+
+</robot>

@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kuribayashi/study/xml/main.cpp
+expat.h
+-
+iostream
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+

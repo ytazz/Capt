@@ -1,26 +1,48 @@
+#include <expat.h>
 #include <iostream>
-#include <string>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/foreach.hpp>
-#include <boost/lexical_cast.hpp>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-int main()
-{
-    using namespace boost::property_tree;
+#define BUFSIZE 102400
 
-    ptree pt;
-    read_xml("data.xml", pt);
+static void XMLCALL elementStart(void *user_data, const XML_Char *el,
+                                 const XML_Char *attr[]) {
+  printf("[ELEMENT] %s Start!\n", el);
+}
 
-    if (boost::optional<std::string> str = pt.get_optional<std::string>("root.str")) {
-        std::cout << str.get() << std::endl;
+static void XMLCALL elementEnd(void *user_data, const XML_Char *el) {
+  printf("[ELEMENT] %s End!\n", el);
+}
+
+int main(int argc, char *argv[]) {
+  char buf[BUFSIZE];
+  int done;
+  XML_Parser parser;
+
+  if ((parser = XML_ParserCreate(NULL)) == NULL) {
+    fprintf(stderr, "Parser Creation Error.\n");
+    exit(1);
+  }
+
+  XML_SetElementHandler(parser, elementStart, elementEnd);
+
+  FILE *fp = fopen("../data/data.xml", "r");
+
+  do {
+    size_t len = fread(buf, sizeof(char), BUFSIZE, fp);
+    if (ferror(fp)) {
+      fprintf(stderr, "File Error.\n");
+      exit(1);
     }
-    else {
-        std::cout << "root.str is nothing" << std::endl;
-    }
 
-    BOOST_FOREACH (const ptree::value_type& child, pt.get_child("root.values")) {
-        const int value = boost::lexical_cast<int>(child.second.data());
-        std::cout << value << std::endl;
+    done = len < sizeof(buf);
+    if (XML_Parse(parser, buf, (int)len, done) == XML_STATUS_ERROR) {
+      fprintf(stderr, "Parse Error.\n");
+      exit(1);
     }
+  } while (!done);
+
+  XML_ParserFree(parser);
+  return (0);
 }

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OriginalSignalSlot</class>
+ <widget class="QWidget" name="OriginalSignalSlot">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>OriginalSignalSlot</string>
+  </property>
+  <widget class="QLineEdit" name="lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>20</y>
+     <width>311</width>
+     <height>51</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>90</y>
+     <width>67</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>130</y>
+     <width>89</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>PushButton</string>
+   </property>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>lineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>OriginalSignalSlot</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>251</x>
+     <y>47</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>164</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>OriginalSignalSlot</sender>
+   <signal>textLengthChanged(int)</signal>
+   <receiver>label</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>332</x>
+     <y>184</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>332</x>
+     <y>106</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <signal>textLengthChanged(int)</signal>
+  <slot>setText(QString)</slot>
+ </slots>
+</ui>

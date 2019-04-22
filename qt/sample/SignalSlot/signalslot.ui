@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SignalSlot</class>
+ <widget class="QWidget" name="SignalSlot">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>SignalSlot</string>
+  </property>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>20</y>
+     <width>312</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>TextLabel</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="lineEdit"/>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>PushButton</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>lineEdit</sender>
+   <signal>returnPressed()</signal>
+   <receiver>pushButton</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>207</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>273</x>
+     <y>34</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SignalSlot</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>321</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>317</x>
+     <y>128</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -1,5 +1,4 @@
 *.o
 build/
 bin/
-build-*/
 /build

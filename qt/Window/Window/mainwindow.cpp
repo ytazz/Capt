@@ -6,36 +6,43 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle(tr("Capturability Based Analysis"));
 
     createActions();
     createMenus();
     createToolBars();
 
-    cw = new QWidget();
-    setCentralWidget(cw);
+    cw = new QWidget(this);
+    this->setCentralWidget(cw);
 
-    widgetMenu = new QWidget();
-    widgetMenu->setGeometry(0, 0, 80, 900);
-    QLabel *plabel=new QLabel(tr("label-1"), widgetMenu);
-    plabel->setGeometry(0, 0, 80, 900);
+    QWidget *widgetMenu    = new QWidget();
+    QWidget *widgetSetting = new QWidget();
+    QWidget *widgetScene   = new QWidget();
+    QWidget *widgetDetail  = new QWidget();
+    QWidget *widgetConsole = new QWidget();
 
-    QPalette palette = plabel->palette();
-    palette.setColor(plabel->backgroundRole(), Qt::red);
-    palette.setColor(plabel->foregroundRole(), Qt::red);
-    plabel->setPalette(palette);
-    plabel->setAutoFillBackground(true);
+    QGridLayout* layout = new QGridLayout;
+    layout->setSpacing(0);
+    layout->setMargin(0);
+    layout->setContentsMargins(0,0,0,0);
+    layout->addWidget(widgetMenu   ,0,0,2,1);
+    layout->addWidget(widgetSetting,0,1,2,1);
+    layout->addWidget(widgetScene  ,0,2);
+    layout->addWidget(widgetDetail ,0,3);
+    layout->addWidget(widgetConsole,1,2,1,2);
+    this->centralWidget()->setLayout(layout);
 
-    widgetSetting = new QWidget();
-    setCentralWidget(widgetSetting);
-    widgetSetting->setGeometry(80, 0, 120, 900);
-    QLabel *plabel2=new QLabel(tr("label-1"), widgetSetting);
-    plabel2->setGeometry(80, 0, 120, 900);
+    widgetMenu   ->setFixedSize(  80, 890);
+    widgetSetting->setFixedSize( 240, 890);
+    widgetScene  ->setFixedSize( 700, 700);
+    widgetDetail ->setFixedSize( 250, 700);
+    widgetConsole->setFixedSize( 950, 186);
 
-    QPalette palette2 = plabel2->palette();
-    palette2.setColor(plabel2->backgroundRole(), Qt::blue);
-    palette2.setColor(plabel2->foregroundRole(), Qt::blue);
-    plabel2->setPalette(palette2);
-    plabel2->setAutoFillBackground(true);
+    setWindowColor(widgetMenu   ,  80, 890, QColor("#404244"));
+    setWindowColor(widgetSetting, 240, 890, QColor("#FFFFFF"));
+    setWindowColor(widgetScene  , 700, 700, QColor("#FFFFFF"));
+    setWindowColor(widgetDetail , 250, 700, QColor("#FFFFFF"));
+    setWindowColor(widgetConsole, 950, 186, QColor("#FFFFFF"));
 }
 
 MainWindow::~MainWindow()
@@ -73,4 +80,15 @@ void MainWindow::createToolBars()
     QToolBar *fileToolBar = addToolBar(tr("File"));
     fileToolBar->addAction(openAct);
     fileToolBar->addAction(saveAsAct);
+}
+
+void MainWindow::setWindowColor(QWidget *widget, int width, int height, const QColor color)
+{
+    QLabel *plabel=new QLabel(widget);
+    plabel->setFixedSize(width, height);
+    QPalette palette = plabel->palette();
+    palette.setColor(plabel->backgroundRole(), color);
+    palette.setColor(plabel->foregroundRole(), color);
+    plabel->setPalette(palette);
+    plabel->setAutoFillBackground(true);
 }

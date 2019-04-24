@@ -25,6 +25,8 @@ public:
     void createMenus();
     void createToolBars();
 
+    void setWindowColor(QWidget *widget, int width, int height, const QColor color);
+
 private:
     Ui::MainWindow *ui;
     QAction *openAct;

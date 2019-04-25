@@ -5,9 +5,11 @@
 #include <QtGui>
 #include <QtWidgets>
 #include <QApplication>
+#include "menu_widget.h"
 
 class QAction;
 class QMenu;
+class MenuWidget;
 
 namespace Ui {
 class MainWindow;
@@ -36,7 +38,7 @@ private:
     QMenu *editMenu;
 
     QWidget *cw; // central widget
-    QWidget *widgetMenu;
+    MenuWidget *widgetMenu;
     QWidget *widgetSetting;
     QWidget *widgetScene;
     QWidget *widgetDetail;

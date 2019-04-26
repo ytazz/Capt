@@ -3,46 +3,7 @@
 
 #include <QtGui>
 #include <QtWidgets>
-
-class menuButton : public QToolButton
-{
-    Q_OBJECT
-
-public:
-    menuButton(const QString &text, QWidget *parent,
-               int x,int y,
-               int width, int height);
-    ~menuButton();
-
-    void setButtonColor(QColor windowColor);
-    void setButtonDefaultColor();
-
-    void setIcon();
-    void setPressIcon();
-
-public:
-    QString getName();
-    int getId();
-
-public slots:
-    void setButtonPressed();
-    void setButtonReleased();
-
-private:
-    QToolButton *button;
-
-    QString buttonName;
-
-    int buttonId;
-
-    int buttonX, buttonY;
-    int buttonWidth, buttonHeight;
-
-    QColor buttonColor;
-    QColor buttonTextColor;
-    QColor buttonFocusColor;
-    QColor buttonPressColor;
-};
+#include "menu_button.h"
 
 class MenuWidget : public QWidget
 {
@@ -57,8 +18,13 @@ public:
 
     menuButton* getButton(int index);
 
-public slots:
     void offOthers(menuButton *button);
+
+public slots:
+    void pressedGraph();
+    void pressedAnalysis();
+    void pressedSearch();
+    void pressedHelp();
 
 private:
     int menuWidth, menuHeight;

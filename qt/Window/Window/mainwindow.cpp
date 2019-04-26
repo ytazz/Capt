@@ -56,14 +56,14 @@ void MainWindow::createActions()
     icon = QApplication::style()->standardIcon( QStyle::SP_DialogOpenButton );
     openAct = new QAction(icon, tr("Open"), this);
     openAct->setStatusTip(tr("Open the project file"));
-    connect(openAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+    //connect(openAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
     // Save File
     icon = QApplication::style()->standardIcon( QStyle::SP_DialogSaveButton );
     saveAsAct = new QAction(icon, tr("Save&As"), this);
     saveAsAct->setShortcuts(QKeySequence::SaveAs);
     saveAsAct->setStatusTip(tr("Save the project file under a new filename"));
-    connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+    //connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 }
 
 void MainWindow::createMenus()

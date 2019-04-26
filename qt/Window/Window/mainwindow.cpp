@@ -15,8 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
     cw = new QWidget(this);
     this->setCentralWidget(cw);
 
-    MenuWidget *widgetMenu = new MenuWidget(80, 890);
-    QWidget *widgetSetting = new QWidget();
+    widgetMenu    = new MenuWidget(80, 890);
+    widgetSetting = new SettingWidget(240, 890);
     QWidget *widgetScene   = new QWidget();
     QWidget *widgetDetail  = new QWidget();
     QWidget *widgetConsole = new QWidget();
@@ -32,20 +32,28 @@ MainWindow::MainWindow(QWidget *parent) :
     layout->addWidget(widgetConsole,1,2,1,2);
     this->centralWidget()->setLayout(layout);
 
-    widgetSetting->setFixedSize( 240, 890);
     widgetScene  ->setFixedSize( 700, 700);
     widgetDetail ->setFixedSize( 250, 700);
     widgetConsole->setFixedSize( 950, 186);
 
-    setWindowColor(widgetSetting, 240, 890, QColor("#FFFFFF"));
     setWindowColor(widgetScene  , 700, 700, QColor("#FFFFFF"));
     setWindowColor(widgetDetail , 250, 700, QColor("#FFFFFF"));
     setWindowColor(widgetConsole, 950, 186, QColor("#FFFFFF"));
+
+    connectSignalSlot();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::connectSignalSlot()
+{
+    connect(widgetMenu->buttonGraph   ->button, &menuButton::pressed, widgetSetting, &SettingWidget::pageGraph);
+    connect(widgetMenu->buttonAnalysis->button, &menuButton::pressed, widgetSetting, &SettingWidget::pageAnalysis);
+    connect(widgetMenu->buttonSearch  ->button, &menuButton::pressed, widgetSetting, &SettingWidget::pageSearch);
+    connect(widgetMenu->buttonHelp    ->button, &menuButton::pressed, widgetSetting, &SettingWidget::pageHelp);
 }
 
 void MainWindow::createActions()

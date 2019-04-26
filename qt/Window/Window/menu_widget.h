@@ -17,6 +17,10 @@ public:
     void connectSignalSlot();
 
     menuButton* getButton(int index);
+    menuButton *buttonGraph;
+    menuButton *buttonAnalysis;
+    menuButton *buttonSearch;
+    menuButton *buttonHelp;
 
     void offOthers(menuButton *button);
 
@@ -32,10 +36,6 @@ private:
     QColor windowColor;
 
     int numButton;
-    menuButton *buttonGraph;
-    menuButton *buttonAnalysis;
-    menuButton *buttonSearch;
-    menuButton *buttonHelp;
 };
 
 #endif // WIDGET_MENU_H

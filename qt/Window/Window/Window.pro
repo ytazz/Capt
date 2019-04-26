@@ -29,12 +29,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     menu_widget.cpp \
-    menu_button.cpp
+    menu_button.cpp \
+    setting_widget.cpp
 
 HEADERS += \
         mainwindow.h \
     menu_widget.h \
-    menu_button.h
+    menu_button.h \
+    setting_widget.h
 
 FORMS += \
         mainwindow.ui

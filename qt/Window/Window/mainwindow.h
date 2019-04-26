@@ -6,10 +6,12 @@
 #include <QtWidgets>
 #include <QApplication>
 #include "menu_widget.h"
+#include "setting_widget.h"
 
 class QAction;
 class QMenu;
 class MenuWidget;
+class SettingWidget;
 
 namespace Ui {
 class MainWindow;
@@ -29,6 +31,8 @@ public:
 
     void setWindowColor(QWidget *widget, int width, int height, const QColor color);
 
+    void connectSignalSlot();
+
 private:
     Ui::MainWindow *ui;
     QAction *openAct;
@@ -38,8 +42,8 @@ private:
     QMenu *editMenu;
 
     QWidget *cw; // central widget
-    MenuWidget *widgetMenu;
-    QWidget *widgetSetting;
+    MenuWidget    *widgetMenu;
+    SettingWidget *widgetSetting;
     QWidget *widgetScene;
     QWidget *widgetDetail;
     QWidget *widgetConsole;

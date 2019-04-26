@@ -4,7 +4,7 @@
 #include <QtGui>
 #include <QtWidgets>
 
-class menuButton : public QPushButton
+class menuButton : public QToolButton
 {
     Q_OBJECT
 
@@ -14,18 +14,26 @@ public:
                int width, int height);
     ~menuButton();
 
-    void setButtonColor(QColor windowColor, QColor textColor);
+    void setButtonColor(QColor windowColor);
     void setButtonDefaultColor();
-//    void setButtonFocusColor();
 
-private slots:
+    void setIcon();
+    void setPressIcon();
+
+public:
+    QString getName();
+    int getId();
+
+public slots:
     void setButtonPressed();
     void setButtonReleased();
 
 private:
-    QPushButton *button;
+    QToolButton *button;
 
     QString buttonName;
+
+    int buttonId;
 
     int buttonX, buttonY;
     int buttonWidth, buttonHeight;
@@ -34,11 +42,6 @@ private:
     QColor buttonTextColor;
     QColor buttonFocusColor;
     QColor buttonPressColor;
-    QColor buttonPressTextColor;
-
-//protected:
-//    void focusInEvent(QFocusEvent* e);
-//    void focusOutEvent(QFocusEvent* e);
 };
 
 class MenuWidget : public QWidget
@@ -52,14 +55,17 @@ public:
     void setWindowColor();
     void connectSignalSlot();
 
+    menuButton* getButton(int index);
+
 public slots:
-    void buttonFocus();
+    void offOthers(menuButton *button);
 
 private:
     int menuWidth, menuHeight;
 
     QColor windowColor;
 
+    int numButton;
     menuButton *buttonGraph;
     menuButton *buttonAnalysis;
     menuButton *buttonSearch;

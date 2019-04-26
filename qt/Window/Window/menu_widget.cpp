@@ -5,9 +5,20 @@ menuButton::menuButton(const QString &text, QWidget *parent,
                        int width, int height)
 {
     // generate button
-    button = new QPushButton(text, parent);
-    //buttonName = new QString(text);
+    button = new QToolButton(parent);
     buttonName = text;
+    button->setText(buttonName);
+    setIcon();
+
+    // set button index
+    if(!QString::compare(buttonName, tr("Graph")   , Qt::CaseInsensitive))
+        buttonId = 0;
+    if(!QString::compare(buttonName, tr("Analysis"), Qt::CaseInsensitive))
+        buttonId = 1;
+    if(!QString::compare(buttonName, tr("Search")  , Qt::CaseInsensitive))
+        buttonId = 2;
+    if(!QString::compare(buttonName, tr("Help")    , Qt::CaseInsensitive))
+        buttonId = 3;
 
     // position
     buttonX = x;
@@ -26,59 +37,72 @@ menuButton::menuButton(const QString &text, QWidget *parent,
     buttonTextColor     = QColor("#BCBEBF");
     buttonFocusColor    = QColor("#595B5D");
     buttonPressColor    = QColor("#262829");
-    QColor color = QColor("#98A9EE");
-    if(!QString::compare(buttonName, tr("Graph")   , Qt::CaseInsensitive))
-        color = QColor("#7FC242"); // green
-    if(!QString::compare(buttonName, tr("Analysis"), Qt::CaseInsensitive))
-        color = QColor("#98A9EE"); // blue
-    if(!QString::compare(buttonName, tr("Search")  , Qt::CaseInsensitive))
-        color = QColor("#BA6000"); // red
-    if(!QString::compare(buttonName, tr("Help")    , Qt::CaseInsensitive))
-        color = QColor("#F3BD04"); // orange
-    buttonPressTextColor= color;
     setButtonDefaultColor();
 
     // signal & slot
-    connect(button, SIGNAL (pressed()), this, SLOT (setButtonPressed()));
-    connect(button, SIGNAL (released()), this, SLOT (setButtonReleased()));
+    // connect(button, SIGNAL (pressed()), this, SLOT (setButtonPressed()));
 
-    setButtonPressed();
+    //setButtonPressed();
 }
 
 menuButton::~menuButton(){}
 
+void menuButton::setIcon()
+{
+    QIcon icon;
+    if(!QString::compare(buttonName, tr("Graph")   , Qt::CaseInsensitive))
+        icon = QIcon(":/icons/graph.png");
+    if(!QString::compare(buttonName, tr("Analysis"), Qt::CaseInsensitive))
+        icon = QIcon(":/icons/analysis.png");
+    if(!QString::compare(buttonName, tr("Search")  , Qt::CaseInsensitive))
+        icon = QIcon(":/icons/search.png");
+    if(!QString::compare(buttonName, tr("Help")    , Qt::CaseInsensitive))
+        icon = QIcon(":/icons/help.png");
+
+    button->setIcon(icon);
+    button->setIconSize(QSize(40, 40));
+    button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+}
+
+void menuButton::setPressIcon()
+{
+    QIcon icon;
+    if(!QString::compare(buttonName, tr("Graph")   , Qt::CaseInsensitive))
+        icon = QIcon(":/icons/graph_.png");
+    if(!QString::compare(buttonName, tr("Analysis"), Qt::CaseInsensitive))
+        icon = QIcon(":/icons/analysis_.png");
+    if(!QString::compare(buttonName, tr("Search")  , Qt::CaseInsensitive))
+        icon = QIcon(":/icons/search_.png");
+    if(!QString::compare(buttonName, tr("Help")    , Qt::CaseInsensitive))
+        icon = QIcon(":/icons/help_.png");
+
+    button->setIcon(icon);
+    button->setIconSize(QSize(40, 40));
+    button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+}
+
 void menuButton::setButtonPressed()
 {
-    setButtonColor(buttonPressColor,buttonPressTextColor);
+    setButtonColor(buttonPressColor);
     button->setDisabled(true);
-    printf("a\n");
+    setPressIcon();
+    printf("pressed");
 }
 
 void menuButton::setButtonReleased()
 {
-    setButtonColor(buttonColor,buttonTextColor);
+    setButtonColor(buttonColor);
     button->setDisabled(false);
-    printf("b\n");
 }
 
-//void menuButton::focusInEvent(QFocusEvent* e)
-//{
-//    setButtonFocusColor();
-//    QPushButton::focusInEvent(e);
-//}
-
-//void menuButton::focusOutEvent(QFocusEvent* e)
-//{
-//    setButtonDefaultColor();
-//    QPushButton::focusOutEvent(e);
-//}
-
-void menuButton::setButtonColor(QColor windowColor, QColor textColor)
+void menuButton::setButtonColor(QColor windowColor)
 {
-    button->setFlat(true);
+    button->setAutoRaise(true);
     QPalette palette = button->palette();
     palette.setColor(QPalette::Button, windowColor);
-    palette.setColor(QPalette::ButtonText, textColor);
+    palette.setColor(QPalette::Background, windowColor);
+    palette.setColor(QPalette::Window, windowColor);
+    palette.setColor(QPalette::ButtonText, buttonTextColor);
     button->setPalette(palette);
     button->setAutoFillBackground(true);
     button->setStyleSheet("font-weight: bold");
@@ -86,16 +110,24 @@ void menuButton::setButtonColor(QColor windowColor, QColor textColor)
 
 void menuButton::setButtonDefaultColor()
 {
-    setButtonColor(buttonColor, buttonTextColor);
+    setButtonColor(buttonColor);
 }
 
-//void menuButton::setButtonFocusColor()
-//{
-//    setButtonColor(buttonFocusColor, buttonTextColor);
-//}
+QString menuButton::getName()
+{
+    return buttonName;
+}
+
+int menuButton::getId()
+{
+    return buttonId;
+}
 
 MenuWidget::MenuWidget(int width, int height)
 {
+    // number of buttons
+    numButton = 4;
+
     // size
     menuWidth  = width;
     menuHeight = height;
@@ -110,6 +142,8 @@ MenuWidget::MenuWidget(int width, int height)
     buttonAnalysis = new menuButton(tr("Analysis"),this,0,1*menuWidth,menuWidth,menuWidth);
     buttonSearch   = new menuButton(tr("Search")  ,this,0,2*menuWidth,menuWidth,menuWidth);
     buttonHelp     = new menuButton(tr("Help")    ,this,0,3*menuWidth,menuWidth,menuWidth);
+
+    connectSignalSlot();
 }
 
 MenuWidget::~MenuWidget(){}
@@ -125,12 +159,34 @@ void MenuWidget::setWindowColor()
     plabel->setAutoFillBackground(true);
 }
 
-void MenuWidget::connectSignalSlot()
+menuButton* MenuWidget::getButton(int index)
 {
-    //connect(this, buttonGraph->focusInEvent(),this,buttonFocus());
+    if(index == 0) return buttonGraph;
+    if(index == 1) return buttonAnalysis;
+    if(index == 2) return buttonSearch;
+    if(index == 3) return buttonHelp;
 }
 
-void MenuWidget::buttonFocus()
+void MenuWidget::connectSignalSlot()
 {
+    connect(buttonGraph, &menuButton::pressed, buttonGraph, &menuButton::setButtonPressed);
+//    connect(this, SIGNAL (buttonGraph->pressed()), this, SLOT(offOthers(buttonGraph)));
+//    connect(this, SIGNAL (buttonGraph->pressed()), this, SLOT(offOthers(buttonGraph)));
+//    connect(this, SIGNAL (buttonGraph->pressed()), this, SLOT(offOthers(buttonGraph)));
+}
+
+void MenuWidget::offOthers(menuButton *button)
+{
+//    int nowButton = button->getId();
+//    printf("button %d is pressed!\n",nowButton);
+
+//    for(int i=0;i<numButton;i++){
+//        if(i==nowButton){
+//            button->setButtonPressed();
+//        }else{
+//            getButton(i)->setButtonReleased();
+//        }
+//    }
+
     printf("hello");
 }

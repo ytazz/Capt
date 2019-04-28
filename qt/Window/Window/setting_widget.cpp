@@ -14,20 +14,39 @@ SettingWidget::SettingWidget(int width, int height)
     windowColor = QColor("#FFFFFF");
     setWindowColor();
 
-    QLabel *plabel[4];
     // generate stacked widget
     stackedWidget = new QStackedWidget(this);
     stackedWidget->setFixedSize(windowWidth, windowHeight);
-    for(int i=0; i<numPage; i++){
-        page[i] = new QWidget(stackedWidget);
-        page[i]->setFixedSize(windowWidth, windowHeight);
-        stackedWidget->addWidget(page[i]);
-        plabel[i]=new QLabel(page[i]);
-        plabel[i]->setFixedSize(windowWidth, windowHeight);
-        plabel[i]->setText(QString::number(i));
-    }
+//    for(int i=0; i<numPage; i++){
+//        page[i] = new SettingGraph(stackedWidget);
+//        page[i]->setFixedSize(windowWidth, windowHeight);
+//        stackedWidget->addWidget(page[i]);
+//    }
 
-    stackedWidget->setCurrentWidget(page[0]);
+//    stackedWidget->setCurrentWidget(page[0]);
+    QWidget* widget = new SettingGraph(stackedWidget);
+    widget->setFixedSize(windowWidth, windowHeight);
+    stackedWidget->addWidget(widget);
+
+    QVBoxLayout* layout = new QVBoxLayout(widget);
+    Section* section = new Section("Section", 300, widget);
+    layout->addWidget(section);
+    Section* section2 = new Section("Section2", 300, widget);
+    layout->addWidget(section2);
+    layout->addStretch();
+
+    QVBoxLayout* anyLayout = new QVBoxLayout();
+    anyLayout->addWidget(new QLabel("Some Text in Section", section));
+    anyLayout->addWidget(new QPushButton("Button in Section", section));
+
+    QVBoxLayout* anyLayout2 = new QVBoxLayout();
+    anyLayout2->addWidget(new QLabel("Some Text in Section", section2));
+    anyLayout2->addWidget(new QLabel("Some Text in Section", section2));
+    anyLayout2->addWidget(new QLabel("Some Text in Section", section2));
+    anyLayout2->addWidget(new QPushButton("Button in Section", section2));
+
+    section->setContentLayout(*anyLayout);
+    section2->setContentLayout(*anyLayout2);
 }
 
 SettingWidget::~SettingWidget(){}

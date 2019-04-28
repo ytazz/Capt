@@ -4,6 +4,7 @@
 #include <QtGui>
 #include <QtWidgets>
 #include "menu_button.h"
+#include "section.h"
 
 class MenuWidget : public QWidget
 {

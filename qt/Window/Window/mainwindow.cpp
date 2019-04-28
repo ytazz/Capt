@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowColor(widgetDetail , 250, 700, QColor("#FFFFFF"));
     setWindowColor(widgetConsole, 950, 186, QColor("#FFFFFF"));
 
-    connectSignalSlot();
+    //connectSignalSlot();
 }
 
 MainWindow::~MainWindow()

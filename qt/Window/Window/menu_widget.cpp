@@ -21,6 +21,7 @@ MenuWidget::MenuWidget(int width, int height)
     buttonHelp     = new menuButton(tr("Help")    ,this,0,3*menuWidth,menuWidth,menuWidth);
 
     connectSignalSlot();
+    pressedGraph();
 }
 
 MenuWidget::~MenuWidget(){}

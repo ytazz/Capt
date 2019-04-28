@@ -5,6 +5,7 @@ menuButton::menuButton(const QString &text, QWidget *parent,
                        int width, int height)
 {
     // generate button
+    parent_ = parent;
     button = new QToolButton(parent);
     buttonName = text;
     button->setText(buttonName);

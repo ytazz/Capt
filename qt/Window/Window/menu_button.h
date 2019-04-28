@@ -26,6 +26,8 @@ public:
     QString getName();
     int getId();
 
+    QWidget *parent_;
+
 public slots:
     void setButtonPressed();
     void setButtonReleased();

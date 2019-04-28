@@ -3,6 +3,8 @@
 
 #include <QtGui>
 #include <QtWidgets>
+#include "setting_graph.h"
+#include "section.h"
 
 class SettingWidget : public QWidget
 {
@@ -27,7 +29,7 @@ private:
     QStackedWidget *stackedWidget;
 
     int numPage;
-    QWidget *page[4];
+    SettingGraph *page[4];
 };
 
 #endif // SETTING_WIDGET_H

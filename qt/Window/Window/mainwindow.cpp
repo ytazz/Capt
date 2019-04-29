@@ -50,10 +50,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::connectSignalSlot()
 {
-    connect(widgetMenu->buttonGraph   ->button, &menuButton::pressed, widgetSetting, &SettingWidget::pageGraph);
-    connect(widgetMenu->buttonAnalysis->button, &menuButton::pressed, widgetSetting, &SettingWidget::pageAnalysis);
-    connect(widgetMenu->buttonSearch  ->button, &menuButton::pressed, widgetSetting, &SettingWidget::pageSearch);
-    connect(widgetMenu->buttonHelp    ->button, &menuButton::pressed, widgetSetting, &SettingWidget::pageHelp);
+    connect(widgetMenu->buttonGraph   , &menuButton::pressed, widgetSetting, &SettingWidget::pageGraph);
+    connect(widgetMenu->buttonAnalysis, &menuButton::pressed, widgetSetting, &SettingWidget::pageAnalysis);
+    connect(widgetMenu->buttonSearch  , &menuButton::pressed, widgetSetting, &SettingWidget::pageSearch);
+    connect(widgetMenu->buttonHelp    , &menuButton::pressed, widgetSetting, &SettingWidget::pageHelp);
 }
 
 void MainWindow::createActions()

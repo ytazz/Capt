@@ -1,15 +1,15 @@
 #include "menu_button.h"
 
+menuButton::menuButton(){}
+
 menuButton::menuButton(const QString &text, QWidget *parent,
-                       int x,int y,
-                       int width, int height)
+                       int x,int y):
+    QToolButton(parent)
 {
     // generate button
-    parent_ = parent;
-    button = new QToolButton(parent);
     buttonName = text;
-    button->setText(buttonName);
-    setIcon();
+    this->setText(buttonName);
+    setDefaultIcon();
 
     // set button index
     if(!QString::compare(buttonName, tr("Graph")   , Qt::CaseInsensitive))
@@ -26,12 +26,12 @@ menuButton::menuButton(const QString &text, QWidget *parent,
     buttonY = y;
 
     // size
-    buttonWidth  = width;
-    buttonHeight = height;
+    buttonWidth  = parent->width();
+    buttonHeight = parent->width();
 
     // arrangement
-    button->setGeometry(QRect(QPoint(buttonX,buttonY),
-                              QSize(buttonWidth, buttonHeight)));
+    this->setGeometry(QRect(QPoint(buttonX,buttonY),
+                            QSize(buttonWidth, buttonHeight)));
 
     // color
     buttonColor         = QColor("#404244");
@@ -41,12 +41,12 @@ menuButton::menuButton(const QString &text, QWidget *parent,
     setButtonDefaultColor();
 
     // signal & slot
-    // connect(button, SIGNAL (pressed()), this, SLOT (setButtonPressed()));
+    // connect(this, SIGNAL (pressed()), this, SLOT (setButtonPressed()));
 }
 
 menuButton::~menuButton(){}
 
-void menuButton::setIcon()
+void menuButton::setDefaultIcon()
 {
     QIcon icon;
     if(!QString::compare(buttonName, tr("Graph")   , Qt::CaseInsensitive))
@@ -58,9 +58,9 @@ void menuButton::setIcon()
     if(!QString::compare(buttonName, tr("Help")    , Qt::CaseInsensitive))
         icon = QIcon(":/icons/help.png");
 
-    button->setIcon(icon);
-    button->setIconSize(QSize(40, 40));
-    button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    this->setIcon(icon);
+    this->setIconSize(QSize(40, 40));
+    this->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 }
 
 void menuButton::setPressIcon()
@@ -75,9 +75,9 @@ void menuButton::setPressIcon()
     if(!QString::compare(buttonName, tr("Help")    , Qt::CaseInsensitive))
         icon = QIcon(":/icons/help_.png");
 
-    button->setIcon(icon);
-    button->setIconSize(QSize(40, 40));
-    button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    this->setIcon(icon);
+    this->setIconSize(QSize(40, 40));
+    this->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 }
 
 void menuButton::setButtonPressed()
@@ -90,24 +90,24 @@ void menuButton::setButtonPressed()
 void menuButton::setButtonReleased()
 {
     setButtonColor(buttonColor);
-    setIcon();
+    setDefaultIcon();
     //button->setDisabled(false);
 }
 
 void menuButton::setButtonColor(QColor windowColor)
 {
-    button->setAutoRaise(true);
-    QPalette palette = button->palette();
+    this->setStyleSheet("font-weight: bold");
+    this->setAutoRaise(true);
+    QPalette palette = this->palette();
     palette.setColor(QPalette::Button, windowColor);
     palette.setColor(QPalette::ButtonText, buttonTextColor);
-    button->setPalette(palette);
-    button->setAutoFillBackground(true);
-    button->setStyleSheet("font-weight: bold");
+    this->setPalette(palette);
+    this->setAutoFillBackground(true);
 }
 
 void menuButton::setButtonDefaultColor()
 {
-    setButtonColor(buttonColor);
+    this->setButtonColor(buttonColor);
 }
 
 QString menuButton::getName()

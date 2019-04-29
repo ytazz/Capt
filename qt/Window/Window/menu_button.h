@@ -9,24 +9,20 @@ class menuButton : public QToolButton
     Q_OBJECT
 
 public:
-    menuButton(const QString &text, QWidget *parent,
-               int x,int y,
-               int width, int height);
+    explicit menuButton();
+    explicit menuButton(const QString &text, QWidget *parent = nullptr,
+                        int x=0, int y=0);
     ~menuButton();
 
     void setButtonColor(QColor windowColor);
     void setButtonDefaultColor();
 
-    void setIcon();
+    void setDefaultIcon();
     void setPressIcon();
-
-    QToolButton *button;
 
 public:
     QString getName();
     int getId();
-
-    QWidget *parent_;
 
 public slots:
     void setButtonPressed();

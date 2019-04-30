@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowColor(widgetDetail , 250, 700, QColor("#FFFFFF"));
     setWindowColor(widgetConsole, 950, 186, QColor("#FFFFFF"));
 
-    //connectSignalSlot();
+    createConnection();
 }
 
 MainWindow::~MainWindow()
@@ -48,7 +48,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::connectSignalSlot()
+void MainWindow::createConnection()
 {
     connect(widgetMenu->buttonGraph   , &menuButton::pressed, widgetSetting, &SettingWidget::pageGraph);
     connect(widgetMenu->buttonAnalysis, &menuButton::pressed, widgetSetting, &SettingWidget::pageAnalysis);

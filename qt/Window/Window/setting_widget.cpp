@@ -3,7 +3,7 @@
 SettingWidget::SettingWidget(int width, int height)
 {
     // number of pages
-    numPage = 4;
+    numPage = NumberOfItem;
 
     // size
     windowWidth  = width;
@@ -17,36 +17,17 @@ SettingWidget::SettingWidget(int width, int height)
     // generate stacked widget
     stackedWidget = new QStackedWidget(this);
     stackedWidget->setFixedSize(windowWidth, windowHeight);
-//    for(int i=0; i<numPage; i++){
-//        page[i] = new SettingGraph(stackedWidget);
-//        page[i]->setFixedSize(windowWidth, windowHeight);
-//        stackedWidget->addWidget(page[i]);
-//    }
 
-//    stackedWidget->setCurrentWidget(page[0]);
-    QWidget* widget = new SettingGraph(stackedWidget);
-    widget->setFixedSize(windowWidth, windowHeight);
-    stackedWidget->addWidget(widget);
+    // generate each pages
+    page[Graph]    = new SettingGraph(stackedWidget);
+    page[Analysis] = new SettingGraph(stackedWidget);
+    page[Search]   = new SettingGraph(stackedWidget);
+    page[Help]     = new SettingGraph(stackedWidget);
 
-    QVBoxLayout* layout = new QVBoxLayout(widget);
-    Section* section = new Section("Section", 300, widget);
-    layout->addWidget(section);
-    Section* section2 = new Section("Section2", 300, widget);
-    layout->addWidget(section2);
-    layout->addStretch();
-
-    QVBoxLayout* anyLayout = new QVBoxLayout();
-    anyLayout->addWidget(new QLabel("Some Text in Section", section));
-    anyLayout->addWidget(new QPushButton("Button in Section", section));
-
-    QVBoxLayout* anyLayout2 = new QVBoxLayout();
-    anyLayout2->addWidget(new QLabel("Some Text in Section", section2));
-    anyLayout2->addWidget(new QLabel("Some Text in Section", section2));
-    anyLayout2->addWidget(new QLabel("Some Text in Section", section2));
-    anyLayout2->addWidget(new QPushButton("Button in Section", section2));
-
-    section->setContentLayout(*anyLayout);
-    section2->setContentLayout(*anyLayout2);
+    // register pages to stacked widget
+    for(int i=0; i<numPage; i++){
+        stackedWidget->addWidget(page[i]);
+    }
 }
 
 SettingWidget::~SettingWidget(){}
@@ -64,24 +45,24 @@ void SettingWidget::setWindowColor()
 
 void SettingWidget::pageGraph()
 {
-    stackedWidget->setCurrentWidget(page[0]);
+    stackedWidget->setCurrentWidget(page[Graph]);
     printf("page 0\n");
 }
 
 void SettingWidget::pageAnalysis()
 {
-    stackedWidget->setCurrentWidget(page[1]);
+    stackedWidget->setCurrentWidget(page[Analysis]);
     printf("page 1\n");
 }
 
 void SettingWidget::pageSearch()
 {
-    stackedWidget->setCurrentWidget(page[2]);
+    stackedWidget->setCurrentWidget(page[Search]);
     printf("page 2\n");
 }
 
 void SettingWidget::pageHelp()
 {
-    stackedWidget->setCurrentWidget(page[3]);
+    stackedWidget->setCurrentWidget(page[Help]);
     printf("page 3\n");
 }

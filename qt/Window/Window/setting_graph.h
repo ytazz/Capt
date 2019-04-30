@@ -3,6 +3,7 @@
 
 #include <QtGui>
 #include <QtWidgets>
+#include "section.h"
 
 class SettingGraph : public QWidget
 {
@@ -20,6 +21,9 @@ private:
 
     void open();
     void createConnect();
+
+    QVBoxLayout* pageLayout;
+    Section* section[3];
 };
 
 #endif // SETTING_GRAPH_H

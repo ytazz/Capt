@@ -12,6 +12,30 @@ SettingGraph::SettingGraph(QWidget* parent):
     windowColor = QColor("#FFFFFF");
     setWindowColor();
 
+    // set page layout
+    pageLayout = new QVBoxLayout(this);
+    section[0] = new Section("Setting File", 300, this);
+    section[1] = new Section("Coordinate", 300, this);
+    section[2] = new Section("Axis", 300, this);
+    pageLayout->addWidget(section[0]);
+    pageLayout->addWidget(section[1]);
+    pageLayout->addWidget(section[2]);
+    pageLayout->addStretch();
+
+    QVBoxLayout* layoutSetting = new QVBoxLayout();
+    layoutSetting->addWidget(new QLabel("Some Text in Section", section[0]));
+    layoutSetting->addWidget(new QPushButton("Button in Section", section[0]));
+
+    QVBoxLayout* anyLayout2 = new QVBoxLayout();
+    anyLayout2->addWidget(new QLabel("Some Text in Section", section[1]));
+    anyLayout2->addWidget(new QLabel("Some Text in Section", section[1]));
+    anyLayout2->addWidget(new QLabel("Some Text in Section", section[1]));
+    anyLayout2->addWidget(new QPushButton("Button in Section", section[1]));
+
+    section[0]->setContentLayout(*layoutSetting);
+    section[1]->setContentLayout(*anyLayout2);
+    section[2]->setContentLayout(*anyLayout2);
+
     // connect signal & slot
     createConnect();
 }

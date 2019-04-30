@@ -31,7 +31,7 @@ public:
 
     void setWindowColor(QWidget *widget, int width, int height, const QColor color);
 
-    void connectSignalSlot();
+    void createConnection();
 
 private:
     Ui::MainWindow *ui;

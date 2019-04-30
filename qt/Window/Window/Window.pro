@@ -35,6 +35,7 @@ SOURCES += \
     section.cpp
 
 HEADERS += \
+    base.h \
         mainwindow.h \
     menu_widget.h \
     menu_button.h \

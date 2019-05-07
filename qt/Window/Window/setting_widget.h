@@ -4,7 +4,7 @@
 #include <QtGui>
 #include <QtWidgets>
 #include "base.h"
-#include "setting_graph.h"
+#include "setting_item.h"
 #include "section.h"
 
 class SettingWidget : public QWidget

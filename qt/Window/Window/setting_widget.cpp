@@ -19,10 +19,9 @@ SettingWidget::SettingWidget(int width, int height)
     stackedWidget->setFixedSize(windowWidth, windowHeight);
 
     // generate each pages
-    page[Graph]    = new SettingGraph(stackedWidget);
-    page[Analysis] = new SettingGraph(stackedWidget);
-    page[Search]   = new SettingGraph(stackedWidget);
-    page[Help]     = new SettingGraph(stackedWidget);
+    for(int i=0; i< numPage; i++){
+        page[i] = new SettingItem(stackedWidget,i);
+    }
 
     // register pages to stacked widget
     for(int i=0; i<numPage; i++){
@@ -45,24 +44,24 @@ void SettingWidget::setWindowColor()
 
 void SettingWidget::pageGraph()
 {
-    stackedWidget->setCurrentWidget(page[Graph]);
+    stackedWidget->setCurrentWidget(page[GRAPH]);
     printf("page 0\n");
 }
 
 void SettingWidget::pageAnalysis()
 {
-    stackedWidget->setCurrentWidget(page[Analysis]);
+    stackedWidget->setCurrentWidget(page[ANALYSIS]);
     printf("page 1\n");
 }
 
 void SettingWidget::pageSearch()
 {
-    stackedWidget->setCurrentWidget(page[Search]);
+    stackedWidget->setCurrentWidget(page[SEARCH]);
     printf("page 2\n");
 }
 
 void SettingWidget::pageHelp()
 {
-    stackedWidget->setCurrentWidget(page[Help]);
+    stackedWidget->setCurrentWidget(page[HELP]);
     printf("page 3\n");
 }

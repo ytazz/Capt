@@ -3,6 +3,7 @@
 
 #include <QtGui>
 #include <QtWidgets>
+#include <base.h>
 
 class menuButton : public QToolButton
 {
@@ -10,7 +11,7 @@ class menuButton : public QToolButton
 
 public:
     explicit menuButton();
-    explicit menuButton(const QString &text, QWidget *parent = nullptr,
+    explicit menuButton(QWidget *parent = nullptr, item_t item_name = 0,
                         int x=0, int y=0);
     ~menuButton();
 
@@ -21,19 +22,15 @@ public:
     void setPressIcon();
 
 public:
-    QString getName();
-    int getId();
+    QString getName(item_t item_name);
+    int getIndex();
 
 public slots:
     void setButtonPressed();
     void setButtonReleased();
 
 private:
-    // QToolButton *button;
-
-    QString buttonName;
-
-    int buttonId;
+    item_t buttonName;
 
     int buttonX, buttonY;
     int buttonWidth, buttonHeight;

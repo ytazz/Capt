@@ -27,20 +27,20 @@ CONFIG += console
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
+    main_window.cpp \
     menu_widget.cpp \
     menu_button.cpp \
+    setting_item.cpp \
     setting_widget.cpp \
-    setting_graph.cpp \
     section.cpp
 
 HEADERS += \
     base.h \
-        mainwindow.h \
+    main_window.h \
     menu_widget.h \
     menu_button.h \
+    setting_item.h \
     setting_widget.h \
-    setting_graph.h \
     section.h
 
 FORMS += \

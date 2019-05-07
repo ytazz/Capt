@@ -15,10 +15,10 @@ MenuWidget::MenuWidget(int width, int height)
     setWindowColor();
 
     // generate buttons
-    buttonGraph    = new menuButton(tr("Graph")   ,this,0,0*menuWidth);
-    buttonAnalysis = new menuButton(tr("Analysis"),this,0,1*menuWidth);
-    buttonSearch   = new menuButton(tr("Search")  ,this,0,2*menuWidth);
-    buttonHelp     = new menuButton(tr("Help")    ,this,0,3*menuWidth);
+    buttonGraph    = new menuButton(this,GRAPH,   0, 0*menuWidth);
+    buttonAnalysis = new menuButton(this,ANALYSIS,0, 1*menuWidth);
+    buttonSearch   = new menuButton(this,SEARCH,  0, 2*menuWidth);
+    buttonHelp     = new menuButton(this,HELP,    0, 3*menuWidth);
 
     connectSignalSlot();
     pressedGraph();
@@ -39,13 +39,10 @@ void MenuWidget::setWindowColor()
 
 menuButton* MenuWidget::getButton(int index)
 {
-    menuButton* button = new menuButton(tr(""),this,0,5*menuWidth);
-    if(index == 0) button = buttonGraph;
-    if(index == 1) button = buttonAnalysis;
-    if(index == 2) button = buttonSearch;
-    if(index == 3) button = buttonHelp;
-
-    return button;
+    if(index == 0) return buttonGraph;
+    if(index == 1) return buttonAnalysis;
+    if(index == 2) return buttonSearch;
+    if(index == 3) return buttonHelp;
 }
 
 void MenuWidget::connectSignalSlot()
@@ -58,7 +55,7 @@ void MenuWidget::connectSignalSlot()
 
 void MenuWidget::offOthers(menuButton *button)
 {
-    int nowButton = button->getId();
+    int nowButton = button->getIndex();
 
     for(int i=0;i<numButton;i++){
         if(i==nowButton){

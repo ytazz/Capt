@@ -11,7 +11,7 @@ Section::Section(const QString & title, const int animationDuration, QWidget* pa
     contentArea = new QScrollArea(this);
     mainLayout = new QGridLayout(this);
 
-    toggleButton->setStyleSheet("QToolButton {border: none;}");
+    toggleButton->setStyleSheet("QToolButton {border: none;font-weight: bold;}");
     toggleButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toggleButton->setArrowType(Qt::ArrowType::RightArrow);
     toggleButton->setText(title);

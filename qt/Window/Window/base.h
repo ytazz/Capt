@@ -2,11 +2,13 @@
 #define BASE_H
 
 enum item {
-  Graph,
-  Analysis,
-  Search,
-  Help,
+  GRAPH,
+  ANALYSIS,
+  SEARCH,
+  HELP,
   NumberOfItem
 };
+
+typedef int item_t;
 
 #endif // BASE_H

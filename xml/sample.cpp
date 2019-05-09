@@ -3,6 +3,18 @@
 #include <stdio.h>
 #include <string.h>
 
+#define BUFSIZE 102400
+
+// static const char *xml =
+//     "<data>\n"
+//     "    <header length=\"4\">\n"
+//     "            <item name=\"time\" type=\"time\">16</item>\n"
+//     "            <item name=\"ref\" type=\"string\">3843747</item>\n"
+//     "            <item name=\"port\" type=\"int16\">0</item>\n"
+//     "            <item name=\"frame\" type=\"int16\">20</item>\n"
+//     "    </header>\n"
+//     "</data>\n";
+
 static const char *xml =
     "<data>\n"
     "    <header length=\"4\">\n"
@@ -20,6 +32,9 @@ static bool grab_next_value;
 void start_element(void *data, const char *element, const char **attribute) {
   process_char_data_buffer();
   reset_char_data_buffer();
+
+  printf("[start] %s\n", element);
+  printf("[start] %s\n", *attribute);
 
   if (strcmp("item", element) == 0) {
     size_t matched = 0;
@@ -58,6 +73,8 @@ void reset_char_data_buffer(void) {
 
 // pastes parts of the node together
 void char_data(void *userData, const XML_Char *s, int len) {
+  printf("%s\n", s);
+
   if (!overflow) {
     if (len + offs >= sizeof(char_data_buffer)) {
       overflow = true;
@@ -92,8 +109,27 @@ int main(void) {
 
   reset_char_data_buffer();
 
-  if (XML_Parse(parser, xml, strlen(xml), XML_TRUE) == XML_STATUS_ERROR)
-    printf("Error: %s\n", XML_ErrorString(XML_GetErrorCode(parser)));
+  FILE *fp = fopen("../data/nao.xml", "r");
+
+  // if (XML_Parse(parser, xml, strlen(xml), XML_TRUE) == XML_STATUS_ERROR)
+  //   printf("Error: %s\n", XML_ErrorString(XML_GetErrorCode(parser)));
+
+  char buf[BUFSIZE];
+  int done;
+
+  do {
+    size_t len = fread(buf, sizeof(char), BUFSIZE, fp);
+    if (ferror(fp)) {
+      fprintf(stderr, "File Error.\n");
+      exit(1);
+    }
+
+    done = len < sizeof(buf);
+    if (XML_Parse(parser, buf, (int)len, done) == XML_STATUS_ERROR) {
+      fprintf(stderr, "Parse Error.\n");
+      exit(1);
+    }
+  } while (!done);
 
   XML_ParserFree(parser);
 

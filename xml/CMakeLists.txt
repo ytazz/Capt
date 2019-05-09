@@ -10,19 +10,13 @@ find_package(EXPAT REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${EXPAT_INCLUDE_DIRS})
-include_directories(include)
-
-set(_include
-  include/reader.h
-  include/vector.h
-)
 
 set(_src
-  src/reader.cpp
+  src/loader.cpp
   src/vector.cpp
 )
 
-add_executable(main main.cpp ${_src} ${_include})
+add_executable(main main.cpp ${_src})
+target_link_libraries(main ${EXPAT_LIBRARIES})
 
-add_executable(sample sample.cpp)
-target_link_libraries(sample ${EXPAT_LIBRARIES})
+configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)

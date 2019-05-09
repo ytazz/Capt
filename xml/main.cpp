@@ -1,8 +1,9 @@
-#include "reader.h"
+#include "loader.h"
+#include <iostream>
 
-using namespace CA;
+using namespace std;
 
-int main() {
-  Reader reader;
-  reader.read("../data/nao.xml");
+int main(int argc, char **argv) {
+  Loader loader("nao.xml");
+  loader.parse();
 }

@@ -6,28 +6,14 @@
 
 #IncludeRegexTransform: 
 
-../include/reader.h
-vector.h
-../include/vector.h
-boost/foreach.hpp
+../include/loader.h
+expat.h
 -
-boost/lexical_cast.hpp
--
-boost/property_tree/ptree.hpp
--
-boost/property_tree/xml_parser.hpp
--
-iostream
+stdint.h
 -
 string
 -
-
-../include/vector.h
-math.h
--
-stdio.h
--
-string
+vector
 -
 
 /home/kuribayashi/study/xml/include/vector.h
@@ -39,12 +25,20 @@ string
 -
 
 /home/kuribayashi/study/xml/main.cpp
-reader.h
-/home/kuribayashi/study/xml/reader.h
+loader.h
+/home/kuribayashi/study/xml/loader.h
+iostream
+-
 
-/home/kuribayashi/study/xml/src/reader.cpp
-reader.h
-/home/kuribayashi/study/xml/src/reader.h
+/home/kuribayashi/study/xml/src/loader.cpp
+loader.h
+/home/kuribayashi/study/xml/src/loader.h
+assert.h
+-
+fstream
+-
+iostream
+-
 
 /home/kuribayashi/study/xml/src/vector.cpp
 ../include/vector.h

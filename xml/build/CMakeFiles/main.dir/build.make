@@ -81,28 +81,28 @@ CMakeFiles/main.dir/main.cpp.o.provides: CMakeFiles/main.dir/main.cpp.o.requires
 CMakeFiles/main.dir/main.cpp.o.provides.build: CMakeFiles/main.dir/main.cpp.o
 
 
-CMakeFiles/main.dir/src/reader.cpp.o: CMakeFiles/main.dir/flags.make
-CMakeFiles/main.dir/src/reader.cpp.o: ../src/reader.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/kuribayashi/study/xml/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/main.dir/src/reader.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/reader.cpp.o -c /home/kuribayashi/study/xml/src/reader.cpp
+CMakeFiles/main.dir/src/loader.cpp.o: CMakeFiles/main.dir/flags.make
+CMakeFiles/main.dir/src/loader.cpp.o: ../src/loader.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/kuribayashi/study/xml/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/main.dir/src/loader.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/loader.cpp.o -c /home/kuribayashi/study/xml/src/loader.cpp
 
-CMakeFiles/main.dir/src/reader.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/src/reader.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/kuribayashi/study/xml/src/reader.cpp > CMakeFiles/main.dir/src/reader.cpp.i
+CMakeFiles/main.dir/src/loader.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/src/loader.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/kuribayashi/study/xml/src/loader.cpp > CMakeFiles/main.dir/src/loader.cpp.i
 
-CMakeFiles/main.dir/src/reader.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/src/reader.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/kuribayashi/study/xml/src/reader.cpp -o CMakeFiles/main.dir/src/reader.cpp.s
+CMakeFiles/main.dir/src/loader.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/src/loader.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/kuribayashi/study/xml/src/loader.cpp -o CMakeFiles/main.dir/src/loader.cpp.s
 
-CMakeFiles/main.dir/src/reader.cpp.o.requires:
+CMakeFiles/main.dir/src/loader.cpp.o.requires:
 
-.PHONY : CMakeFiles/main.dir/src/reader.cpp.o.requires
+.PHONY : CMakeFiles/main.dir/src/loader.cpp.o.requires
 
-CMakeFiles/main.dir/src/reader.cpp.o.provides: CMakeFiles/main.dir/src/reader.cpp.o.requires
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/reader.cpp.o.provides.build
-.PHONY : CMakeFiles/main.dir/src/reader.cpp.o.provides
+CMakeFiles/main.dir/src/loader.cpp.o.provides: CMakeFiles/main.dir/src/loader.cpp.o.requires
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/loader.cpp.o.provides.build
+.PHONY : CMakeFiles/main.dir/src/loader.cpp.o.provides
 
-CMakeFiles/main.dir/src/reader.cpp.o.provides.build: CMakeFiles/main.dir/src/reader.cpp.o
+CMakeFiles/main.dir/src/loader.cpp.o.provides.build: CMakeFiles/main.dir/src/loader.cpp.o
 
 
 CMakeFiles/main.dir/src/vector.cpp.o: CMakeFiles/main.dir/flags.make
@@ -132,16 +132,17 @@ CMakeFiles/main.dir/src/vector.cpp.o.provides.build: CMakeFiles/main.dir/src/vec
 # Object files for target main
 main_OBJECTS = \
 "CMakeFiles/main.dir/main.cpp.o" \
-"CMakeFiles/main.dir/src/reader.cpp.o" \
+"CMakeFiles/main.dir/src/loader.cpp.o" \
 "CMakeFiles/main.dir/src/vector.cpp.o"
 
 # External object files for target main
 main_EXTERNAL_OBJECTS =
 
 main: CMakeFiles/main.dir/main.cpp.o
-main: CMakeFiles/main.dir/src/reader.cpp.o
+main: CMakeFiles/main.dir/src/loader.cpp.o
 main: CMakeFiles/main.dir/src/vector.cpp.o
 main: CMakeFiles/main.dir/build.make
+main: /usr/lib/x86_64-linux-gnu/libexpat.so
 main: CMakeFiles/main.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/kuribayashi/study/xml/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable main"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/main.dir/link.txt --verbose=$(VERBOSE)
@@ -152,7 +153,7 @@ CMakeFiles/main.dir/build: main
 .PHONY : CMakeFiles/main.dir/build
 
 CMakeFiles/main.dir/requires: CMakeFiles/main.dir/main.cpp.o.requires
-CMakeFiles/main.dir/requires: CMakeFiles/main.dir/src/reader.cpp.o.requires
+CMakeFiles/main.dir/requires: CMakeFiles/main.dir/src/loader.cpp.o.requires
 CMakeFiles/main.dir/requires: CMakeFiles/main.dir/src/vector.cpp.o.requires
 
 .PHONY : CMakeFiles/main.dir/requires

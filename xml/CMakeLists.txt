@@ -10,11 +10,19 @@ find_package(EXPAT REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${EXPAT_INCLUDE_DIRS})
+include_directories(include)
 
-set(_src
-  # src/xml.cpp
+set(_include
+  include/reader.h
+  include/vector.h
 )
 
-add_executable(main main.cpp ${_src})
+set(_src
+  src/reader.cpp
+  src/vector.cpp
+)
 
-target_link_libraries(main ${EXPAT_LIBRARIES})
+add_executable(main main.cpp ${_src} ${_include})
+
+add_executable(sample sample.cpp)
+target_link_libraries(sample ${EXPAT_LIBRARIES})

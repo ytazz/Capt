@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named sample
+
+# Build rule for target.
+sample: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sample
+.PHONY : sample
+
+# fast build rule for target.
+sample/fast:
+	$(MAKE) -f CMakeFiles/sample.dir/build.make CMakeFiles/sample.dir/build
+.PHONY : sample/fast
+
+#=============================================================================
 # Target rules for targets named main
 
 # Build rule for target.
@@ -150,6 +163,87 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+sample.o: sample.cpp.o
+
+.PHONY : sample.o
+
+# target to build an object file
+sample.cpp.o:
+	$(MAKE) -f CMakeFiles/sample.dir/build.make CMakeFiles/sample.dir/sample.cpp.o
+.PHONY : sample.cpp.o
+
+sample.i: sample.cpp.i
+
+.PHONY : sample.i
+
+# target to preprocess a source file
+sample.cpp.i:
+	$(MAKE) -f CMakeFiles/sample.dir/build.make CMakeFiles/sample.dir/sample.cpp.i
+.PHONY : sample.cpp.i
+
+sample.s: sample.cpp.s
+
+.PHONY : sample.s
+
+# target to generate assembly for a file
+sample.cpp.s:
+	$(MAKE) -f CMakeFiles/sample.dir/build.make CMakeFiles/sample.dir/sample.cpp.s
+.PHONY : sample.cpp.s
+
+src/reader.o: src/reader.cpp.o
+
+.PHONY : src/reader.o
+
+# target to build an object file
+src/reader.cpp.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/reader.cpp.o
+.PHONY : src/reader.cpp.o
+
+src/reader.i: src/reader.cpp.i
+
+.PHONY : src/reader.i
+
+# target to preprocess a source file
+src/reader.cpp.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/reader.cpp.i
+.PHONY : src/reader.cpp.i
+
+src/reader.s: src/reader.cpp.s
+
+.PHONY : src/reader.s
+
+# target to generate assembly for a file
+src/reader.cpp.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/reader.cpp.s
+.PHONY : src/reader.cpp.s
+
+src/vector.o: src/vector.cpp.o
+
+.PHONY : src/vector.o
+
+# target to build an object file
+src/vector.cpp.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/vector.cpp.o
+.PHONY : src/vector.cpp.o
+
+src/vector.i: src/vector.cpp.i
+
+.PHONY : src/vector.i
+
+# target to preprocess a source file
+src/vector.cpp.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/vector.cpp.i
+.PHONY : src/vector.cpp.i
+
+src/vector.s: src/vector.cpp.s
+
+.PHONY : src/vector.s
+
+# target to generate assembly for a file
+src/vector.cpp.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/vector.cpp.s
+.PHONY : src/vector.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -157,11 +251,21 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... sample"
 	@echo "... edit_cache"
 	@echo "... main"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... sample.o"
+	@echo "... sample.i"
+	@echo "... sample.s"
+	@echo "... src/reader.o"
+	@echo "... src/reader.i"
+	@echo "... src/reader.s"
+	@echo "... src/vector.o"
+	@echo "... src/vector.i"
+	@echo "... src/vector.s"
 .PHONY : help
 
 

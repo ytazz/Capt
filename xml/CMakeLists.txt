@@ -13,6 +13,7 @@ include_directories(${EXPAT_INCLUDE_DIRS})
 
 set(_src
   src/loader.cpp
+  src/model.cpp
   src/vector.cpp
 )
 

@@ -3,10 +3,15 @@
 
 CMakeFiles/main.dir/main.cpp.o
  ../include/loader.h
+ ../include/model.h
  /home/kuribayashi/study/xml/main.cpp
 CMakeFiles/main.dir/src/loader.cpp.o
  ../include/loader.h
  /home/kuribayashi/study/xml/src/loader.cpp
+CMakeFiles/main.dir/src/model.cpp.o
+ ../include/loader.h
+ ../include/model.h
+ /home/kuribayashi/study/xml/src/model.cpp
 CMakeFiles/main.dir/src/vector.cpp.o
  /home/kuribayashi/study/xml/include/vector.h
  /home/kuribayashi/study/xml/src/vector.cpp

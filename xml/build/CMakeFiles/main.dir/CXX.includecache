@@ -9,11 +9,13 @@
 ../include/loader.h
 expat.h
 -
-stdint.h
--
 string
 -
-vector
+
+../include/model.h
+loader.h
+../include/loader.h
+iostream
 -
 
 /home/kuribayashi/study/xml/include/vector.h
@@ -27,6 +29,8 @@ string
 /home/kuribayashi/study/xml/main.cpp
 loader.h
 /home/kuribayashi/study/xml/loader.h
+model.h
+/home/kuribayashi/study/xml/model.h
 iostream
 -
 
@@ -39,6 +43,10 @@ fstream
 -
 iostream
 -
+
+/home/kuribayashi/study/xml/src/model.cpp
+model.h
+/home/kuribayashi/study/xml/src/model.h
 
 /home/kuribayashi/study/xml/src/vector.cpp
 ../include/vector.h

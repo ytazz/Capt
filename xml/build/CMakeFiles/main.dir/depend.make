@@ -3,6 +3,7 @@
 
 CMakeFiles/main.dir/main.cpp.o: ../include/loader.h
 CMakeFiles/main.dir/main.cpp.o: ../include/model.h
+CMakeFiles/main.dir/main.cpp.o: ../include/vector.h
 CMakeFiles/main.dir/main.cpp.o: ../main.cpp
 
 CMakeFiles/main.dir/src/loader.cpp.o: ../include/loader.h
@@ -10,6 +11,7 @@ CMakeFiles/main.dir/src/loader.cpp.o: ../src/loader.cpp
 
 CMakeFiles/main.dir/src/model.cpp.o: ../include/loader.h
 CMakeFiles/main.dir/src/model.cpp.o: ../include/model.h
+CMakeFiles/main.dir/src/model.cpp.o: ../include/vector.h
 CMakeFiles/main.dir/src/model.cpp.o: ../src/model.cpp
 
 CMakeFiles/main.dir/src/vector.cpp.o: ../include/vector.h

@@ -15,7 +15,23 @@ string
 ../include/model.h
 loader.h
 ../include/loader.h
+vector.h
+../include/vector.h
 iostream
+-
+math.h
+-
+string.h
+-
+vector
+-
+
+../include/vector.h
+math.h
+-
+stdio.h
+-
+string
 -
 
 /home/kuribayashi/study/xml/include/vector.h

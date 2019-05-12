@@ -22,10 +22,8 @@
     </shape>
   </link>
 
-
-<!--
   <link name="foot_l">
     <shape type="reverse"/>
   </link>
--->
+
 </robot>

@@ -1,159 +1,156 @@
 #include "setting_item.h"
 
-SettingItem::SettingItem(QWidget* parent, item_t item_name):
-    QWidget(parent)
-{
-    // size
-    windowWidth = parent->width();
-    windowHeight = parent->height();
-    this->setFixedSize(windowWidth, windowHeight);
-    printf("%d\n",item_name);
+using namespace CA;
 
-    // color
-    windowColor = QColor("#FFFFFF");
-    setWindowColor();
+SettingItem::SettingItem(QWidget *parent, item_t item_name) : QWidget(parent) {
+  // size
+  windowWidth = parent->width();
+  windowHeight = parent->height();
+  this->setFixedSize(windowWidth, windowHeight);
+  printf("%d\n", item_name);
 
-    // create page
-    createPage(item_name);
+  // color
+  windowColor = QColor("#FFFFFF");
+  setWindowColor();
 
-    // initialize labels
+  // create page
+  createPage(item_name);
 
-
-    // connect signal & slot
-    createConnect();
+  // connect signal & slot
+  createConnection(item_name);
 }
 
-SettingItem::~SettingItem(){}
+SettingItem::~SettingItem() {}
 
-void SettingItem::createConnect()
-{
-//    connect()
+void SettingItem::createConnection(item_t item_name) {
+  if (item_name == GRAPH)
+    QObject::connect(button_file, &QToolButton::pressed, this,
+                     &SettingItem::openFile);
 }
 
-void SettingItem::createPage(item_t item_name)
-{
-    if(item_name == GRAPH)    createGraphPage();
-    if(item_name == ANALYSIS) createAnalysisPage();
-    if(item_name == SEARCH)   createSearchPage();
-    if(item_name == HELP)     createHelpPage();
+void SettingItem::createPage(item_t item_name) {
+  if (item_name == GRAPH)
+    createGraphPage();
+  if (item_name == ANALYSIS)
+    createAnalysisPage();
+  if (item_name == SEARCH)
+    createSearchPage();
+  if (item_name == HELP)
+    createHelpPage();
 }
 
-void SettingItem::createGraphPage()
-{
-    // set page layout
-    QVBoxLayout* pageLayout = new QVBoxLayout(this);
+void SettingItem::createGraphPage() {
+  // set page layout
+  QVBoxLayout *pageLayout = new QVBoxLayout(this);
 
-    // sections
-    Section* section[4];
-    section[0] = new Section("Setting File", 300, this);
-    section[1] = new Section("Coordinate", 300, this);
-    section[2] = new Section("Axis (r)", 300, this);
-    section[3] = new Section("Axis (theta)", 300, this);
-    pageLayout->addWidget(section[0]);
-    pageLayout->addWidget(section[1]);
-    pageLayout->addWidget(section[2]);
-    pageLayout->addWidget(section[3]);
-    pageLayout->addStretch();
+  // sections
+  section[0] = new Section("Setting File", 300, this);
+  section[1] = new Section("Coordinate", 300, this);
+  section[2] = new Section("Axis (r)", 300, this);
+  section[3] = new Section("Axis (theta)", 300, this);
+  pageLayout->addWidget(section[0]);
+  pageLayout->addWidget(section[1]);
+  pageLayout->addWidget(section[2]);
+  pageLayout->addWidget(section[3]);
+  pageLayout->addStretch();
 
-    // layout for each sections
-    // [0] Setting File
-    QVBoxLayout* layout_set = new QVBoxLayout();
-    layout_set->addWidget(new QLabel(tr("file name"), section[0]));
-    layout_set->addWidget(new QPushButton(tr("open file"), section[0]));
+  // layout for each sections
+  // [0] Setting File
+  label_file_name = new QLabel(tr("file name"), section[0]);
+  button_file = new QToolButton(section[0]);
+  button_file->setIcon(
+      QApplication::style()->standardIcon(QStyle::SP_DialogOpenButton));
+  button_file->setIconSize(QSize(30, 30));
+  QHBoxLayout *layout_set = new QHBoxLayout();
+  layout_set->addWidget(label_file_name);
+  pageLayout->addStretch();
+  layout_set->addWidget(button_file);
 
-    // [1] Coordinate
-    QVBoxLayout* layout_coo = new QVBoxLayout();
-    layout_coo->addWidget(new QLabel(tr("file name"), section[1]));
+  // [1] Coordinate
+  label_coordinate = new QLabel(tr("file name"), section[1]);
+  QVBoxLayout *layout_coo = new QVBoxLayout();
+  layout_coo->addWidget(label_coordinate);
 
-    // [2] Axis
-    QGridLayout* layout_axi[2];
+  // [2] Axis
+  QGridLayout *layout_axi[2];
 
-    // 1st axis (r or x)
-    // initialize labels
-    label_r_min =new QLabel("0.0",section[2]);
-    label_r_max =new QLabel("0.0",section[2]);
-    label_r_step=new QLabel("0.0",section[2]);
-    label_r_tick=new QLabel("0.0",section[2]);
-    // layout
-    layout_axi[0] = new QGridLayout();
-    layout_axi[0]->addWidget(new QLabel("min", section[2]),0,0);
-    layout_axi[0]->addWidget(new QLabel("max", section[2]),1,0);
-    layout_axi[0]->addWidget(new QLabel("step", section[2]),2,0);
-    layout_axi[0]->addWidget(new QLabel("tick", section[2]),3,0);
-    layout_axi[0]->addWidget(label_r_min, 0,1);
-    layout_axi[0]->addWidget(label_r_max, 1,1);
-    layout_axi[0]->addWidget(label_r_step,2,1);
-    layout_axi[0]->addWidget(label_r_tick,3,1);
+  // 1st axis (r or x)
+  // initialize labels
+  label_r_min = new QLabel("0.0", section[2]);
+  label_r_max = new QLabel("0.0", section[2]);
+  label_r_step = new QLabel("0.0", section[2]);
+  label_r_tick = new QLabel("0.0", section[2]);
+  // layout
+  layout_axi[0] = new QGridLayout();
+  layout_axi[0]->addWidget(new QLabel("min", section[2]), 0, 0);
+  layout_axi[0]->addWidget(new QLabel("max", section[2]), 1, 0);
+  layout_axi[0]->addWidget(new QLabel("step", section[2]), 2, 0);
+  layout_axi[0]->addWidget(new QLabel("tick", section[2]), 3, 0);
+  layout_axi[0]->addWidget(label_r_min, 0, 1);
+  layout_axi[0]->addWidget(label_r_max, 1, 1);
+  layout_axi[0]->addWidget(label_r_step, 2, 1);
+  layout_axi[0]->addWidget(label_r_tick, 3, 1);
 
-    // 2nd axis (theta or y)
-    // initialize labels
-    label_t_min =new QLabel("0.0",section[3]);
-    label_t_max =new QLabel("0.0",section[3]);
-    label_t_step=new QLabel("0.0",section[3]);
-    label_t_tick=new QLabel("0.0",section[3]);
-    // layout
-    layout_axi[1] = new QGridLayout();
-    layout_axi[1]->addWidget(new QLabel("min", section[3]),0,0);
-    layout_axi[1]->addWidget(new QLabel("max", section[3]),1,0);
-    layout_axi[1]->addWidget(new QLabel("step", section[3]),2,0);
-    layout_axi[1]->addWidget(new QLabel("tick", section[3]),3,0);
-    layout_axi[1]->addWidget(label_t_min, 0,1);
-    layout_axi[1]->addWidget(label_t_max, 1,1);
-    layout_axi[1]->addWidget(label_t_step,2,1);
-    layout_axi[1]->addWidget(label_t_tick,3,1);
+  // 2nd axis (theta or y)
+  // initialize labels
+  label_t_min = new QLabel("0.0", section[3]);
+  label_t_max = new QLabel("0.0", section[3]);
+  label_t_step = new QLabel("0.0", section[3]);
+  label_t_tick = new QLabel("0.0", section[3]);
+  // layout
+  layout_axi[1] = new QGridLayout();
+  layout_axi[1]->addWidget(new QLabel("min", section[3]), 0, 0);
+  layout_axi[1]->addWidget(new QLabel("max", section[3]), 1, 0);
+  layout_axi[1]->addWidget(new QLabel("step", section[3]), 2, 0);
+  layout_axi[1]->addWidget(new QLabel("tick", section[3]), 3, 0);
+  layout_axi[1]->addWidget(label_t_min, 0, 1);
+  layout_axi[1]->addWidget(label_t_max, 1, 1);
+  layout_axi[1]->addWidget(label_t_step, 2, 1);
+  layout_axi[1]->addWidget(label_t_tick, 3, 1);
 
-    // register each layouts to section
-    section[0]->setContentLayout(*layout_set);
-    section[1]->setContentLayout(*layout_coo);
-    section[2]->setContentLayout(*layout_axi[0]);
-    section[3]->setContentLayout(*layout_axi[1]);
+  // register each layouts to section
+  section[0]->setContentLayout(*layout_set);
+  section[1]->setContentLayout(*layout_coo);
+  section[2]->setContentLayout(*layout_axi[0]);
+  section[3]->setContentLayout(*layout_axi[1]);
 }
 
-void SettingItem::createAnalysisPage()
-{
-    QLabel *label=new QLabel(this);
-    label->setFixedSize(windowWidth, windowHeight);
-    label->setText("Sorry, this page (Analysis) doesn't exist ...");
+void SettingItem::createAnalysisPage() {
+  QLabel *label = new QLabel(this);
+  label->setFixedSize(windowWidth, windowHeight);
+  label->setText("Sorry, this page (Analysis)\n doesn't exist ...");
 }
 
-void SettingItem::createSearchPage()
-{
-    QLabel *label=new QLabel(this);
-    label->setFixedSize(windowWidth, windowHeight);
-    label->setText("Sorry, this page (Search) doesn't exist ...");
+void SettingItem::createSearchPage() {
+  QLabel *label = new QLabel(this);
+  label->setFixedSize(windowWidth, windowHeight);
+  label->setText("Sorry, this page (Search)\n doesn't exist ...");
 }
 
-void SettingItem::createHelpPage()
-{
-    QLabel *label=new QLabel(this);
-    label->setFixedSize(windowWidth, windowHeight);
-    label->setText("Sorry, this page (Help) doesn't exist ...");
+void SettingItem::createHelpPage() {
+  QLabel *label = new QLabel(this);
+  label->setFixedSize(windowWidth, windowHeight);
+  label->setText("Sorry, this page (Help)\n doesn't exist ...");
 }
 
-void SettingItem::setWindowColor()
-{
-    QLabel *plabel=new QLabel(this);
-    plabel->setFixedSize(windowWidth, windowHeight);
-    QPalette palette = plabel->palette();
-    palette.setColor(plabel->backgroundRole(), windowColor);
-    palette.setColor(plabel->foregroundRole(), windowColor);
-    plabel->setPalette(palette);
-    plabel->setAutoFillBackground(true);
+void SettingItem::setWindowColor() {
+  QLabel *plabel = new QLabel(this);
+  plabel->setFixedSize(windowWidth, windowHeight);
+  QPalette palette = plabel->palette();
+  palette.setColor(plabel->backgroundRole(), windowColor);
+  palette.setColor(plabel->foregroundRole(), windowColor);
+  plabel->setPalette(palette);
+  plabel->setAutoFillBackground(true);
 }
 
-void SettingItem::open()
-{
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "",
-        tr("Text Files (*.txt);;C++ Files (*.cpp *.h)"));
+void SettingItem::openFile() {
+  QString file_name_qstr = QFileDialog::getOpenFileName(
+      this, tr("Open File"), "", tr("XML Files (*.xml)"));
 
-    if (!fileName.isEmpty()) {
-        QFile file(fileName);
-        if (!file.open(QIODevice::ReadOnly)) {
-            QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
-            return;
-        }
-        QTextStream in(&file);
-//        textEdit->setText(in.readAll());
-        file.close();
-    }
+  if (!file_name_qstr.isEmpty()) {
+    std::string file_name = file_name_qstr.toStdString();
+    Model model(file_name);
+    model.parse();
+    model.print();
+  }
 }

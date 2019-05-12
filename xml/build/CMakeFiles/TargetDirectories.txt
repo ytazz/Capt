@@ -1,3 +1,0 @@
-/home/kuribayashi/study/xml/build/CMakeFiles/rebuild_cache.dir
-/home/kuribayashi/study/xml/build/CMakeFiles/edit_cache.dir
-/home/kuribayashi/study/xml/build/CMakeFiles/main.dir

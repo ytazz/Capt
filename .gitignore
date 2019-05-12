@@ -3,3 +3,4 @@ build/
 bin/
 /build
 /xml/build/
+*.user

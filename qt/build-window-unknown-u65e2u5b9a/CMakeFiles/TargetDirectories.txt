@@ -1,4 +1,0 @@
-/home/kuribayashi/study/qt/build-window-unknown-u65e2u5b9a/CMakeFiles/edit_cache.dir
-/home/kuribayashi/study/qt/build-window-unknown-u65e2u5b9a/CMakeFiles/rebuild_cache.dir
-/home/kuribayashi/study/qt/build-window-unknown-u65e2u5b9a/CMakeFiles/window.dir
-/home/kuribayashi/study/qt/build-window-unknown-u65e2u5b9a/CMakeFiles/window_automoc.dir

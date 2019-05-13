@@ -29,6 +29,12 @@ public:
                          const std::string &value) override;
 
   std::vector<Vector2> reverseShape(std::vector<Vector2> points);
+
+  void get(const char *element_name, const char *attribute_name, float *val);
+  void get(const char *element_name, const char *attribute_name,
+           std::string &str);
+  void get(const char *element_name, const char *attribute_name,
+           std::vector<Vector2> *vec);
   void print();
 
 private:

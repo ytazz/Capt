@@ -179,6 +179,38 @@ void Model::callbackAttribute(const std::string &name,
   }
 }
 
+void Model::get(const char *element_name, const char *attribute_name,
+                std::string &str) {
+  if (equalStr(element_name, "robot")) {
+    if (equalStr(attribute_name, "name"))
+      str = robot_name;
+  }
+}
+
+void Model::get(const char *element_name, const char *attribute_name,
+                float *val) {
+  if (equalStr(element_name, "physics")) {
+    if (equalStr(attribute_name, "mass"))
+      *val = mass;
+    if (equalStr(attribute_name, "com_height"))
+      *val = com_height;
+    if (equalStr(attribute_name, "step_time_min"))
+      *val = step_time_min;
+    if (equalStr(attribute_name, "foot_vel_max"))
+      *val = foot_vel_max;
+  }
+}
+
+void Model::get(const char *element_name, const char *attribute_name,
+                std::vector<Vector2> *vec) {
+  if (equalStr(element_name, "link")) {
+    if (equalStr(attribute_name, "foot_r"))
+      *vec = foot_r;
+    if (equalStr(attribute_name, "foot_l"))
+      *vec = foot_l;
+  }
+}
+
 void Model::print() {
   printf("-------------------------------------------\n");
   printf("robot:\n");

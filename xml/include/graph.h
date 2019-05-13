@@ -22,6 +22,9 @@ public:
   void callbackAttribute(const std::string &name,
                          const std::string &value) override;
 
+  void get(const char *element_name, const char *attribute_name, float *val);
+  void get(const char *element_name, const char *attribute_name,
+           std::string &str);
   void print();
 
 private:

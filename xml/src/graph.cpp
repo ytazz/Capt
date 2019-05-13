@@ -113,6 +113,43 @@ void Graph::callbackAttribute(const std::string &name,
   }
 }
 
+void Graph::get(const char *element_name, const char *attribute_name,
+                std::string &str) {
+  using namespace Gr;
+  if (equalStr(element_name, "coordinate")) {
+    if (equalStr(attribute_name, "type")) {
+      if (coordinate == POLAR)
+        str = "polar";
+      if (coordinate == CARTESIAN)
+        str = "cartesian";
+    }
+  }
+}
+
+void Graph::get(const char *element_name, const char *attribute_name,
+                float *val) {
+  if (equalStr(element_name, "radius")) {
+    if (equalStr(attribute_name, "min"))
+      *val = radius_min;
+    if (equalStr(attribute_name, "max"))
+      *val = radius_max;
+    if (equalStr(attribute_name, "step"))
+      *val = radius_step;
+    if (equalStr(attribute_name, "tick"))
+      *val = radius_tick;
+  }
+  if (equalStr(element_name, "angle")) {
+    if (equalStr(attribute_name, "min"))
+      *val = angle_min;
+    if (equalStr(attribute_name, "max"))
+      *val = angle_max;
+    if (equalStr(attribute_name, "step"))
+      *val = angle_step;
+    if (equalStr(attribute_name, "tick"))
+      *val = angle_tick;
+  }
+}
+
 void Graph::print() {
   using namespace Gr;
   printf("-------------------------------------------\n");

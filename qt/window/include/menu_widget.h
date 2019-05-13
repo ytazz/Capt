@@ -1,42 +1,41 @@
 #ifndef WIDGET_MENU_H
 #define WIDGET_MENU_H
 
-#include <QtGui>
-#include <QtWidgets>
 #include "menu_button.h"
 #include "section.h"
+#include <QtGui>
+#include <QtWidgets>
 
-class MenuWidget : public QWidget
-{
-    Q_OBJECT
+class MenuWidget : public QWidget {
+  Q_OBJECT
 
 public:
-    MenuWidget(int width, int height);
-    ~MenuWidget();
+  explicit MenuWidget(QWidget *parent = nullptr, int width = 0, int height = 0);
+  ~MenuWidget();
 
-    void setWindowColor();
-    void connectSignalSlot();
+  void setWindowColor();
+  void connectSignalSlot();
 
-    menuButton* getButton(int index);
-    menuButton *buttonGraph;
-    menuButton *buttonAnalysis;
-    menuButton *buttonSearch;
-    menuButton *buttonHelp;
+  menuButton *getButton(int index);
+  menuButton *buttonGraph;
+  menuButton *buttonAnalysis;
+  menuButton *buttonSearch;
+  menuButton *buttonHelp;
 
-    void offOthers(menuButton *button);
+  void offOthers(menuButton *button);
 
 public slots:
-    void pressedGraph();
-    void pressedAnalysis();
-    void pressedSearch();
-    void pressedHelp();
+  void pressedGraph();
+  void pressedAnalysis();
+  void pressedSearch();
+  void pressedHelp();
 
 private:
-    int menuWidth, menuHeight;
+  int menuWidth, menuHeight;
 
-    QColor windowColor;
+  QColor windowColor;
 
-    int numButton;
+  int numButton;
 };
 
 #endif // WIDGET_MENU_H

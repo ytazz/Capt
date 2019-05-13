@@ -13,9 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
   cw = new QWidget(this);
   this->setCentralWidget(cw);
 
-  widgetMenu = new MenuWidget(80, 890);
-  widgetSetting = new SettingWidget(240, 890);
-  widgetScene = new GLWidget(this);
+  widgetMenu = new MenuWidget(this, 80, 890);
+  widgetSetting = new SettingWidget(this, 240, 890);
+  widgetScene = new GLWidget(this, 700, 700);
   QWidget *widgetDetail = new QWidget();
   QWidget *widgetConsole = new QWidget();
 
@@ -30,11 +30,9 @@ MainWindow::MainWindow(QWidget *parent)
   layout->addWidget(widgetConsole, 1, 2, 1, 2);
   this->centralWidget()->setLayout(layout);
 
-  widgetScene->setFixedSize(700, 700);
   widgetDetail->setFixedSize(250, 700);
   widgetConsole->setFixedSize(950, 186);
 
-  // setWindowColor(widgetScene, 700, 700, QColor("#FFFFFF"));
   setWindowColor(widgetDetail, 250, 700, QColor("#FFFFFF"));
   setWindowColor(widgetConsole, 950, 186, QColor("#FFFFFF"));
 

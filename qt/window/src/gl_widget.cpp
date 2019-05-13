@@ -1,6 +1,12 @@
 #include "gl_widget.h"
 
-GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent) {}
+GLWidget::GLWidget(QWidget *parent, int width, int height)
+    : QOpenGLWidget(parent) {
+  // size
+  windowWidth = width;
+  windowHeight = height;
+  setFixedSize(windowWidth, windowHeight);
+}
 
 GLWidget::~GLWidget() {}
 

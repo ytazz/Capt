@@ -11,7 +11,8 @@ class SettingWidget : public QWidget {
   Q_OBJECT
 
 public:
-  SettingWidget(int width, int height);
+  explicit SettingWidget(QWidget *parent = nullptr, int width = 0,
+                         int height = 0);
   ~SettingWidget();
 
   void setWindowColor();

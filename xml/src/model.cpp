@@ -3,9 +3,9 @@
 namespace CA {
 
 Model::Model(const std::string &name) : Loader(name), pi(M_PI) {
-  element = NOELEMENT;
-  foot = NOFOOT;
-  shape = NOSHAPE;
+  element = Mo::NOELEMENT;
+  foot = Mo::NOFOOT;
+  shape = Mo::NOSHAPE;
 
   trn = {0.0, 0.0};
   rot = 0.0;
@@ -29,6 +29,7 @@ Model::Model(const std::string &name) : Loader(name), pi(M_PI) {
 Model::~Model() {}
 
 void Model::callbackElement(const std::string &name, const bool is_start) {
+  using namespace Mo;
   if (is_start) {
     switch (element) {
     case NOELEMENT:
@@ -82,6 +83,7 @@ void Model::callbackElement(const std::string &name, const bool is_start) {
 
 void Model::callbackAttribute(const std::string &name,
                               const std::string &value) {
+  using namespace Mo;
   switch (element) {
   case ROBOT:
     if (equalStr(name, "name"))
@@ -152,9 +154,9 @@ void Model::callbackAttribute(const std::string &name,
     case POLYGON:
       if (equalStr(name, "point")) {
         if (foot == RFOOT)
-          foot_r.push_back(convertStrToVec(value));
+          foot_r.push_back(convertStrToVec(value) * unit_length);
         if (foot == LFOOT)
-          foot_l.push_back(convertStrToVec(value));
+          foot_l.push_back(convertStrToVec(value) * unit_length);
       }
       break;
     case REVERSE:
@@ -175,42 +177,6 @@ void Model::callbackAttribute(const std::string &name,
   default:
     break;
   }
-}
-
-bool Model::equalStr(const char *chr1, const char *chr2) {
-  bool is_equal = false;
-
-  if (strcmp(chr1, chr2) == 0)
-    is_equal = true;
-
-  return is_equal;
-}
-
-bool Model::equalStr(const std::string &str1, const char *chr2) {
-  return equalStr(str1.c_str(), chr2);
-}
-
-bool Model::equalStr(const char *chr1, const std::string &str2) {
-  return equalStr(chr1, str2.c_str());
-}
-
-bool Model::equalStr(const std::string &str1, const std::string &str2) {
-  return equalStr(str1.c_str(), str2.c_str());
-}
-
-Vector2 Model::convertStrToVec(const std::string &str) {
-  int space_position = str.find(" ");
-
-  std::string val1 = "", val2 = "";
-  for (int i = 0; i < space_position; i++) {
-    val1 += str[i];
-  }
-  for (uint i = space_position + 1; i < str.length(); i++) {
-    val2 += str[i];
-  }
-
-  Vector2 vec = {stof(val1), stof(val2)};
-  return vec;
 }
 
 void Model::print() {

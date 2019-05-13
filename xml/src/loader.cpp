@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iostream>
 
+namespace CA {
+
 Loader::Loader(const std::string &name)
     : name(name), parser(XML_ParserCreate(NULL)), depth(0) {
   if (!parser) {
@@ -63,3 +65,41 @@ void Loader::end_element(const std::string &name) {
 void Loader::get_attribute(const std::string &name, const std::string &value) {
   callbackAttribute(name, value);
 }
+
+bool Loader::equalStr(const char *chr1, const char *chr2) {
+  bool is_equal = false;
+
+  if (strcmp(chr1, chr2) == 0)
+    is_equal = true;
+
+  return is_equal;
+}
+
+bool Loader::equalStr(const std::string &str1, const char *chr2) {
+  return equalStr(str1.c_str(), chr2);
+}
+
+bool Loader::equalStr(const char *chr1, const std::string &str2) {
+  return equalStr(chr1, str2.c_str());
+}
+
+bool Loader::equalStr(const std::string &str1, const std::string &str2) {
+  return equalStr(str1.c_str(), str2.c_str());
+}
+
+Vector2 Loader::convertStrToVec(const std::string &str) {
+  int space_position = str.find(" ");
+
+  std::string val1 = "", val2 = "";
+  for (int i = 0; i < space_position; i++) {
+    val1 += str[i];
+  }
+  for (uint i = space_position + 1; i < str.length(); i++) {
+    val2 += str[i];
+  }
+
+  Vector2 vec = {stof(val1), stof(val2)};
+  return vec;
+}
+
+} // namespace CA

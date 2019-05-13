@@ -13,6 +13,7 @@ include_directories(${EXPAT_INCLUDE_DIRS})
 
 set(_src
   src/loader.cpp
+  src/graph.cpp
   src/model.cpp
   src/vector.cpp
 )
@@ -21,3 +22,4 @@ add_executable(main main.cpp ${_src})
 target_link_libraries(main ${EXPAT_LIBRARIES})
 
 configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(data/graph.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)

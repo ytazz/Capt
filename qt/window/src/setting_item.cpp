@@ -57,6 +57,7 @@ void SettingItem::createGraphPage() {
   // layout for each sections
   // [0] Setting File
   label_file_name = new QLabel(tr("file name"), section[0]);
+  label_file_name->setFixedSize(windowWidth - 80, 70);
   button_file = new QToolButton(section[0]);
   button_file->setIcon(
       QApplication::style()->standardIcon(QStyle::SP_DialogOpenButton));
@@ -67,7 +68,7 @@ void SettingItem::createGraphPage() {
   layout_set->addWidget(button_file);
 
   // [1] Coordinate
-  label_coordinate = new QLabel(tr("file name"), section[1]);
+  label_coordinate = new QLabel(tr("-"), section[1]);
   QVBoxLayout *layout_coo = new QVBoxLayout();
   layout_coo->addWidget(label_coordinate);
 
@@ -76,10 +77,10 @@ void SettingItem::createGraphPage() {
 
   // 1st axis (r or x)
   // initialize labels
-  label_r_min = new QLabel("0.0", section[2]);
-  label_r_max = new QLabel("0.0", section[2]);
-  label_r_step = new QLabel("0.0", section[2]);
-  label_r_tick = new QLabel("0.0", section[2]);
+  label_r_min = new QLabel("-", section[2]);
+  label_r_max = new QLabel("-", section[2]);
+  label_r_step = new QLabel("-", section[2]);
+  label_r_tick = new QLabel("-", section[2]);
   // layout
   layout_axi[0] = new QGridLayout();
   layout_axi[0]->addWidget(new QLabel("min", section[2]), 0, 0);
@@ -93,10 +94,10 @@ void SettingItem::createGraphPage() {
 
   // 2nd axis (theta or y)
   // initialize labels
-  label_t_min = new QLabel("0.0", section[3]);
-  label_t_max = new QLabel("0.0", section[3]);
-  label_t_step = new QLabel("0.0", section[3]);
-  label_t_tick = new QLabel("0.0", section[3]);
+  label_t_min = new QLabel("-", section[3]);
+  label_t_max = new QLabel("-", section[3]);
+  label_t_step = new QLabel("-", section[3]);
+  label_t_tick = new QLabel("-", section[3]);
   // layout
   layout_axi[1] = new QGridLayout();
   layout_axi[1]->addWidget(new QLabel("min", section[3]), 0, 0);
@@ -145,12 +146,24 @@ void SettingItem::setWindowColor() {
 
 void SettingItem::openFile() {
   QString file_name_qstr = QFileDialog::getOpenFileName(
-      this, tr("Open File"), "", tr("XML Files (*.xml)"));
+      this, tr("Open Setting File"), "", tr("XML Files (*.xml)"));
 
   if (!file_name_qstr.isEmpty()) {
     std::string file_name = file_name_qstr.toStdString();
-    Model model(file_name);
-    model.parse();
-    model.print();
+    Graph graph(file_name);
+    graph.parse();
+
+    label_file_name->setText(QString::fromStdString(file_name));
+    label_file_name->setWordWrap(true);
+    label_coordinate->setText(
+        QString::fromStdString(graph.getStr("coordinate", "type")));
+    label_r_min->setText(QString::number(graph.getVal("radius", "min")));
+    label_r_max->setText(QString::number(graph.getVal("radius", "max")));
+    label_r_step->setText(QString::number(graph.getVal("radius", "step")));
+    label_r_tick->setText(QString::number(graph.getVal("radius", "tick")));
+    label_t_min->setText(QString::number(graph.getVal("angle", "min")));
+    label_t_max->setText(QString::number(graph.getVal("angle", "max")));
+    label_t_step->setText(QString::number(graph.getVal("angle", "step")));
+    label_t_tick->setText(QString::number(graph.getVal("angle", "tick")));
   }
 }

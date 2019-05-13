@@ -2,6 +2,7 @@
 #define SETTING_ITEM_H
 
 #include "base.h"
+#include "graph.h"
 #include "model.h"
 #include "section.h"
 #include <QtGui>

@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
   graph.print();
 
   std::vector<Vector2> v;
-  model.get("link", "foot_l", &v);
+  v=model.getVec("link", "foot_l");
   for (size_t i = 0; i < v.size(); i++) {
     printf("%lf, %lf\n", v[i].x, v[i].y);
   }

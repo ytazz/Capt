@@ -21,7 +21,7 @@ set(UI_SOURCES
 )
 
 set(UI_RESOURCES
-  res/icons.qrc
+  resource/icons.qrc
 )
 
 # set(SOURCES

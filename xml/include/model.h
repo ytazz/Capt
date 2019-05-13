@@ -30,11 +30,10 @@ public:
 
   std::vector<Vector2> reverseShape(std::vector<Vector2> points);
 
-  void get(const char *element_name, const char *attribute_name, float *val);
-  void get(const char *element_name, const char *attribute_name,
-           std::string &str);
-  void get(const char *element_name, const char *attribute_name,
-           std::vector<Vector2> *vec);
+  float getVal(const char *element_name, const char *attribute_name);
+  std::string getStr(const char *element_name, const char *attribute_name);
+  std::vector<Vector2> getVec(const char *element_name,
+                              const char *attribute_name);
   void print();
 
 private:

@@ -179,36 +179,41 @@ void Model::callbackAttribute(const std::string &name,
   }
 }
 
-void Model::get(const char *element_name, const char *attribute_name,
-                std::string &str) {
+std::string Model::getStr(const char *element_name,
+                          const char *attribute_name) {
+  std::string str = "";
   if (equalStr(element_name, "robot")) {
     if (equalStr(attribute_name, "name"))
       str = robot_name;
   }
+  return str;
 }
 
-void Model::get(const char *element_name, const char *attribute_name,
-                float *val) {
+float Model::getVal(const char *element_name, const char *attribute_name) {
+  float val = 0.0;
   if (equalStr(element_name, "physics")) {
     if (equalStr(attribute_name, "mass"))
-      *val = mass;
+      val = mass;
     if (equalStr(attribute_name, "com_height"))
-      *val = com_height;
+      val = com_height;
     if (equalStr(attribute_name, "step_time_min"))
-      *val = step_time_min;
+      val = step_time_min;
     if (equalStr(attribute_name, "foot_vel_max"))
-      *val = foot_vel_max;
+      val = foot_vel_max;
   }
+  return val;
 }
 
-void Model::get(const char *element_name, const char *attribute_name,
-                std::vector<Vector2> *vec) {
+std::vector<Vector2> Model::getVec(const char *element_name,
+                                   const char *attribute_name) {
+  std::vector<Vector2> vec;
   if (equalStr(element_name, "link")) {
     if (equalStr(attribute_name, "foot_r"))
-      *vec = foot_r;
+      vec = foot_r;
     if (equalStr(attribute_name, "foot_l"))
-      *vec = foot_l;
+      vec = foot_l;
   }
+  return vec;
 }
 
 void Model::print() {

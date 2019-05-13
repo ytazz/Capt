@@ -1,5 +1,5 @@
-#ifndef __MODEL__
-#define __MODEL__
+#ifndef __MODEL_H__
+#define __MODEL_H__
 
 #include "loader.h"
 #include "vector.h"
@@ -10,11 +10,13 @@
 
 namespace CA {
 
-enum Element { NOELEMENT, ROBOT, UNIT, PHYSICS, LINK, SHAPE };
+namespace Mo {
+enum ModelElement { NOELEMENT, ROBOT, UNIT, PHYSICS, LINK, SHAPE };
 
 enum Foot { NOFOOT, RFOOT, LFOOT };
 
 enum Shape { NOSHAPE, BOX, POLYGON, CIRCLE, REVERSE };
+} // namespace Mo
 
 class Model : public Loader {
 
@@ -26,19 +28,18 @@ public:
   void callbackAttribute(const std::string &name,
                          const std::string &value) override;
 
-  bool equalStr(const char *chr1, const char *chr2);
-  bool equalStr(const std::string &str1, const char *chr2);
-  bool equalStr(const char *chr1, const std::string &str2);
-  bool equalStr(const std::string &str1, const std::string &str2);
-  Vector2 convertStrToVec(const std::string &str);
   std::vector<Vector2> reverseShape(std::vector<Vector2> points);
 
+  float getVal(const char *element_name, const char *attribute_name);
+  std::string getStr(const char *element_name, const char *attribute_name);
+  std::vector<Vector2> getVec(const char *element_name,
+                              const char *attribute_name);
   void print();
 
 private:
-  Element element;
-  Foot foot;
-  Shape shape;
+  Mo::ModelElement element;
+  Mo::Foot foot;
+  Mo::Shape shape;
 
   const float pi;
 
@@ -54,4 +55,4 @@ private:
 
 } // namespace CA
 
-#endif // __MODEL__
+#endif // __MODEL_H__

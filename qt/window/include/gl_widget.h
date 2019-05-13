@@ -18,6 +18,23 @@ protected:
   void resizeGL(int w, int h);
   void paintGL();
 
+public:
+  // get RGB from color name
+  void color(const char *color_name);
+
+  // paint function
+  void paint();
+
+  // for polar coordinate
+  bool paint_polar_grid;
+  float polar_min, polar_max, polar_step;
+  void setPolarGrid(float min, float max, float step);
+  void paintPolarGrid(float min, float max, float step);
+  void paintPolar(float radius, float angle, const char *color_name);
+  // for cartesian coordinate
+  void paintCartesianGrid(float min, float max, float step);
+  void paintCartesian(float x, float y, const char *color_name);
+
   int windowWidth, windowHeight;
 };
 

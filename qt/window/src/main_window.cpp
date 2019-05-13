@@ -37,6 +37,9 @@ MainWindow::MainWindow(QWidget *parent)
   setWindowColor(widgetConsole, 950, 186, QColor("#FFFFFF"));
 
   createConnection();
+
+  widgetScene->setPolarGrid(0.0, 0.0, 0.0);
+  widgetScene->paint();
 }
 
 MainWindow::~MainWindow() { delete ui; }

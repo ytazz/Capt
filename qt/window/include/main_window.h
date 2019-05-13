@@ -1,6 +1,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#include "gl_widget.h"
 #include "menu_widget.h"
 #include "setting_widget.h"
 #include <QApplication>
@@ -44,7 +45,7 @@ private:
   QWidget *cw; // central widget
   MenuWidget *widgetMenu;
   SettingWidget *widgetSetting;
-  QWidget *widgetScene;
+  GLWidget *widgetScene;
   QWidget *widgetDetail;
   QWidget *widgetConsole;
 };

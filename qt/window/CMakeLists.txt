@@ -3,10 +3,12 @@ project(window)
 
 set(QTDIR $ENV{QTDIR})
 set(CMAKE_PREFIX_PATH ${QTDIR})
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -lglut -lGL -lGLU")
 
 find_package(Qt5Widgets REQUIRED)
 find_package(EXPAT REQUIRED)
+find_package(GLUT)
+find_package(OpenGL)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -57,7 +59,7 @@ qt5_add_resources(RESOURCES ${UI_RESOURCES})
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${UI_HEADERS} ${RESOURCES})
 
-target_link_libraries(${PROJECT_NAME} Qt5::Widgets ${EXPAT_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} Qt5::Widgets ${EXPAT_LIBRARIES} ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
 
 configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 configure_file(data/graph.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)

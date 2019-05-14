@@ -7,7 +7,6 @@ SettingItem::SettingItem(QWidget *parent, item_t item_name) : QWidget(parent) {
   windowWidth = parent->width();
   windowHeight = parent->height();
   this->setFixedSize(windowWidth, windowHeight);
-  printf("%d\n", item_name);
 
   // color
   windowColor = QColor("#FFFFFF");
@@ -165,5 +164,13 @@ void SettingItem::openFile() {
     label_t_max->setText(QString::number(graph.getVal("angle", "max")));
     label_t_step->setText(QString::number(graph.getVal("angle", "step")));
     label_t_tick->setText(QString::number(graph.getVal("angle", "tick")));
+
+    setPolarGridRadius(graph.getVal("radius", "min"),
+                       graph.getVal("radius", "max"),
+                       graph.getVal("radius", "step"), "gray");
+    setPolarGridAngle(graph.getVal("angle", "min"),
+                      graph.getVal("angle", "max"),
+                      graph.getVal("angle", "step"), "gray");
+    paint();
   }
 }

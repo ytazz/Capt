@@ -1,5 +1,7 @@
 #include "setting_widget.h"
 
+namespace CA {
+
 SettingWidget::SettingWidget(QWidget *parent, int width, int height)
     : QWidget(parent) {
   // number of pages
@@ -60,3 +62,5 @@ void SettingWidget::pageHelp() {
   stackedWidget->setCurrentWidget(page[HELP]);
   printf("page 3\n");
 }
+
+} // namespace CA

@@ -33,33 +33,36 @@ protected:
   void paintCartesianGrid(float min, float max, float step);
   void paintCartesian(float x, float y, const char *color_name);
 
+public slots:
+  void setPolarGridRadius(float min, float max, float step,
+                          const char *color_name);
+  void setPolarGridAngle(float min, float max, float step,
+                         const char *color_name);
+  void setPolarPoint(Vector2 point, const char *color_name);
+  void setPolarPoints(std::vector<Vector2> point, const char *color_name);
+  void setPolarPolygon(std::vector<Vector2> vertex, const char *color_name);
+  // paint function
+  void paint();
+  void reset();
+
 public:
   // get RGB from color name
   void color(const char *color_name);
-
-  // paint function
-  void paint();
 
   // window size
   const float window_size;
   const float offset_angle;
 
-  // for polar coordinate
+  // for polar coordinate plot
+  // grid
   bool paint_polar_r_grid, paint_polar_t_grid;
   const char *polar_grid_color;
   float polar_r_min, polar_r_max, polar_r_step;
   float polar_t_min, polar_t_max, polar_t_step;
-  void setPolarGridRadius(float min, float max, float step,
-                          const char *color_name);
-  void setPolarGridAngle(float min, float max, float step,
-                         const char *color_name);
-
+  // point & polygon
   bool paint_polar_point;
   bool paint_polar_points;
   bool paint_polar_polygon;
-  void setPolarPoint(Vector2 point, const char *color_name);
-  void setPolarPoints(std::vector<Vector2> points, const char *color_name);
-  void setPolarPolygon(std::vector<Vector2> vertices, const char *color_name);
 
   int windowWidth, windowHeight;
 };

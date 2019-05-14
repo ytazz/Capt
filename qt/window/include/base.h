@@ -1,14 +1,12 @@
-#ifndef BASE_H
-#define BASE_H
+#ifndef __BASE_H__
+#define __BASE_H__
 
-enum item {
-  GRAPH,
-  ANALYSIS,
-  SEARCH,
-  HELP,
-  NumberOfItem
-};
+#include "vector.h"
+#include <string.h>
+#include <vector>
+
+enum item { GRAPH, ANALYSIS, SEARCH, HELP, NumberOfItem };
 
 typedef int item_t;
 
-#endif // BASE_H
+#endif // __BASE_H__

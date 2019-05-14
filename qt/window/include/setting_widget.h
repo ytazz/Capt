@@ -1,11 +1,13 @@
-#ifndef SETTING_WIDGET_H
-#define SETTING_WIDGET_H
+#ifndef __SETTING_WIDGET_H__
+#define __SETTING_WIDGET_H__
 
 #include "base.h"
 #include "section.h"
 #include "setting_item.h"
 #include <QtGui>
 #include <QtWidgets>
+
+namespace CA {
 
 class SettingWidget : public QWidget {
   Q_OBJECT
@@ -16,6 +18,8 @@ public:
   ~SettingWidget();
 
   void setWindowColor();
+
+  SettingItem *page[NumberOfItem];
 
 public slots:
   void pageGraph();
@@ -30,7 +34,8 @@ private:
   QStackedWidget *stackedWidget;
 
   int numPage;
-  QWidget *page[NumberOfItem];
 };
 
-#endif // SETTING_WIDGET_H
+} // namespace CA
+
+#endif // __SETTING_WIDGET_H__

@@ -40,9 +40,9 @@ MainWindow::MainWindow(QWidget *parent)
 
   createConnection();
 
-  widgetScene->setPolarGridRadius(0.2, 0.8, 0.1, "gray");
-  widgetScene->setPolarGridAngle(M_PI_2, M_PI * 2, M_PI / 8, "gray");
-  widgetScene->paint();
+  // widgetScene->setPolarGridRadius(0.2, 0.8, 0.1, "gray");
+  // widgetScene->setPolarGridAngle(M_PI_2, M_PI * 2, M_PI / 8, "gray");
+  // widgetScene->paint();
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -56,6 +56,12 @@ void MainWindow::createConnection() {
           &SettingWidget::pageSearch);
   connect(widgetMenu->buttonHelp, &menuButton::pressed, widgetSetting,
           &SettingWidget::pageHelp);
+  connect(widgetSetting->page[GRAPH], &SettingItem::setPolarGridRadius,
+          widgetScene, &GLWidget::setPolarGridRadius);
+  connect(widgetSetting->page[GRAPH], &SettingItem::setPolarGridAngle,
+          widgetScene, &GLWidget::setPolarGridAngle);
+  connect(widgetSetting->page[GRAPH], &SettingItem::paint, widgetScene,
+          &GLWidget::paint);
 }
 
 void MainWindow::createActions() {

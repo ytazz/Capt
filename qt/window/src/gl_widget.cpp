@@ -63,7 +63,14 @@ void GLWidget::color(const char *color_name) {
     glColor3f(0.0, 0.0, 0.0);
 }
 
-void GLWidget::paint() { paintGL(); }
+void GLWidget::paint() { update(); }
+
+void GLWidget::reset() {
+  paint_polar_point = false;
+  paint_polar_points = false;
+  paint_polar_polygon = false;
+  update();
+}
 
 void GLWidget::setPolarGridRadius(float min, float max, float step,
                                   const char *color_name) {

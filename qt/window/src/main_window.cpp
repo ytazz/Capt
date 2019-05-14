@@ -1,6 +1,8 @@
 #include "main_window.h"
 #include "ui_mainwindow.h"
 
+namespace CA {
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
@@ -38,7 +40,8 @@ MainWindow::MainWindow(QWidget *parent)
 
   createConnection();
 
-  widgetScene->setPolarGrid(0.0, 0.0, 0.0);
+  widgetScene->setPolarGridRadius(0.2, 0.8, 0.1, "gray");
+  widgetScene->setPolarGridAngle(M_PI_2, M_PI * 2, M_PI / 8, "gray");
   widgetScene->paint();
 }
 
@@ -94,3 +97,5 @@ void MainWindow::setWindowColor(QWidget *widget, int width, int height,
   plabel->setPalette(palette);
   plabel->setAutoFillBackground(true);
 }
+
+} // namespace CA

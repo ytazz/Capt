@@ -2,23 +2,53 @@
 
 namespace CA {
 
-double Vector2::norm() { return sqrt(x * x + y * y); }
-
-void Vector2::print(std::string s) {
-  printf("%s [ %lf, %lf ]\n", s.c_str(), x, y);
+void Vector2::setPolar(float radius, float theta) {
+  this->r = radius;
+  this->t = theta;
+  polarToCartesian();
 }
 
-void Vector2::print() { print(""); }
+void Vector2::setCartesian(float x, float y) {
+  this->x = x;
+  this->y = y;
+  cartesianToPolar();
+}
+
+void Vector2::polarToCartesian() {
+  this->x = this->r * cos(this->t);
+  this->y = this->r * sin(this->t);
+}
+
+void Vector2::cartesianToPolar() {
+  this->r = norm();
+  this->t = atan2f(this->y, this->x);
+  if (this->t < 0.0) {
+    this->t += 2 * M_PI;
+  }
+}
+
+float Vector2::norm() { return sqrt(x * x + y * y); }
+
+void Vector2::printCartesian(std::string str) {
+  printf("%s [ %lf, %lf ]\n", str.c_str(), this->x, this->y);
+}
+
+void Vector2::printPolar(std::string str) {
+  printf("%s [ %lf, %lf ]\n", str.c_str(), this->r, this->t);
+}
 
 void Vector2::operator=(const Vector2 &v) {
   this->x = v.x;
   this->y = v.y;
+  this->r = v.r;
+  this->t = v.t;
 }
 
 Vector2 Vector2::operator+(const Vector2 &v) {
   Vector2 vec;
   vec.x = this->x + v.x;
   vec.y = this->y + v.y;
+  vec.cartesianToPolar();
   return vec;
 }
 
@@ -26,97 +56,38 @@ Vector2 Vector2::operator-(const Vector2 &v) {
   Vector2 vec;
   vec.x = this->x - v.x;
   vec.y = this->y - v.y;
+  vec.cartesianToPolar();
   return vec;
 }
 
-double Vector2::operator%(const Vector2 &v) {
-  double product;
+float Vector2::operator%(const Vector2 &v) {
+  float product;
   product = this->x * v.y - this->y * v.x;
   return product;
 }
 
-Vector2 Vector2::operator*(const double &d) {
+Vector2 Vector2::operator*(const float &d) {
   Vector2 vec;
   vec.x = this->x * d;
   vec.y = this->y * d;
+  vec.r = this->r * d;
+  vec.t = this->t;
   return vec;
 }
 
-double Vector2::operator*(const Vector2 &v) {
-  double product = 0.0;
+float Vector2::operator*(const Vector2 &v) {
+  float product = 0.0;
   product += this->x * v.x;
   product += this->y * v.y;
   return product;
 }
 
-Vector2 operator*(const double &d, const Vector2 &v) {
+Vector2 operator*(const float &d, const Vector2 &v) {
   Vector2 vec;
   vec.x = v.x * d;
   vec.y = v.y * d;
-  return vec;
-}
-
-double Vector3::norm() { return sqrt(x * x + y * y + z * z); }
-
-double Vector3::normXY() { return sqrt(x * x + y * y); }
-
-void Vector3::print(std::string s) {
-  printf("%s [ %lf, %lf, %lf ]\n", s.c_str(), x, y, z);
-}
-
-void Vector3::print() { print(""); }
-
-void Vector3::operator=(const Vector3 &v) {
-  this->x = v.x;
-  this->y = v.y;
-  this->z = v.z;
-}
-
-Vector3 Vector3::operator+(const Vector3 &v) {
-  Vector3 vec;
-  vec.x = this->x + v.x;
-  vec.y = this->y + v.y;
-  vec.z = this->z + v.z;
-  return vec;
-}
-
-Vector3 Vector3::operator-(const Vector3 &v) {
-  Vector3 vec;
-  vec.x = this->x - v.x;
-  vec.y = this->y - v.y;
-  vec.z = this->z - v.z;
-  return vec;
-}
-
-Vector3 Vector3::operator%(const Vector3 &v) {
-  Vector3 vec;
-  vec.x = this->y * v.z - this->z * v.y;
-  vec.y = this->z * v.x - this->x * v.z;
-  vec.z = this->x * v.y - this->y * v.x;
-  return vec;
-}
-
-Vector3 Vector3::operator*(const double &d) {
-  Vector3 vec;
-  vec.x = this->x * d;
-  vec.y = this->y * d;
-  vec.z = this->z * d;
-  return vec;
-}
-
-double Vector3::operator*(const Vector3 &v) {
-  double product = 0.0;
-  product += this->x * v.x;
-  product += this->y * v.y;
-  product += this->z * v.z;
-  return product;
-}
-
-Vector3 operator*(const double &d, const Vector3 &v) {
-  Vector3 vec;
-  vec.x = v.x * d;
-  vec.y = v.y * d;
-  vec.z = v.z * d;
+  vec.r = v.r * d;
+  vec.t = v.t;
   return vec;
 }
 

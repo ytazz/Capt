@@ -1,6 +1,8 @@
 #include "main_window.h"
 #include <QApplication>
 
+using namespace CA;
+
 int main(int argc, char *argv[]) {
   QApplication a(argc, argv);
   MainWindow w;

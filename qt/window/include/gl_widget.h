@@ -5,8 +5,16 @@
 #include <QWidget>
 // #include <gl/GL.h>
 // #include <gl/GLU.h>
+#include "vector.h"
 #include <GL/freeglut.h>
 #include <GL/glut.h>
+
+namespace CA {
+
+struct GLPoint {
+  Vector2 point;
+  std::string color;
+};
 
 class GLWidget : public QOpenGLWidget {
 public:
@@ -18,6 +26,13 @@ protected:
   void resizeGL(int w, int h);
   void paintGL();
 
+  // for polar coordinate
+  void paintPolarGrid();
+  void paintPolar(float radius, float angle, const char *color_name);
+  // for cartesian coordinate
+  void paintCartesianGrid(float min, float max, float step);
+  void paintCartesian(float x, float y, const char *color_name);
+
 public:
   // get RGB from color name
   void color(const char *color_name);
@@ -25,17 +40,30 @@ public:
   // paint function
   void paint();
 
+  // window size
+  const float window_size;
+  const float offset_angle;
+
   // for polar coordinate
-  bool paint_polar_grid;
-  float polar_min, polar_max, polar_step;
-  void setPolarGrid(float min, float max, float step);
-  void paintPolarGrid(float min, float max, float step);
-  void paintPolar(float radius, float angle, const char *color_name);
-  // for cartesian coordinate
-  void paintCartesianGrid(float min, float max, float step);
-  void paintCartesian(float x, float y, const char *color_name);
+  bool paint_polar_r_grid, paint_polar_t_grid;
+  const char *polar_grid_color;
+  float polar_r_min, polar_r_max, polar_r_step;
+  float polar_t_min, polar_t_max, polar_t_step;
+  void setPolarGridRadius(float min, float max, float step,
+                          const char *color_name);
+  void setPolarGridAngle(float min, float max, float step,
+                         const char *color_name);
+
+  bool paint_polar_point;
+  bool paint_polar_points;
+  bool paint_polar_polygon;
+  void setPolarPoint(Vector2 point, const char *color_name);
+  void setPolarPoints(std::vector<Vector2> points, const char *color_name);
+  void setPolarPolygon(std::vector<Vector2> vertices, const char *color_name);
 
   int windowWidth, windowHeight;
 };
+
+} // namespace CA
 
 #endif // __GL_WIDGET_H__

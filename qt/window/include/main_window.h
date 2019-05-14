@@ -18,6 +18,8 @@ namespace Ui {
 class MainWindow;
 }
 
+namespace CA {
+
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -49,5 +51,7 @@ private:
   QWidget *widgetDetail;
   QWidget *widgetConsole;
 };
+
+} // namespace CA
 
 #endif // MAIN_WINDOW_H

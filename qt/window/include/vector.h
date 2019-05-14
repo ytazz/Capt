@@ -8,46 +8,30 @@
 namespace CA {
 
 struct Vector2 {
-  double x;
-  double y;
-  double norm();
+  void setPolar(float radius, float theta);
+  void setCartesian(float x, float y);
 
-  void print(std::string str);
-  void print();
+  void printPolar(std::string str);
+  void printCartesian(std::string str);
+
+  float r, t;
+  float x, y;
+  float norm();
 
   void operator=(const Vector2 &v);
 
   Vector2 operator+(const Vector2 &v);
   Vector2 operator-(const Vector2 &v);
-  double operator%(const Vector2 &v);
-  Vector2 operator*(const double &d);
-  double operator*(const Vector2 &v);
+  float operator%(const Vector2 &v);
+  Vector2 operator*(const float &d);
+  float operator*(const Vector2 &v);
+
+private:
+  void cartesianToPolar();
+  void polarToCartesian();
 };
 
-Vector2 operator*(const double &d, const Vector2 &v);
-
-struct Vector3 {
-  double x;
-  double y;
-  double z;
-  double norm();
-  double normXY();
-
-  void print(std::string str);
-  void print();
-
-  void operator=(const Vector3 &v);
-
-  Vector3 operator+(const Vector3 &v);
-
-  Vector3 operator-(const Vector3 &v);
-
-  Vector3 operator%(const Vector3 &v);
-  Vector3 operator*(const double &d);
-  double operator*(const Vector3 &v);
-};
-
-Vector3 operator*(const double &d, const Vector3 &v);
+Vector2 operator*(const float &d, const Vector2 &v);
 
 } // namespace CA
 

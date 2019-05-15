@@ -17,6 +17,12 @@ GLWidget::GLWidget(QWidget *parent, int width, int height)
   polar_t_min = 0.0;
   polar_t_max = 0.0;
   polar_t_step = 0.0;
+
+  paint_point = false;
+  paint_polygon = false;
+
+  point.clear();
+  polygon.clear();
 }
 
 GLWidget::~GLWidget() {}
@@ -32,6 +38,10 @@ void GLWidget::initializeGL() {
 
 void GLWidget::paintGL() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  if (paint_point)
+    paintPolarPoint();
+  if (paint_polygon)
+    paintPolarPolygon();
   if (paint_polar_r_grid && paint_polar_t_grid)
     paintPolarGrid();
 }
@@ -66,9 +76,8 @@ void GLWidget::color(const char *color_name) {
 void GLWidget::paint() { update(); }
 
 void GLWidget::reset() {
-  paint_polar_point = false;
-  paint_polar_points = false;
-  paint_polar_polygon = false;
+  paint_point = false;
+  paint_polygon = false;
   update();
 }
 
@@ -92,8 +101,54 @@ void GLWidget::setPolarGridAngle(float min, float max, float step,
   polar_grid_color = color_name;
 }
 
-void GLWidget::setPolarPoint(Vector2 point, const char *color_name) {
-  paint_polar_point = true;
+void GLWidget::setPoint(Vector2 point, const char *color_name) {
+  std::vector<Vector2> vec;
+  vec.push_back(point);
+  setPoints(vec, color_name);
+}
+void GLWidget::setPoints(std::vector<Vector2> point, const char *color_name) {
+  std::vector<GLPoint> p;
+  GLPoint gp;
+  for (size_t i = 0; i < point.size(); i++) {
+    gp.color = color_name;
+    gp.point = point[i];
+    p.push_back(gp);
+  }
+  this->point.push_back(p);
+  printf("%d\n", (int)point.size());
+
+  paint_point = true;
+}
+
+void GLWidget::setPolygon(std::vector<Vector2> vertex, const char *color_name) {
+  std::vector<GLPoint> p;
+  GLPoint gp;
+  for (size_t i = 0; i < vertex.size(); i++) {
+    gp.color = color_name;
+    gp.point = vertex[i];
+    p.push_back(gp);
+  }
+  this->polygon.push_back(p);
+
+  paint_polygon = true;
+}
+
+void GLWidget::glPolar2f(const float radius, const float theta) {
+  float plot_x, plot_y;
+  plot_x = radius * cos(theta + offset_angle);
+  plot_y = radius * sin(theta + offset_angle);
+  plot_x *= window_size / polar_r_max;
+  plot_y *= window_size / polar_r_max;
+  glVertex2f(plot_x, plot_y);
+}
+
+void GLWidget::glCartesian2f(const float x, const float y) {
+  float plot_x, plot_y;
+  plot_x = x * cos(offset_angle) - y * sin(offset_angle);
+  plot_y = x * sin(offset_angle) + y * cos(offset_angle);
+  plot_x *= window_size / polar_r_max;
+  plot_y *= window_size / polar_r_max;
+  glVertex2f(plot_x, plot_y);
 }
 
 void GLWidget::paintPolarGrid() {
@@ -104,12 +159,12 @@ void GLWidget::paintPolarGrid() {
   bool continue_flag = true;
   float theta = polar_t_min;
   while (continue_flag) {
-    glVertex3f(
+    glVertex2f(
         polar_r_min * window_size / polar_r_max * cos(theta + offset_angle),
-        polar_r_min * window_size / polar_r_max * sin(theta + offset_angle), 0);
-    glVertex3f(
+        polar_r_min * window_size / polar_r_max * sin(theta + offset_angle));
+    glVertex2f(
         polar_r_max * window_size / polar_r_max * cos(theta + offset_angle),
-        polar_r_max * window_size / polar_r_max * sin(theta + offset_angle), 0);
+        polar_r_max * window_size / polar_r_max * sin(theta + offset_angle));
     theta += polar_t_step;
     if (theta > polar_t_max + polar_t_step / 2.0) {
       continue_flag = false;
@@ -122,18 +177,43 @@ void GLWidget::paintPolarGrid() {
     for (int i = 0; i < resolution; i++) {
       theta =
           polar_t_min + (polar_t_max - polar_t_min) * (float)(i) / resolution;
-      glVertex3f(radius * window_size / polar_r_max * cos(theta + offset_angle),
-                 radius * window_size / polar_r_max * sin(theta + offset_angle),
-                 0);
+      glVertex2f(radius * window_size / polar_r_max * cos(theta + offset_angle),
+                 radius * window_size / polar_r_max *
+                     sin(theta + offset_angle));
       theta = polar_t_min +
               (polar_t_max - polar_t_min) * (float)(i + 1) / resolution;
-      glVertex3f(radius * window_size / polar_r_max * cos(theta + offset_angle),
-                 radius * window_size / polar_r_max * sin(theta + offset_angle),
-                 0);
+      glVertex2f(radius * window_size / polar_r_max * cos(theta + offset_angle),
+                 radius * window_size / polar_r_max *
+                     sin(theta + offset_angle));
     }
     radius += polar_r_step;
     if (radius > polar_r_max + polar_r_step / 2.0) {
       continue_flag = false;
+    }
+  }
+  glEnd();
+}
+
+void GLWidget::paintPolarPoint() {
+  glPointSize(10);
+  glEnable(GL_POINT_SMOOTH);
+  glBegin(GL_POINTS);
+  for (size_t i = 0; i < point.size(); i++) {
+    for (size_t j = 0; j < point[i].size(); j++) {
+      color(point[i][j].color);
+      glPolar2f(point[i][j].point.r, point[i][j].point.t);
+    }
+  }
+  glEnd();
+}
+
+void GLWidget::paintPolarPolygon() {
+  glBegin(GL_LINES);
+  for (size_t i = 0; i < polygon.size(); i++) {
+    for (size_t j = 0; j < polygon[i].size() - 1; j++) {
+      color(polygon[i][j].color);
+      glPolar2f(polygon[i][j].point.r, polygon[i][j].point.t);
+      glPolar2f(polygon[i][j + 1].point.r, polygon[i][j + 1].point.t);
     }
   }
   glEnd();

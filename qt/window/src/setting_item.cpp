@@ -171,6 +171,11 @@ void SettingItem::openFile() {
     setPolarGridAngle(graph.getVal("angle", "min"),
                       graph.getVal("angle", "max"),
                       graph.getVal("angle", "step"), "gray");
+
+    Model model("nao.xml");
+    model.parse();
+    setPolygon(model.getVec("link", "foot_r"), "black");
+    setPoints(model.getVec("link", "foot_r"), "blue");
     paint();
   }
 }

@@ -98,7 +98,8 @@ Vector2 Loader::convertStrToVec(const std::string &str) {
     val2 += str[i];
   }
 
-  Vector2 vec = {stof(val1), stof(val2)};
+  Vector2 vec;
+  vec.setCartesian(stof(val1), stof(val2));
   return vec;
 }
 

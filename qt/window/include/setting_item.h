@@ -30,9 +30,9 @@ signals:
                           const char *color_name);
   void setPolarGridAngle(float min, float max, float step,
                          const char *color_name);
-  void setPolarPoint(Vector2 point, const char *color_name);
-  void setPolarPoints(std::vector<Vector2> point, const char *color_name);
-  void setPolarPolygon(std::vector<Vector2> vertex, const char *color_name);
+  void setPoint(Vector2 point, const char *color_name);
+  void setPoints(std::vector<Vector2> point, const char *color_name);
+  void setPolygon(std::vector<Vector2> vertex, const char *color_name);
   void paint();
   void reset();
 

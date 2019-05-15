@@ -13,7 +13,7 @@ namespace CA {
 
 struct GLPoint {
   Vector2 point;
-  std::string color;
+  const char *color;
 };
 
 class GLWidget : public QOpenGLWidget {
@@ -28,6 +28,8 @@ protected:
 
   // for polar coordinate
   void paintPolarGrid();
+  void paintPolarPoint();
+  void paintPolarPolygon();
   void paintPolar(float radius, float angle, const char *color_name);
   // for cartesian coordinate
   void paintCartesianGrid(float min, float max, float step);
@@ -38,14 +40,18 @@ public slots:
                           const char *color_name);
   void setPolarGridAngle(float min, float max, float step,
                          const char *color_name);
-  void setPolarPoint(Vector2 point, const char *color_name);
-  void setPolarPoints(std::vector<Vector2> point, const char *color_name);
-  void setPolarPolygon(std::vector<Vector2> vertex, const char *color_name);
+  void setPoint(Vector2 point, const char *color_name);
+  void setPoints(std::vector<Vector2> point, const char *color_name);
+  void setPolygon(std::vector<Vector2> vertex, const char *color_name);
   // paint function
   void paint();
   void reset();
 
 public:
+  // plot
+  void glPolar2f(const float radius, const float theta);
+  void glCartesian2f(const float x, const float y);
+
   // get RGB from color name
   void color(const char *color_name);
 
@@ -60,9 +66,9 @@ public:
   float polar_r_min, polar_r_max, polar_r_step;
   float polar_t_min, polar_t_max, polar_t_step;
   // point & polygon
-  bool paint_polar_point;
-  bool paint_polar_points;
-  bool paint_polar_polygon;
+  bool paint_point, paint_polygon;
+  std::vector<std::vector<GLPoint>> point;
+  std::vector<std::vector<GLPoint>> polygon;
 
   int windowWidth, windowHeight;
 };

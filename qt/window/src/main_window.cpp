@@ -62,6 +62,12 @@ void MainWindow::createConnection() {
           widgetScene, &GLWidget::setPolarGridAngle);
   connect(widgetSetting->page[GRAPH], &SettingItem::paint, widgetScene,
           &GLWidget::paint);
+  connect(widgetSetting->page[GRAPH], &SettingItem::setPoint, widgetScene,
+          &GLWidget::setPoint);
+  connect(widgetSetting->page[GRAPH], &SettingItem::setPoints, widgetScene,
+          &GLWidget::setPoints);
+  connect(widgetSetting->page[GRAPH], &SettingItem::setPolygon, widgetScene,
+          &GLWidget::setPolygon);
 }
 
 void MainWindow::createActions() {

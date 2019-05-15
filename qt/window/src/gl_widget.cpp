@@ -115,7 +115,6 @@ void GLWidget::setPoints(std::vector<Vector2> point, const char *color_name) {
     p.push_back(gp);
   }
   this->point.push_back(p);
-  printf("%d\n", (int)point.size());
 
   paint_point = true;
 }
@@ -153,6 +152,7 @@ void GLWidget::glCartesian2f(const float x, const float y) {
 
 void GLWidget::paintPolarGrid() {
   const int resolution = 100;
+  glLineWidth(1);
   glBegin(GL_LINES);
   color(polar_grid_color);
   // radius-axis (line)
@@ -208,6 +208,7 @@ void GLWidget::paintPolarPoint() {
 }
 
 void GLWidget::paintPolarPolygon() {
+  glLineWidth(3);
   glBegin(GL_LINES);
   for (size_t i = 0; i < polygon.size(); i++) {
     for (size_t j = 0; j < polygon[i].size() - 1; j++) {

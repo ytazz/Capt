@@ -37,14 +37,16 @@ void MenuWidget::setWindowColor() {
 }
 
 menuButton *MenuWidget::getButton(int index) {
+  menuButton *correspond_button = NULL;
   if (index == 0)
-    return buttonGraph;
+    correspond_button = buttonGraph;
   if (index == 1)
-    return buttonAnalysis;
+    correspond_button = buttonAnalysis;
   if (index == 2)
-    return buttonSearch;
+    correspond_button = buttonSearch;
   if (index == 3)
-    return buttonHelp;
+    correspond_button = buttonHelp;
+  return correspond_button;
 }
 
 void MenuWidget::connectSignalSlot() {

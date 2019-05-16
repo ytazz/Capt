@@ -8,5 +8,6 @@
         <file>icons/help_.png</file>
         <file>icons/search.png</file>
         <file>icons/search_.png</file>
+        <file>icons/window.png</file>
     </qresource>
 </RCC>

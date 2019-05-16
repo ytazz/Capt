@@ -5,6 +5,6 @@
   <unit length="m" angle="deg"/>
 
   <radius min="0.0" max="0.2" step="0.01" tick="0.05"/>
-  <angle  min="0"   max="360" step="5"   tick="90"/>
+  <angle  min="0"   max="360" step="10"   tick="90"/>
 
 </coordinate>

@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
   widgetMenu = new MenuWidget(this, 80, 890);
   widgetSetting = new SettingWidget(this, 240, 890);
   widgetScene = new GLWidget(this, 700, 700);
-  QWidget *widgetDetail = new QWidget();
+  widgetDetail = new DetailWidget(this, 250, 700);
   QWidget *widgetConsole = new QWidget();
 
   QGridLayout *layout = new QGridLayout;
@@ -32,17 +32,11 @@ MainWindow::MainWindow(QWidget *parent)
   layout->addWidget(widgetConsole, 1, 2, 1, 2);
   this->centralWidget()->setLayout(layout);
 
-  widgetDetail->setFixedSize(250, 700);
   widgetConsole->setFixedSize(950, 186);
 
-  setWindowColor(widgetDetail, 250, 700, QColor("#FFFFFF"));
   setWindowColor(widgetConsole, 950, 186, QColor("#FFFFFF"));
 
   createConnection();
-
-  // widgetScene->setPolarGridRadius(0.2, 0.8, 0.1, "gray");
-  // widgetScene->setPolarGridAngle(M_PI_2, M_PI * 2, M_PI / 8, "gray");
-  // widgetScene->paint();
 }
 
 MainWindow::~MainWindow() { delete ui; }

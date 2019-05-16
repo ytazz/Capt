@@ -175,7 +175,18 @@ void SettingItem::openFile() {
     Model model("nao.xml");
     model.parse();
     setPolygon(model.getVec("link", "foot_r"), "black");
-    setPoints(model.getVec("link", "foot_r"), "blue");
+    std::vector<Vector2> steppable;
+    Vector2 vec;
+    float radius, angle;
+    for (int i = 0; i <= 4; i++) {
+      radius = 0.12 + 0.01 * i;
+      for (int j = 0; j <= 7; j++) {
+        angle = M_PI / 3.0 + M_PI / 18.0 * j;
+        vec.setPolar(radius, angle);
+        steppable.push_back(vec);
+      }
+    }
+    setPoints(steppable, "blue");
     paint();
   }
 }

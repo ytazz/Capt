@@ -162,12 +162,16 @@ void Model::callbackAttribute(const std::string &name,
     case REVERSE:
       if (foot == RFOOT) {
         for (size_t i = 0; i < foot_l.size(); i++) {
-          foot_r.push_back({foot_l[i].x, -foot_l[i].y});
+          Vector2 v;
+          v.setCartesian(foot_l[i].x, -foot_l[i].y);
+          foot_r.push_back(v);
         }
       }
       if (foot == LFOOT)
         for (size_t i = 0; i < foot_r.size(); i++) {
-          foot_l.push_back({foot_r[i].x, -foot_r[i].y});
+          Vector2 v;
+          v.setCartesian(foot_r[i].x, -foot_r[i].y);
+          foot_l.push_back(v);
         }
       break;
     default:

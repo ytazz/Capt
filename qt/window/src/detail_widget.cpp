@@ -13,7 +13,7 @@ DetailWidget::DetailWidget(QWidget *parent, int width, int height)
   setWindowColor(QColor("#FFFFFF"));
 
   // layout
-  // layout();
+  layout = NULL;
 }
 
 DetailWidget::~DetailWidget() {}
@@ -28,27 +28,44 @@ void DetailWidget::setWindowColor(QColor color) {
   plabel->setAutoFillBackground(true);
 }
 
-void DetailWidget::layout() {
-  QGridLayout *layout = new QGridLayout;
-  layout->setSpacing(0);
-  layout->setMargin(0);
-  layout->setContentsMargins(0, 0, 0, 0);
-  QLabel *label = new QLabel(this);
-  label->setText(tr("hello"));
-  label->setFixedSize(width, 20);
-  layout->addWidget(label, 0, 0);
-  layout->addWidget(label, 0, 1);
-  // layout->addStretch();
-  this->setLayout(layout);
+void DetailWidget::setLegend(char *name, char *type, char *color) {
+  Legend l;
+  l.name = name;
+  l.type = type;
+  l.color = color;
+  legend.push_back(l);
 }
 
-// void MainWindow::paintEvent(QPaintEvent *) //描画イベント
-// {
-//   QPainter painter(this);
-//   painter.setRenderHint(QPainter::Antialiasing, true);
-//   //アンチエイリアスセット painter.setPen(QPen(Qt::black, 12,
-//   Qt::DashDotLine, Qt::RoundCap)); painter.setBrush(QBrush(Qt::green,
-//   Qt::SolidPattern)); painter.drawEllipse(80, 80, 400, 240); //楕円描画
-// }
+void DetailWidget::updateLayout() {
+  QTableWidget *table = new QTableWidget(this);
+
+  // 不要かも
+  table->clear();
+
+  // テーブルサイズを決定
+  table->setColumnCount(2);
+  table->setRowCount(20);
+
+  // 列のタイトル文字列を一度に指定
+  table->setHorizontalHeaderLabels(QStringList()
+                                   << tr("Title 1") << tr("Title 2"));
+
+  // セルを埋める
+  table->setItem(0, 0, new QTableWidgetItem("a"));
+  table->setItem(0, 1, new QTableWidgetItem("")); // 空白の場合
+
+  // 行の高さを指定　行ごとに指定する必要がある様子
+  table->setRowHeight(0, 20);
+
+  // 一行選択モードに設定
+  table->setSelectionMode(QAbstractItemView::ContiguousSelection);
+  table->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+  table->setMaximumHeight(height);
+  table->setMinimumHeight(height);
+  table->setMaximumWidth(width);
+  table->setMinimumWidth(width);
+  // this->setWidget(table);
+}
 
 } // namespace CA

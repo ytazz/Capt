@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
   widgetScene = new GLWidget(this, 700, 700);
   widgetDetail = new DetailWidget(this, 250, 700);
   QWidget *widgetConsole = new QWidget();
+  widgetDetail->updateLayout();
 
   QGridLayout *layout = new QGridLayout;
   layout->setSpacing(0);

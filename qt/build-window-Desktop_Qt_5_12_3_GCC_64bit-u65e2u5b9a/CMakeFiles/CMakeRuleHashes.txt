@@ -1,0 +1,4 @@
+# Hashes of file build rules.
+10fd69498275a9abc881fd826791b8b0 CMakeFiles/window_automoc
+1a4d1c4be43290edf37cb8333e01f732 qrc_icons.cpp
+13361d385051f7b90c0e3f4848000dbf ui_mainwindow.h

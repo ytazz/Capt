@@ -1,0 +1,4 @@
+/home/kuribayashi/study/qt/build-window-Desktop_Qt_5_12_3_GCC_64bit-u65e2u5b9a/CMakeFiles/edit_cache.dir
+/home/kuribayashi/study/qt/build-window-Desktop_Qt_5_12_3_GCC_64bit-u65e2u5b9a/CMakeFiles/rebuild_cache.dir
+/home/kuribayashi/study/qt/build-window-Desktop_Qt_5_12_3_GCC_64bit-u65e2u5b9a/CMakeFiles/window.dir
+/home/kuribayashi/study/qt/build-window-Desktop_Qt_5_12_3_GCC_64bit-u65e2u5b9a/CMakeFiles/window_automoc.dir

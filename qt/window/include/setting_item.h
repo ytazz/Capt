@@ -4,6 +4,7 @@
 #include "base.h"
 #include "graph.h"
 #include "model.h"
+#include "param.h"
 #include "section.h"
 #include "vector.h"
 #include <QtGui>

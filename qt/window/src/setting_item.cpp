@@ -187,6 +187,10 @@ void SettingItem::openFile() {
       }
     }
     setPoints(steppable, "blue");
+
+    Param param("analysis.xml");
+    param.parse();
+    param.print();
     paint();
   }
 }

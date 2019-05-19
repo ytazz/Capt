@@ -38,34 +38,12 @@ void DetailWidget::setLegend(char *name, char *type, char *color) {
 
 void DetailWidget::updateLayout() {
   QTableWidget *table = new QTableWidget(this);
-
-  // 不要かも
-  table->clear();
-
-  // テーブルサイズを決定
+  table->setFixedSize(width, height);
+  table->setRowCount(22);
   table->setColumnCount(2);
-  table->setRowCount(20);
-
-  // 列のタイトル文字列を一度に指定
-  table->setHorizontalHeaderLabels(QStringList()
-                                   << tr("Title 1") << tr("Title 2"));
-
-  // セルを埋める
-  table->setItem(0, 0, new QTableWidgetItem("a"));
-  table->setItem(0, 1, new QTableWidgetItem("")); // 空白の場合
-
-  // 行の高さを指定　行ごとに指定する必要がある様子
-  table->setRowHeight(0, 20);
-
-  // 一行選択モードに設定
-  table->setSelectionMode(QAbstractItemView::ContiguousSelection);
-  table->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-  table->setMaximumHeight(height);
-  table->setMinimumHeight(height);
-  table->setMaximumWidth(width);
-  table->setMinimumWidth(width);
-  // this->setWidget(table);
+  table->verticalHeader()->setVisible(false);
+  table->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  table->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 } // namespace CA

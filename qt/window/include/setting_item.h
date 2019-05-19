@@ -27,14 +27,24 @@ public:
   QToolButton *button_file;
 
 signals:
-  void setPolarGridRadius(float min, float max, float step,
-                          const char *color_name);
-  void setPolarGridAngle(float min, float max, float step,
-                         const char *color_name);
-  void setPoint(Vector2 point, const char *color_name);
-  void setPoints(std::vector<Vector2> point, const char *color_name);
-  void setPolygon(std::vector<Vector2> vertex, const char *color_name);
+  // set point & line parameters
+  // common
+  void setPoint(Vector2 point, const char *color);
+  void setPoints(std::vector<Vector2> point, const char *color);
+  void setLine(std::vector<Vector2> vertex, const char *color);
+  void setCircle(Vector2 center, float radius, const char *color);
+  void setArc(Vector2 center, float radius, float start_angle, float end_angle,
+              const char *color);
+  // polar
+  void setPolarGridRadius(float min, float max, float step, const char *color);
+  void setPolarGridAngle(float min, float max, float step, const char *color);
+  // cartesian
+  void setCartesianGridX(float min, float max, float step, const char *color);
+  void setCartesianGridY(float min, float max, float step, const char *color);
+
+  // paint function
   void paint();
+  // reset all parameters
   void reset();
 
 public slots:

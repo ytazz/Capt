@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::createConnection() {
+  // side button -> page
   connect(widgetMenu->buttonGraph, &menuButton::pressed, widgetSetting,
           &SettingWidget::pageGraph);
   connect(widgetMenu->buttonAnalysis, &menuButton::pressed, widgetSetting,
@@ -51,18 +52,26 @@ void MainWindow::createConnection() {
           &SettingWidget::pageSearch);
   connect(widgetMenu->buttonHelp, &menuButton::pressed, widgetSetting,
           &SettingWidget::pageHelp);
+
+  // widget setting -> graph
+  connect(widgetSetting->page[GRAPH], &SettingItem::setPoint, widgetScene,
+          &GLWidget::setPoint);
+  connect(widgetSetting->page[GRAPH], &SettingItem::setPoints, widgetScene,
+          &GLWidget::setPoints);
+  connect(widgetSetting->page[GRAPH], &SettingItem::setLine, widgetScene,
+          &GLWidget::setLine);
+  connect(widgetSetting->page[GRAPH], &SettingItem::setArc, widgetScene,
+          &GLWidget::setArc);
+  connect(widgetSetting->page[GRAPH], &SettingItem::setCircle, widgetScene,
+          &GLWidget::setCircle);
   connect(widgetSetting->page[GRAPH], &SettingItem::setPolarGridRadius,
           widgetScene, &GLWidget::setPolarGridRadius);
   connect(widgetSetting->page[GRAPH], &SettingItem::setPolarGridAngle,
           widgetScene, &GLWidget::setPolarGridAngle);
   connect(widgetSetting->page[GRAPH], &SettingItem::paint, widgetScene,
           &GLWidget::paint);
-  connect(widgetSetting->page[GRAPH], &SettingItem::setPoint, widgetScene,
-          &GLWidget::setPoint);
-  connect(widgetSetting->page[GRAPH], &SettingItem::setPoints, widgetScene,
-          &GLWidget::setPoints);
-  connect(widgetSetting->page[GRAPH], &SettingItem::setPolygon, widgetScene,
-          &GLWidget::setPolygon);
+  connect(widgetSetting->page[GRAPH], &SettingItem::reset, widgetScene,
+          &GLWidget::reset);
 }
 
 void MainWindow::createActions() {

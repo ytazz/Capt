@@ -28,10 +28,10 @@ public:
 
 private:
   int width, height;
-  int width_name, width_mark, height_name, height_mark;
 
   QGridLayout *layout;
   std::vector<Legend> legend;
+  // std::vector<QLabel*> ;
 };
 
 } // namespace CA

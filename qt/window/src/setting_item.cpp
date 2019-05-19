@@ -174,7 +174,7 @@ void SettingItem::openFile() {
 
     Model model("nao.xml");
     model.parse();
-    setPolygon(model.getVec("link", "foot_r"), "black");
+    setLine(model.getVec("link", "foot_r"), "black");
     std::vector<Vector2> steppable;
     Vector2 vec;
     float radius, angle;
@@ -190,7 +190,12 @@ void SettingItem::openFile() {
 
     Param param("analysis.xml");
     param.parse();
-    param.print();
+
+    Vector2 center;
+    center.setPolar(0.0, 0.0);
+    setArc(center, 0.05, 20 * M_PI / 180, 160 * M_PI / 180, "red");
+    // setCircle(center, 0.1, "red");
+
     paint();
   }
 }

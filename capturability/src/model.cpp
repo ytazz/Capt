@@ -43,9 +43,12 @@ void Model::callbackElement(const std::string &name, const bool is_start) {
         element = PHYSICS;
       if (equalStr(name, "link"))
         element = LINK;
+      if (equalStr(name, "environment"))
+        element = ENVIRONMENT;
       break;
     case UNIT:
     case PHYSICS:
+    case ENVIRONMENT:
       break;
     case LINK:
       if (equalStr(name, "shape"))
@@ -63,6 +66,7 @@ void Model::callbackElement(const std::string &name, const bool is_start) {
       break;
     case UNIT:
     case PHYSICS:
+    case ENVIRONMENT:
     case LINK:
       foot = NOFOOT;
       element = ROBOT;
@@ -126,6 +130,12 @@ void Model::callbackAttribute(const std::string &name,
       step_time_min = std::stof(value);
     if (equalStr(name, "foot_vel_max"))
       foot_vel_max = std::stof(value);
+    break;
+  case ENVIRONMENT:
+    if (equalStr(name, "gravity"))
+      gravity = std::stof(value);
+    if (equalStr(name, "friction"))
+      friction = std::stof(value);
     break;
   case LINK:
     if (equalStr(name, "name")) {
@@ -205,6 +215,12 @@ float Model::getVal(const char *element_name, const char *attribute_name) {
     if (equalStr(attribute_name, "foot_vel_max"))
       val = foot_vel_max;
   }
+  if (equalStr(element_name, "environment")) {
+    if (equalStr(attribute_name, "gravity"))
+      val = gravity;
+    if (equalStr(attribute_name, "friction"))
+      val = friction;
+  }
   return val;
 }
 
@@ -234,6 +250,9 @@ void Model::print() {
   printf("\tcom_height   : %lf\n", com_height);
   printf("\tstep_time_min: %lf\n", step_time_min);
   printf("\tfoot_vel_max : %lf\n", foot_vel_max);
+  printf("environment:\n");
+  printf("\tgravity : %lf\n", gravity);
+  printf("\tfriction: %lf\n", friction);
   printf("link: foot_r\n");
   for (size_t i = 0; i < foot_r.size(); i++) {
     printf("\t%lf, %lf\n", foot_r[i].x, foot_r[i].y);

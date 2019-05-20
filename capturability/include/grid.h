@@ -1,7 +1,9 @@
 #ifndef __GRID_H__
 #define __GRID_H__
 
+#include "input.h"
 #include "param.h"
+#include "state.h"
 #include "vector.h"
 #include <iostream>
 #include <string>
@@ -13,19 +15,18 @@ namespace GridSpace {
 enum Element { MIN, MAX, STEP, NUMELEMENT };
 }
 
-struct State {
-  Vector2 icp;
-  Vector2 swft;
-};
-
-struct Input {
-  Vector2 step;
-};
-
 class Grid {
 public:
   Grid(Param param);
   ~Grid();
+
+  State getState(int index);
+  State getState(int icp_r_id, int icp_th_id, int swft_r_id, int swft_th_id);
+  Input getInput(int index);
+  Input getInput(int swft_r_id, int swft_th_id);
+
+  int getNumState();
+  int getNumInput();
 
 private:
   void create();
@@ -34,13 +35,6 @@ private:
   void setStateCartesian(float icp_x, float icp_y, float swft_x, float swft_y);
   void setInputPolar(float swft_r, float swft_th);
   void setInputCartesian(float swft_x, float swft_y);
-
-  State getState(int index);
-  State getState(int icp_r_id, int icp_th_id, int swft_r_id, int swft_th_id);
-  Input getInput(int index);
-
-  int getNumState();
-  int getNumInput();
 
   int round(float value);
   int max(int val1, int val2);
@@ -68,4 +62,4 @@ private:
 
 } // namespace CA
 
-#endif // __GRID_H____
+#endif // __GRID_H__

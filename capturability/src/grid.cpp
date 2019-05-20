@@ -82,7 +82,11 @@ void Grid::create() {
     // printf("num_swft_r  = %d\n", num_swft_r);
     // printf("num_swft_th = %d\n", num_swft_th);
 
-    FILE *fp_state = fopen("state_table.csv", "w");
+    FILE *fp_state = NULL;
+    if ((fp_state = fopen("state_table.csv", "w")) == NULL) {
+      printf("Error: couldn't open state_table.csv\n");
+      exit(EXIT_FAILURE);
+    }
     fprintf(fp_state, "index");
     for (int i = 0; i < max(num_icp_r, num_icp_th, num_swft_r, num_swft_th);
          i++) {
@@ -108,6 +112,7 @@ void Grid::create() {
       swft_th_ = swft_th[MIN] + swft_th[STEP] * l;
       fprintf(fp_state, ",%lf", swft_th_);
     }
+    fclose(fp_state);
 
     // input
     num_input = 0;
@@ -119,7 +124,11 @@ void Grid::create() {
       }
     }
 
-    FILE *fp_input = fopen("input_table.csv", "w");
+    FILE *fp_input = NULL;
+    if ((fp_input = fopen("input_table.csv", "w")) == NULL) {
+      printf("Error: couldn't open input_table.csv\n");
+      exit(EXIT_FAILURE);
+    }
     fprintf(fp_input, "index");
     for (int i = 0; i < max(num_swft_r, num_swft_th); i++) {
       fprintf(fp_input, ",%d", i);
@@ -134,6 +143,7 @@ void Grid::create() {
       swft_th_ = swft_th[MIN] + swft_th[STEP] * l;
       fprintf(fp_input, ",%lf", swft_th_);
     }
+    fclose(fp_input);
   }
 }
 
@@ -189,7 +199,7 @@ void Grid::setStateCartesian(float icp_x, float icp_y, float swft_x,
 
 void Grid::setInputPolar(float swft_r, float swft_th) {
   Input input_;
-  input_.step.setPolar(swft_r, swft_th);
+  input_.swft.setPolar(swft_r, swft_th);
 
   input.push_back(input_);
   num_input++;
@@ -197,15 +207,18 @@ void Grid::setInputPolar(float swft_r, float swft_th) {
 
 void Grid::setInputCartesian(float swft_x, float swft_y) {
   Input input_;
-  input_.step.setCartesian(swft_x, swft_y);
+  input_.swft.setCartesian(swft_x, swft_y);
 
   input.push_back(input_);
   num_input++;
 }
 
 State Grid::getState(int index) {
-  if (index > num_state)
-    printf("error\n");
+  if (index > num_state) {
+    printf("Error: state id(%d) is larger than number of states(%d)\n", index,
+           num_state);
+    exit(EXIT_FAILURE);
+  }
 
   return state[index];
 }
@@ -216,14 +229,25 @@ State Grid::getState(int icp_r_id, int icp_th_id, int swft_r_id,
   index = num_swft_th * num_swft_r * num_icp_th * icp_r_id +
           num_swft_th * num_swft_r * icp_th_id + num_swft_th * swft_r_id +
           swft_th_id;
+
   return getState(index);
 }
 
 Input Grid::getInput(int index) {
-  if (index > num_input)
-    printf("error\n");
+  if (index > num_input) {
+    printf("Error: input id(%d) is larger than number of inputs(%d)\n", index,
+           num_input);
+    exit(EXIT_FAILURE);
+  }
 
   return input[index];
+}
+
+Input Grid::getInput(int swft_r_id, int swft_th_id) {
+  int index = 0;
+  index = num_swft_th * swft_r_id + swft_th_id;
+
+  return getInput(index);
 }
 
 int Grid::getNumState() { return num_state; }

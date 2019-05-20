@@ -2,9 +2,16 @@
 
 namespace CA {
 
+void Vector2::init() {
+  this->r = 0.0;
+  this->th = 0.0;
+  this->x = 0.0;
+  this->y = 0.0;
+}
+
 void Vector2::setPolar(float radius, float theta) {
   this->r = radius;
-  this->t = theta;
+  this->th = theta;
   polarToCartesian();
 }
 
@@ -15,15 +22,15 @@ void Vector2::setCartesian(float x, float y) {
 }
 
 void Vector2::polarToCartesian() {
-  this->x = this->r * cos(this->t);
-  this->y = this->r * sin(this->t);
+  this->x = this->r * cos(this->th);
+  this->y = this->r * sin(this->th);
 }
 
 void Vector2::cartesianToPolar() {
   this->r = norm();
-  this->t = atan2f(this->y, this->x);
-  if (this->t < 0.0) {
-    this->t += 2 * M_PI;
+  this->th = atan2f(this->y, this->x);
+  if (this->th < 0.0) {
+    this->th += 2 * M_PI;
   }
 }
 
@@ -34,14 +41,14 @@ void Vector2::printCartesian(std::string str) {
 }
 
 void Vector2::printPolar(std::string str) {
-  printf("%s [ %lf, %lf ]\n", str.c_str(), this->r, this->t);
+  printf("%s [ %lf, %lf ]\n", str.c_str(), this->r, this->th);
 }
 
 void Vector2::operator=(const Vector2 &v) {
   this->x = v.x;
   this->y = v.y;
   this->r = v.r;
-  this->t = v.t;
+  this->th = v.th;
 }
 
 Vector2 Vector2::operator+(const Vector2 &v) {
@@ -71,7 +78,7 @@ Vector2 Vector2::operator*(const float &d) {
   vec.x = this->x * d;
   vec.y = this->y * d;
   vec.r = this->r * d;
-  vec.t = this->t;
+  vec.th = this->th;
   return vec;
 }
 
@@ -87,7 +94,7 @@ Vector2 operator*(const float &d, const Vector2 &v) {
   vec.x = v.x * d;
   vec.y = v.y * d;
   vec.r = v.r * d;
-  vec.t = v.t;
+  vec.th = v.th;
   return vec;
 }
 

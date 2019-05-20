@@ -9,4 +9,6 @@ enum item { GRAPH, ANALYSIS, SEARCH, HELP, NumberOfItem };
 
 typedef int item_t;
 
+// class BaseWidget : public QWidget {};
+
 #endif // __BASE_H__

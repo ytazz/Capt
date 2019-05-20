@@ -1,8 +1,17 @@
+#include "grid.h"
+#include "loader.h"
+#include "model.h"
+#include "param.h"
+#include "vector.h"
 #include <iostream>
 
 using namespace std;
+using namespace CA;
 
 int main(int argc, char const *argv[]) {
-  double swft_r_min, swft_r_max, swft_r_step;
-  double icp_min, icp_max, icp_step;
+  Param param("analysis.xml");
+  param.parse();
+  // param.print();
+
+  Grid grid(param);
 }

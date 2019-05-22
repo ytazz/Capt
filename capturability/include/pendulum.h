@@ -13,8 +13,8 @@ public:
   ~Pendulum();
 
   // void setCom(const Vector2 &com, const Vector2 &com_vel);
-  void setIcp(const Vector2 &icp);
-  void setCop(const Vector2 &cop);
+  void setIcp(const Vector2 icp);
+  void setCop(const Vector2 cop);
 
   // Vector2 getCom(float dt);
   // Vector2 getComVel(float dt);

@@ -213,8 +213,24 @@ void Grid::setInputCartesian(float swft_x, float swft_y) {
   num_input++;
 }
 
+bool Grid::existState(int state_id) {
+  bool is_exist = false;
+  if (0 <= state_id && state_id <= num_state)
+    is_exist = true;
+
+  return is_exist;
+}
+
+bool Grid::existInput(int input_id) {
+  bool is_exist = false;
+  if (0 <= input_id && input_id <= num_input)
+    is_exist = true;
+
+  return is_exist;
+}
+
 State Grid::getState(int index) {
-  if (index > num_state) {
+  if (!existState(index)) {
     printf("Error: state id(%d) is larger than number of states(%d)\n", index,
            num_state);
     exit(EXIT_FAILURE);
@@ -234,7 +250,7 @@ State Grid::getState(int icp_r_id, int icp_th_id, int swft_r_id,
 }
 
 Input Grid::getInput(int index) {
-  if (index > num_input) {
+  if (!existInput(index)) {
     printf("Error: input id(%d) is larger than number of inputs(%d)\n", index,
            num_input);
     exit(EXIT_FAILURE);

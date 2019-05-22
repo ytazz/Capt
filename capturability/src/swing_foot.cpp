@@ -31,24 +31,21 @@ float SwingFoot::getTime() {
   return t;
 }
 
-// Vector2 SwingFoot::getTraj(float dt) {
-//   Vector2 v;
-//
-//   if (dt <= min_step_time / 2) {
-//     v.x = foot.x;
-//     v.y = foot.y;
-//     v.z = 0.0;
-//   } else if (dt >= getTime() - min_step_time / 2) {
-//     v.x = foot_des.x;
-//     v.y = foot_des.y;
-//     v.z = 0.0;
-//   } else {
-//     v.x = foot.x + foot_vel_x * (dt - min_step_time / 2);
-//     v.y = foot.y + foot_vel_y * (dt - min_step_time / 2);
-//     v.z = 0.0;
-//   }
-//
-//   return v;
-// }
+Vector2 SwingFoot::getTraj(float dt) {
+  Vector2 swft;
+
+  if (dt <= step_time_min / 2.0) {
+    swft.x = foot.x;
+    swft.y = foot.y;
+  } else if (dt >= getTime() - step_time_min / 2.0) {
+    swft.x = foot_des.x;
+    swft.y = foot_des.y;
+  } else {
+    swft.x = foot.x + foot_vel_x * (dt - step_time_min / 2.0);
+    swft.y = foot.y + foot_vel_y * (dt - step_time_min / 2.0);
+  }
+
+  return swft;
+}
 
 } // namespace CA

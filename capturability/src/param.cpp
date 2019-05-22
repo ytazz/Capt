@@ -132,11 +132,11 @@ void Param::callbackAttribute(const std::string &name,
       }
       if (axis == ANGLE) {
         if (equalStr(name, "min"))
-          icp_th_min = std::stof(value) * unit_length;
+          icp_th_min = std::stof(value) * unit_angle;
         if (equalStr(name, "max"))
-          icp_th_max = std::stof(value) * unit_length;
+          icp_th_max = std::stof(value) * unit_angle;
         if (equalStr(name, "step"))
-          icp_th_step = std::stof(value) * unit_length;
+          icp_th_step = std::stof(value) * unit_angle;
       }
     }
     break;
@@ -152,11 +152,11 @@ void Param::callbackAttribute(const std::string &name,
       }
       if (axis == ANGLE) {
         if (equalStr(name, "min"))
-          swft_th_min = std::stof(value) * unit_length;
+          swft_th_min = std::stof(value) * unit_angle;
         if (equalStr(name, "max"))
-          swft_th_max = std::stof(value) * unit_length;
+          swft_th_max = std::stof(value) * unit_angle;
         if (equalStr(name, "step"))
-          swft_th_step = std::stof(value) * unit_length;
+          swft_th_step = std::stof(value) * unit_angle;
       }
     }
     break;

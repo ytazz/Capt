@@ -15,9 +15,9 @@ Pendulum::Pendulum(Model model) {
 
 Pendulum::~Pendulum(){};
 
-void Pendulum::setIcp(const Vector2 &icp) { this->icp = icp; }
+void Pendulum::setIcp(const Vector2 icp) { this->icp = icp; }
 
-void Pendulum::setCop(const Vector2 &cop) { this->cop = cop; }
+void Pendulum::setCop(const Vector2 cop) { this->cop = cop; }
 
 Vector2 Pendulum::getIcp(float dt) {
   Vector2 icp_;

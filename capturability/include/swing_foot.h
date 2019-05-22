@@ -13,7 +13,7 @@ public:
 
   void set(Vector2 foot, Vector2 foot_des);
   float getTime();
-  // Vector2 getTraj(float dt);
+  Vector2 getTraj(float dt);
 
 private:
   Vector2 foot, foot_des;

@@ -11,7 +11,7 @@
 namespace CA {
 
 namespace Mo {
-enum ModelElement { NOELEMENT, ROBOT, UNIT, PHYSICS, LINK, SHAPE };
+enum ModelElement { NOELEMENT, ROBOT, UNIT, PHYSICS, ENVIRONMENT, LINK, SHAPE };
 
 enum Foot { NOFOOT, RFOOT, LFOOT };
 
@@ -46,6 +46,7 @@ private:
   std::string robot_name;
   float unit_length, unit_mass, unit_time, unit_angle;
   float mass, com_height, step_time_min, foot_vel_max;
+  float gravity, friction;
 
   std::vector<Vector2> foot_r, foot_l;
 

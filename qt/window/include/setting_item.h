@@ -5,6 +5,7 @@
 #include "graph.h"
 #include "model.h"
 #include "param.h"
+#include "pendulum.h"
 #include "section.h"
 #include "vector.h"
 #include <QtGui>

@@ -174,19 +174,19 @@ void SettingItem::openFile() {
 
     Model model("nao.xml");
     model.parse();
-    setLine(model.getVec("link", "foot_r"), "black");
-    std::vector<Vector2> steppable;
-    Vector2 vec;
-    float radius, angle;
-    for (int i = 0; i <= 4; i++) {
-      radius = 0.12 + 0.01 * i;
-      for (int j = 0; j <= 7; j++) {
-        angle = M_PI / 3.0 + M_PI / 18.0 * j;
-        vec.setPolar(radius, angle);
-        steppable.push_back(vec);
-      }
-    }
-    setPoints(steppable, "blue");
+    // setLine(model.getVec("link", "foot_r"), "black");
+    // std::vector<Vector2> steppable;
+    // Vector2 vec;
+    // float radius, angle;
+    // for (int i = 0; i <= 4; i++) {
+    //   radius = 0.12 + 0.01 * i;
+    //   for (int j = 0; j <= 7; j++) {
+    //     angle = M_PI / 3.0 + M_PI / 18.0 * j;
+    //     vec.setPolar(radius, angle);
+    //     steppable.push_back(vec);
+    //   }
+    // }
+    // setPoints(steppable, "blue");
 
     Param param("analysis.xml");
     param.parse();
@@ -195,6 +195,44 @@ void SettingItem::openFile() {
     center.setPolar(0.0, 0.0);
     setArc(center, 0.05, 20 * M_PI / 180, 160 * M_PI / 180, "red");
     // setCircle(center, 0.1, "red");
+
+    Pendulum pendulum(model);
+    Vector2 icp, icp_, cop;
+    icp.setPolar(0.056, 2.64);
+    cop.setPolar(0.04, 2.64);
+    pendulum.setIcp(icp);
+    pendulum.setCop(cop);
+    setPoint(icp, "green");
+    setPoint(cop, "black");
+
+    float v_max = 1.0;
+    float t_min = 0.1;
+    float dt = 0.01;
+    float r_foot = 0.04;
+    float l_max = 0.22;
+    Vector2 sw0;
+    sw0.setPolar(0.158, 1.12);
+
+    float t = 0.3;
+    icp_ = pendulum.getIcp(t);
+    setPoint(icp_, "blue");
+    for (int j = 0; j < 360; j++) {
+      float sw_r = v_max * (t - t_min);
+      float sw_th = j * M_PI / 180.0;
+      float sw_x = sw0.x + sw_r * cos(sw_th);
+      float sw_y = sw0.y + sw_r * sin(sw_th);
+      Vector2 swft;
+      swft.setCartesian(sw_x, sw_y);
+      setPoint(swft, "red");
+      float norm = (swft - icp_).norm();
+      printf("deg = \t%3.0d, \tnorm = \t%lf\n", j, norm);
+      if (0.09 <= swft.r && swft.r <= 0.22 && 20.0 * M_PI / 180.0 <= swft.th &&
+          swft.th <= 160.0 * M_PI / 180.0) {
+        if (norm <= r_foot) {
+        } else if (norm <= l_max * exp(-5.718 * t) + r_foot) {
+        }
+      }
+    }
 
     paint();
   }

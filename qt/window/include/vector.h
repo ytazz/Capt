@@ -8,13 +8,15 @@
 namespace CA {
 
 struct Vector2 {
+  void init();
+
   void setPolar(float radius, float theta);
   void setCartesian(float x, float y);
 
   void printPolar(std::string str);
   void printCartesian(std::string str);
 
-  float r, t;
+  float r, th;
   float x, y;
   float norm();
 

@@ -15,6 +15,26 @@ namespace GridSpace {
 enum Element { MIN, MAX, STEP, NUMELEMENT };
 }
 
+struct GridState {
+  int id;
+  State state;
+
+  void operator=(const GridState &grid_state) {
+    this->state = grid_state.state;
+    this->id = grid_state.id;
+  }
+};
+
+struct GridInput {
+  int id;
+  Input input;
+
+  void operator=(const GridInput &grid_input) {
+    this->input = grid_input.input;
+    this->id = grid_input.id;
+  }
+};
+
 class Grid {
 public:
   Grid(Param param);
@@ -36,7 +56,9 @@ private:
   void setInputPolar(float swft_r, float swft_th);
   void setInputCartesian(float swft_x, float swft_y);
 
-  int round(float value);
+  State roundState()
+
+      int round(float value);
   int max(int val1, int val2);
   int max(int val1, int val2, int val3, int val4);
 

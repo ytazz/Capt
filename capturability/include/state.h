@@ -10,6 +10,7 @@ namespace CA {
 struct State {
   Vector2 icp;
   Vector2 swft;
+
   void printPolar() {
     printf("icp  = [ %lf, %lf ]\n", icp.r, icp.th);
     printf("swft = [ %lf, %lf ]\n", swft.r, swft.th);
@@ -17,6 +18,11 @@ struct State {
   void printCartesian() {
     printf("icp  = [ %lf, %lf ]\n", icp.x, icp.y);
     printf("swft = [ %lf, %lf ]\n", swft.x, swft.y);
+  }
+
+  void operator=(const State &state) {
+    this->icp = state.icp;
+    this->swft = state.swft;
   }
 };
 

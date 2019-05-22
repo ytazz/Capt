@@ -1,9 +1,7 @@
 #ifndef __PENDULUM_H__
 #define __PENDULUM_H__
 
-#include "input.h"
 #include "model.h"
-#include "state.h"
 #include "vector.h"
 
 namespace CA {

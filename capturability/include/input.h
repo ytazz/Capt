@@ -9,8 +9,11 @@ namespace CA {
 
 struct Input {
   Vector2 swft;
+
   void printPolar() { printf("swft = [ %lf, %lf ]\n", swft.r, swft.th); }
   void printCartesian() { printf("swft = [ %lf, %lf ]\n", swft.x, swft.y); }
+
+  void operator=(const Input &input) { this->swft = input.swft; }
 };
 
 } // namespace CA

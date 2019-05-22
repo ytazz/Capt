@@ -50,7 +50,8 @@ int main(int argc, char const *argv[]) {
       float norm = (swft - icp_).norm();
       printf("deg = \t%3.0d, \tnorm = \t%lf\n", j, norm);
       // fprintf(fp, "%lf,%lf,%lf,%lf,%lf\n", icp_.x, icp_.y, swft.x, swft.y);
-      if (0.09 <= swft.r && swft.r <= 0.22) {
+      if (0.09 <= swft.r && swft.r <= 0.22 && 0.3491 <= swft.th &&
+          swft.th <= 2.7925) {
         if (norm <= r_foot) {
           printf("in!\n");
           fprintf(fp, "%lf,%lf,%lf,%lf,%lf\n", t, icp_.x, icp_.y, swft.x,

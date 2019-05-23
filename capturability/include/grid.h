@@ -45,11 +45,15 @@ public:
   Input getInput(int index);
   Input getInput(int swft_r_id, int swft_th_id);
 
+  int getStateIndex(int icp_r_id, int icp_th_id, int swft_r_id, int swft_th_id);
+
   bool existState(int state_id);
   bool existInput(int input_id);
 
   int getNumState();
   int getNumInput();
+
+  GridState roundState(State state_);
 
 private:
   void create();
@@ -58,8 +62,6 @@ private:
   void setStateCartesian(float icp_x, float icp_y, float swft_x, float swft_y);
   void setInputPolar(float swft_r, float swft_th);
   void setInputCartesian(float swft_x, float swft_y);
-
-  // GridState roundState();
 
   int round(float value);
   int max(int val1, int val2);

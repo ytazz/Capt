@@ -17,17 +17,18 @@ int main(int argc, char const *argv[]) {
   Param param("analysis.xml");
   param.parse();
 
-  Vector2 icp, cop, icp_;
-  icp.setPolar(0.06, 2.094);
-  cop.setPolar(0.04, 2.094);
-  icp.printCartesian("icp : ");
-  cop.printCartesian("cop : ");
+  Grid grid(param);
+  Vector2 icp, swft;
+  icp.setPolar(0.02, 0.349);
+  swft.setPolar(0.11, 0.384);
+  State state;
+  GridState grid_state;
+  state.icp = icp;
+  state.swft = swft;
+  grid_state = grid.roundState(state);
 
-  Pendulum pendulum(model);
-  pendulum.setIcp(icp);
-  pendulum.setCop(cop);
-  icp_ = pendulum.getIcp(0.28978);
-  icp_.printCartesian("icp_: ");
+  state.printPolar();
+  printf("%d\n", grid_state.id);
 
   return 0;
 }

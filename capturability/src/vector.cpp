@@ -59,7 +59,7 @@ Vector2 Vector2::operator+(const Vector2 &v) {
   return vec;
 }
 
-Vector2 Vector2::operator-(const Vector2 &v) {
+Vector2 Vector2::operator-(const Vector2 &v) const {
   Vector2 vec;
   vec.x = this->x - v.x;
   vec.y = this->y - v.y;

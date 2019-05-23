@@ -45,6 +45,8 @@ private:
   SwingFoot swing_foot;
 
   std::vector<CaptureState> capture_state;
+
+  FILE *debug;
 };
 
 } // namespace CA

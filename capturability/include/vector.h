@@ -23,7 +23,7 @@ struct Vector2 {
   void operator=(const Vector2 &v);
 
   Vector2 operator+(const Vector2 &v);
-  Vector2 operator-(const Vector2 &v);
+  Vector2 operator-(const Vector2 &v) const;
   float operator%(const Vector2 &v);
   Vector2 operator*(const float &d);
   float operator*(const Vector2 &v);

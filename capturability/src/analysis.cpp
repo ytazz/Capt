@@ -8,6 +8,7 @@ Analysis::Analysis(Model model, Param param)
   fprintf(
       debug,
       "input_id, input_x, input_y, dt, swft_x, swft_y, icp_x, icp_y, dist\n");
+  capture_state.clear();
 }
 
 Analysis::~Analysis() {}
@@ -17,23 +18,57 @@ void Analysis::exe() {
   Input input;
   GridState grid_state;
   GridInput grid_input;
+  int state_id = 0, input_id = 0;
+  std::vector<bool> one_step;
 
-  int state_id = 462641, input_id = 0;
-  // while (grid.existState(state_id)) {
-  while (state_id <= 462641) {
+  state_id = 0, input_id = 0;
+  while (grid.existState(state_id)) {
     state = grid.getState(state_id);
-    printf("%d / %d\n", state_id, grid.getNumState());
+    printf("1step:\t%d / %d\n", state_id, grid.getNumState());
     input_id = 0;
+    bool flag = false;
     while (grid.existInput(input_id)) {
       input = grid.getInput(input_id);
       input_id++;
-      fprintf(debug, "%d,", input_id);
       if (capturable(state, input)) {
         grid_state.state = state;
         grid_state.id = state_id;
         grid_input.input = input;
         grid_input.id = input_id;
         setCaptureState(grid_state, grid_input, 1);
+        flag = true;
+      }
+    }
+    if (flag == true) {
+      one_step.push_back(true);
+    } else {
+      one_step.push_back(false);
+    }
+    state_id++;
+  }
+
+  for (size_t i = 0; i < one_step.size(); i++) {
+    if (one_step[i]) {
+      printf("%d\n", (int)i);
+    }
+  }
+
+  state_id = 462641, input_id = 0;
+  // while (grid.existState(state_id)) {
+  while (state_id == 462641) {
+    state = grid.getState(state_id);
+    printf("2step:\t%d / %d\n", state_id, grid.getNumState());
+    input_id = 0;
+    while (grid.existInput(input_id)) {
+      input = grid.getInput(input_id);
+      input_id++;
+      state = step(state, input);
+      if (capturable(state, input)) {
+        grid_state.state = state;
+        grid_state.id = state_id;
+        grid_input.input = input;
+        grid_input.id = input_id;
+        setCaptureState(grid_state, grid_input, 2);
       }
     }
     state_id++;
@@ -81,9 +116,36 @@ void Analysis::setCaptureState(const GridState grid_state,
   capture_state.push_back(cs);
 }
 
+State Analysis::step(const State state, const Input input) {
+  Vector2 icp, swft;
+  float dt;
+
+  pendulum.setIcp(state.icp);
+  Vector2 cop;
+  cop.setPolar(0.04, state.icp.th);
+  pendulum.setCop(cop);
+
+  swing_foot.set(state.swft, input.swft);
+  dt = swing_foot.getTime();
+
+  icp = pendulum.getIcp(dt);
+  swft = swing_foot.getTraj(dt);
+
+  Vector2 icp_, swft_;
+  icp_.setCartesian(-input.swft.x, input.swft.y);
+  swft_.setCartesian(-input.swft.x + icp.x, input.swft.y - icp.y);
+
+  State state_;
+  state_.icp = icp_;
+  state_.swft = swft_;
+
+  return state_;
+}
+
 void Analysis::save(const char *file_name) {
   FILE *fp = fopen(file_name, "w");
-  fprintf(fp, "state_id, state_icp_x, state_icp_y, state_swft_x, state_swft_y, "
+  fprintf(fp, "state_id, state_icp_x, state_icp_y, state_swft_x, state_swft_y,"
+              "n_step_capturable, "
               "input_id, input_swft_x, input_swft_y\n");
   for (size_t i = 0; i < capture_state.size(); i++) {
     if (capture_state[i].grid_state.id == 462641) {
@@ -92,6 +154,7 @@ void Analysis::save(const char *file_name) {
               capture_state[i].grid_state.state.icp.y);
       fprintf(fp, "%lf, %lf,", capture_state[i].grid_state.state.swft.x,
               capture_state[i].grid_state.state.swft.y);
+      fprintf(fp, "%d,", capture_state[i].n_capturable);
       fprintf(fp, "%d,", capture_state[i].grid_input.id);
       fprintf(fp, "%lf, %lf,", capture_state[i].grid_input.input.swft.x,
               capture_state[i].grid_input.input.swft.y);

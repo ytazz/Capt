@@ -63,7 +63,8 @@ void Analysis::exe() {
       input = grid.getInput(input_id);
       input_id++;
       state = step(state, input);
-      if (capturable(state, input)) {
+      GridState gs = grid.roundState(state);
+      if (one_step[gs.id]) {
         grid_state.state = state;
         grid_state.id = state_id;
         grid_input.input = input;

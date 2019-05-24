@@ -38,8 +38,8 @@ set(SOURCES
 )
 # file(GLOB_RECURSE SOURCES src/*.cpp)
 
-add_executable(${PROJECT_NAME} debug.cpp ${SOURCES} ${HEADERS})
-# add_executable(${PROJECT_NAME} main.cpp ${SOURCES} ${HEADERS})
+# add_executable(${PROJECT_NAME} debug.cpp ${SOURCES} ${HEADERS})
+add_executable(${PROJECT_NAME} main.cpp ${SOURCES} ${HEADERS})
 
 target_link_libraries(${PROJECT_NAME} ${EXPAT_LIBRARIES})
 

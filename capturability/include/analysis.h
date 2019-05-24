@@ -33,7 +33,7 @@ public:
   ~Analysis();
 
   void exe();
-  void save(const char *file_name);
+  void save(const char *file_name, const int n_step_capturable);
 
 private:
   bool capturable(const State state, const Input input);

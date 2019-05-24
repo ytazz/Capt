@@ -11,7 +11,7 @@
 
   <swing>
     <radius min="0.09" max="0.22" step="0.01"/>
-    <angle  min="20" max="160" step="1"/>
+    <angle  min="20" max="160" step="5"/>
   </swing>
 
 </coordinate>

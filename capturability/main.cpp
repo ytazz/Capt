@@ -21,7 +21,8 @@ int main(int argc, char const *argv[]) {
 
   Analysis analysis(model, param);
   analysis.exe();
-  analysis.save("result.csv");
+  analysis.save("1step.csv", 1);
+  analysis.save("2step.csv", 2);
 
   return 0;
 }

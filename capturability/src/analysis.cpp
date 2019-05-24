@@ -53,9 +53,9 @@ void Analysis::exe() {
     }
   }
 
-  state_id = 462641, input_id = 0;
+  state_id = 95153, input_id = 0;
   // while (grid.existState(state_id)) {
-  while (state_id == 462641) {
+  while (state_id == 95153) {
     state = grid.getState(state_id);
     printf("2step:\t%d / %d\n", state_id, grid.getNumState());
     input_id = 0;
@@ -143,19 +143,17 @@ State Analysis::step(const State state, const Input input) {
   return state_;
 }
 
-void Analysis::save(const char *file_name) {
+void Analysis::save(const char *file_name, const int n_step_capturable) {
   FILE *fp = fopen(file_name, "w");
   fprintf(fp, "state_id, state_icp_x, state_icp_y, state_swft_x, state_swft_y,"
-              "n_step_capturable, "
               "input_id, input_swft_x, input_swft_y\n");
   for (size_t i = 0; i < capture_state.size(); i++) {
-    if (capture_state[i].grid_state.id == 462641) {
+    if (capture_state[i].n_capturable == n_step_capturable) {
       fprintf(fp, "%d,", capture_state[i].grid_state.id);
       fprintf(fp, "%lf, %lf,", capture_state[i].grid_state.state.icp.x,
               capture_state[i].grid_state.state.icp.y);
       fprintf(fp, "%lf, %lf,", capture_state[i].grid_state.state.swft.x,
               capture_state[i].grid_state.state.swft.y);
-      fprintf(fp, "%d,", capture_state[i].n_capturable);
       fprintf(fp, "%d,", capture_state[i].grid_input.id);
       fprintf(fp, "%lf, %lf,", capture_state[i].grid_input.input.swft.x,
               capture_state[i].grid_input.input.swft.y);

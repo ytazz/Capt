@@ -63,13 +63,15 @@ void Analysis::exe() {
       input = grid.getInput(input_id);
       input_id++;
       state = step(state, input);
-      GridState gs = grid.roundState(state);
-      if (one_step[gs.id]) {
-        grid_state.state = state;
-        grid_state.id = state_id;
-        grid_input.input = input;
-        grid_input.id = input_id;
-        setCaptureState(grid_state, grid_input, 2);
+      if (grid.existState(state)) {
+        GridState gs = grid.roundState(state);
+        if (one_step[gs.id]) {
+          grid_state.state = state;
+          grid_state.id = state_id;
+          grid_input.input = input;
+          grid_input.id = input_id;
+          setCaptureState(grid_state, grid_input, 2);
+        }
       }
     }
     state_id++;

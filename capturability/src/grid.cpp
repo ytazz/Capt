@@ -185,57 +185,13 @@ GridState Grid::roundState(State state_) {
   int icp_r_id = 0, icp_th_id = 0;
   int swft_r_id = 0, swft_th_id = 0;
 
-  // icp_r
-  if (state_.icp.r < icp_r[MIN] - icp_r[STEP] / 2.0) {
-    printf("Error: state icp_r(%lf) is too lower than the lower limit(%lf)\n",
-           state_.icp.r, icp_r[MIN]);
-    exit(EXIT_FAILURE);
-  } else if (state_.icp.r >= icp_r[MAX] + icp_r[STEP] / 2.0) {
-    printf("Error: state icp_r(%lf) is too larger than the upper limit(%lf)\n",
-           state_.icp.r, icp_r[MAX]);
-    exit(EXIT_FAILURE);
-  } else {
-    icp_r_id = round((state_.icp.r - icp_r[MIN]) / icp_r[STEP]);
-  }
-  // icp_th
-  if (state_.icp.th < icp_th[MIN] - icp_th[STEP] / 2.0) {
-    printf("Error: state icp_th(%lf) is too lower than the lower limit(%lf)\n",
-           state_.icp.th, icp_th[MIN]);
-    exit(EXIT_FAILURE);
-  } else if (state_.icp.th >= icp_th[MAX] + icp_th[STEP] / 2.0) {
-    printf("Error: state icp_th(%lf) is too larger than the upper limit(%lf)\n",
-           state_.icp.th, icp_th[MAX]);
-    exit(EXIT_FAILURE);
-  } else {
-    icp_th_id = round((state_.icp.th - icp_th[MIN]) / icp_th[STEP]);
-  }
-  // swft_r
-  if (state_.swft.r < swft_r[MIN] - swft_r[STEP] / 2.0) {
-    printf("Error: state swft_r(%lf) is too lower than the lower limit(%lf)\n",
-           state_.swft.r, swft_r[MIN]);
-    exit(EXIT_FAILURE);
-  } else if (state_.swft.r >= swft_r[MAX] + swft_r[STEP] / 2.0) {
-    printf("Error: state swft_r(%lf) is too larger than the upper limit(%lf)\n",
-           state_.swft.r, swft_r[MAX]);
-    exit(EXIT_FAILURE);
-  } else {
-    swft_r_id = round((state_.swft.r - swft_r[MIN]) / swft_r[STEP]);
-  }
-  // swft_th
-  if (state_.swft.th < swft_th[MIN] - swft_th[STEP] / 2.0) {
-    printf("Error: state swft_th(%lf) is too lower than the lower limit(%lf)\n",
-           state_.swft.th, swft_th[MIN]);
-    exit(EXIT_FAILURE);
-  } else if (state_.swft.th >= swft_th[MAX] + swft_th[STEP] / 2.0) {
-    printf(
-        "Error: state swft_th(%lf) is too larger than the upper limit(%lf)\n",
-        state_.swft.th, swft_th[MAX]);
-    exit(EXIT_FAILURE);
-  } else {
-    swft_th_id = round((state_.swft.th - swft_th[MIN]) / swft_th[STEP]);
-  }
+  icp_r_id = round((state_.icp.r - icp_r[MIN]) / icp_r[STEP]);
+  icp_th_id = round((state_.icp.th - icp_th[MIN]) / icp_th[STEP]);
+  swft_r_id = round((state_.swft.r - swft_r[MIN]) / swft_r[STEP]);
+  swft_th_id = round((state_.swft.th - swft_th[MIN]) / swft_th[STEP]);
 
-  int state_id = getStateIndex(icp_r_id, icp_th_id, swft_r_id, swft_th_id);
+  int state_id = 0;
+  state_id = getStateIndex(icp_r_id, icp_th_id, swft_r_id, swft_th_id);
   GridState gs;
   gs.id = state_id;
   gs.state = getState(state_id);
@@ -287,6 +243,39 @@ bool Grid::existState(int state_id) {
   return is_exist;
 }
 
+bool Grid::existState(State state_) {
+  using GridSpace::MAX;
+  using GridSpace::MIN;
+  using GridSpace::STEP;
+
+  bool flag_icp_r = false, flag_icp_th = false;
+  bool flag_swft_r = false, flag_swft_th = false;
+
+  // icp_r
+  if (state_.icp.r >= icp_r[MIN] - icp_r[STEP] / 2.0 &&
+      state_.icp.r < icp_r[MAX] + icp_r[STEP] / 2.0) {
+    flag_icp_r = true;
+  }
+  // icp_th
+  if (state_.icp.th >= icp_th[MIN] - icp_th[STEP] / 2.0 &&
+      state_.icp.th < icp_th[MAX] + icp_th[STEP] / 2.0) {
+    flag_icp_th = true;
+  }
+  // swft_r
+  if (state_.swft.r >= swft_r[MIN] - swft_r[STEP] / 2.0 &&
+      state_.swft.r < swft_r[MAX] + swft_r[STEP] / 2.0) {
+    flag_swft_r = true;
+  }
+  // swft_th
+  if (state_.swft.th >= swft_th[MIN] - swft_th[STEP] / 2.0 &&
+      state_.swft.th < swft_th[MAX] + swft_th[STEP] / 2.0) {
+    flag_swft_th = true;
+  }
+
+  bool flag = flag_icp_r * flag_icp_th * flag_swft_r * flag_swft_th;
+  return flag;
+}
+
 bool Grid::existInput(int input_id) {
   bool is_exist = false;
   if (0 <= input_id && input_id <= num_input)
@@ -299,7 +288,7 @@ State Grid::getState(int index) {
   if (!existState(index)) {
     printf("Error: state id(%d) is larger than number of states(%d)\n", index,
            num_state);
-    exit(EXIT_FAILURE);
+    // exit(EXIT_FAILURE);
   }
 
   return state[index];
@@ -324,7 +313,7 @@ Input Grid::getInput(int index) {
   if (!existInput(index)) {
     printf("Error: input id(%d) is larger than number of inputs(%d)\n", index,
            num_input);
-    exit(EXIT_FAILURE);
+    // exit(EXIT_FAILURE);
   }
 
   return input[index];

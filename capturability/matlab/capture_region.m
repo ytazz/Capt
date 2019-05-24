@@ -36,7 +36,6 @@ three_step_cr_x(1)=0;
 three_step_cr_y(1)=0;
 
 for t = 0: 0.01: 0.4
-    t=0.2;
     %% Calculate
     if t<t_min
         swft_r = 0;
@@ -56,18 +55,23 @@ for t = 0: 0.01: 0.4
         swft_y = swft0(2) + swft_r * sin(swft_th);
         swft = [swft_x swft_y];
         dist = sqrt((swft(1)-icp(1))^2+(swft(2)-icp(2))^2);
-        if dist <= one_step_r
-            one_step_cr_x(one_step_k) = swft_x;
-            one_step_cr_y(one_step_k) = swft_y;
-            one_step_k = one_step_k+1;
-        elseif dist <= two_step_r
-            two_step_cr_x(two_step_k) = swft_x;
-            two_step_cr_y(two_step_k) = swft_y;
-            two_step_k = two_step_k+1;
-        elseif dist <= three_step_r
-            three_step_cr_x(three_step_k) = swft_x;
-            three_step_cr_y(three_step_k) = swft_y;
-            three_step_k = three_step_k+1;
+        
+        sw_theta=atan2(swft_y,swft_x);
+        sw_dist=sqrt(swft(1)^2+swft(2)^2);
+        if 0.349<=sw_theta && sw_theta<=2.793 && 0.09<=sw_dist && sw_dist<=0.22
+            if dist <= one_step_r
+                one_step_cr_x(one_step_k) = swft_x;
+                one_step_cr_y(one_step_k) = swft_y;
+                one_step_k = one_step_k+1;
+            elseif dist <= two_step_r
+                two_step_cr_x(two_step_k) = swft_x;
+                two_step_cr_y(two_step_k) = swft_y;
+                two_step_k = two_step_k+1;
+            elseif dist <= three_step_r
+                three_step_cr_x(three_step_k) = swft_x;
+                three_step_cr_y(three_step_k) = swft_y;
+                three_step_k = three_step_k+1;
+            end
         end
     end
 
@@ -101,8 +105,8 @@ for t = 0: 0.01: 0.4
     scatter(one_step_cr_x,one_step_cr_y,5,'filled','MarkerFaceColor',[0 1 0]);
     
     % 2-step
-%     draw_circle(icp,two_step_r,[0 360],[0.91 0.42 0.47]);
-%     scatter(two_step_cr_x,two_step_cr_y,5,'filled','MarkerFaceColor',[0 .7 .7]);
+    draw_circle(icp,two_step_r,[0 360],[0.91 0.42 0.47]);
+    scatter(two_step_cr_x,two_step_cr_y,5,'filled','MarkerFaceColor',[0 .7 .7]);
     
     % 3-step
 %     draw_circle(icp,three_step_r,[0 360],[0.91 0.42 0.47]);

@@ -53,9 +53,9 @@ void Analysis::exe() {
     }
   }
 
-  state_id = 95153, input_id = 0;
-  // while (grid.existState(state_id)) {
-  while (state_id == 95153) {
+  state_id = 0, input_id = 0;
+  while (grid.existState(state_id)) {
+    // while (state_id == 95153) {
     state = grid.getState(state_id);
     printf("2step:\t%d / %d\n", state_id, grid.getNumState());
     input_id = 0;

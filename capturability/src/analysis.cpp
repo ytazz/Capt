@@ -14,7 +14,7 @@ Analysis::Analysis(Model model, Param param)
 Analysis::~Analysis() {}
 
 void Analysis::exe() {
-  State state;
+  State state, state_;
   Input input;
   GridState grid_state;
   GridInput grid_input;
@@ -24,12 +24,11 @@ void Analysis::exe() {
   state_id = 0, input_id = 0;
   while (grid.existState(state_id)) {
     state = grid.getState(state_id);
-    printf("1step:\t%d / %d\n", state_id, grid.getNumState());
+    // printf("1step:\t%d / %d\n", state_id, grid.getNumState());
     input_id = 0;
     bool flag = false;
     while (grid.existInput(input_id)) {
       input = grid.getInput(input_id);
-      input_id++;
       if (capturable(state, input)) {
         grid_state.state = state;
         grid_state.id = state_id;
@@ -38,6 +37,7 @@ void Analysis::exe() {
         setCaptureState(grid_state, grid_input, 1);
         flag = true;
       }
+      input_id++;
     }
     if (flag == true) {
       one_step.push_back(true);
@@ -47,24 +47,16 @@ void Analysis::exe() {
     state_id++;
   }
 
-  for (size_t i = 0; i < one_step.size(); i++) {
-    if (one_step[i]) {
-      printf("%d\n", (int)i);
-    }
-  }
-
   state_id = 0, input_id = 0;
   while (grid.existState(state_id)) {
-    // while (state_id == 95153) {
     state = grid.getState(state_id);
-    printf("2step:\t%d / %d\n", state_id, grid.getNumState());
+    // printf("2step:\t%d / %d\n", state_id, grid.getNumState());
     input_id = 0;
     while (grid.existInput(input_id)) {
       input = grid.getInput(input_id);
-      input_id++;
-      state = step(state, input);
-      if (grid.existState(state)) {
-        GridState gs = grid.roundState(state);
+      state_ = step(state, input);
+      if (grid.existState(state_)) {
+        GridState gs = grid.roundState(state_);
         if (one_step[gs.id]) {
           grid_state.state = state;
           grid_state.id = state_id;
@@ -73,14 +65,13 @@ void Analysis::exe() {
           setCaptureState(grid_state, grid_input, 2);
         }
       }
+      input_id++;
     }
     state_id++;
   }
 }
 
 bool Analysis::capturable(const State state, const Input input) {
-  Vector2 icp, swft;
-  float dt;
   bool flag = false;
 
   pendulum.setIcp(state.icp);
@@ -89,21 +80,15 @@ bool Analysis::capturable(const State state, const Input input) {
   pendulum.setCop(cop);
 
   swing_foot.set(state.swft, input.swft);
-  dt = swing_foot.getTime();
+  float dt = swing_foot.getTime();
 
-  icp = pendulum.getIcp(dt);
-  swft = swing_foot.getTraj(dt);
+  Vector2 icp = pendulum.getIcp(dt);
+  Vector2 swft = swing_foot.getTraj(dt);
 
   float dist = (icp - swft).norm();
   if (dist <= 0.04) {
     flag = true;
   }
-
-  fprintf(debug, "%lf, %lf,", input.swft.x, input.swft.y);
-  fprintf(debug, "%lf,", dt);
-  fprintf(debug, "%lf, %lf,", cop.x, cop.y);
-  fprintf(debug, "%lf, %lf,", icp.x, icp.y);
-  fprintf(debug, "%lf\n", dist);
 
   return flag;
 }

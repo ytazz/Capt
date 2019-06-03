@@ -35,12 +35,12 @@ public:
   void exe();
   void save(const char *file_name, const int n_step_capturable);
 
+  State step(const State state, const Input input);
+
 private:
   bool capturable(const State state, const Input input);
   void setCaptureState(const GridState grid_state, const GridInput grid_input,
                        const int n_step_capturable);
-
-  State step(const State state, const Input input);
 
   Grid grid;
   Pendulum pendulum;

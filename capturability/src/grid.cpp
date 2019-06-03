@@ -87,30 +87,35 @@ void Grid::create() {
       printf("Error: couldn't open state_table.csv\n");
       exit(EXIT_FAILURE);
     }
-    fprintf(fp_state, "index");
+    fprintf(fp_state, "index,icp_r,icp_th,swft_r,swft_th\n");
     for (int i = 0; i < max(num_icp_r, num_icp_th, num_swft_r, num_swft_th);
          i++) {
-      fprintf(fp_state, ",%d", i);
-    }
-    fprintf(fp_state, "\nicp_r");
-    for (int i = 0; i < num_icp_r; i++) {
-      icp_r_ = icp_r[MIN] + icp_r[STEP] * i;
-      fprintf(fp_state, ",%lf", icp_r_);
-    }
-    fprintf(fp_state, "\nicp_th");
-    for (int j = 0; j < num_icp_th; j++) {
-      icp_th_ = icp_th[MIN] + icp_th[STEP] * j;
-      fprintf(fp_state, ",%lf", icp_th_);
-    }
-    fprintf(fp_state, "\nswft_r");
-    for (int k = 0; k < num_swft_r; k++) {
-      swft_r_ = swft_r[MIN] + swft_r[STEP] * k;
-      fprintf(fp_state, ",%lf", swft_r_);
-    }
-    fprintf(fp_state, "\nswft_th");
-    for (int l = 0; l < num_swft_th; l++) {
-      swft_th_ = swft_th[MIN] + swft_th[STEP] * l;
-      fprintf(fp_state, ",%lf", swft_th_);
+      fprintf(fp_state, "%d", i);
+      if (i < num_icp_r) {
+        icp_r_ = icp_r[MIN] + icp_r[STEP] * i;
+        fprintf(fp_state, ",%lf", icp_r_);
+      } else {
+        fprintf(fp_state, ",");
+      }
+      if (i < num_icp_th) {
+        icp_th_ = icp_th[MIN] + icp_th[STEP] * i;
+        fprintf(fp_state, ",%lf", icp_th_);
+      } else {
+        fprintf(fp_state, ",");
+      }
+      if (i < num_swft_r) {
+        swft_r_ = swft_r[MIN] + swft_r[STEP] * i;
+        fprintf(fp_state, ",%lf", swft_r_);
+      } else {
+        fprintf(fp_state, ",");
+      }
+      if (i < num_swft_th) {
+        swft_th_ = swft_th[MIN] + swft_th[STEP] * i;
+        fprintf(fp_state, ",%lf", swft_th_);
+      } else {
+        fprintf(fp_state, ",");
+      }
+      fprintf(fp_state, "\n");
     }
     fclose(fp_state);
 
@@ -129,19 +134,22 @@ void Grid::create() {
       printf("Error: couldn't open input_table.csv\n");
       exit(EXIT_FAILURE);
     }
-    fprintf(fp_input, "index");
+    fprintf(fp_input, "index,swft_r,swft_th\n");
     for (int i = 0; i < max(num_swft_r, num_swft_th); i++) {
-      fprintf(fp_input, ",%d", i);
-    }
-    fprintf(fp_input, "\nswft_r");
-    for (int k = 0; k < num_swft_r; k++) {
-      swft_r_ = swft_r[MIN] + swft_r[STEP] * k;
-      fprintf(fp_input, ",%lf", swft_r_);
-    }
-    fprintf(fp_input, "\nswft_th");
-    for (int l = 0; l < num_swft_th; l++) {
-      swft_th_ = swft_th[MIN] + swft_th[STEP] * l;
-      fprintf(fp_input, ",%lf", swft_th_);
+      fprintf(fp_input, "%d", i);
+      if (i < num_swft_r) {
+        swft_r_ = swft_r[MIN] + swft_r[STEP] * i;
+        fprintf(fp_input, ",%lf", swft_r_);
+      } else {
+        fprintf(fp_input, ",");
+      }
+      if (i < num_swft_th) {
+        swft_th_ = swft_th[MIN] + swft_th[STEP] * i;
+        fprintf(fp_input, ",%lf", swft_th_);
+      } else {
+        fprintf(fp_input, ",");
+      }
+      fprintf(fp_input, "\n");
     }
     fclose(fp_input);
   }

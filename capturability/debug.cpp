@@ -18,17 +18,19 @@ int main(int argc, char const *argv[]) {
   param.parse();
 
   Grid grid(param);
-  Vector2 icp, swft;
-  icp.setPolar(0.06, 2.094);
-  swft.setPolar(0.14, 0.698);
-  State state;
-  GridState grid_state;
-  state.icp = icp;
-  state.swft = swft;
-  grid_state = grid.roundState(state);
 
-  state.printPolar();
-  printf("%d\n", grid_state.id);
+  int state_id = 95153;
+  int input_id = 223;
+  State state = grid.getState(state_id);
+  state.printCartesian();
+  // state.printPolar();
+  Input input = grid.getInput(input_id);
+  input.printCartesian();
+  // input.printPolar();
+
+  Analysis analysis(model, param);
+  State state_ = analysis.step(state, input);
+  state_.printCartesian();
 
   return 0;
 }

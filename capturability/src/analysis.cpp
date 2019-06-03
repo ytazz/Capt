@@ -120,7 +120,7 @@ void Analysis::setCaptureState(const GridState grid_state,
 }
 
 State Analysis::step(const State state, const Input input) {
-  Vector2 icp, swft;
+  Vector2 icp;
   float dt;
 
   pendulum.setIcp(state.icp);
@@ -132,11 +132,10 @@ State Analysis::step(const State state, const Input input) {
   dt = swing_foot.getTime();
 
   icp = pendulum.getIcp(dt);
-  swft = swing_foot.getTraj(dt);
 
   Vector2 icp_, swft_;
-  icp_.setCartesian(-input.swft.x, input.swft.y);
-  swft_.setCartesian(-input.swft.x + icp.x, input.swft.y - icp.y);
+  icp_.setCartesian(-input.swft.x + icp.x, input.swft.y - icp.y);
+  swft_.setCartesian(-input.swft.x, input.swft.y);
 
   State state_;
   state_.icp = icp_;

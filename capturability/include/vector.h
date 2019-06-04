@@ -8,7 +8,9 @@
 namespace CA {
 
 struct Vector2 {
-  void init();
+  Vector2(); // constructor
+
+  void clear();
 
   void setPolar(float radius, float theta);
   void setCartesian(float x, float y);
@@ -27,6 +29,7 @@ struct Vector2 {
   float operator%(const Vector2 &v);
   Vector2 operator*(const float &d);
   float operator*(const Vector2 &v);
+  Vector2 operator/(const float &d);
 
 private:
   void cartesianToPolar();

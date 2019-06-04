@@ -7,7 +7,7 @@ Model::Model(const std::string &name) : Loader(name), pi(M_PI) {
   foot = Mo::NOFOOT;
   shape = Mo::NOSHAPE;
 
-  trn = {0.0, 0.0};
+  trn.clear();
   rot = 0.0;
 
   robot_name = "";
@@ -74,7 +74,7 @@ void Model::callbackElement(const std::string &name, const bool is_start) {
     case SHAPE:
       if (equalStr(name, "shape")) {
         shape = NOSHAPE;
-        trn = {0.0, 0.0};
+        trn.clear();
         rot = 0.0;
         element = LINK;
       }

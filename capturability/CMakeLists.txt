@@ -20,6 +20,7 @@ set(HEADERS
   include/model.h
   include/param.h
   include/pendulum.h
+  include/polygon.h
   include/state.h
   include/swing_foot.h
   include/vector.h
@@ -33,13 +34,14 @@ set(SOURCES
   src/model.cpp
   src/param.cpp
   src/pendulum.cpp
+  src/polygon.cpp
   src/swing_foot.cpp
   src/vector.cpp
 )
 # file(GLOB_RECURSE SOURCES src/*.cpp)
 
-# add_executable(${PROJECT_NAME} debug.cpp ${SOURCES} ${HEADERS})
-add_executable(${PROJECT_NAME} main.cpp ${SOURCES} ${HEADERS})
+add_executable(${PROJECT_NAME} debug.cpp ${SOURCES} ${HEADERS})
+# add_executable(${PROJECT_NAME} main.cpp ${SOURCES} ${HEADERS})
 
 target_link_libraries(${PROJECT_NAME} ${EXPAT_LIBRARIES})
 

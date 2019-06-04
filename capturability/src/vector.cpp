@@ -2,7 +2,9 @@
 
 namespace CA {
 
-void Vector2::init() {
+Vector2::Vector2() { clear(); }
+
+void Vector2::clear() {
   this->r = 0.0;
   this->th = 0.0;
   this->x = 0.0;
@@ -87,6 +89,15 @@ float Vector2::operator*(const Vector2 &v) {
   product += this->x * v.x;
   product += this->y * v.y;
   return product;
+}
+
+Vector2 Vector2::operator/(const float &d) {
+  Vector2 vec;
+  vec.x = this->x / d;
+  vec.y = this->y / d;
+  vec.r = this->r / d;
+  vec.th = this->th;
+  return vec;
 }
 
 Vector2 operator*(const float &d, const Vector2 &v) {

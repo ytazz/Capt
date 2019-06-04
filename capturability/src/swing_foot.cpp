@@ -3,8 +3,8 @@
 namespace CA {
 
 SwingFoot::SwingFoot(Model model) {
-  foot.init();
-  foot_des.init();
+  foot.clear();
+  foot_des.clear();
   foot_vel_x = 0;
   foot_vel_y = 0;
 

@@ -207,6 +207,13 @@ GridState Grid::roundState(State state_) {
   return gs;
 }
 
+int Grid::getStateIndex(State state_) {
+  GridState gs;
+  gs = roundState(state_);
+
+  return gs.id;
+}
+
 void Grid::setStatePolar(float icp_r, float icp_th, float swft_r,
                          float swft_th) {
   State state_;
@@ -294,8 +301,9 @@ bool Grid::existInput(int input_id) {
 
 State Grid::getState(int index) {
   if (!existState(index)) {
-    printf("Error: state id(%d) is larger than number of states(%d)\n", index,
-           num_state);
+    // printf("Error: state id(%d) is larger than number of states(%d)\n",
+    // index,
+    //        num_state);
     // exit(EXIT_FAILURE);
   }
 
@@ -319,8 +327,9 @@ State Grid::getState(int icp_r_id, int icp_th_id, int swft_r_id,
 
 Input Grid::getInput(int index) {
   if (!existInput(index)) {
-    printf("Error: input id(%d) is larger than number of inputs(%d)\n", index,
-           num_input);
+    // printf("Error: input id(%d) is larger than number of inputs(%d)\n",
+    // index,
+    //        num_input);
     // exit(EXIT_FAILURE);
   }
 

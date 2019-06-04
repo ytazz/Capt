@@ -3,106 +3,55 @@
 namespace CA {
 
 Analysis::Analysis(Model model, Param param)
-    : grid(param), pendulum(model), swing_foot(model) {
-  debug = fopen("debug.csv", "w");
-  fprintf(
-      debug,
-      "input_id, input_x, input_y, dt, swft_x, swft_y, icp_x, icp_y, dist\n");
-  capture_state.clear();
-}
+    : grid(param), pendulum(model), swing_foot(model),
+      capturability(model, param) {}
 
 Analysis::~Analysis() {}
 
-void Analysis::exe() {
+void Analysis::exe(int n_step) {
   State state, state_;
   Input input;
-  GridState grid_state;
-  GridInput grid_input;
   int state_id = 0, input_id = 0;
-  std::vector<bool> one_step;
 
   state_id = 0, input_id = 0;
   while (grid.existState(state_id)) {
     state = grid.getState(state_id);
-    // printf("1step:\t%d / %d\n", state_id, grid.getNumState());
-    input_id = 0;
-    bool flag = false;
-    while (grid.existInput(input_id)) {
-      input = grid.getInput(input_id);
-      if (capturable(state, input)) {
-        grid_state.state = state;
-        grid_state.id = state_id;
-        grid_input.input = input;
-        grid_input.id = input_id;
-        setCaptureState(grid_state, grid_input, 1);
-        flag = true;
-      }
-      input_id++;
-    }
-    if (flag == true) {
-      one_step.push_back(true);
-    } else {
-      one_step.push_back(false);
-    }
-    state_id++;
-  }
-
-  state_id = 0, input_id = 0;
-  while (grid.existState(state_id)) {
-    state = grid.getState(state_id);
-    // printf("2step:\t%d / %d\n", state_id, grid.getNumState());
     input_id = 0;
     while (grid.existInput(input_id)) {
       input = grid.getInput(input_id);
       state_ = step(state, input);
-      if (grid.existState(state_)) {
-        GridState gs = grid.roundState(state_);
-        if (one_step[gs.id]) {
-          grid_state.state = state;
-          grid_state.id = state_id;
-          grid_input.input = input;
-          grid_input.id = input_id;
-          setCaptureState(grid_state, grid_input, 2);
-        }
+      if (capturability.capturable(state_, 0)) {
+        capturability.setCaptureSet(state_id, input_id,
+                                    grid.getStateIndex(state_), 1);
       }
       input_id++;
     }
     state_id++;
+    printf("%d / %d\n", state_id, grid.getNumState());
   }
 }
 
-bool Analysis::capturable(const State state, const Input input) {
-  bool flag = false;
-
-  pendulum.setIcp(state.icp);
-  Vector2 cop;
-  cop.setPolar(0.04, state.icp.th);
-  pendulum.setCop(cop);
-
-  swing_foot.set(state.swft, input.swft);
-  float dt = swing_foot.getTime();
-
-  Vector2 icp = pendulum.getIcp(dt);
-  Vector2 swft = swing_foot.getTraj(dt);
-
-  float dist = (icp - swft).norm();
-  if (dist <= 0.04) {
-    flag = true;
-  }
-
-  return flag;
-}
-
-void Analysis::setCaptureState(const GridState grid_state,
-                               const GridInput grid_input,
-                               const int n_step_capturable) {
-  CaptureState cs;
-  cs.grid_state = grid_state;
-  cs.grid_input = grid_input;
-  cs.n_capturable = n_step_capturable;
-
-  capture_state.push_back(cs);
-}
+// bool Analysis::capturable(const State state, const Input input) {
+//   bool flag = false;
+//
+//   pendulum.setIcp(state.icp);
+//   Vector2 cop;
+//   cop.setPolar(0.04, state.icp.th);
+//   pendulum.setCop(cop);
+//
+//   swing_foot.set(state.swft, input.swft);
+//   float dt = swing_foot.getTime();
+//
+//   Vector2 icp = pendulum.getIcp(dt);
+//   Vector2 swft = swing_foot.getTraj(dt);
+//
+//   float dist = (icp - swft).norm();
+//   if (dist <= 0.04) {
+//     flag = true;
+//   }
+//
+//   return flag;
+// }
 
 State Analysis::step(const State state, const Input input) {
   Vector2 icp;
@@ -130,22 +79,7 @@ State Analysis::step(const State state, const Input input) {
 }
 
 void Analysis::save(const char *file_name, const int n_step_capturable) {
-  FILE *fp = fopen(file_name, "w");
-  fprintf(fp, "state_id, state_icp_x, state_icp_y, state_swft_x, state_swft_y,"
-              "input_id, input_swft_x, input_swft_y\n");
-  for (size_t i = 0; i < capture_state.size(); i++) {
-    if (capture_state[i].n_capturable == n_step_capturable) {
-      fprintf(fp, "%d,", capture_state[i].grid_state.id);
-      fprintf(fp, "%lf, %lf,", capture_state[i].grid_state.state.icp.x,
-              capture_state[i].grid_state.state.icp.y);
-      fprintf(fp, "%lf, %lf,", capture_state[i].grid_state.state.swft.x,
-              capture_state[i].grid_state.state.swft.y);
-      fprintf(fp, "%d,", capture_state[i].grid_input.id);
-      fprintf(fp, "%lf, %lf,", capture_state[i].grid_input.input.swft.x,
-              capture_state[i].grid_input.input.swft.y);
-      fprintf(fp, "\n");
-    }
-  }
+  capturability.save(file_name, n_step_capturable);
 }
 
 } // namespace CA

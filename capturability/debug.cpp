@@ -1,4 +1,5 @@
 #include "analysis.h"
+#include "capturability.h"
 #include "grid.h"
 #include "loader.h"
 #include "model.h"
@@ -19,35 +20,32 @@ int main(int argc, char const *argv[]) {
   param.parse();
 
   Grid grid(param);
-
-  State state, state_;
-  Input input;
-  GridState grid_state;
-  GridInput grid_input;
+  Capturability capturability(model, param);
 
   Analysis analysis(model, param);
+  analysis.exe(1);
+  analysis.save("1step.csv", 1);
 
-  FILE *fp = fopen("test.csv", "w");
-  fprintf(fp,
-          "state_id,input_id,state.icp.r,state.icp.th,state.swft.r,state.swft."
-          "th\n");
-
-  Polygon polygon;
-  polygon.setVertex(model.getVec("link", "foot_r"));
-  polygon.printVertex();
-  printf("------\n");
-  polygon.getConvexHull();
-  polygon.printConvex();
-  Vector2 point;
-  printf("------\n");
-  for (int i = 0; i <= 20; i++) {
-    for (int j = 0; j <= 20; j++) {
-      point.setCartesian(-0.1 + 0.01 * i, -0.1 + 0.01 * j);
-      if (polygon.inPolygon(point, polygon.getConvexHull())) {
-        printf("%lf, %lf\n", -0.1 + 0.01 * i, -0.1 + 0.01 * j);
-      }
-    }
-  }
+  // State state, state_;
+  // Input input;
+  // int state_id = 0, input_id = 0;
+  //
+  // state_id = 0, input_id = 0;
+  // while (grid.existState(state_id)) {
+  //   state = grid.getState(state_id);
+  //   input_id = 0;
+  //   while (grid.existInput(input_id)) {
+  //     input = grid.getInput(input_id);
+  //     state_ = step(state, input);
+  //     if (capturability.capturable(state_, 0)) {
+  //       capturability.setCaptureSet(state_id, input_id,
+  //                                   grid.getStateIndex(state_), 1);
+  //     }
+  //     input_id++;
+  //   }
+  //   state_id++;
+  //   printf("%d / %d\n", state_id, grid.getNumState());
+  // }
 
   return 0;
 }

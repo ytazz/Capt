@@ -46,6 +46,7 @@ public:
   Input getInput(int swft_r_id, int swft_th_id);
 
   int getStateIndex(int icp_r_id, int icp_th_id, int swft_r_id, int swft_th_id);
+  int getStateIndex(State state_);
 
   bool existState(int state_id);
   bool existState(State state_);

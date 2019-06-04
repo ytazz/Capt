@@ -14,6 +14,7 @@ include_directories(${EXPAT_INCLUDE_DIRS})
 
 set(HEADERS
   include/analysis.h
+  include/capturability.h
   include/grid.h
   include/input.h
   include/loader.h
@@ -29,6 +30,7 @@ set(HEADERS
 
 set(SOURCES
   src/analysis.cpp
+  src/capturability.cpp
   src/grid.cpp
   src/loader.cpp
   src/model.cpp

@@ -1,6 +1,7 @@
 #ifndef __ANALYSIS_H__
 #define __ANALYSIS_H__
 
+#include "capturability.h"
 #include "grid.h"
 #include "input.h"
 #include "model.h"
@@ -32,23 +33,16 @@ public:
   Analysis(Model model, Param param);
   ~Analysis();
 
-  void exe();
+  void exe(int n_step);
   void save(const char *file_name, const int n_step_capturable);
 
   State step(const State state, const Input input);
 
 private:
-  bool capturable(const State state, const Input input);
-  void setCaptureState(const GridState grid_state, const GridInput grid_input,
-                       const int n_step_capturable);
-
   Grid grid;
   Pendulum pendulum;
   SwingFoot swing_foot;
-
-  std::vector<CaptureState> capture_state;
-
-  FILE *debug;
+  Capturability capturability;
 };
 
 } // namespace CA

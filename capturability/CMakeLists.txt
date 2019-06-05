@@ -1,10 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(capturability)
 
-find_package(GLUT)
-find_package(OpenGL)
-
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -lglut -lGL -lGLU")
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -45,12 +42,11 @@ set(SOURCES
 )
 # file(GLOB_RECURSE SOURCES src/*.cpp)
 
-# add_executable(${PROJECT_NAME} debug.cpp ${SOURCES} ${HEADERS})
-# add_executable(${PROJECT_NAME} main.cpp ${SOURCES} ${HEADERS})
-add_executable(${PROJECT_NAME} test_cop.cpp ${SOURCES} ${HEADERS})
+add_executable(${PROJECT_NAME} debug.cpp ${SOURCES} ${HEADERS})
+add_executable(converter converter.cpp ${SOURCES} ${HEADERS})
 
 target_link_libraries(${PROJECT_NAME} ${EXPAT_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
+target_link_libraries(converter ${EXPAT_LIBRARIES})
 
 configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 # configure_file(data/graph.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)

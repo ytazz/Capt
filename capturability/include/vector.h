@@ -15,7 +15,9 @@ struct Vector2 {
   void setPolar(float radius, float theta);
   void setCartesian(float x, float y);
 
+  void printPolar();
   void printPolar(std::string str);
+  void printCartesian();
   void printCartesian(std::string str);
 
   float r, th;

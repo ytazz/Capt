@@ -45,9 +45,13 @@ Vector2 Vector2::normal() {
   return normal_vector;
 }
 
+void Vector2::printCartesian() { printCartesian(""); }
+
 void Vector2::printCartesian(std::string str) {
   printf("%s [ %lf, %lf ]\n", str.c_str(), this->x, this->y);
 }
+
+void Vector2::printPolar() { printPolar(""); }
 
 void Vector2::printPolar(std::string str) {
   printf("%s [ %lf, %lf ]\n", str.c_str(), this->r, this->th);

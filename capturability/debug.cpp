@@ -23,15 +23,15 @@ int main(int argc, char const *argv[]) {
   Capturability capturability(model, param);
 
   Analysis analysis(model, param);
-  // analysis.exe(1);
-  // analysis.save("1step.csv", 1);
+  analysis.exe(1);
+  analysis.save("1step.csv", 1);
 
-  Vector2 point;
-  point.setCartesian(0.05, 0.05);
-  Polygon polygon;
-  polygon.setVertex(model.getVec("link", "foot_r"));
-
-  polygon.getClosestPoint(point, polygon.getConvexHull());
+  // capturability.load("1step.csv");
+  // std::vector<Input> region = capturability.getCaptureRegion(2200, 1);
+  //
+  // for (size_t i = 0; i < region.size(); i++) {
+  //   region[i].swft.printCartesian();
+  // }
 
   return 0;
 }

@@ -40,6 +40,7 @@ public:
 
 private:
   Grid grid;
+  Model model;
   Pendulum pendulum;
   SwingFoot swing_foot;
   Capturability capturability;

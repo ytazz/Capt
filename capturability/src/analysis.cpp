@@ -3,7 +3,7 @@
 namespace CA {
 
 Analysis::Analysis(Model model, Param param)
-    : grid(param), pendulum(model), swing_foot(model),
+    : grid(param), model(model), pendulum(model), swing_foot(model),
       capturability(model, param) {}
 
 Analysis::~Analysis() {}
@@ -11,55 +11,32 @@ Analysis::~Analysis() {}
 void Analysis::exe(int n_step) {
   State state, state_;
   Input input;
-  int state_id = 0, input_id = 0;
 
-  state_id = 0, input_id = 0;
-  while (grid.existState(state_id)) {
+  printf("state:%d, input:%d\n", grid.getNumState(), grid.getNumInput());
+
+  for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
     state = grid.getState(state_id);
-    input_id = 0;
-    while (grid.existInput(input_id)) {
+    for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
       input = grid.getInput(input_id);
       state_ = step(state, input);
       if (capturability.capturable(state_, 0)) {
         capturability.setCaptureSet(state_id, input_id,
                                     grid.getStateIndex(state_), 1);
       }
-      input_id++;
     }
-    state_id++;
-    printf("%d / %d\n", state_id, grid.getNumState());
+    if ((state_id % 100) == 0)
+      printf("%d / %d\n", state_id, grid.getNumState());
   }
 }
-
-// bool Analysis::capturable(const State state, const Input input) {
-//   bool flag = false;
-//
-//   pendulum.setIcp(state.icp);
-//   Vector2 cop;
-//   cop.setPolar(0.04, state.icp.th);
-//   pendulum.setCop(cop);
-//
-//   swing_foot.set(state.swft, input.swft);
-//   float dt = swing_foot.getTime();
-//
-//   Vector2 icp = pendulum.getIcp(dt);
-//   Vector2 swft = swing_foot.getTraj(dt);
-//
-//   float dist = (icp - swft).norm();
-//   if (dist <= 0.04) {
-//     flag = true;
-//   }
-//
-//   return flag;
-// }
 
 State Analysis::step(const State state, const Input input) {
   Vector2 icp;
   float dt;
 
   pendulum.setIcp(state.icp);
-  Vector2 cop;
-  cop.setPolar(0.04, state.icp.th);
+  Polygon polygon;
+  polygon.setVertex(model.getVec("link", "foot_r"));
+  Vector2 cop = polygon.getClosestPoint(state.icp, polygon.getConvexHull());
   pendulum.setCop(cop);
 
   swing_foot.set(state.swft, input.swft);

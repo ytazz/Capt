@@ -24,6 +24,9 @@ public:
   // by using gift wrapping algorithm
   std::vector<Vector2> getConvexHull();
 
+  // Find closest point from a point to polygon
+  Vector2 getClosestPoint(Vector2 point, std::vector<Vector2> vertex);
+
   // Determine whether a point (x,y) is within a polygon
   // by using the sign of cross product
   // Especially, ICP and supporting polygon

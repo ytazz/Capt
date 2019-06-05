@@ -38,6 +38,13 @@ void Vector2::cartesianToPolar() {
 
 float Vector2::norm() { return sqrt(x * x + y * y); }
 
+Vector2 Vector2::normal() {
+  Vector2 normal_vector;
+  // rotate -90 deg around +z direction
+  normal_vector.setCartesian(this->y, -this->x);
+  return normal_vector;
+}
+
 void Vector2::printCartesian(std::string str) {
   printf("%s [ %lf, %lf ]\n", str.c_str(), this->x, this->y);
 }

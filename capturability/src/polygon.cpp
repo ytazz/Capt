@@ -12,7 +12,7 @@ Polygon::~Polygon() {}
 void Polygon::setVertex(Vector2 vertex) { this->vertex.push_back(vertex); }
 
 void Polygon::setVertex(std::vector<Vector2> vertex) {
-  for (size_t i = 0; i < vertex.size(); i++) {
+  for (size_t i = 0; i < vertex.size() - 1; i++) {
     this->vertex.push_back(vertex[i]);
   }
 }
@@ -64,10 +64,12 @@ std::vector<Vector2> Polygon::getConvexHull() {
         }
       }
       if (product) {
-        vertex_convex.push_back(vertex[i]);
-        in_convex[i] = true;
-        flag_continue = true;
-        back = i;
+        if (!in_convex[i]) {
+          vertex_convex.push_back(vertex[i]);
+          in_convex[i] = true;
+          flag_continue = true;
+          back = i;
+        }
         break;
       }
     }
@@ -75,6 +77,43 @@ std::vector<Vector2> Polygon::getConvexHull() {
   vertex_convex.push_back(vertex[0]);
 
   return vertex_convex;
+}
+
+Vector2 Polygon::getClosestPoint(Vector2 point, std::vector<Vector2> vertex) {
+  Vector2 closest;
+  Vector2 v1, v2, v3, v4; // vector
+  Vector2 n1, n2;         // normal vector
+
+  if (inPolygon(point, vertex)) {
+    closest = point;
+  } else {
+    for (size_t i = 0; i < vertex.size() - 1; i++) {
+      //最近点が角にあるとき
+      if (i == 0) {
+        n1 = (vertex[1] - vertex[i]).normal();
+        n2 = (vertex[i] - vertex[vertex.size() - 2]).normal();
+      } else {
+        n1 = (vertex[i + 1] - vertex[i]).normal();
+        n2 = (vertex[i] - vertex[i - 1]).normal();
+      }
+      v1 = point - vertex[i];
+      if ((n1 % v1) < 0 && (n2 % v1) > 0) {
+        closest = vertex[i];
+      }
+      // 最近点が辺にあるとき
+      n1 = (vertex[i + 1] - vertex[i]).normal();
+      v1 = point - vertex[i];
+      v2 = vertex[i + 1] - vertex[i];
+      v3 = point - vertex[i + 1];
+      v4 = vertex[i] - vertex[i + 1];
+      if ((n1 % v1) > 0 && (v2 % v1) < 0 && (n1 % v3) < 0 && (v4 % v3) > 0) {
+        float k = v1 * v2 / (v2.norm() * v2.norm());
+        closest = vertex[i] + k * v2;
+      }
+    }
+  }
+
+  return closest;
 }
 
 bool Polygon::inPolygon(Vector2 point, std::vector<Vector2> vertex_) {

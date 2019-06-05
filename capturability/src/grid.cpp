@@ -208,10 +208,15 @@ GridState Grid::roundState(State state_) {
 }
 
 int Grid::getStateIndex(State state_) {
-  GridState gs;
-  gs = roundState(state_);
+  int id = -1;
 
-  return gs.id;
+  if (existState(state_)) {
+    GridState gs;
+    gs = roundState(state_);
+    id = gs.id;
+  }
+
+  return id;
 }
 
 void Grid::setStatePolar(float icp_r, float icp_th, float swft_r,

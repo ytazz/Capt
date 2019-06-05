@@ -23,29 +23,15 @@ int main(int argc, char const *argv[]) {
   Capturability capturability(model, param);
 
   Analysis analysis(model, param);
-  analysis.exe(1);
-  analysis.save("1step.csv", 1);
+  // analysis.exe(1);
+  // analysis.save("1step.csv", 1);
 
-  // State state, state_;
-  // Input input;
-  // int state_id = 0, input_id = 0;
-  //
-  // state_id = 0, input_id = 0;
-  // while (grid.existState(state_id)) {
-  //   state = grid.getState(state_id);
-  //   input_id = 0;
-  //   while (grid.existInput(input_id)) {
-  //     input = grid.getInput(input_id);
-  //     state_ = step(state, input);
-  //     if (capturability.capturable(state_, 0)) {
-  //       capturability.setCaptureSet(state_id, input_id,
-  //                                   grid.getStateIndex(state_), 1);
-  //     }
-  //     input_id++;
-  //   }
-  //   state_id++;
-  //   printf("%d / %d\n", state_id, grid.getNumState());
-  // }
+  Vector2 point;
+  point.setCartesian(0.05, 0.05);
+  Polygon polygon;
+  polygon.setVertex(model.getVec("link", "foot_r"));
+
+  polygon.getClosestPoint(point, polygon.getConvexHull());
 
   return 0;
 }

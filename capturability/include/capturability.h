@@ -37,9 +37,10 @@ public:
 
   void setCaptureSet(const int state_id, const int input_id,
                      const int next_state_id, const int n_step_capturable);
+  std::vector<Input> getCaptureRegion(const int state_id,
+                                      const int n_step_capturable);
 
   bool capturable(State state, int n_step_capture_region);
-  std::vector<Input> getCaptureSet(State state, int n_step_capture_region);
 
 private:
   Grid grid;

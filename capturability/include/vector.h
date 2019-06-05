@@ -22,6 +22,8 @@ struct Vector2 {
   float x, y;
   float norm();
 
+  Vector2 normal();
+
   void operator=(const Vector2 &v);
 
   Vector2 operator+(const Vector2 &v);

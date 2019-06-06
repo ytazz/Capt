@@ -12,6 +12,8 @@ void Analysis::exe(int n_step) {
   State state, state_;
   Input input;
 
+  printf("-----------------------------------------\n");
+  printf("Start %d-step capturability analysis\n", n_step);
   printf("state:%d, input:%d\n", grid.getNumState(), grid.getNumInput());
 
   for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
@@ -19,13 +21,18 @@ void Analysis::exe(int n_step) {
     for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
       input = grid.getInput(input_id);
       state_ = step(state, input);
-      if (capturability.capturable(state_, 0)) {
-        capturability.setCaptureSet(state_id, input_id,
-                                    grid.getStateIndex(state_), 1);
+      if (grid.existState(state_)) {
+        if (capturability.capturable(state_, n_step - 1)) {
+          capturability.setCaptureSet(state_id, input_id,
+                                      grid.getStateIndex(state_), n_step);
+        }
       }
     }
-    if ((state_id % 100) == 0)
-      printf("%d / %d\n", state_id, grid.getNumState());
+    if ((state_id % 1000) == 0) {
+      float percentage = (float)state_id / grid.getNumState();
+      printf("%d \t/ %d \t(%lf %%)\n", state_id, grid.getNumState(),
+             percentage);
+    }
   }
 }
 

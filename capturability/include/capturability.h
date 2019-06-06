@@ -33,14 +33,15 @@ public:
   ~Capturability();
 
   void load(const char *file_name);
-  void save(const char *file_name, int n_step_capture_set);
+  void save(const char *file_name, int n_step);
 
   void setCaptureSet(const int state_id, const int input_id,
-                     const int next_state_id, const int n_step_capturable);
-  std::vector<Input> getCaptureRegion(const int state_id,
-                                      const int n_step_capturable);
+                     const int next_state_id, const int n_step);
+  std::vector<Input> getCaptureRegion(const int state_id, const int n_step);
+  std::vector<Input> getCaptureRegion(const State state, const int n_step);
 
   bool capturable(State state, int n_step_capture_region);
+  bool capturable(int state_id, int n_step_capture_region);
 
 private:
   Grid grid;

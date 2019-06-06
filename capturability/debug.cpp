@@ -23,15 +23,15 @@ int main(int argc, char const *argv[]) {
   Capturability capturability(model, param);
 
   Analysis analysis(model, param);
-  analysis.exe(1);
-  analysis.save("1step.csv", 1);
+  // analysis.exe(1);
+  // analysis.save("1step.csv", 1);
 
-  // capturability.load("1step.csv");
-  // std::vector<Input> region = capturability.getCaptureRegion(2200, 1);
-  //
-  // for (size_t i = 0; i < region.size(); i++) {
-  //   region[i].swft.printCartesian();
-  // }
+  capturability.load("1step.csv");
+  std::vector<Input> region = capturability.getCaptureRegion(44392, 1);
+
+  for (size_t i = 0; i < region.size(); i++) {
+    region[i].swft.printCartesian();
+  }
 
   return 0;
 }

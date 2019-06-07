@@ -3,12 +3,10 @@
 namespace CA {
 
 Model::Model(const std::string &name) : Loader(name), pi(M_PI) {
-  element = Mo::NOELEMENT;
-  foot = Mo::NOFOOT;
-  shape = Mo::NOSHAPE;
-
-  trn.clear();
-  rot = 0.0;
+  element = MODEL_ELE_NONE;
+  foot = FOOT_NONE;
+  shape = SHAPE_NONE;
+  link = LINK_NONE;
 
   robot_name = "";
 
@@ -17,67 +15,108 @@ Model::Model(const std::string &name) : Loader(name), pi(M_PI) {
   unit_time = 0.0;
   unit_angle = 0.0;
 
-  mass = 0.0;
+  total_mass = 0.0;
   com_height = 0.0;
   step_time_min = 0.0;
   foot_vel_max = 0.0;
 
   foot_r.clear();
   foot_l.clear();
+
+  for (int i = 0; i < NUM_LINK; i++) {
+    trn[i] = Eigen::Vector3f::Zero();
+    axis[i] = Eigen::Vector3f::Zero();
+    com[i] = Eigen::Vector3f::Zero();
+    mass[i] = 0.0f;
+  }
+
+  link_name[TORSO] = "Torso";
+  link_name[HEAD_YAW] = "HeadYaw";
+  link_name[HEAD_PITCH] = "HeadPitch";
+  link_name[R_SHOULDER_PITCH] = "RShoulderPitch";
+  link_name[R_SHOULDER_ROLL] = "RShoulderRoll";
+  link_name[R_ELBOW_YAW] = "RElbowYaw";
+  link_name[R_ELBOW_ROLL] = "RElbowRoll";
+  link_name[R_WRIST_YAW] = "RWristYaw";
+  link_name[L_SHOULDER_PITCH] = "LShoulderPitch";
+  link_name[L_SHOULDER_ROLL] = "LShoulderRoll";
+  link_name[L_ELBOW_YAW] = "LElbowYaw";
+  link_name[L_ELBOW_ROLL] = "LElbowRoll";
+  link_name[L_WRIST_YAW] = "LWristYaw";
+  link_name[R_HIP_YAWPITCH] = "RHipYawPitch";
+  link_name[R_HIP_ROLL] = "RHipRoll";
+  link_name[R_HIP_PITCH] = "RHipPitch";
+  link_name[R_KNEE_PITCH] = "RKneePitch";
+  link_name[R_ANKLE_PITCH] = "RAnklePitch";
+  link_name[R_ANKLE_ROLL] = "RAnkleRoll";
+  link_name[L_HIP_YAWPITCH] = "LHipYawPitch";
+  link_name[L_HIP_ROLL] = "LHipRoll";
+  link_name[L_HIP_PITCH] = "LHipPitch";
+  link_name[L_KNEE_PITCH] = "LKneePitch";
+  link_name[L_ANKLE_PITCH] = "LAnklePitch";
+  link_name[L_ANKLE_ROLL] = "LAnkleRoll";
 }
 
 Model::~Model() {}
 
 void Model::callbackElement(const std::string &name, const bool is_start) {
-  using namespace Mo;
   if (is_start) {
     switch (element) {
-    case NOELEMENT:
+    case MODEL_ELE_NONE:
       if (equalStr(name, "robot"))
-        element = ROBOT;
+        element = MODEL_ELE_ROBOT;
       break;
-    case ROBOT:
+    case MODEL_ELE_ROBOT:
       if (equalStr(name, "unit"))
-        element = UNIT;
+        element = MODEL_ELE_UNIT;
       if (equalStr(name, "physics"))
-        element = PHYSICS;
-      if (equalStr(name, "link"))
-        element = LINK;
+        element = MODEL_ELE_PHYSICS;
       if (equalStr(name, "environment"))
-        element = ENVIRONMENT;
+        element = MODEL_ELE_ENVIRONMENT;
+      if (equalStr(name, "foot"))
+        element = MODEL_ELE_FOOT;
+      if (equalStr(name, "link"))
+        element = MODEL_ELE_LINK;
       break;
-    case UNIT:
-    case PHYSICS:
-    case ENVIRONMENT:
+    case MODEL_ELE_UNIT:
+    case MODEL_ELE_PHYSICS:
+    case MODEL_ELE_ENVIRONMENT:
       break;
-    case LINK:
+    case MODEL_ELE_FOOT:
       if (equalStr(name, "shape"))
-        element = SHAPE;
+        element = MODEL_ELE_SHAPE;
+      break;
+    case MODEL_ELE_LINK:
+      if (equalStr(name, "physics"))
+        element = MODEL_ELE_LINK_PHYSICS;
       break;
     default:
       break;
     }
   } else {
     switch (element) {
-    case NOELEMENT:
+    case MODEL_ELE_NONE:
       break;
-    case ROBOT:
-      element = NOELEMENT;
+    case MODEL_ELE_ROBOT:
+      element = MODEL_ELE_NONE;
       break;
-    case UNIT:
-    case PHYSICS:
-    case ENVIRONMENT:
-    case LINK:
-      foot = NOFOOT;
-      element = ROBOT;
+    case MODEL_ELE_UNIT:
+    case MODEL_ELE_PHYSICS:
+    case MODEL_ELE_ENVIRONMENT:
+    case MODEL_ELE_FOOT:
+    case MODEL_ELE_LINK:
+      element = MODEL_ELE_ROBOT;
+      foot = FOOT_NONE;
+      link = LINK_NONE;
       break;
-    case SHAPE:
+    case MODEL_ELE_SHAPE:
       if (equalStr(name, "shape")) {
-        shape = NOSHAPE;
-        trn.clear();
-        rot = 0.0;
-        element = LINK;
+        shape = SHAPE_NONE;
+        element = MODEL_ELE_FOOT;
       }
+      break;
+    case MODEL_ELE_LINK_PHYSICS:
+      element = MODEL_ELE_LINK;
       break;
     default:
       break;
@@ -87,13 +126,12 @@ void Model::callbackElement(const std::string &name, const bool is_start) {
 
 void Model::callbackAttribute(const std::string &name,
                               const std::string &value) {
-  using namespace Mo;
   switch (element) {
-  case ROBOT:
+  case MODEL_ELE_ROBOT:
     if (equalStr(name, "name"))
       robot_name = value;
     break;
-  case UNIT:
+  case MODEL_ELE_UNIT:
     if (equalStr(name, "length")) {
       if (equalStr(value, "m"))
         unit_length = 1.0;
@@ -121,9 +159,9 @@ void Model::callbackAttribute(const std::string &name,
         unit_angle = pi / 180.0;
     }
     break;
-  case PHYSICS:
+  case MODEL_ELE_PHYSICS:
     if (equalStr(name, "mass"))
-      mass = std::stof(value);
+      total_mass = std::stof(value);
     if (equalStr(name, "com_height"))
       com_height = std::stof(value);
     if (equalStr(name, "step_time_min"))
@@ -131,53 +169,53 @@ void Model::callbackAttribute(const std::string &name,
     if (equalStr(name, "foot_vel_max"))
       foot_vel_max = std::stof(value);
     break;
-  case ENVIRONMENT:
+  case MODEL_ELE_ENVIRONMENT:
     if (equalStr(name, "gravity"))
       gravity = std::stof(value);
     if (equalStr(name, "friction"))
       friction = std::stof(value);
     break;
-  case LINK:
+  case MODEL_ELE_FOOT:
     if (equalStr(name, "name")) {
       if (equalStr(value, "foot_r"))
-        foot = RFOOT;
+        foot = R_FOOT;
       if (equalStr(value, "foot_l"))
-        foot = LFOOT;
+        foot = L_FOOT;
     }
     break;
-  case SHAPE:
+  case MODEL_ELE_SHAPE:
     if (equalStr(name, "type")) {
       if (equalStr(value, "box"))
-        shape = BOX;
+        shape = SHAPE_BOX;
       if (equalStr(value, "polygon"))
-        shape = POLYGON;
+        shape = SHAPE_POLYGON;
       if (equalStr(value, "circle"))
-        shape = CIRCLE;
+        shape = SHAPE_CIRCLE;
       if (equalStr(value, "reverse"))
-        shape = REVERSE;
+        shape = SHAPE_REVERSE;
     }
-    if (equalStr(name, "trn"))
-      trn = convertStrToVec(value);
-    if (equalStr(name, "rot"))
-      rot = std::stof(value);
+    // if (equalStr(name, "trn"))
+    //   trn = convertStrToVec(value);
+    // if (equalStr(name, "rot"))
+    //   rot = std::stof(value);
     switch (shape) {
-    case POLYGON:
+    case SHAPE_POLYGON:
       if (equalStr(name, "point")) {
-        if (foot == RFOOT)
+        if (foot == R_FOOT)
           foot_r.push_back(convertStrToVec(value) * unit_length);
-        if (foot == LFOOT)
+        if (foot == L_FOOT)
           foot_l.push_back(convertStrToVec(value) * unit_length);
       }
       break;
-    case REVERSE:
-      if (foot == RFOOT) {
+    case SHAPE_REVERSE:
+      if (foot == R_FOOT) {
         for (size_t i = 0; i < foot_l.size(); i++) {
           Vector2 v;
           v.setCartesian(foot_l[i].x, -foot_l[i].y);
           foot_r.push_back(v);
         }
       }
-      if (foot == LFOOT)
+      if (foot == L_FOOT)
         for (size_t i = 0; i < foot_r.size(); i++) {
           Vector2 v;
           v.setCartesian(foot_r[i].x, -foot_r[i].y);
@@ -186,6 +224,29 @@ void Model::callbackAttribute(const std::string &name,
       break;
     default:
       break;
+    }
+  case MODEL_ELE_LINK:
+    if (equalStr(name, "name")) {
+      for (int i = static_cast<int>(Link::TORSO);
+           i < static_cast<int>(Link::NUM_LINK); i++) {
+        if (equalStr(value, link_name[i])) {
+          link = static_cast<Link>(i);
+        }
+      }
+    }
+    if (link != LINK_NONE) {
+      if (equalStr(name, "trn"))
+        trn[link] = convertStrToVec3(value) * unit_length;
+      if (equalStr(name, "axis"))
+        axis[link] = convertStrToVec3(value) * unit_length;
+    }
+    break;
+  case MODEL_ELE_LINK_PHYSICS:
+    if (link != LINK_NONE) {
+      if (equalStr(name, "com"))
+        com[link] = convertStrToVec3(value) * unit_length;
+      if (equalStr(name, "mass"))
+        mass[link] = stof(value) * unit_mass;
     }
     break;
   default:
@@ -207,7 +268,7 @@ float Model::getVal(const char *element_name, const char *attribute_name) {
   float val = 0.0;
   if (equalStr(element_name, "physics")) {
     if (equalStr(attribute_name, "mass"))
-      val = mass;
+      val = total_mass;
     if (equalStr(attribute_name, "com_height"))
       val = com_height;
     if (equalStr(attribute_name, "step_time_min"))
@@ -227,12 +288,30 @@ float Model::getVal(const char *element_name, const char *attribute_name) {
 std::vector<Vector2> Model::getVec(const char *element_name,
                                    const char *attribute_name) {
   std::vector<Vector2> vec;
-  if (equalStr(element_name, "link")) {
+  if (equalStr(element_name, "foot")) {
     if (equalStr(attribute_name, "foot_r"))
       vec = foot_r;
     if (equalStr(attribute_name, "foot_l"))
       vec = foot_l;
   }
+  return vec;
+}
+
+float Model::getLinkVal(Link link, const char *attribute_name) {
+  float val = 0.0;
+  if (equalStr(attribute_name, "mass"))
+    val = mass[link];
+  return val;
+}
+
+vec3_t Model::getLinkVec(Link link, const char *attribute_name) {
+  vec3_t vec = Eigen::Vector3f::Zero();
+  if (equalStr(attribute_name, "trn"))
+    vec = trn[link];
+  if (equalStr(attribute_name, "axis"))
+    vec = axis[link];
+  if (equalStr(attribute_name, "com"))
+    vec = com[link];
   return vec;
 }
 
@@ -246,20 +325,27 @@ void Model::print() {
   printf("\ttime  : %lf\n", unit_time);
   printf("\tangle : %lf\n", unit_angle);
   printf("physics:\n");
-  printf("\tmass         : %lf\n", mass);
+  printf("\tmass         : %lf\n", total_mass);
   printf("\tcom_height   : %lf\n", com_height);
   printf("\tstep_time_min: %lf\n", step_time_min);
   printf("\tfoot_vel_max : %lf\n", foot_vel_max);
   printf("environment:\n");
   printf("\tgravity : %lf\n", gravity);
   printf("\tfriction: %lf\n", friction);
-  printf("link: foot_r\n");
+  printf("foot: foot_r\n");
   for (size_t i = 0; i < foot_r.size(); i++) {
     printf("\t%lf, %lf\n", foot_r[i].x, foot_r[i].y);
   }
-  printf("link: foot_l\n");
+  printf("foot: foot_l\n");
   for (size_t i = 0; i < foot_l.size(); i++) {
     printf("\t%lf, %lf\n", foot_l[i].x, foot_l[i].y);
+  }
+  for (int i = 0; i < NUM_LINK; i++) {
+    printf("link: %s\n", link_name[i].c_str());
+    printf("\ttrn: %lf, %lf, %lf\n", trn[i].x(), trn[i].y(), trn[i].z());
+    printf("\taxis: %lf, %lf, %lf\n", axis[i].x(), axis[i].y(), axis[i].z());
+    printf("\tcom: %lf, %lf, %lf\n", com[i].x(), com[i].y(), com[i].z());
+    printf("\tmass: %lf\n", mass[i]);
   }
   printf("-------------------------------------------\n");
 }

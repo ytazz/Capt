@@ -2,10 +2,15 @@
 #define __XML_LOADER__
 
 #include "vector.h"
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/Geometry>
+// #include <eigen3/Eigen/Core>
 #include <expat.h>
 #include <string.h>
 
 namespace CA {
+
+typedef Eigen::Vector3f vec3_t;
 
 class Loader {
 public:
@@ -31,6 +36,7 @@ public:
   bool equalStr(const char *chr1, const std::string &str2);
   bool equalStr(const std::string &str1, const std::string &str2);
   Vector2 convertStrToVec(const std::string &str);
+  vec3_t convertStrToVec3(const std::string &str);
 
 protected:
   std::string name;

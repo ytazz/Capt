@@ -103,4 +103,28 @@ Vector2 Loader::convertStrToVec(const std::string &str) {
   return vec;
 }
 
+vec3_t Loader::convertStrToVec3(const std::string &str) {
+  std::vector<uint> space_position;
+
+  space_position.push_back(str.find_first_of(" "));
+  space_position.push_back(str.find_last_of(" "));
+
+  std::string val[3]{"", "", ""};
+  for (uint i = 0; i < space_position[0]; i++) {
+    val[0] += str[i];
+  }
+  for (uint i = space_position[0] + 1; i < space_position[1]; i++) {
+    val[1] += str[i];
+  }
+  for (uint i = space_position[1] + 1; i < str.length(); i++) {
+    val[2] += str[i];
+  }
+
+  vec3_t vec = Eigen::Vector3f::Zero();
+  for (int i = 0; i < 3; i++) {
+    vec(i) = stof(val[i]);
+  }
+  return vec;
+}
+
 } // namespace CA

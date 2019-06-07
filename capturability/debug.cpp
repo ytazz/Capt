@@ -26,12 +26,16 @@ int main(int argc, char const *argv[]) {
   // analysis.exe(1);
   // analysis.save("1step.csv", 1);
 
-  capturability.load("1step.csv");
-  std::vector<Input> region = capturability.getCaptureRegion(44392, 1);
-
-  for (size_t i = 0; i < region.size(); i++) {
-    region[i].swft.printCartesian();
-  }
+  // capturability.load("1step.csv");
+  // std::vector<Input> region = capturability.getCaptureRegion(44392, 1);
+  //
+  // for (size_t i = 0; i < region.size(); i++) {
+  //   region[i].swft.printCartesian();
+  // }
+  model.print();
+  printf("%lf, %lf, %lf\n", model.getLinkVec(L_KNEE_PITCH, "com").x(),
+         model.getLinkVec(L_KNEE_PITCH, "com").y(),
+         model.getLinkVec(L_KNEE_PITCH, "com").z());
 
   return 0;
 }

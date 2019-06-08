@@ -227,10 +227,10 @@ void Model::callbackAttribute(const std::string &name,
     }
   case MODEL_ELE_LINK:
     if (equalStr(name, "name")) {
-      for (int i = static_cast<int>(Link::TORSO);
-           i < static_cast<int>(Link::NUM_LINK); i++) {
+      for (int i = static_cast<int>(ELink::TORSO);
+           i < static_cast<int>(ELink::NUM_LINK); i++) {
         if (equalStr(value, link_name[i])) {
-          link = static_cast<Link>(i);
+          link = static_cast<ELink>(i);
         }
       }
     }
@@ -297,14 +297,19 @@ std::vector<Vector2> Model::getVec(const char *element_name,
   return vec;
 }
 
-float Model::getLinkVal(Link link, const char *attribute_name) {
+float Model::getLinkVal(ELink link, const char *attribute_name) {
   float val = 0.0;
   if (equalStr(attribute_name, "mass"))
     val = mass[link];
   return val;
 }
 
-vec3_t Model::getLinkVec(Link link, const char *attribute_name) {
+float Model::getLinkVal(int link_id, const char *attribute_name) {
+  ELink link = static_cast<ELink>(link_id);
+  return getLinkVal(link, attribute_name);
+}
+
+vec3_t Model::getLinkVec(ELink link, const char *attribute_name) {
   vec3_t vec = Eigen::Vector3f::Zero();
   if (equalStr(attribute_name, "trn"))
     vec = trn[link];
@@ -313,6 +318,11 @@ vec3_t Model::getLinkVec(Link link, const char *attribute_name) {
   if (equalStr(attribute_name, "com"))
     vec = com[link];
   return vec;
+}
+
+vec3_t Model::getLinkVec(int link_id, const char *attribute_name) {
+  ELink link = static_cast<ELink>(link_id);
+  return getLinkVec(link, attribute_name);
 }
 
 void Model::print() {

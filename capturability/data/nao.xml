@@ -57,7 +57,7 @@
   </link>
 
   <link name="RElbowYaw" trn="0.10500 -0.01500 0" axis="1 0 0">
-    <physics com ="0.10500 -0.01500 0"/>
+    <physics com ="-0.02744 0 -0.00014"/>
     <physics mass="0.06483"/>
   </link>
 
@@ -83,7 +83,7 @@
   </link>
 
   <link name="LElbowYaw" trn="0.10500 0.01500 0" axis="1 0 0">
-    <physics com ="0.10500 0.01500 0"/>
+    <physics com ="-0.02744 0 -0.00014"/>
     <physics mass="0.06483"/>
   </link>
 

@@ -10,7 +10,7 @@
 
 namespace CA {
 
-enum ModelElement {
+enum EModelElement {
   MODEL_ELE_NONE,
   MODEL_ELE_ROBOT,
   MODEL_ELE_UNIT,
@@ -22,7 +22,7 @@ enum ModelElement {
   MODEL_ELE_SHAPE
 };
 
-enum Link {
+enum ELink {
   TORSO,
   HEAD_YAW,
   HEAD_PITCH,
@@ -52,18 +52,9 @@ enum Link {
   LINK_NONE
 };
 
-enum Chain {
-  TORSO_CHAIN,
-  HEAD_CHAIN,
-  RARM_CHAIN,
-  LARM_CHAIN,
-  RLEG_CHAIN,
-  LLEG_CHAIN
-};
+enum EFoot { FOOT_NONE, R_FOOT, L_FOOT };
 
-enum Foot { FOOT_NONE, R_FOOT, L_FOOT };
-
-enum Shape {
+enum EShape {
   SHAPE_NONE,
   SHAPE_BOX,
   SHAPE_POLYGON,
@@ -87,15 +78,17 @@ public:
   std::string getStr(const char *element_name, const char *attribute_name);
   std::vector<Vector2> getVec(const char *element_name,
                               const char *attribute_name);
-  float getLinkVal(Link link, const char *attribute_name);
-  vec3_t getLinkVec(Link link, const char *attribute_name);
+  float getLinkVal(ELink link, const char *attribute_name);
+  float getLinkVal(int link_id, const char *attribute_name);
+  vec3_t getLinkVec(ELink link, const char *attribute_name);
+  vec3_t getLinkVec(int link_id, const char *attribute_name);
   void print();
 
 private:
-  ModelElement element;
-  Foot foot;
-  Shape shape;
-  Link link;
+  EModelElement element;
+  EFoot foot;
+  EShape shape;
+  ELink link;
 
   float pi;
 

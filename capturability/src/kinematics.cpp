@@ -11,6 +11,9 @@ Kinematics::Kinematics(Model model)
     link[i].com = model.getLinkVec(i, "com");
     link[i].mass = model.getLinkVal(i, "mass");
   }
+
+  link[TORSO].homo =
+      homogeneous(Eigen::Matrix3f::Identity(), link[TORSO].trans);
 }
 
 Kinematics::~Kinematics() {}
@@ -257,6 +260,29 @@ mat6_t Kinematics::jacobianLLeg() {
   }
 
   return jacobi;
+}
+
+vec3_t Kinematics::getCom(Chain chain) {
+  vec3_t com = Eigen::Vector3f::Zero();
+  float sum_mass = 0.0;
+
+  switch (chain) {
+  case CHAIN_BODY:
+    for (int i = static_cast<int>(TORSO); i <= static_cast<int>(L_ANKLE_ROLL);
+         i++) {
+      ELink elink = static_cast<ELink>(i);
+
+      com += link[elink].mass *
+             (getLinkPos(elink) + getLinkRot(elink) * link[elink].com);
+      sum_mass += link[elink].mass;
+    }
+    com = com / sum_mass;
+    break;
+  default:
+    break;
+  }
+
+  return com;
 }
 
 vec3_t Kinematics::getLinkPos(ELink elink) {

@@ -47,11 +47,12 @@ public:
 
   mat6_t jacobian(Chain chain);
 
+  vec3_t getCom(Chain chain);
+
   vec3_t getLinkPos(ELink elink);
   mat3_t getLinkRot(ELink elink);
   vec3_t getLinkEuler(ELink elink); // [roll pitch yaw]
   float getJointAngle(ELink elink);
-  vec3_t getCom(ELink elink);
 
 private:
   void forwardHead(std::vector<float> joint_angle);
@@ -89,4 +90,4 @@ private:
 
 } // namespace CA
 
-#endif // __KINEMATICS_H__
+#endif // __KINEMATICS_H____

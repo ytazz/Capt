@@ -29,7 +29,8 @@
   </foot>
 
 <!-- Torso -->
-  <link name="Torso" trn="0 0 0.33309">
+  <!-- <link name="Torso" trn="0 0 0.33309"> -->
+  <link name="Torso" trn="0 0 0">
     <physics com ="-0.00413 0 0.04342"/>
     <physics mass="1.3946"/>
   </link>

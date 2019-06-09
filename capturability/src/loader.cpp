@@ -29,14 +29,14 @@ void Loader::parse() {
   while (!(l_end = l_file.eof())) {
     l_file.read(l_buf, l_size);
     if (!XML_Parse(parser, l_buf, l_file.gcount(), l_end)) {
-      std::cout << "ERROR : Parse error at line "
-                << XML_GetCurrentLineNumber(parser) << " :"
-                << XML_ErrorString(XML_GetErrorCode(parser)) << std::endl;
-      exit(-1);
+      // std::cout << "ERROR : Parse error at line "
+      //           << XML_GetCurrentLineNumber(parser) << " :"
+      //           << XML_ErrorString(XML_GetErrorCode(parser)) << std::endl;
+      // exit(-1);
     }
   }
   l_file.close();
-  // std::cout << "PARSE SUCCESSFULL" << std::endl;
+  std::cout << "PARSE SUCCESSFULL" << std::endl;
 }
 
 void Loader::start(void *data, const char *el, const char **attr) {

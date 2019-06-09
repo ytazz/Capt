@@ -35,6 +35,8 @@ Param::Param(const std::string &name) : Loader(name), pi(M_PI) {
   swft_y_min = 0.0;
   swft_y_max = 0.0;
   swft_y_step = 0.0;
+
+  parse();
 }
 
 Param::~Param() {}

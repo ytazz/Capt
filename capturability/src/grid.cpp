@@ -2,9 +2,7 @@
 
 namespace CA {
 
-Grid::Grid(Param param) {
-  this->param = param;
-
+Grid::Grid(Param param) : param(param) {
   state.clear();
   input.clear();
 

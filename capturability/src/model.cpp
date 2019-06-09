@@ -55,6 +55,8 @@ Model::Model(const std::string &name) : Loader(name), pi(M_PI) {
   link_name[L_KNEE_PITCH] = "LKneePitch";
   link_name[L_ANKLE_PITCH] = "LAnklePitch";
   link_name[L_ANKLE_ROLL] = "LAnkleRoll";
+
+  parse();
 }
 
 Model::~Model() {}

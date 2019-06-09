@@ -87,6 +87,8 @@ void Model::callbackElement(const std::string &name, const bool is_start) {
         element = MODEL_ELE_SHAPE;
       break;
     case MODEL_ELE_LINK:
+      if (equalStr(name, "joint"))
+        element = MODEL_ELE_LINK_JOINT;
       if (equalStr(name, "physics"))
         element = MODEL_ELE_LINK_PHYSICS;
       break;
@@ -115,6 +117,7 @@ void Model::callbackElement(const std::string &name, const bool is_start) {
         element = MODEL_ELE_FOOT;
       }
       break;
+    case MODEL_ELE_LINK_JOINT:
     case MODEL_ELE_LINK_PHYSICS:
       element = MODEL_ELE_LINK;
       break;
@@ -241,6 +244,15 @@ void Model::callbackAttribute(const std::string &name,
         axis[link] = convertStrToVec3(value) * unit_length;
     }
     break;
+  case MODEL_ELE_LINK_JOINT:
+    if (link != LINK_NONE) {
+      if (equalStr(name, "limit")) {
+        Vector2 limit_vec = convertStrToVec(value) * unit_angle;
+        limit[link][LIMIT_LOWER] = limit_vec.x;
+        limit[link][LIMIT_UPPER] = limit_vec.y;
+      }
+    }
+    break;
   case MODEL_ELE_LINK_PHYSICS:
     if (link != LINK_NONE) {
       if (equalStr(name, "com"))
@@ -299,6 +311,10 @@ std::vector<Vector2> Model::getVec(const char *element_name,
 
 float Model::getLinkVal(ELink link, const char *attribute_name) {
   float val = 0.0;
+  if (equalStr(attribute_name, "lower_limit"))
+    val = limit[link][LIMIT_LOWER];
+  if (equalStr(attribute_name, "upper_limit"))
+    val = limit[link][LIMIT_UPPER];
   if (equalStr(attribute_name, "mass"))
     val = mass[link];
   return val;
@@ -354,6 +370,7 @@ void Model::print() {
     printf("link: %s\n", link_name[i].c_str());
     printf("\ttrn: %lf, %lf, %lf\n", trn[i].x(), trn[i].y(), trn[i].z());
     printf("\taxis: %lf, %lf, %lf\n", axis[i].x(), axis[i].y(), axis[i].z());
+    printf("\tlimit: %f, %f\n", limit[i][LIMIT_LOWER], limit[i][LIMIT_UPPER]);
     printf("\tcom: %lf, %lf, %lf\n", com[i].x(), com[i].y(), com[i].z());
     printf("\tmass: %lf\n", mass[i]);
   }

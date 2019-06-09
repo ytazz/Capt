@@ -36,125 +36,149 @@
 
 <!-- Head -->
   <link name="HeadYaw" trn="0 0 0.12650" axis="0 0 1">
+    <joint limit ="-119.5 119.5"/>
     <physics com ="-0.00001 0 -0.02742"/>
     <physics mass="0.07842"/>
   </link>
 
   <link name="HeadPitch" axis="0 1 0">
+    <joint limit ="-38.5 29.5"/>
     <physics com ="-0.0165 0.02663 -0.00014"/>
     <physics mass="0.60533"/>
   </link>
 
 <!-- Right Arm -->
   <link name="RShoulderPitch" trn="0 -0.09800 0.100" axis="0 1 0">
+    <joint limit ="-119.5 119.5"/>
     <physics com ="-0.00615 0.02663 0.00014"/>
     <physics mass="0.09304"/>
   </link>
 
   <link name="RShoulderRoll" axis="0 0 1">
+    <joint limit ="-76 18"/>
     <physics com ="0.02455 -0.00563 0.0033"/>
     <physics mass="0.15777"/>
   </link>
 
   <link name="RElbowYaw" trn="0.10500 -0.01500 0" axis="1 0 0">
+    <joint limit ="-119.5 119.5"/>
     <physics com ="-0.02744 0 -0.00014"/>
     <physics mass="0.06483"/>
   </link>
 
   <link name="RElbowRoll" axis="0 0 1">
+    <joint limit ="2 88.5"/>
     <physics com ="0.02556 -0.00281 0.00076"/>
     <physics mass="0.07761"/>
   </link>
 
   <link name="RWristYaw" trn="0.05595 0 0" axis="1 0 0">
+    <joint limit ="-104.5 104.5"/>
     <physics com ="0.03434 0.00088 0.00308"/>
     <physics mass="0.18533"/>
   </link>
 
 <!-- Left Arm -->
   <link name="LShoulderPitch" trn="0 0.09800 0.100" axis="0 1 0">
+    <joint limit ="-119.5 119.5"/>
     <physics com ="-0.00615 -0.02663 0.00014"/>
     <physics mass="0.09304"/>
   </link>
 
   <link name="LShoulderRoll" axis="0 0 1">
+    <joint limit ="-18 76"/>
     <physics com ="0.02455 0.00563 0.0033"/>
     <physics mass="0.15777"/>
   </link>
 
   <link name="LElbowYaw" trn="0.10500 0.01500 0" axis="1 0 0">
+    <joint limit ="-119.5 119.5"/>
     <physics com ="-0.02744 0 -0.00014"/>
     <physics mass="0.06483"/>
   </link>
 
   <link name="LElbowRoll" axis="0 0 1">
+    <joint limit ="-88.5 -2"/>
     <physics com ="0.02556 0.00281 0.00076"/>
     <physics mass="0.07761"/>
   </link>
 
   <link name="LWristYaw" trn="0.05595 0 0" axis="1 0 0">
+    <joint limit ="-104.5 104.5"/>
     <physics com ="0.03434 -0.00088 0.00308"/>
     <physics mass="0.18533"/>
   </link>
 
 <!-- Right Leg -->
   <link name="RHipYawPitch" trn="0 -0.05 -0.08500" axis="0 0.707106781 0.707106781">
+    <joint limit ="-65.62 42.44"/>
     <physics com ="-0.00781 0.01114 0.02661"/>
     <physics mass="0.06981"/>
   </link>
 
   <link name="RHipRoll" axis="1 0 0">
+    <joint limit ="-45.29 21.74"/>
     <physics com ="-0.01549 -0.00029 -0.00515"/>
     <physics mass="0.14053"/>
   </link>
 
   <link name="RHipPitch" axis="0 1 0">
+    <joint limit ="-88.00 27.73"/>
     <physics com ="0.00138 -0.00221 -0.05373"/>
     <physics mass="0.38968"/>
   </link>
 
   <link name="RKneePitch" trn="0 0 -0.100" axis="0 1 0">
+    <joint limit ="-5.90 121.47"/>
     <physics com ="0.00453 -0.00225 -0.04936"/>
     <physics mass="0.30142"/>
   </link>
 
   <link name="RAnklePitch" trn="0 0 -0.10290" axis="0 1 0">
+    <joint limit ="-67.97 53.40"/>
     <physics com ="0.00045 -0.00029 -0.00685"/>
     <physics mass="0.13416"/>
   </link>
 
   <link name="RAnkleRoll" axis="1 0 0">
+    <joint limit ="-44.06 22.80"/>
     <physics com ="0.02542 -0.0033 -0.03239"/>
     <physics mass="0.17184"/>
   </link>
 
 <!-- Left Leg -->
   <link name="LHipYawPitch" trn="0 0.05 -0.08500" axis="0 0.707106781 0.707106781">
+    <joint limit ="-65.62 42.44"/>
     <physics com ="-0.00781 -0.01114 0.02661"/>
     <physics mass="0.06981"/>
   </link>
 
   <link name="LHipRoll" axis="1 0 0">
+    <joint limit ="-21.74 45.29"/>
     <physics com ="-0.01549 0.00029 -0.00515"/>
     <physics mass="0.14053"/>
   </link>
 
   <link name="LHipPitch" axis="0 1 0">
+    <joint limit ="-88.00 27.73"/>
     <physics com ="0.00138 0.00221 -0.05373"/>
     <physics mass="0.38968"/>
   </link>
 
   <link name="LKneePitch" trn="0 0 -0.100" axis="0 1 0">
+    <joint limit ="-5.29 121.04"/>
     <physics com ="0.00453 0.00225 -0.04936"/>
     <physics mass="0.30142"/>
   </link>
 
   <link name="LAnklePitch" trn="0 0 -0.10290" axis="0 1 0">
+    <joint limit ="-68.15 52.86"/>
     <physics com ="0.00045 0.00029 -0.00685"/>
     <physics mass="0.13416"/>
   </link>
 
   <link name="LAnkleRoll" axis="1 0 0">
+    <joint limit ="-22.79 44.06"/>
     <physics com ="0.02542 0.0033 -0.03239"/>
     <physics mass="0.17184"/>
   </link>

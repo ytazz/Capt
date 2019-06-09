@@ -48,34 +48,42 @@ int main(int argc, char const *argv[]) {
   joint.push_back(0.0);
   joint.push_back(0.0);
   joint.push_back(0.0);
+  joint.push_back(0.0); // rleg
+  joint.push_back(0.0);
+  joint.push_back(-0.174533);
+  joint.push_back(+0.174533);
   joint.push_back(0.0);
   joint.push_back(0.0);
-  joint.push_back(0.0);
-  joint.push_back(0.0);
-  joint.push_back(0.0);
-  joint.push_back(0.0);
-  joint.push_back(0.1);
+  joint.push_back(0.1); // lleg
   joint.push_back(0.2);
   joint.push_back(0.3);
   joint.push_back(0.4);
   joint.push_back(0.5);
   joint.push_back(0.6);
 
-  if (kinematics.forward(joint, CHAIN_BODY)) {
-    for (int i = static_cast<int>(HEAD_YAW);
-         i <= static_cast<int>(L_ANKLE_ROLL); i++) {
-      ELink elink = static_cast<ELink>(i);
-      vec3_t pos = kinematics.getLinkPos(elink);
-      mat3_t mat = kinematics.getLinkRot(elink);
-      vec3_t euler = kinematics.getLinkEuler(elink);
-      std::cout << "--------------------------" << '\n';
-      std::cout << "pos" << '\n';
-      std::cout << pos << '\n';
-      std::cout << "mat" << '\n';
-      std::cout << mat << '\n';
-      std::cout << "euler" << '\n';
-      std::cout << euler << '\n';
-    }
+  kinematics.forward(joint, CHAIN_BODY);
+
+  mat4_t T_ref = Eigen::Matrix4f::Identity();
+  mat3_t R_ref;
+  float theta = 3.1415926 / 6;
+  R_ref << cos(theta), -sin(theta), 0, sin(theta), cos(theta), 0, 0, 0, 1;
+  T_ref.block(0, 0, 3, 3) = R_ref;
+  T_ref(0, 3) = 0;
+  T_ref(1, 3) = -0.05;
+  T_ref(2, 3) = -0.2;
+  if (kinematics.inverse(T_ref, CHAIN_RLEG)) {
+    printf("%d: %lf\n", static_cast<int>(R_HIP_YAWPITCH),
+           kinematics.getJointAngle(R_HIP_YAWPITCH));
+    printf("%d: %lf\n", static_cast<int>(R_HIP_ROLL),
+           kinematics.getJointAngle(R_HIP_ROLL));
+    printf("%d: %lf\n", static_cast<int>(R_HIP_PITCH),
+           kinematics.getJointAngle(R_HIP_PITCH));
+    printf("%d: %lf\n", static_cast<int>(R_KNEE_PITCH),
+           kinematics.getJointAngle(R_KNEE_PITCH));
+    printf("%d: %lf\n", static_cast<int>(R_ANKLE_PITCH),
+           kinematics.getJointAngle(R_ANKLE_PITCH));
+    printf("%d: %lf\n", static_cast<int>(R_ANKLE_ROLL),
+           kinematics.getJointAngle(R_ANKLE_ROLL));
   }
 
   return 0;

@@ -17,6 +17,7 @@ enum EModelElement {
   MODEL_ELE_PHYSICS,
   MODEL_ELE_ENVIRONMENT,
   MODEL_ELE_LINK,
+  MODEL_ELE_LINK_JOINT,
   MODEL_ELE_LINK_PHYSICS,
   MODEL_ELE_FOOT,
   MODEL_ELE_SHAPE
@@ -62,6 +63,8 @@ enum EShape {
   SHAPE_REVERSE
 };
 
+enum ELimit { LIMIT_LOWER, LIMIT_UPPER, NUM_LIMIT };
+
 class Model : public Loader {
 
 public:
@@ -103,6 +106,8 @@ private:
 
   vec3_t trn[NUM_LINK];
   vec3_t axis[NUM_LINK];
+  // limit[*][0] = lower limit, limit[*][1] = upper limit
+  float limit[NUM_LINK][NUM_LIMIT];
   vec3_t com[NUM_LINK];
   float mass[NUM_LINK];
 };

@@ -27,6 +27,7 @@ set(HEADERS
   include/polygon.h
   include/state.h
   include/swing_foot.h
+  include/trajectory.h
   include/vector.h
 )
 # file(GLOB_RECURSE HEADERS include/*.h)
@@ -42,6 +43,7 @@ set(SOURCES
   src/pendulum.cpp
   src/polygon.cpp
   src/swing_foot.cpp
+  src/trajectory.cpp
   src/vector.cpp
 )
 # file(GLOB_RECURSE SOURCES src/*.cpp)

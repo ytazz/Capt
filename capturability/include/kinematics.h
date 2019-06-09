@@ -53,6 +53,7 @@ public:
   mat3_t getLinkRot(ELink elink);
   vec3_t getLinkEuler(ELink elink); // [roll pitch yaw]
   float getJointAngle(ELink elink);
+  std::vector<float> getJoints(Chain chain);
 
 private:
   void forwardHead(std::vector<float> joint_angle);

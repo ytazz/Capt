@@ -10,6 +10,7 @@ Kinematics::Kinematics(Model model)
     link[i].axis = model.getLinkVec(i, "axis");
     link[i].com = model.getLinkVec(i, "com");
     link[i].mass = model.getLinkVal(i, "mass");
+    link[i].joint = 0.0;
   }
 
   link[TORSO].homo =
@@ -151,15 +152,41 @@ void Kinematics::forwardLLeg(std::vector<float> joint_angle) {
 }
 
 bool Kinematics::inverse(mat4_t link_trans, Chain chain) {
+  bool find_solution = false;
+
+  switch (chain) {
+  case CHAIN_RLEG:
+    find_solution = inverseRLeg(link_trans);
+    break;
+  case CHAIN_LLEG:
+    find_solution = inverseLLeg(link_trans);
+    break;
+  default:
+    break;
+  }
+
+  return find_solution;
+}
+
+bool Kinematics::inverse(vec3_t link_pos, Chain chain) {
+  mat4_t T_ref;
+  mat3_t E = Eigen::Matrix3f::Identity();
+  T_ref.block(0, 0, 3, 3) = E;
+  T_ref.block(0, 3, 3, 1) = link_pos;
+
+  return inverse(T_ref, chain);
+}
+
+bool Kinematics::inverseRLeg(mat4_t link_trans) {
   vec6_t q;
+  vec3_t p_ref = link_trans.block(0, 3, 3, 1);
+  mat3_t R_ref = link_trans.block(0, 0, 3, 3);
+
   for (int i = static_cast<int>(R_HIP_YAWPITCH);
        i <= static_cast<int>(R_ANKLE_ROLL); i++) {
     ELink elink = static_cast<ELink>(i);
     q(i - static_cast<int>(R_HIP_YAWPITCH), 0) = getJointAngle(elink);
   }
-
-  vec3_t p_ref = link_trans.block(0, 3, 3, 1);
-  mat3_t R_ref = link_trans.block(0, 0, 3, 3);
 
   bool find_solution = false;
   while (!find_solution) {
@@ -171,7 +198,6 @@ bool Kinematics::inverse(mat4_t link_trans, Chain chain) {
     vec3_t err_p = p_ref - getLinkPos(R_ANKLE_ROLL);
     mat3_t err_R = getLinkRot(R_ANKLE_ROLL).transpose() * R_ref;
     vec3_t err_r = log_func(err_R);
-    // vec3_t err_r = Eigen::Vector3f::Zero();
 
     vec6_t err;
     err.block(0, 0, 3, 1) = err_p;
@@ -180,11 +206,9 @@ bool Kinematics::inverse(mat4_t link_trans, Chain chain) {
       find_solution = true;
 
     vec6_t dq;
-    // printf("det = %1.10lf\n", fabs(jacobian(chain).determinant()));
-    if (fabs(jacobian(chain).determinant()) <= FLT_EPSILON)
+    if (fabs(jacobian(CHAIN_RLEG).determinant()) <= FLT_EPSILON)
       break;
-    // std::cout << jacobian(chain) << '\n';
-    dq = lambda * jacobian(chain).inverse() * err;
+    dq = lambda * jacobian(CHAIN_RLEG).inverse() * err;
     q = q + dq;
   }
 
@@ -200,13 +224,51 @@ bool Kinematics::inverse(mat4_t link_trans, Chain chain) {
   return find_solution;
 }
 
-bool Kinematics::inverse(vec3_t link_pos, Chain chain) {
-  mat4_t T_ref;
-  mat3_t E = Eigen::Matrix3f::Identity();
-  T_ref.block(0, 0, 3, 3) = E;
-  T_ref.block(0, 3, 3, 1) = link_pos;
+bool Kinematics::inverseLLeg(mat4_t link_trans) {
+  vec6_t q;
+  vec3_t p_ref = link_trans.block(0, 3, 3, 1);
+  mat3_t R_ref = link_trans.block(0, 0, 3, 3);
 
-  return inverse(T_ref, chain);
+  for (int i = static_cast<int>(L_HIP_YAWPITCH);
+       i <= static_cast<int>(L_ANKLE_ROLL); i++) {
+    ELink elink = static_cast<ELink>(i);
+    q(i - static_cast<int>(L_HIP_YAWPITCH), 0) = getJointAngle(elink);
+  }
+
+  bool find_solution = false;
+  while (!find_solution) {
+    std::vector<float> joint;
+    for (int j = 0; j < 6; j++) {
+      joint.push_back(q(j, 0));
+    }
+    forward(joint, CHAIN_LLEG);
+    vec3_t err_p = p_ref - getLinkPos(L_ANKLE_ROLL);
+    mat3_t err_R = getLinkRot(L_ANKLE_ROLL).transpose() * R_ref;
+    vec3_t err_r = log_func(err_R);
+
+    vec6_t err;
+    err.block(0, 0, 3, 1) = err_p;
+    err.block(3, 0, 3, 1) = err_r;
+    if (err.norm() <= accuracy)
+      find_solution = true;
+
+    vec6_t dq;
+    if (fabs(jacobian(CHAIN_LLEG).determinant()) <= FLT_EPSILON)
+      break;
+    dq = lambda * jacobian(CHAIN_LLEG).inverse() * err;
+    q = q + dq;
+  }
+
+  for (int i = static_cast<int>(L_HIP_YAWPITCH);
+       i <= static_cast<int>(L_ANKLE_ROLL); i++) {
+    ELink elink = static_cast<ELink>(i);
+    if (model.getLinkVal(elink, "lower_limit") > getJointAngle(elink))
+      find_solution *= false;
+    if (model.getLinkVal(elink, "upper_limit") < getJointAngle(elink))
+      find_solution *= false;
+  }
+
+  return find_solution;
 }
 
 mat6_t Kinematics::jacobian(Chain chain) {
@@ -323,6 +385,59 @@ vec3_t Kinematics::getLinkEuler(ELink elink) {
 }
 
 float Kinematics::getJointAngle(ELink elink) { return link[elink].joint; }
+
+std::vector<float> Kinematics::getJoints(Chain chain) {
+  std::vector<float> joints;
+
+  switch (chain) {
+  case CHAIN_BODY:
+    for (int i = static_cast<int>(HEAD_YAW);
+         i <= static_cast<int>(L_ANKLE_ROLL); i++) {
+      ELink elink = static_cast<ELink>(i);
+      joints.push_back(link[elink].joint);
+    }
+    break;
+  case CHAIN_HEAD:
+    for (int i = static_cast<int>(HEAD_YAW); i <= static_cast<int>(HEAD_PITCH);
+         i++) {
+      ELink elink = static_cast<ELink>(i);
+      joints.push_back(link[elink].joint);
+    }
+    break;
+  case CHAIN_RARM:
+    for (int i = static_cast<int>(R_SHOULDER_PITCH);
+         i <= static_cast<int>(R_WRIST_YAW); i++) {
+      ELink elink = static_cast<ELink>(i);
+      joints.push_back(link[elink].joint);
+    }
+    break;
+  case CHAIN_LARM:
+    for (int i = static_cast<int>(L_SHOULDER_PITCH);
+         i <= static_cast<int>(L_WRIST_YAW); i++) {
+      ELink elink = static_cast<ELink>(i);
+      joints.push_back(link[elink].joint);
+    }
+    break;
+  case CHAIN_RLEG:
+    for (int i = static_cast<int>(R_HIP_YAWPITCH);
+         i <= static_cast<int>(R_ANKLE_ROLL); i++) {
+      ELink elink = static_cast<ELink>(i);
+      joints.push_back(link[elink].joint);
+    }
+    break;
+  case CHAIN_LLEG:
+    for (int i = static_cast<int>(L_HIP_YAWPITCH);
+         i <= static_cast<int>(L_ANKLE_ROLL); i++) {
+      ELink elink = static_cast<ELink>(i);
+      joints.push_back(link[elink].joint);
+    }
+    break;
+  default:
+    break;
+  }
+
+  return joints;
+}
 
 mat3_t Kinematics::rodrigues(vec3_t axis, float angle) {
   mat3_t axis_wedge = Eigen::Matrix3f::Zero(); // = a^

@@ -7,6 +7,7 @@
 #include "param.h"
 #include "pendulum.h"
 #include "polygon.h"
+#include "trajectory.h"
 #include "vector.h"
 #include <iostream>
 
@@ -48,21 +49,35 @@ int main(int argc, char const *argv[]) {
   joint.push_back(0.0);
   joint.push_back(0.0);
   joint.push_back(0.0);
-  joint.push_back(0.0); // rleg
-  joint.push_back(0.0);
-  joint.push_back(0.0);
-  joint.push_back(0.0);
-  joint.push_back(0.0);
-  joint.push_back(0.0);
-  joint.push_back(0.0); // lleg
-  joint.push_back(0.0);
-  joint.push_back(0.0);
-  joint.push_back(0.0);
-  joint.push_back(0.0);
-  joint.push_back(0.0);
+  joint.push_back(0.1); // rleg
+  joint.push_back(0.1);
+  joint.push_back(0.1);
+  joint.push_back(0.1);
+  joint.push_back(0.1);
+  joint.push_back(0.1);
+  joint.push_back(0.1); // lleg
+  joint.push_back(0.1);
+  joint.push_back(0.1);
+  joint.push_back(0.1);
+  joint.push_back(0.1);
+  joint.push_back(0.1);
 
   kinematics.forward(joint, CHAIN_BODY);
   kinematics.getCom(CHAIN_BODY);
+
+  Trajectory trajectory(model);
+  trajectory.setJoints(joint);
+  vec3_t com_ref;
+  com_ref << 0, 0, 0.25;
+  vec3_t rleg_ref;
+  rleg_ref << 0, -0.05, 0.0467;
+  vec3_t lleg_ref;
+  lleg_ref << 0, 0.05, 0.0467;
+  trajectory.setRLegRef(rleg_ref);
+  trajectory.setLLegRef(lleg_ref);
+  trajectory.setComRef(com_ref);
+
+  trajectory.calc();
 
   // mat4_t T_ref = Eigen::Matrix4f::Identity();
   // mat3_t R_ref;

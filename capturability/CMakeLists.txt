@@ -17,6 +17,7 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 set(HEADERS
   include/analysis.h
   include/capturability.h
+  include/friction_filter.h
   include/grid.h
   include/input.h
   include/kinematics.h
@@ -35,6 +36,7 @@ set(HEADERS
 set(SOURCES
   src/analysis.cpp
   src/capturability.cpp
+  src/friction_filter.cpp
   src/grid.cpp
   src/kinematics.cpp
   src/loader.cpp
@@ -49,6 +51,7 @@ set(SOURCES
 # file(GLOB_RECURSE SOURCES src/*.cpp)
 
 add_executable(${PROJECT_NAME} debug.cpp ${SOURCES} ${HEADERS})
+# add_executable(${PROJECT_NAME} main.cpp ${SOURCES} ${HEADERS})
 # add_executable(converter converter.cpp ${SOURCES} ${HEADERS})
 
 target_link_libraries(${PROJECT_NAME} ${EXPAT_LIBRARIES})

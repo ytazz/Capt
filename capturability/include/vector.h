@@ -7,8 +7,10 @@
 
 namespace CA {
 
-struct Vector2 {
+typedef struct Vector2 {
+
   Vector2(); // constructor
+  ~Vector2();
 
   void clear();
 
@@ -38,7 +40,8 @@ struct Vector2 {
 private:
   void cartesianToPolar();
   void polarToCartesian();
-};
+
+} vec2_t;
 
 Vector2 operator*(const float &d, const Vector2 &v);
 

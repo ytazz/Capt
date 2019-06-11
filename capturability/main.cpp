@@ -12,17 +12,15 @@ using namespace CA;
 
 int main(int argc, char const *argv[]) {
   Model model("nao.xml");
-  model.parse();
 
   Param param("analysis.xml");
-  param.parse();
 
   Grid grid(param);
 
   Analysis analysis(model, param);
-  analysis.exe();
+  analysis.exe(1);
   analysis.save("1step.csv", 1);
-  analysis.save("2step.csv", 2);
+  // analysis.save("2step.csv", 2);
 
   return 0;
 }

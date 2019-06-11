@@ -44,6 +44,9 @@ private:
   Pendulum pendulum;
   SwingFoot swing_foot;
   Capturability capturability;
+
+  vec2_t cop;
+  float step_time;
 };
 
 } // namespace CA

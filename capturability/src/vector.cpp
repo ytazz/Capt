@@ -4,6 +4,8 @@ namespace CA {
 
 Vector2::Vector2() { clear(); }
 
+Vector2::~Vector2() {}
+
 void Vector2::clear() {
   this->r = 0.0;
   this->th = 0.0;
@@ -48,13 +50,13 @@ Vector2 Vector2::normal() {
 void Vector2::printCartesian() { printCartesian(""); }
 
 void Vector2::printCartesian(std::string str) {
-  printf("%s [ %lf, %lf ]\n", str.c_str(), this->x, this->y);
+  printf("%s %lf, %lf\n", str.c_str(), this->x, this->y);
 }
 
 void Vector2::printPolar() { printPolar(""); }
 
 void Vector2::printPolar(std::string str) {
-  printf("%s [ %lf, %lf ]\n", str.c_str(), this->r, this->th);
+  printf("%s %lf, %lf\n", str.c_str(), this->r, this->th);
 }
 
 void Vector2::operator=(const Vector2 &v) {

@@ -24,12 +24,13 @@ void Analysis::exe(int n_step) {
       if (grid.existState(state_)) {
         if (capturability.capturable(state_, n_step - 1)) {
           capturability.setCaptureSet(state_id, input_id,
-                                      grid.getStateIndex(state_), n_step);
+                                      grid.getStateIndex(state_), n_step, cop,
+                                      step_time);
         }
       }
     }
     if ((state_id % 1000) == 0) {
-      float percentage = (float)state_id / grid.getNumState();
+      float percentage = (float)state_id / grid.getNumState() * 100;
       printf("%d \t/ %d \t(%lf %%)\n", state_id, grid.getNumState(),
              percentage);
     }
@@ -38,18 +39,19 @@ void Analysis::exe(int n_step) {
 
 State Analysis::step(const State state, const Input input) {
   Vector2 icp;
-  float dt;
 
   pendulum.setIcp(state.icp);
   Polygon polygon;
-  polygon.setVertex(model.getVec("link", "foot_r"));
-  Vector2 cop = polygon.getClosestPoint(state.icp, polygon.getConvexHull());
+  polygon.setVertex(model.getVec("foot", "foot_r"));
+  cop = polygon.getClosestPoint(state.icp, polygon.getConvexHull());
+  Vector2 cop_;
+  cop_.setCartesian(cop.x, cop.y);
   pendulum.setCop(cop);
 
   swing_foot.set(state.swft, input.swft);
-  dt = swing_foot.getTime();
+  step_time = swing_foot.getTime();
 
-  icp = pendulum.getIcp(dt);
+  icp = pendulum.getIcp(step_time);
 
   Vector2 icp_, swft_;
   icp_.setCartesian(-input.swft.x + icp.x, input.swft.y - icp.y);

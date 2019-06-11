@@ -36,7 +36,7 @@ void Loader::parse() {
     }
   }
   l_file.close();
-  std::cout << "PARSE SUCCESSFULL" << std::endl;
+  // std::cout << "PARSE SUCCESSFULL" << std::endl;
 }
 
 void Loader::start(void *data, const char *el, const char **attr) {

@@ -3,8 +3,8 @@
 namespace CA {
 
 Kinematics::Kinematics(Model model)
-    : model(model), pi(M_PI), lambda(0.5), accuracy(0.00001), weight_p(1),
-      weight_R(1) {
+    : model(model), pi(M_PI), lambda(0.5), accuracy(0.001), iteration_max(20),
+      weight_p(1), weight_R(1) {
   for (int i = 0; i < NUM_LINK; i++) {
     link[i].trans = model.getLinkVec(i, "trn");
     link[i].axis = model.getLinkVec(i, "axis");
@@ -189,6 +189,7 @@ bool Kinematics::inverseRLeg(mat4_t link_trans) {
   }
 
   bool find_solution = false;
+  int count = 0;
   while (!find_solution) {
     std::vector<float> joint;
     for (int j = 0; j < 6; j++) {
@@ -210,6 +211,10 @@ bool Kinematics::inverseRLeg(mat4_t link_trans) {
       break;
     dq = lambda * jacobian(CHAIN_RLEG).inverse() * err;
     q = q + dq;
+
+    if (count >= iteration_max)
+      break;
+    count++;
   }
 
   for (int i = static_cast<int>(R_HIP_YAWPITCH);
@@ -236,6 +241,7 @@ bool Kinematics::inverseLLeg(mat4_t link_trans) {
   }
 
   bool find_solution = false;
+  int count = 0;
   while (!find_solution) {
     std::vector<float> joint;
     for (int j = 0; j < 6; j++) {
@@ -257,6 +263,10 @@ bool Kinematics::inverseLLeg(mat4_t link_trans) {
       break;
     dq = lambda * jacobian(CHAIN_LLEG).inverse() * err;
     q = q + dq;
+
+    if (count >= iteration_max)
+      break;
+    count++;
   }
 
   for (int i = static_cast<int>(L_HIP_YAWPITCH);

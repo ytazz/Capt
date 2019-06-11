@@ -83,6 +83,7 @@ private:
   const float pi;
   const float lambda; // 0 < lambda <= 1 stabilize calculation
   const float accuracy;
+  const int iteration_max;
   const float weight_p;
   const float weight_R;
 

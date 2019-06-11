@@ -3,8 +3,8 @@
 namespace CA {
 
 Trajectory::Trajectory(Model model)
-    : kinematics(model), lambda(0.1), accuracy(0.00001) {
-  torso_ref = Eigen::Vector3f::Zero();
+    : kinematics(model), lambda(0.5), accuracy(0.0001) {
+  this->torso_ref = Eigen::Vector3f::Zero();
 }
 
 Trajectory::~Trajectory() {}
@@ -28,29 +28,38 @@ bool Trajectory::calc() {
   vec3_t torso_p_lleg;
 
   bool find_traj = false;
+  int iteration = 0;
   while (!find_traj) {
     torso_p_rleg = rleg_ref - torso_ref;
     torso_p_lleg = lleg_ref - torso_ref;
-    if (kinematics.inverse(torso_p_rleg, CHAIN_RLEG))
+    if (kinematics.inverse(torso_p_rleg, CHAIN_RLEG)) {
       joints_r = kinematics.getJoints(CHAIN_RLEG);
-    if (kinematics.inverse(torso_p_lleg, CHAIN_LLEG))
+    } else {
+      torso_ref -= lambda * err;
+      break;
+    }
+    if (kinematics.inverse(torso_p_lleg, CHAIN_LLEG)) {
       joints_l = kinematics.getJoints(CHAIN_LLEG);
+    } else {
+      torso_ref -= lambda * err;
+      break;
+    }
     kinematics.forward(joints_r, CHAIN_RLEG);
     kinematics.forward(joints_l, CHAIN_LLEG);
-    err = com_ref - kinematics.getCom(CHAIN_BODY);
+    err = com_ref - (torso_ref + kinematics.getCom(CHAIN_BODY));
+    torso_ref += lambda * err;
     if (err.norm() <= accuracy)
       find_traj = true;
-    std::cout << "------------" << '\n';
-    std::cout << err(2) << '\n';
-    torso_ref = lambda * err;
+    iteration++;
   }
+  // std::cout << "iteration:" << iteration << '\n';
 
   return find_traj;
 }
 
-vec3_t Trajectory::getRLegRef() { return rleg_ref; }
+vec3_t Trajectory::getRLegRef() { return this->rleg_ref; }
 
-vec3_t Trajectory::getLLegRef() { return lleg_ref; }
+vec3_t Trajectory::getLLegRef() { return this->lleg_ref; }
 
-vec3_t Trajectory::getTorsoRef() { return torso_ref; }
+vec3_t Trajectory::getTorsoRef() { return this->torso_ref; }
 }

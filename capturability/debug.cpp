@@ -16,18 +16,13 @@ using namespace CA;
 
 int main(int argc, char const *argv[]) {
   Model model("nao.xml");
-  // model.parse();
   // model.print();
 
   Param param("analysis.xml");
-  // param.parse();
   // param.print();
 
-  std::cout << "/* message */" << '\n';
   Grid grid(param);
-  std::cout << "/* message */" << '\n';
   Capturability capturability(model, param);
-  std::cout << "/* message */" << '\n';
 
   Analysis analysis(model, param);
   // analysis.exe(1);
@@ -54,35 +49,64 @@ int main(int argc, char const *argv[]) {
   joint.push_back(0.0);
   joint.push_back(0.0);
   joint.push_back(0.0);
-  joint.push_back(0.1); // rleg
-  joint.push_back(0.1);
-  joint.push_back(0.1);
-  joint.push_back(0.1);
-  joint.push_back(0.1);
-  joint.push_back(0.1);
-  joint.push_back(0.1); // lleg
-  joint.push_back(0.1);
-  joint.push_back(0.1);
-  joint.push_back(0.1);
-  joint.push_back(0.1);
-  joint.push_back(0.1);
+  joint.push_back(0.0); // rleg
+  joint.push_back(0.0);
+  joint.push_back(-0.1745);
+  joint.push_back(+0.1745);
+  joint.push_back(0.0);
+  joint.push_back(0.0);
+  joint.push_back(0.0); // lleg
+  joint.push_back(0.0);
+  joint.push_back(-0.1745);
+  joint.push_back(+0.1745);
+  joint.push_back(0.0);
+  joint.push_back(0.0);
 
   kinematics.forward(joint, CHAIN_BODY);
   kinematics.getCom(CHAIN_BODY);
 
   Trajectory trajectory(model);
   trajectory.setJoints(joint);
-  vec3_t com_ref;
-  com_ref << 0, 0, 0.25;
-  vec3_t rleg_ref;
-  rleg_ref << 0, -0.05, 0.0467;
-  vec3_t lleg_ref;
-  lleg_ref << 0, 0.05, 0.0467;
-  trajectory.setRLegRef(rleg_ref);
-  trajectory.setLLegRef(lleg_ref);
-  trajectory.setComRef(com_ref);
+  vec3_t world_p_com_ref;
+  vec3_t world_p_rleg_ref;
+  vec3_t world_p_lleg_ref;
+  vec3_t world_p_torso_ref;
+  world_p_com_ref << 0.05, 0.0, 0.25;
+  world_p_rleg_ref << 0.0173, -0.05, 0.045;
+  world_p_lleg_ref << 0.0173, +0.05, 0.045;
+  world_p_torso_ref << 0, 0, 0;
+  trajectory.setRLegRef(world_p_rleg_ref);
+  trajectory.setLLegRef(world_p_lleg_ref);
+  trajectory.setComRef(world_p_com_ref);
 
-  trajectory.calc();
+  if (trajectory.calc())
+    std::cout << "success" << '\n';
+  else
+    std::cout << "failed" << '\n';
+
+  world_p_torso_ref = trajectory.getTorsoRef();
+  world_p_rleg_ref = trajectory.getRLegRef();
+  world_p_lleg_ref = trajectory.getLLegRef();
+
+  vec3_t torso_p_rleg = world_p_rleg_ref - world_p_torso_ref;
+  vec3_t torso_p_lleg = world_p_lleg_ref - world_p_torso_ref;
+
+  std::vector<float> joints_r, joints_l;
+  if (kinematics.inverse(torso_p_rleg, CHAIN_RLEG))
+    joints_r = kinematics.getJoints(CHAIN_RLEG);
+  else
+    std::cout << "Right side IK failed" << '\n';
+  if (kinematics.inverse(torso_p_lleg, CHAIN_LLEG))
+    joints_l = kinematics.getJoints(CHAIN_LLEG);
+  else
+    std::cout << "Left side IK failed" << '\n';
+  kinematics.forward(joints_r, CHAIN_RLEG);
+  kinematics.forward(joints_l, CHAIN_LLEG);
+  vec3_t torso_p_com = kinematics.getCom(CHAIN_BODY);
+  std::cout << "world_p_torso_ref" << '\n';
+  std::cout << world_p_torso_ref << '\n';
+  std::cout << "world_p_com" << '\n';
+  std::cout << world_p_torso_ref + torso_p_com << '\n';
 
   return 0;
 }

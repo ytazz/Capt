@@ -18,35 +18,41 @@ using namespace CA;
 int main(int argc, char const *argv[]) {
   Model model("nao.xml");
   // model.print();
-
   Param param("analysis.xml");
   // param.print();
 
   Grid grid(param);
+  Pendulum pendulum(model);
+
   Capturability capturability(model, param);
   capturability.load("1step.csv");
 
   // Analysis analysis(model, param);
   // analysis.exe(1);
   // analysis.save("1step.csv", 1);
-  std::vector<CaptureSet> region = capturability.getCaptureRegion(44392, 1);
+  std::vector<CaptureSet> region = capturability.getCaptureRegion(44457, 1);
 
   std::cout << "state" << '\n';
-  State state = grid.getState(44392);
+  State state = grid.getState(44457);
   state.printCartesian();
+  std::cout << "--------------------------" << '\n';
+  std::cout << "region: " << (int)region.size() << '\n';
   for (size_t i = 0; i < region.size(); i++) {
     region[i].swft.printCartesian();
   }
 
-  // std::cout << "--------------------------" << '\n';
-  // FrictionFilter friction_filter(capturability);
-  // // friction_filter.setCaptureRegion(region);
-  // vec2_t com;
-  // std::vector<Input> modified_region;
-  // = friction_filter.getCaptureRegion(1,com);
-  // for (size_t i = 0; i < modified_region.size(); i++) {
-  //   modified_region[i].swft.printCartesian();
-  // }
+  FrictionFilter friction_filter(capturability, pendulum);
+  friction_filter.setCaptureRegion(region);
+  vec2_t icp, com, com_vel;
+  icp = state.icp;
+  com.clear();
+  com_vel = (icp - com) * 5.71741;
+  std::vector<CaptureSet> modified_region =
+      friction_filter.getCaptureRegion(com, com_vel, 0.15);
+  std::cout << "modified region: " << (int)modified_region.size() << '\n';
+  for (size_t i = 0; i < modified_region.size(); i++) {
+    modified_region[i].swft.printCartesian();
+  }
 
   // Kinematics kinematics(model);
   // std::vector<float> joint;

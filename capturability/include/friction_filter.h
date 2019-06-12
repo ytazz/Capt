@@ -12,18 +12,22 @@ namespace CA {
 
 class FrictionFilter {
 public:
-  FrictionFilter(Capturability capturability);
+  FrictionFilter(Capturability capturability, Pendulum pendulum);
   ~FrictionFilter();
 
-  void setCaptureRegion(std::vector<Input> capture_region);
-  std::vector<Input> getCaptureRegion(State state, vec2_t com,
-                                      float mu); // mu = coefficient of friction
+  void setCaptureRegion(std::vector<CaptureSet> capture_set);
+  std::vector<CaptureSet>
+  getCaptureRegion(vec2_t com, vec2_t com_vel,
+                   float mu); // mu = friction coefficient
 
 private:
   Capturability capturability;
-  std::vector<Input> capture_region; // current target capture region
+  Pendulum pendulum;
+
+  // current target capture region
+  std::vector<CaptureSet> capture_set;
 };
 
 } // namespace CA
 
-#endif // __FRICTION_FILTER_H__
+#endif // __FRICTION_FILTER_H____

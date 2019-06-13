@@ -97,7 +97,7 @@ private:
 
   std::string robot_name;
   float unit_length, unit_mass, unit_time, unit_angle;
-  float total_mass, com_height, step_time_min, foot_vel_max;
+  float total_mass, com_height, step_time_min, foot_vel_max, step_height;
   float gravity, friction;
 
   std::vector<Vector2> foot_r, foot_l;

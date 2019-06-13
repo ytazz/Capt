@@ -40,7 +40,7 @@ FrictionFilter::getCaptureRegion(vec2_t com, vec2_t com_vel, float mu) {
     com_vel_ = pendulum.getComVel(capture_set[i].step_time);
     d_end = (com_ - capture_set[i].cop).norm();
 
-    if (std::max(d_start, d_end) <= mu * 0.3) {
+    if (std::max(d_start, d_end) <= mu * 0.25) {
       modified_cr.push_back(capture_set[i]);
     }
   }

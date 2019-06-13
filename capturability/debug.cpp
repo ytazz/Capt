@@ -17,7 +17,7 @@ using namespace CA;
 
 int main(int argc, char const *argv[]) {
   Model model("nao.xml");
-  // model.print();
+  model.print();
   Param param("analysis.xml");
   // param.print();
 

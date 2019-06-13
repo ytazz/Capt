@@ -19,6 +19,7 @@ Model::Model(const std::string &name) : Loader(name), pi(M_PI) {
   com_height = 0.0;
   step_time_min = 0.0;
   foot_vel_max = 0.0;
+  step_height = 0.0;
 
   foot_r.clear();
   foot_l.clear();
@@ -173,6 +174,8 @@ void Model::callbackAttribute(const std::string &name,
       step_time_min = std::stof(value);
     if (equalStr(name, "foot_vel_max"))
       foot_vel_max = std::stof(value);
+    if (equalStr(name, "step_height"))
+      step_height = std::stof(value);
     break;
   case MODEL_ELE_ENVIRONMENT:
     if (equalStr(name, "gravity"))
@@ -289,6 +292,8 @@ float Model::getVal(const char *element_name, const char *attribute_name) {
       val = step_time_min;
     if (equalStr(attribute_name, "foot_vel_max"))
       val = foot_vel_max;
+    if (equalStr(attribute_name, "step_height"))
+      val = step_height;
   }
   if (equalStr(element_name, "environment")) {
     if (equalStr(attribute_name, "gravity"))
@@ -357,6 +362,7 @@ void Model::print() {
   printf("\tcom_height   : %lf\n", com_height);
   printf("\tstep_time_min: %lf\n", step_time_min);
   printf("\tfoot_vel_max : %lf\n", foot_vel_max);
+  printf("\tstep_height  : %lf\n", step_height);
   printf("environment:\n");
   printf("\tgravity : %lf\n", gravity);
   printf("\tfriction: %lf\n", friction);

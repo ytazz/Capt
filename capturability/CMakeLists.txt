@@ -19,6 +19,7 @@ set(HEADERS
   include/capturability.h
   include/friction_filter.h
   include/grid.h
+  include/interpolation.h
   include/input.h
   include/kinematics.h
   include/loader.h
@@ -37,6 +38,7 @@ set(SOURCES
   src/analysis.cpp
   src/capturability.cpp
   src/friction_filter.cpp
+  src/interpolation.cpp
   src/grid.cpp
   src/kinematics.cpp
   src/loader.cpp
@@ -52,10 +54,10 @@ set(SOURCES
 
 add_executable(${PROJECT_NAME} debug.cpp ${SOURCES} ${HEADERS})
 # add_executable(${PROJECT_NAME} main.cpp ${SOURCES} ${HEADERS})
-add_executable(converter converter.cpp ${SOURCES} ${HEADERS})
+# add_executable(converter converter.cpp ${SOURCES} ${HEADERS})
 
 target_link_libraries(${PROJECT_NAME} ${EXPAT_LIBRARIES})
-target_link_libraries(converter ${EXPAT_LIBRARIES})
+# target_link_libraries(converter ${EXPAT_LIBRARIES})
 
 configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 # configure_file(data/graph.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)

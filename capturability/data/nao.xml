@@ -4,7 +4,7 @@
 
   <unit length="m" mass="kg" time="s" angle="deg"/>
 
-  <physics mass="5.65039" com_height="0.3" step_time_min="0.1" foot_vel_max="1.0"/>
+  <physics mass="5.65039" com_height="0.25" step_time_min="0.1" foot_vel_max="1.0" step_height="0.05"/>
 
   <environment gravity="9.80665" friction="1"/>
 

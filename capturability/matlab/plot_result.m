@@ -43,6 +43,10 @@ line([sfwt_r_min*cos(swft_th_max_) sfwt_r_max*cos(swft_th_max_)], ...
 draw_circle([0 0],sfwt_r_min,[swft_th_min swft_th_max],[0.5 0.5 0.5]);
 draw_circle([0 0],sfwt_r_max,[swft_th_min swft_th_max],[0.5 0.5 0.5]);
 
+% CoM
+data = csvread('com.csv');
+scatter(data(1,1),data(1,2),20,'filled','MarkerFaceColor',[0 0 0]);
+
 % ICP
 data = csvread('icp.csv');
 scatter(data(1,1),data(1,2),20,'filled','MarkerFaceColor',[1 0 0]);

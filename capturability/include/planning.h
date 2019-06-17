@@ -18,9 +18,13 @@ public:
   Planning(Model model);
   ~Planning();
 
-  setFootStep(std::vector<FootStep> footstep);
-  setCom(vec3_t com);
-  setComVel(vec3_t com_vel);
+  void setFootStep(std::vector<FootStep> footstep);
+  void setCom(vec3_t com);
+  void setComVel(vec3_t com_vel);
+
+  bool calc(float time);
+
+  vec6_t getJoints(std::string right_or_left);
 
 private:
   Polygon polygon;

@@ -24,8 +24,10 @@ set(HEADERS
   include/kinematics.h
   include/loader.h
   include/model.h
+  include/monitor.h
   include/param.h
   include/pendulum.h
+  include/planning.h
   include/polygon.h
   include/state.h
   include/swing_foot.h
@@ -43,8 +45,10 @@ set(SOURCES
   src/kinematics.cpp
   src/loader.cpp
   src/model.cpp
+  src/monitor.cpp
   src/param.cpp
   src/pendulum.cpp
+  src/planning.cpp
   src/polygon.cpp
   src/swing_foot.cpp
   src/trajectory.cpp

@@ -1,0 +1,47 @@
+\documentclass[a4j]{jarticle}
+
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage{here}
+\usepackage{listings}
+\usepackage{url}
+\usepackage{subfiles}
+\usepackage{subcaption}
+
+\lstset{
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={single},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  xrightmargin=0zw,
+  xleftmargin=0zw,
+  lineskip=-0.5ex
+}
+
+\captionsetup{compatibility=false}
+
+\renewcommand{\figurename}{\bf\textrm{Fig.}}
+\renewcommand{\tablename}{\bf\textrm{Table}}
+\renewcommand{\refname}{参考URL}
+
+\title{Capturability controller for NAO robot}
+\author{H. Kuribayashi}
+\date{\the\year 年\the\month 月\the\day 日}
+
+\begin{document}
+\maketitle
+%-----------------------------------------------------------------------------%
+\subfile{controller}
+%-----------------------------------------------------------------------------%
+% \begin{thebibliography}{15}
+% \end{thebibliography}
+
+\end{document}

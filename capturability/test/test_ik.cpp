@@ -81,17 +81,24 @@ int main(int argc, char const *argv[]) {
   // world_p_lleg_ref = trajectory.getLLegRef();
   //
   // vec3_t torso_p_rleg = world_p_rleg_ref - world_p_torso_ref;
-  // vec3_t torso_p_lleg = world_p_lleg_ref - world_p_torso_ref;
+  vec3_t world_p_torso;
+  world_p_torso << 0, 0, 0;
+  vec3_t world_p_lleg;
+  world_p_lleg << 0.0306181, 0.0750597, -0.294408;
+  vec3_t torso_p_lleg = world_p_lleg - world_p_torso;
   //
-  // std::vector<float> joints_r, joints_l;
+  std::vector<float> joints_r, joints_l;
   // if (kinematics.inverse(torso_p_rleg, CHAIN_RLEG))
   //   joints_r = kinematics.getJoints(CHAIN_RLEG);
   // else
   //   std::cout << "Right side IK failed" << '\n';
-  // if (kinematics.inverse(torso_p_lleg, CHAIN_LLEG))
-  //   joints_l = kinematics.getJoints(CHAIN_LLEG);
-  // else
-  //   std::cout << "Left side IK failed" << '\n';
+  if (kinematics.inverse(torso_p_lleg, CHAIN_LLEG))
+    joints_l = kinematics.getJoints(CHAIN_LLEG);
+  else
+    std::cout << "Left side IK failed" << '\n';
+  for (size_t i = 0; i < joints_l.size(); i++) {
+    std::cout << joints_l[i] << '\n';
+  }
   // kinematics.forward(joints_r, CHAIN_RLEG);
   // kinematics.forward(joints_l, CHAIN_LLEG);
   // vec3_t torso_p_com = kinematics.getCom(CHAIN_BODY);

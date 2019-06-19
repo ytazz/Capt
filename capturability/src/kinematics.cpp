@@ -417,7 +417,9 @@ std::vector<float> Kinematics::getJoints(Chain chain) {
     for (int i = static_cast<int>(HEAD_YAW);
          i <= static_cast<int>(L_ANKLE_ROLL); i++) {
       ELink elink = static_cast<ELink>(i);
-      joints.push_back(link[elink].joint);
+      if (elink != R_FOOT && elink != L_FOOT) {
+        joints.push_back(link[elink].joint);
+      }
     }
     break;
   case CHAIN_HEAD:

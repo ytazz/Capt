@@ -97,27 +97,27 @@ int main(int argc, char const *argv[]) {
   // std::vector<float> joint;
   // joint.push_back(0.0);
   // joint.push_back(0.0);
+  // joint.push_back(1.7453); // right
   // joint.push_back(0.0);
+  // joint.push_back(1.5708);
+  // joint.push_back(1.2217);
   // joint.push_back(0.0);
+  // joint.push_back(1.7453); // left
   // joint.push_back(0.0);
-  // joint.push_back(0.0);
-  // joint.push_back(0.0);
-  // joint.push_back(0.0);
-  // joint.push_back(0.0);
-  // joint.push_back(0.0);
-  // joint.push_back(0.0);
+  // joint.push_back(-1.5708);
+  // joint.push_back(-1.2217);
   // joint.push_back(0.0);
   // joint.push_back(0.0); // rleg
   // joint.push_back(0.0);
-  // joint.push_back(-0.1745);
-  // joint.push_back(+0.1745);
-  // joint.push_back(0.0);
+  // joint.push_back(-0.7448);
+  // joint.push_back(1.2568);
+  // joint.push_back(-0.5120);
   // joint.push_back(0.0);
   // joint.push_back(0.0); // lleg
   // joint.push_back(0.0);
-  // joint.push_back(-0.1745);
-  // joint.push_back(+0.1745);
-  // joint.push_back(0.0);
+  // joint.push_back(-0.7448);
+  // joint.push_back(1.2568);
+  // joint.push_back(-0.5120);
   // joint.push_back(0.0);
   //
   // kinematics.forward(joint, CHAIN_BODY);
@@ -129,10 +129,10 @@ int main(int argc, char const *argv[]) {
   // vec3_t world_p_rleg_ref;
   // vec3_t world_p_lleg_ref;
   // vec3_t world_p_torso_ref;
-  // world_p_com_ref << 0.05, 0.0, 0.25;
+  // world_p_com_ref << 0.0, 0.04, 0.25;
   // world_p_rleg_ref << 0.0173, -0.05, 0.045;
   // world_p_lleg_ref << 0.0173, +0.05, 0.045;
-  // world_p_torso_ref << 0, 0, 0;
+  // world_p_torso_ref << 0, 0, 0.2933;
   // trajectory.setRLegRef(world_p_rleg_ref);
   // trajectory.setLLegRef(world_p_lleg_ref);
   // trajectory.setComRef(world_p_com_ref);

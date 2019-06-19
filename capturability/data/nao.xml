@@ -147,6 +147,9 @@
     <physics mass="0.17184"/>
   </link>
 
+  <link name="RFoot" trn="0.025 -0.005 -0.04519">  <!-- end effector -->
+  </link>
+
 <!-- Left Leg -->
   <link name="LHipYawPitch" trn="0 0.05 -0.08500" axis="0 0.707106781 0.707106781">
     <joint limit ="-65.62 42.44"/>
@@ -182,6 +185,9 @@
     <joint limit ="-22.79 44.06"/>
     <physics com ="0.02542 0.0033 -0.03239"/>
     <physics mass="0.17184"/>
+  </link>
+
+  <link name="LFoot" trn="0.025 -0.005 -0.04519">  <!-- end effector -->
   </link>
 
 </robot>

@@ -187,7 +187,7 @@
     <physics mass="0.17184"/>
   </link>
 
-  <link name="LFoot" trn="0.025 -0.005 -0.04519">  <!-- end effector -->
+  <link name="LFoot" trn="0.025 0.005 -0.04519">  <!-- end effector -->
   </link>
 
 </robot>

@@ -43,17 +43,19 @@ enum ELink {
   R_KNEE_PITCH,
   R_ANKLE_PITCH,
   R_ANKLE_ROLL,
+  R_FOOT,
   L_HIP_YAWPITCH,
   L_HIP_ROLL,
   L_HIP_PITCH,
   L_KNEE_PITCH,
   L_ANKLE_PITCH,
   L_ANKLE_ROLL,
+  L_FOOT,
   NUM_LINK,
   LINK_NONE
 };
 
-enum EFoot { FOOT_NONE, R_FOOT, L_FOOT };
+enum EFoot { FOOT_NONE, FOOT_R, FOOT_L };
 
 enum EShape {
   SHAPE_NONE,

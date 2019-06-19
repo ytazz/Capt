@@ -16,10 +16,10 @@ void Monitor::setIcp(vec2_t icp) {
 
   polygon.clear();
   switch (e_suft) {
-  case R_FOOT:
+  case FOOT_R:
     polygon.setVertex(model.getVec("foot", "foot_r"));
     break;
-  case L_FOOT:
+  case FOOT_L:
     polygon.setVertex(model.getVec("foot", "foot_l"));
     break;
   default:
@@ -46,10 +46,10 @@ bool Monitor::judge() {
 
   polygon.clear();
   switch (e_suft) {
-  case R_FOOT:
+  case FOOT_R:
     polygon.setVertex(model.getVec("foot", "foot_l"));
     break;
-  case L_FOOT:
+  case FOOT_L:
     polygon.setVertex(model.getVec("foot", "foot_r"));
     break;
   default:

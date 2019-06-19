@@ -59,8 +59,10 @@ set(SOURCES
 add_executable(${PROJECT_NAME} debug.cpp ${SOURCES} ${HEADERS})
 # add_executable(${PROJECT_NAME} main.cpp ${SOURCES} ${HEADERS})
 # add_executable(converter converter.cpp ${SOURCES} ${HEADERS})
+add_executable(test_ik test/test_ik.cpp ${SOURCES} ${HEADERS})
 
 target_link_libraries(${PROJECT_NAME} ${EXPAT_LIBRARIES})
+target_link_libraries(test_ik ${EXPAT_LIBRARIES})
 # target_link_libraries(converter ${EXPAT_LIBRARIES})
 
 configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)

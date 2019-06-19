@@ -88,6 +88,9 @@ private:
   const float weight_R;
 
   Link link[NUM_LINK];
+
+  // AnkleRoll -> Foot
+  vec3_t offset_rfoot, offset_lfoot;
 };
 
 } // namespace CA

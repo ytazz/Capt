@@ -50,12 +50,14 @@ Model::Model(const std::string &name) : Loader(name), pi(M_PI) {
   link_name[R_KNEE_PITCH] = "RKneePitch";
   link_name[R_ANKLE_PITCH] = "RAnklePitch";
   link_name[R_ANKLE_ROLL] = "RAnkleRoll";
+  link_name[R_FOOT] = "RFoot";
   link_name[L_HIP_YAWPITCH] = "LHipYawPitch";
   link_name[L_HIP_ROLL] = "LHipRoll";
   link_name[L_HIP_PITCH] = "LHipPitch";
   link_name[L_KNEE_PITCH] = "LKneePitch";
   link_name[L_ANKLE_PITCH] = "LAnklePitch";
   link_name[L_ANKLE_ROLL] = "LAnkleRoll";
+  link_name[L_FOOT] = "LFoot";
 
   parse();
 }
@@ -186,9 +188,9 @@ void Model::callbackAttribute(const std::string &name,
   case MODEL_ELE_FOOT:
     if (equalStr(name, "name")) {
       if (equalStr(value, "foot_r"))
-        foot = R_FOOT;
+        foot = FOOT_R;
       if (equalStr(value, "foot_l"))
-        foot = L_FOOT;
+        foot = FOOT_L;
     }
     break;
   case MODEL_ELE_SHAPE:
@@ -209,21 +211,21 @@ void Model::callbackAttribute(const std::string &name,
     switch (shape) {
     case SHAPE_POLYGON:
       if (equalStr(name, "point")) {
-        if (foot == R_FOOT)
+        if (foot == FOOT_R)
           foot_r.push_back(convertStrToVec(value) * unit_length);
-        if (foot == L_FOOT)
+        if (foot == FOOT_L)
           foot_l.push_back(convertStrToVec(value) * unit_length);
       }
       break;
     case SHAPE_REVERSE:
-      if (foot == R_FOOT) {
+      if (foot == FOOT_R) {
         for (size_t i = 0; i < foot_l.size(); i++) {
           Vector2 v;
           v.setCartesian(foot_l[i].x, -foot_l[i].y);
           foot_r.push_back(v);
         }
       }
-      if (foot == L_FOOT)
+      if (foot == FOOT_L)
         for (size_t i = 0; i < foot_r.size(); i++) {
           Vector2 v;
           v.setCartesian(foot_r[i].x, -foot_r[i].y);

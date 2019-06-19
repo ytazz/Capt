@@ -136,10 +136,10 @@ void Planning::printStepSeq() {
     printf("\t|%1.3lf", step_seq[i].step_time);
     printf("\t|");
     switch (step_seq[i].e_suft) {
-    case R_FOOT:
+    case FOOT_R:
       printf("%s", "r_foot");
       break;
-    case L_FOOT:
+    case FOOT_L:
       printf("%s", "l_foot");
       break;
     default:

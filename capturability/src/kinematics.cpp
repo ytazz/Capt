@@ -13,6 +13,9 @@ Kinematics::Kinematics(Model model)
     link[i].joint = 0.0;
   }
 
+  offset_rfoot = model.getLinkVec(static_cast<int>(R_FOOT), "trn");
+  offset_lfoot = model.getLinkVec(static_cast<int>(L_FOOT), "trn");
+
   link[TORSO].homo =
       homogeneous(Eigen::Matrix3f::Identity(), link[TORSO].trans);
 }
@@ -179,7 +182,7 @@ bool Kinematics::inverse(vec3_t link_pos, Chain chain) {
 
 bool Kinematics::inverseRLeg(mat4_t link_trans) {
   vec6_t q;
-  vec3_t p_ref = link_trans.block(0, 3, 3, 1);
+  vec3_t p_ref = link_trans.block(0, 3, 3, 1) - offset_rfoot;
   mat3_t R_ref = link_trans.block(0, 0, 3, 3);
 
   for (int i = static_cast<int>(R_HIP_YAWPITCH);
@@ -231,7 +234,7 @@ bool Kinematics::inverseRLeg(mat4_t link_trans) {
 
 bool Kinematics::inverseLLeg(mat4_t link_trans) {
   vec6_t q;
-  vec3_t p_ref = link_trans.block(0, 3, 3, 1);
+  vec3_t p_ref = link_trans.block(0, 3, 3, 1) - offset_lfoot;
   mat3_t R_ref = link_trans.block(0, 0, 3, 3);
 
   for (int i = static_cast<int>(L_HIP_YAWPITCH);
@@ -359,13 +362,23 @@ vec3_t Kinematics::getCom(Chain chain) {
 
 vec3_t Kinematics::getLinkPos(ELink elink) {
   vec3_t pos;
-  pos = link[elink].homo.block(0, 3, 3, 1);
+  if (elink == R_FOOT)
+    pos = link[R_ANKLE_ROLL].homo.block(0, 3, 3, 1) + offset_rfoot;
+  else if (elink == L_FOOT)
+    pos = link[L_ANKLE_ROLL].homo.block(0, 3, 3, 1) + offset_lfoot;
+  else
+    pos = link[elink].homo.block(0, 3, 3, 1);
   return pos;
 }
 
 mat3_t Kinematics::getLinkRot(ELink elink) {
   mat3_t mat;
-  mat = link[elink].homo.block(0, 0, 3, 3);
+  if (elink == R_FOOT)
+    mat = link[R_ANKLE_ROLL].homo.block(0, 0, 3, 3);
+  else if (elink == L_FOOT)
+    mat = link[L_ANKLE_ROLL].homo.block(0, 0, 3, 3);
+  else
+    mat = link[elink].homo.block(0, 0, 3, 3);
   return mat;
 }
 

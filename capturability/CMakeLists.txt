@@ -36,6 +36,11 @@ set(HEADERS
 )
 # file(GLOB_RECURSE HEADERS include/*.h)
 
+set(PLOT_HEADERS
+  include/cr_plot.h
+  include/gnuplot.h
+)
+
 set(SOURCES
   src/analysis.cpp
   src/capturability.cpp
@@ -56,13 +61,21 @@ set(SOURCES
 )
 # file(GLOB_RECURSE SOURCES src/*.cpp)
 
-add_executable(${PROJECT_NAME} debug.cpp ${SOURCES} ${HEADERS})
-# add_executable(${PROJECT_NAME} main.cpp ${SOURCES} ${HEADERS})
+set(PLOT_SOURCES
+  src/cr_plot.cpp
+  src/gnuplot.cpp
+)
+
+add_executable(debug debug.cpp ${SOURCES} ${HEADERS})
+add_executable(${PROJECT_NAME} main.cpp ${SOURCES} ${HEADERS})
 # add_executable(converter converter.cpp ${SOURCES} ${HEADERS})
 add_executable(test_ik test/test_ik.cpp ${SOURCES} ${HEADERS})
+add_executable(animation test/animation.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
 
 target_link_libraries(${PROJECT_NAME} ${EXPAT_LIBRARIES})
+target_link_libraries(debug ${EXPAT_LIBRARIES})
 target_link_libraries(test_ik ${EXPAT_LIBRARIES})
+target_link_libraries(animation ${EXPAT_LIBRARIES})
 # target_link_libraries(converter ${EXPAT_LIBRARIES})
 
 configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)

@@ -1,7 +1,3 @@
-/*
-    author G. KIM
-*/
-
 #include "cr_plot.h"
 
 using namespace std;

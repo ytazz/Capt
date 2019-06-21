@@ -27,7 +27,10 @@ public:
 
   void calcRef();
 
+  vec2_t getCop(float time);
   vec3_t getCom(float time);
+  vec3_t getComVel(float time);
+  vec2_t getIcp(float time);
   vec3_t getRLeg(float time);
   vec3_t getLLeg(float time);
 
@@ -51,6 +54,7 @@ private:
   vec3_t com_, com_vel_;
   vec3_t rleg, lleg;
 
+  vec2_t icp_ref;
   vec3_t com_ref, com_vel_ref;
   vec3_t rleg_ref, lleg_ref;
 };

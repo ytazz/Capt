@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(Capturability)
 
+# add_subdirectory(example)
+
 set(MAKE_LIBRARY  false CACHE BOOL "make capturability library")
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
 if(${MAKE_LIBRARY})
@@ -43,6 +45,7 @@ set(HEADERS
 
 set(PLOT_HEADERS
   include/cr_plot.h
+  include/plot_trajectory.h
   include/gnuplot.h
 )
 
@@ -68,14 +71,16 @@ set(SOURCES
 
 set(PLOT_SOURCES
   src/cr_plot.cpp
+  src/plot_trajectory.cpp
   src/gnuplot.cpp
 )
 
 add_executable(main main.cpp ${SOURCES} ${HEADERS})
 add_executable(debug debug.cpp ${SOURCES} ${HEADERS})
 # add_executable(converter converter.cpp ${SOURCES} ${HEADERS})
-add_executable(test_ik test/test_ik.cpp ${SOURCES} ${HEADERS})
-add_executable(animation test/animation.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
+add_executable(test_ik example/test_ik.cpp ${SOURCES} ${HEADERS})
+add_executable(animation example/animation.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
+add_executable(anim_traj example/anim_traj.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
 
 
 target_link_libraries(main ${EXPAT_LIBRARIES})
@@ -83,6 +88,7 @@ target_link_libraries(debug ${EXPAT_LIBRARIES})
 target_link_libraries(test_ik ${EXPAT_LIBRARIES})
 # target_link_libraries(converter ${EXPAT_LIBRARIES})
 target_link_libraries(animation ${EXPAT_LIBRARIES})
+target_link_libraries(anim_traj ${EXPAT_LIBRARIES})
 
 if(${MAKE_LIBRARY})
   add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})

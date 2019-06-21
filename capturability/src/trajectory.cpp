@@ -36,14 +36,14 @@ bool Trajectory::calc() {
     if (kinematics.inverse(torso_p_rleg, CHAIN_RLEG)) {
       joints_r = kinematics.getJoints(CHAIN_RLEG);
     } else {
-      std::cout << "ik false right" << '\n';
+      // std::cout << "ik false right" << '\n';
       torso_ref -= lambda * err;
       break;
     }
     if (kinematics.inverse(torso_p_lleg, CHAIN_LLEG)) {
       joints_l = kinematics.getJoints(CHAIN_LLEG);
     } else {
-      std::cout << "ik false left" << '\n';
+      // std::cout << "ik false left" << '\n';
       torso_ref -= lambda * err;
       break;
     }
@@ -55,17 +55,17 @@ bool Trajectory::calc() {
       find_traj = true;
     iteration++;
   }
-  if (iteration == 0) {
-    std::cout << " 最初から無理" << '\n';
-    std::cout << "torso_ref" << '\n';
-    std::cout << torso_ref << '\n';
-    std::cout << "rleg_ref" << '\n';
-    std::cout << rleg_ref << '\n';
-    std::cout << "lleg_ref" << '\n';
-    std::cout << lleg_ref << '\n';
-    std::cout << "com_ref" << '\n';
-    std::cout << com_ref << '\n';
-  }
+  // if (iteration == 0) {
+  //   std::cout << " 最初から無理" << '\n';
+  //   std::cout << "torso_ref" << '\n';
+  //   std::cout << torso_ref << '\n';
+  //   std::cout << "rleg_ref" << '\n';
+  //   std::cout << rleg_ref << '\n';
+  //   std::cout << "lleg_ref" << '\n';
+  //   std::cout << lleg_ref << '\n';
+  //   std::cout << "com_ref" << '\n';
+  //   std::cout << com_ref << '\n';
+  // }
 
   return find_traj;
 }

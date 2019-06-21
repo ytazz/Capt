@@ -227,11 +227,11 @@ bool Kinematics::inverseRLeg(mat4_t link_trans) {
     ELink elink = static_cast<ELink>(i);
     // link[elink].joint = q(i - static_cast<int>(R_HIP_YAWPITCH), 0);
     if (model.getLinkVal(elink, "lower_limit") > getJointAngle(elink)) {
-      std::cout << "lower out:" << i << '\n';
+      // std::cout << "lower out:" << i << '\n';
       find_solution *= false;
     }
     if (model.getLinkVal(elink, "upper_limit") < getJointAngle(elink)) {
-      std::cout << "upper out:" << i << '\n';
+      // std::cout << "upper out:" << i << '\n';
       find_solution *= false;
     }
   }
@@ -286,11 +286,11 @@ bool Kinematics::inverseLLeg(mat4_t link_trans) {
     ELink elink = static_cast<ELink>(i);
     // link[elink].joint = q(i - static_cast<int>(L_HIP_YAWPITCH), 0);
     if (model.getLinkVal(elink, "lower_limit") > getJointAngle(elink)) {
-      std::cout << "lower out:" << i << '\n';
+      // std::cout << "lower out:" << i << '\n';
       find_solution *= false;
     }
     if (model.getLinkVal(elink, "upper_limit") < getJointAngle(elink)) {
-      std::cout << "upper out:" << i << '\n';
+      // std::cout << "upper out:" << i << '\n';
       find_solution *= false;
     }
   }

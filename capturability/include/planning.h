@@ -1,55 +1,56 @@
 #ifndef __PLANNING_H__
 #define __PLANNING_H__
 
+#include "capturability.h"
+#include "grid.h"
 #include "kinematics.h"
 #include "model.h"
 #include "monitor.h"
 #include "pendulum.h"
 #include "polygon.h"
+#include "swing_foot.h"
 #include "vector.h"
 #include <vector>
 
 namespace CA {
 
-struct StepSeq {
-  vec3_t footstep;
-  vec2_t cop;
-  float step_time;
-  EFoot e_suft;
-};
-
-struct ComState {
-  vec2_t pos;
-  vec2_t vel;
-};
-
 class Planning {
 public:
-  Planning(Model model);
+  Planning(Model model, Param param);
   ~Planning();
 
-  void setStepSeq(std::vector<StepSeq> step_seq);
-  void setComState(vec2_t com, vec2_t com_vel);
+  // world coordinate
+  void setCom(vec3_t com);
+  void setComVel(vec3_t com_vel);
+  void setRLeg(vec3_t rleg);
+  void setLLeg(vec3_t lleg);
 
   void calcRef();
 
-  void printStepSeq();
-
-  float getPlanningTime();
-  vec2_t getFootstep(int num_step);
-  vec2_t getCom(float time);
-  vec2_t getComVel(float time);
-  vec3_t getIcp(float time);
-  vec6_t getJoints(float time, std::string right_or_left);
+  vec3_t getCom(float time);
+  vec3_t getRLeg(float time);
+  vec3_t getLLeg(float time);
 
 private:
   Polygon polygon;
   Pendulum pendulum;
+  Capturability capturability;
+  Grid grid;
+  SwingFoot swing_foot;
 
-  int getNumStep(float time);
+  float step_time;
+  float g;
+  float h;
+  float omega;
 
-  std::vector<StepSeq> step_seq;
-  std::vector<ComState> com_state; // at t=0, n-step
+  vec3_t vec2tovec3(vec2_t vec2);
+  vec2_t vec3tovec2(vec3_t vec3);
+
+  vec3_t com, com_vel;
+  vec3_t rleg, lleg;
+
+  vec3_t com_ref, com_vel_ref;
+  vec3_t rleg_ref, lleg_ref;
 };
 
 } // namespace CA

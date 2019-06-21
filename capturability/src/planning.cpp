@@ -2,153 +2,119 @@
 
 namespace CA {
 
-Planning::Planning(Model model) : polygon(), pendulum(model) {
-  this->step_seq.clear();
-  this->com_state.clear();
+Planning::Planning(Model model, Param param)
+    : polygon(), pendulum(model), capturability(model, param), grid(param),
+      swing_foot(model) {
+  this->com = vec3_t::Zero();
+  this->com_vel = vec3_t::Zero();
+  this->rleg = vec3_t::Zero();
+  this->lleg = vec3_t::Zero();
+  this->com_ref = vec3_t::Zero();
+  this->com_vel_ref = vec3_t::Zero();
+  this->rleg_ref = vec3_t::Zero();
+  this->lleg_ref = vec3_t::Zero();
+
+  g = model.getVal("environment", "gravity");
+  h = model.getVal("physics", "com_height");
+  omega = sqrt(g / h);
+
+  capturability.load("1step.csv");
 }
 
 Planning::~Planning() {}
 
-void Planning::setStepSeq(std::vector<StepSeq> step_seq) {
-  this->step_seq.clear();
-  this->step_seq = step_seq;
+void Planning::setCom(vec3_t com) { this->com = com; }
+
+void Planning::setComVel(vec3_t com_vel) { this->com_vel = com_vel; }
+
+void Planning::setRLeg(vec3_t rleg) { this->rleg = rleg; }
+
+void Planning::setLLeg(vec3_t lleg) { this->lleg = lleg; }
+
+vec3_t Planning::vec2tovec3(vec2_t vec2) {
+  vec3_t vec3;
+  vec3.x() = vec2.x;
+  vec3.y() = vec2.y;
+  vec3.z() = 0.0;
+  return vec3;
 }
 
-void Planning::setComState(vec2_t com, vec2_t com_vel) {
-  this->com_state.clear();
-  ComState com_state_;
-  com_state_.pos = com;
-  com_state_.vel = com_vel;
-  this->com_state.push_back(com_state_);
+vec2_t Planning::vec3tovec2(vec3_t vec3) {
+  vec2_t vec2;
+  vec2.setCartesian(vec3.x(), vec3.y());
+  return vec2;
 }
 
 void Planning::calcRef() {
-  float point[2]; // landing
-  float piece[2], piece_vel[2];
-  float com_des[2], com_vel_des[2];
-  float c, s;
-  float Tc = sqrt(0.25 / 9.80665);
-  const float a = 1, b = 0.1;
+  // get capture region
+  vec3_t icp3 = com + com_vel / omega;
 
-  for (size_t i = 0; i < step_seq.size() - 1; i++) {
-    // step 3
-    pendulum.setCop(step_seq[i].cop);
-    pendulum.setCom(com_state[i].pos);
-    pendulum.setComVel(com_state[i].vel);
+  State state;
+  state.icp.setCartesian(icp3.x(), icp3.y());
+  state.swft.setCartesian((lleg - rleg).x(), (lleg - rleg).y());
+  state.printCartesian();
 
-    ComState com_state_;
-    com_state_.pos = pendulum.getCom(step_seq[i].step_time);
-    com_state_.vel = pendulum.getComVel(step_seq[i].step_time);
-    this->com_state.push_back(com_state_);
+  GridState gstate;
+  gstate = grid.roundState(state);
 
-    // step 5
-    point[0] = step_seq[i].footstep.x();
-    point[1] = step_seq[i].footstep.y();
+  std::vector<CA::CaptureSet> capture_set;
+  capture_set = capturability.getCaptureRegion(gstate.id, 1);
+  // printf("capture region\n");
+  // for (size_t i = 0; i < capture_set.size(); i++) {
+  //   printf("%f,%f\n", capture_set[i].swft.x, capture_set[i].swft.y);
+  // }
 
-    // step 6
-    piece[0] = (step_seq[i + 1].footstep.x() - step_seq[i].footstep.x()) / 2.0;
-    piece[1] = (step_seq[i + 1].footstep.y() - step_seq[i].footstep.y()) / 2.0;
-
-    c = cosh(step_seq[i].step_time / Tc);
-    s = sinh(step_seq[i].step_time / Tc);
-    piece_vel[0] = piece[0] * (c + 1) / (Tc * s);
-    piece_vel[1] = piece[1] * (c + 1) / (Tc * s);
-    // printf("%f,%f\n", piece[0], piece[1]);
-
-    // step 7
-    com_des[0] = point[0] + piece[0];
-    com_des[1] = point[1] + piece[1];
-    com_vel_des[0] = piece_vel[0];
-    com_vel_des[1] = piece_vel[1];
-
-    // step 8
-    float d = a * (c - 1) * (c - 1) + b * (s / Tc) * (s / Tc);
-    point[0] = -a * (c - 1) *
-                   (com_des[0] - c * com_state[i + 1].pos.x -
-                    Tc * s * com_state[i + 1].vel.x) /
-                   d -
-               b * s *
-                   (com_vel_des[0] - s * com_state[i].pos.x / Tc -
-                    c * com_state[i].vel.x) /
-                   (Tc * d);
-    point[1] = -a * (c - 1) *
-                   (com_des[1] - c * com_state[i + 1].pos.y -
-                    Tc * s * com_state[i + 1].vel.y) /
-                   d -
-               b * s *
-                   (com_vel_des[1] - s * com_state[i].pos.y / Tc -
-                    c * com_state[i].vel.y) /
-                   (Tc * d);
-
-    step_seq[i + 1].footstep.x() = point[0];
-    step_seq[i + 1].footstep.y() = point[1];
-    step_seq[i + 1].cop.x = point[0];
-    step_seq[i + 1].cop.y = point[1];
-  }
-}
-
-float Planning::getPlanningTime() {
-  float step_time_sum = 0.0;
-  for (size_t i = 0; i < step_seq.size(); i++) {
-    step_time_sum += step_seq[i].step_time;
-  }
-  return step_time_sum;
-}
-
-vec2_t Planning::getFootstep(int num_step) {
-  vec2_t foot;
-  foot.setCartesian(step_seq[num_step].footstep.x(),
-                    step_seq[num_step].footstep.y());
-  return foot;
-}
-
-int Planning::getNumStep(float time) {
-  int num_step = 0;
-  float step_time_sum = 0.0;
-
-  if (time > getPlanningTime()) {
-    printf("Error: time(%lf) > planning time(%lf)\n", time, getPlanningTime());
-    exit(EXIT_FAILURE);
-  } else {
-    for (size_t i = 0; i < step_seq.size(); i++) {
-      step_time_sum += step_seq[i].step_time;
-      if (time <= step_time_sum)
-        break;
-      num_step++;
+  // calculate desired landing position
+  vec3_t landing;
+  float dist = 0.0, dist_min = 0.0;
+  int dist_min_id = 0;
+  std::cout << "size = " << capture_set.size() << '\n';
+  for (size_t i = 0; i < capture_set.size(); i++) {
+    dist = (capture_set[i].swft - state.swft).norm();
+    if (i == 0) {
+      dist_min = dist;
+      dist_min_id = i;
+    } else if (dist < dist_min) {
+      dist_min = dist;
+      dist_min_id = i;
     }
   }
-  return num_step;
+  landing.x() = capture_set[dist_min_id].swft.x;
+  landing.y() = capture_set[dist_min_id].swft.y;
+  landing.z() = 0.0;
+  std::cout << "landing" << '\n';
+  std::cout << landing << '\n';
+
+  // feet trajectory planning
+  swing_foot.set(lleg, landing);
+  step_time = swing_foot.getTime();
+
+  // com trajectory planning
+  pendulum.setCom(com);
+  pendulum.setComVel(com_vel);
+  pendulum.setCop(capture_set[dist_min_id].cop);
 }
 
-vec2_t Planning::getCom(float time) { return com_state[getNumStep(time)].pos; }
+vec3_t Planning::getCom(float time) {
+  vec2_t com2_ref;
+  if (time <= step_time)
+    com2_ref = pendulum.getCom(time);
+  else
+    com2_ref = pendulum.getCom(step_time);
+  com_ref = vec2tovec3(com2_ref);
+  com_ref.z() = h;
+  return com_ref;
+}
 
-void Planning::printStepSeq() {
-  printf("---------------------------------------------------------\n");
-  printf("|num\t|foot_x\t|foot_y\t|cop_x\t|cop_y\t|time\t|suft\t|\n");
-  printf("---------------------------------------------------------\n");
+vec3_t Planning::getRLeg(float time) {
+  rleg_ref = rleg;
+  return rleg_ref;
+}
 
-  for (size_t i = 0; i < step_seq.size(); i++) {
-    printf("|%d", (int)i);
-    printf("\t|%1.3lf", step_seq[i].footstep.x());
-    printf("\t|%1.3lf", step_seq[i].footstep.y());
-    printf("\t|%1.3lf", step_seq[i].cop.x);
-    printf("\t|%1.3lf", step_seq[i].cop.y);
-    printf("\t|%1.3lf", step_seq[i].step_time);
-    printf("\t|");
-    switch (step_seq[i].e_suft) {
-    case FOOT_R:
-      printf("%s", "r_foot");
-      break;
-    case FOOT_L:
-      printf("%s", "l_foot");
-      break;
-    default:
-      break;
-    }
-    printf("\t|");
-    printf("\n");
-  }
-  printf("---------------------------------------------------------\n");
+vec3_t Planning::getLLeg(float time) {
+  if (time <= step_time)
+    lleg_ref = swing_foot.getTraj(time);
+  return lleg_ref;
 }
 
 } // namespace CA

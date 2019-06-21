@@ -46,7 +46,9 @@ private:
   vec3_t vec2tovec3(vec2_t vec2);
   vec2_t vec3tovec2(vec3_t vec3);
 
+  vec2_t cop, cop_;
   vec3_t com, com_vel;
+  vec3_t com_, com_vel_;
   vec3_t rleg, lleg;
 
   vec3_t com_ref, com_vel_ref;

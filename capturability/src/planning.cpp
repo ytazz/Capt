@@ -48,6 +48,10 @@ vec2_t Planning::vec3tovec2(vec3_t vec3) {
 void Planning::calcRef() {
   // get capture region
   vec3_t icp3 = com + com_vel / omega;
+  std::cout << "com" << '\n';
+  std::cout << com << '\n';
+  std::cout << "com_vel" << '\n';
+  std::cout << com_vel << '\n';
 
   State state;
   state.icp.setCartesian(icp3.x(), icp3.y());
@@ -90,17 +94,28 @@ void Planning::calcRef() {
   step_time = swing_foot.getTime();
 
   // com trajectory planning
+  cop = capture_set[dist_min_id].cop;
+  cop_ = capture_set[dist_min_id].swft;
   pendulum.setCom(com);
   pendulum.setComVel(com_vel);
-  pendulum.setCop(capture_set[dist_min_id].cop);
+  pendulum.setCop(cop);
+  com_ = vec2tovec3(pendulum.getCom(step_time));
+  com_vel_ = vec2tovec3(pendulum.getComVel(step_time));
 }
 
 vec3_t Planning::getCom(float time) {
   vec2_t com2_ref;
-  if (time <= step_time)
+  if (time <= step_time) {
+    pendulum.setCom(com);
+    pendulum.setComVel(com_vel);
+    pendulum.setCop(cop);
     com2_ref = pendulum.getCom(time);
-  else
-    com2_ref = pendulum.getCom(step_time);
+  } else {
+    pendulum.setCom(com_);
+    pendulum.setComVel(com_vel_);
+    pendulum.setCop(cop_);
+    com2_ref = pendulum.getCom(time - step_time);
+  }
   com_ref = vec2tovec3(com2_ref);
   com_ref.z() = h;
   return com_ref;
@@ -108,6 +123,10 @@ vec3_t Planning::getCom(float time) {
 
 vec3_t Planning::getRLeg(float time) {
   rleg_ref = rleg;
+  if (time > step_time) {
+    rleg_ref.y() += 0.00001;
+    rleg_ref.z() += 0.00001;
+  }
   return rleg_ref;
 }
 

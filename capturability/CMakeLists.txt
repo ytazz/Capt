@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.0)
 project(Capturability)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -shared -fPIC")
+set(MAKE_LIBRARY  false CACHE BOOL "make capturability library")
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
+if(${MAKE_LIBRARY})
+  set(CMAKE_CXX_FLAGS "-shared -fPIC")
+endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
@@ -73,17 +77,19 @@ add_executable(debug debug.cpp ${SOURCES} ${HEADERS})
 add_executable(test_ik test/test_ik.cpp ${SOURCES} ${HEADERS})
 add_executable(animation test/animation.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
 
-add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
 
 target_link_libraries(main ${EXPAT_LIBRARIES})
 target_link_libraries(debug ${EXPAT_LIBRARIES})
 target_link_libraries(test_ik ${EXPAT_LIBRARIES})
 # target_link_libraries(converter ${EXPAT_LIBRARIES})
 target_link_libraries(animation ${EXPAT_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} ${EXPAT_LIBRARIES})
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_SOURCE_DIR}/lib)
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
+if(${MAKE_LIBRARY})
+  add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})
+  target_link_libraries(${PROJECT_NAME} ${EXPAT_LIBRARIES})
+  install(TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_SOURCE_DIR}/lib)
+  install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+endif()
 
 configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 # configure_file(data/graph.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)

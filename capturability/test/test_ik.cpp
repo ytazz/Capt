@@ -55,57 +55,70 @@ int main(int argc, char const *argv[]) {
   for (size_t i = 0; i < joints.size(); i++) {
     std::cout << i << ": " << joints[i] << '\n';
   }
-  // kinematics.getCom(CHAIN_BODY);
-  //
-  // Trajectory trajectory(model);
-  // trajectory.setJoints(joint);
-  // vec3_t world_p_com_ref;
-  // vec3_t world_p_rleg_ref;
-  // vec3_t world_p_lleg_ref;
-  // vec3_t world_p_torso_ref;
-  // world_p_com_ref << 0.0, 0.04, 0.25;
-  // world_p_rleg_ref << 0.0173 + 0.025, -0.05 - 0.005, 0.045 - 0.04519;
-  // world_p_lleg_ref << 0.0173 + 0.025, +0.05 + 0.005, 0.045 - 0.04519;
-  // world_p_torso_ref << 0, 0, 0.2933;
-  // trajectory.setRLegRef(world_p_rleg_ref);
-  // trajectory.setLLegRef(world_p_lleg_ref);
-  // trajectory.setComRef(world_p_com_ref);
-  //
-  // if (trajectory.calc())
-  //   std::cout << "success" << '\n';
-  // else
-  //   std::cout << "failed" << '\n';
-  //
-  // world_p_torso_ref = trajectory.getTorsoRef();
-  // world_p_rleg_ref = trajectory.getRLegRef();
-  // world_p_lleg_ref = trajectory.getLLegRef();
-  //
-  // vec3_t torso_p_rleg = world_p_rleg_ref - world_p_torso_ref;
+
+  Trajectory trajectory(model);
+  trajectory.setJoints(joint);
   vec3_t world_p_torso;
-  world_p_torso << 0, 0, 0;
-  vec3_t world_p_lleg;
-  world_p_lleg << 0.0306181, 0.0750597, -0.294408;
-  vec3_t torso_p_lleg = world_p_lleg - world_p_torso;
-  //
-  std::vector<float> joints_r, joints_l;
-  // if (kinematics.inverse(torso_p_rleg, CHAIN_RLEG))
-  //   joints_r = kinematics.getJoints(CHAIN_RLEG);
-  // else
-  //   std::cout << "Right side IK failed" << '\n';
-  if (kinematics.inverse(torso_p_lleg, CHAIN_LLEG))
-    joints_l = kinematics.getJoints(CHAIN_LLEG);
+  vec3_t world_p_com;
+  vec3_t world_p_lleg, world_p_rleg;
+  vec3_t world_p_com_ref;
+  vec3_t world_p_rleg_ref, world_p_lleg_ref;
+  vec3_t world_p_torso_ref;
+
+  // setting
+  world_p_com << -0.00999698, -0.0104361, 0.249976;
+  world_p_torso << -0.018111, -0.0053466, 0.295333;
+  world_p_lleg << 0, 0.055, -0.000170774;
+  world_p_rleg << 0, -0.055, -0.000170774;
+
+  trajectory.setTorso(world_p_torso);
+  trajectory.setRLegRef(world_p_rleg);
+  trajectory.setLLegRef(world_p_lleg);
+  trajectory.setComRef(world_p_com);
+
+  if (trajectory.calc())
+    std::cout << "success" << '\n';
   else
-    std::cout << "Left side IK failed" << '\n';
-  for (size_t i = 0; i < joints_l.size(); i++) {
-    std::cout << joints_l[i] << '\n';
+    std::cout << "failed" << '\n';
+
+  world_p_torso_ref = trajectory.getTorsoRef();
+  world_p_rleg_ref = trajectory.getRLegRef();
+  world_p_lleg_ref = trajectory.getLLegRef();
+
+  vec3_t torso_p_rleg = world_p_rleg_ref - world_p_torso_ref;
+  vec3_t torso_p_lleg = world_p_lleg_ref - world_p_torso_ref;
+  std::vector<float> joints_r, joints_l;
+  if (kinematics.inverse(torso_p_rleg, CHAIN_RLEG)) {
+    joints_r = kinematics.getJoints(CHAIN_RLEG);
+    for (size_t i = 0; i < joints_r.size(); i++) {
+      std::cout << joints_r[i] << '\n';
+    }
+  } else {
+    std::cout << "Right side IK failed" << '\n';
   }
-  // kinematics.forward(joints_r, CHAIN_RLEG);
-  // kinematics.forward(joints_l, CHAIN_LLEG);
-  // vec3_t torso_p_com = kinematics.getCom(CHAIN_BODY);
-  // std::cout << "world_p_torso_ref" << '\n';
-  // std::cout << world_p_torso_ref << '\n';
-  // std::cout << "world_p_com" << '\n';
-  // std::cout << world_p_torso_ref + torso_p_com << '\n';
+
+  std::cout << "----------------" << '\n';
+
+  if (kinematics.inverse(torso_p_lleg, CHAIN_LLEG)) {
+    joints_l = kinematics.getJoints(CHAIN_LLEG);
+    for (size_t i = 0; i < joints_l.size(); i++) {
+      std::cout << joints_l[i] << '\n';
+    }
+  } else {
+    std::cout << "Left side IK failed" << '\n';
+  }
+
+  std::cout << "----------------" << '\n';
+  std::cout << "world_p_torso_ref" << '\n';
+  std::cout << world_p_torso_ref << '\n';
+  std::cout << "world_p_rleg_ref" << '\n';
+  std::cout << world_p_rleg_ref << '\n';
+  std::cout << "world_p_lleg_ref" << '\n';
+  std::cout << world_p_lleg_ref << '\n';
+  std::cout << "torso_p_rleg" << '\n';
+  std::cout << torso_p_rleg << '\n';
+  std::cout << "torso_p_lleg" << '\n';
+  std::cout << torso_p_lleg << '\n';
 
   return 0;
 }

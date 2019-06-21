@@ -3,7 +3,7 @@
 namespace CA {
 
 Kinematics::Kinematics(Model model)
-    : model(model), pi(M_PI), lambda(0.5), accuracy(0.001), iteration_max(20),
+    : model(model), pi(M_PI), lambda(0.5), accuracy(0.001), iteration_max(1000),
       weight_p(1), weight_R(1) {
   for (int i = 0; i < NUM_LINK; i++) {
     link[i].trans = model.getLinkVec(i, "trn");
@@ -215,18 +215,25 @@ bool Kinematics::inverseRLeg(mat4_t link_trans) {
     dq = lambda * jacobian(CHAIN_RLEG).inverse() * err;
     q = q + dq;
 
-    if (count >= iteration_max)
+    if (count >= iteration_max) {
+      // find_solution = true;
       break;
+    }
     count++;
   }
 
   for (int i = static_cast<int>(R_HIP_YAWPITCH);
        i <= static_cast<int>(R_ANKLE_ROLL); i++) {
     ELink elink = static_cast<ELink>(i);
-    if (model.getLinkVal(elink, "lower_limit") > getJointAngle(elink))
+    // link[elink].joint = q(i - static_cast<int>(R_HIP_YAWPITCH), 0);
+    if (model.getLinkVal(elink, "lower_limit") > getJointAngle(elink)) {
+      std::cout << "lower out:" << i << '\n';
       find_solution *= false;
-    if (model.getLinkVal(elink, "upper_limit") < getJointAngle(elink))
+    }
+    if (model.getLinkVal(elink, "upper_limit") < getJointAngle(elink)) {
+      std::cout << "upper out:" << i << '\n';
       find_solution *= false;
+    }
   }
 
   return find_solution;
@@ -267,18 +274,25 @@ bool Kinematics::inverseLLeg(mat4_t link_trans) {
     dq = lambda * jacobian(CHAIN_LLEG).inverse() * err;
     q = q + dq;
 
-    if (count >= iteration_max)
+    if (count >= iteration_max) {
+      // find_solution = true;
       break;
+    }
     count++;
   }
 
   for (int i = static_cast<int>(L_HIP_YAWPITCH);
        i <= static_cast<int>(L_ANKLE_ROLL); i++) {
     ELink elink = static_cast<ELink>(i);
-    if (model.getLinkVal(elink, "lower_limit") > getJointAngle(elink))
+    // link[elink].joint = q(i - static_cast<int>(L_HIP_YAWPITCH), 0);
+    if (model.getLinkVal(elink, "lower_limit") > getJointAngle(elink)) {
+      std::cout << "lower out:" << i << '\n';
       find_solution *= false;
-    if (model.getLinkVal(elink, "upper_limit") < getJointAngle(elink))
+    }
+    if (model.getLinkVal(elink, "upper_limit") < getJointAngle(elink)) {
+      std::cout << "upper out:" << i << '\n';
       find_solution *= false;
+    }
   }
 
   return find_solution;

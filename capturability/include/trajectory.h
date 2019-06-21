@@ -12,6 +12,7 @@ public:
   Trajectory(Model model);
   ~Trajectory();
 
+  void setTorso(vec3_t torso);
   void setJoints(std::vector<float> joints);
   void setRLegRef(vec3_t rleg_ref);
   void setLLegRef(vec3_t lleg_ref);
@@ -34,6 +35,6 @@ private:
   const float lambda; // 0 < lambda <= 1 stabilize calculation
   const float accuracy;
 };
-}
+} // namespace CA
 
 #endif // __TRAJECTORY_H__

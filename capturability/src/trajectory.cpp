@@ -9,6 +9,8 @@ Trajectory::Trajectory(Model model)
 
 Trajectory::~Trajectory() {}
 
+void Trajectory::setTorso(vec3_t torso) { this->torso_ref = torso; }
+
 void Trajectory::setJoints(std::vector<float> joints) {
   kinematics.forward(joints, CHAIN_BODY);
 }
@@ -20,7 +22,6 @@ void Trajectory::setLLegRef(vec3_t lleg_ref) { this->lleg_ref = lleg_ref; }
 void Trajectory::setComRef(vec3_t com_ref) { this->com_ref = com_ref; }
 
 bool Trajectory::calc() {
-  torso_ref = com_ref;
   vec3_t err = Eigen::Vector3f::Zero();
   std::vector<float> joints_r, joints_l;
 
@@ -35,12 +36,14 @@ bool Trajectory::calc() {
     if (kinematics.inverse(torso_p_rleg, CHAIN_RLEG)) {
       joints_r = kinematics.getJoints(CHAIN_RLEG);
     } else {
+      std::cout << "ik false right" << '\n';
       torso_ref -= lambda * err;
       break;
     }
     if (kinematics.inverse(torso_p_lleg, CHAIN_LLEG)) {
       joints_l = kinematics.getJoints(CHAIN_LLEG);
     } else {
+      std::cout << "ik false left" << '\n';
       torso_ref -= lambda * err;
       break;
     }
@@ -52,7 +55,17 @@ bool Trajectory::calc() {
       find_traj = true;
     iteration++;
   }
-  // std::cout << "iteration:" << iteration << '\n';
+  if (iteration == 0) {
+    std::cout << " 最初から無理" << '\n';
+    std::cout << "torso_ref" << '\n';
+    std::cout << torso_ref << '\n';
+    std::cout << "rleg_ref" << '\n';
+    std::cout << rleg_ref << '\n';
+    std::cout << "lleg_ref" << '\n';
+    std::cout << lleg_ref << '\n';
+    std::cout << "com_ref" << '\n';
+    std::cout << com_ref << '\n';
+  }
 
   return find_traj;
 }
@@ -62,4 +75,4 @@ vec3_t Trajectory::getRLegRef() { return this->rleg_ref; }
 vec3_t Trajectory::getLLegRef() { return this->lleg_ref; }
 
 vec3_t Trajectory::getTorsoRef() { return this->torso_ref; }
-}
+} // namespace CA

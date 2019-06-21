@@ -19,7 +19,7 @@ line('XData',data(:,1),'YData',data(:,6),'Color','g');
 line('XData',data(:,1),'YData',data(:,7),'Color','b');
 
 %% Plot
-figure('Name','Right');
+figure('Name','Torso');
 hold on;
 % axis equal;
 grid on;
@@ -34,6 +34,22 @@ line('XData',data(:,1),'YData',data(:,11),'Color','r');
 line('XData',data(:,1),'YData',data(:,12),'Color','g');
 line('XData',data(:,1),'YData',data(:,13),'Color','b');
 
+%% Plot
+figure('Name','Right');
+hold on;
+% axis equal;
+grid on;
+grid minor;
+
+% RLEG
+data = csvread('~/choreonoid/build/data.csv',1,0);
+line('XData',data(:,1),'YData',data(:,14),'Color','r','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,15),'Color','g','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,16),'Color','b','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,17),'Color','r');
+line('XData',data(:,1),'YData',data(:,18),'Color','g');
+line('XData',data(:,1),'YData',data(:,19),'Color','b');
+
 
 %% Plot
 figure('Name','Left');
@@ -44,12 +60,12 @@ grid minor;
 
 % LLEG
 data = csvread('~/choreonoid/build/data.csv',1,0);
-line('XData',data(:,1),'YData',data(:,14),'Color','r','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,15),'Color','g','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,16),'Color','b','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,17),'Color','r');
-line('XData',data(:,1),'YData',data(:,18),'Color','g');
-line('XData',data(:,1),'YData',data(:,19),'Color','b');
+line('XData',data(:,1),'YData',data(:,20),'Color','r','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,21),'Color','g','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,22),'Color','b','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,23),'Color','r');
+line('XData',data(:,1),'YData',data(:,24),'Color','g');
+line('XData',data(:,1),'YData',data(:,25),'Color','b');
 
 %% Tracking
 figure('Name','IK');
@@ -60,8 +76,8 @@ grid minor;
 
 data = csvread('~/choreonoid/build/data_ik.csv',1,0);
 line('XData',data(:,1),'YData',data(:,2),'Color','r','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,3),'Color','g','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,4),'Color','b','LineStyle','--');
+%line('XData',data(:,1),'YData',data(:,3),'Color','g','LineStyle','--');
+%line('XData',data(:,1),'YData',data(:,4),'Color','b','LineStyle','--');
 
 %% Joint
 figure('Name','Joints(Left)');

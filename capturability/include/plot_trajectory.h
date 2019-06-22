@@ -29,13 +29,19 @@ public:
   void setLLeg(vec3_t lleg);
   void calcRef();
 
-  void plot(float t);
+  void plotXY(float t);
+  void plotYZ(float t);
 
 private:
+  void fileOutput(vec2_t vec);
+  void fileOutput(vec3_t vec);
+
   Gnuplot p;
   Model model;
   Param param;
   Planning planning;
+
+  FILE *fp;
 
   vec2_t world_p_icp;
   vec2_t world_p_cop;
@@ -43,6 +49,8 @@ private:
   vec3_t world_p_com_vel;
   vec3_t world_p_rleg;
   vec3_t world_p_lleg;
+
+  std::vector<vec2_t> foot;
 };
 }
 

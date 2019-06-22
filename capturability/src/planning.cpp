@@ -54,7 +54,7 @@ void Planning::calcRef() {
   std::cout << com_vel << '\n';
 
   State state;
-  state.icp.setCartesian(icp3.x(), icp3.y());
+  state.icp.setCartesian((icp3 - rleg).x(), (icp3 - rleg).y());
   state.swft.setCartesian((lleg - rleg).x(), (lleg - rleg).y());
   state.printCartesian();
 
@@ -90,12 +90,11 @@ void Planning::calcRef() {
   std::cout << landing << '\n';
 
   // feet trajectory planning
-  swing_foot.set(lleg, landing);
+  swing_foot.set(lleg, rleg + landing);
   step_time = swing_foot.getTime();
 
   // com trajectory planning
   cop = capture_set[dist_min_id].cop + vec3tovec2(rleg);
-  cop_ = capture_set[dist_min_id].swft;
   pendulum.setCom(com);
   pendulum.setComVel(com_vel);
   pendulum.setCop(cop);
@@ -108,7 +107,8 @@ vec2_t Planning::getCop(float time) {
   if (time <= step_time) {
     current_cop = cop;
   } else {
-    current_cop = cop_;
+    current_cop = getIcp(time);
+    cop_ = getIcp(time);
   }
   return current_cop;
 }

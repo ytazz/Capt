@@ -20,15 +20,15 @@ int main() {
   Model model(model_dir);
 
   vec3_t com;
-  com << -0.0136254, -0.028355, 0.250988;
+  com << -0.0136255, -0.0262312, 0.251226;
   vec3_t com_vel;
-  com_vel << 0, 0.707916, -0.00822986;
+  com_vel << -5.81843e-07, 0.353957, -0.00553961;
   vec3_t torso;
-  torso << -0.022432, -0.0407954, 0.293682;
+  torso << -0.022417, -0.038482, 0.293978;
   vec3_t rleg;
-  rleg << -0.0040939, -0.0541447, 0;
+  rleg << -0.00441721, -0.0530343, 0.000301669;
   vec3_t lleg;
-  lleg << -0.00274675, 0.0559155, 0.0199344;
+  lleg << -0.00278837, 0.0571003, 0.0198305;
 
   PlotTrajectory plot(model, param);
   plot.setCom(com);
@@ -38,11 +38,10 @@ int main() {
   plot.calcRef();
 
   double t = 0.0;
-  while (t <= 0.3) {
-    plot.plot(t);
+  while (t <= 0.4) {
+    plot.plotYZ(t);
     // usleep(500 * 1000); // usleep takes sleep time in us
-    t += 0.001;
-    std::cout << t << '\n';
+    t += 0.01;
   }
 
   return 0;

@@ -27,7 +27,7 @@ int main() {
   capturability.load("1step.csv");
 
   State state;
-  state.icp.setPolar(0.11, param.getVal("icp_th", "min"));
+  state.icp.setCartesian(-0.013626, 0.1388);
   state.swft.setPolar(0.11, 3.14159 / 2);
 
   CRPlot cr_plot(model, param);

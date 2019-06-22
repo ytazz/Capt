@@ -81,6 +81,7 @@ add_executable(debug debug.cpp ${SOURCES} ${HEADERS})
 add_executable(test_ik example/test_ik.cpp ${SOURCES} ${HEADERS})
 add_executable(animation example/animation.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
 add_executable(anim_traj example/anim_traj.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
+add_executable(test_time example/test_time.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
 
 
 target_link_libraries(main ${EXPAT_LIBRARIES})
@@ -89,6 +90,7 @@ target_link_libraries(test_ik ${EXPAT_LIBRARIES})
 # target_link_libraries(converter ${EXPAT_LIBRARIES})
 target_link_libraries(animation ${EXPAT_LIBRARIES})
 target_link_libraries(anim_traj ${EXPAT_LIBRARIES})
+target_link_libraries(test_time ${EXPAT_LIBRARIES})
 
 if(${MAKE_LIBRARY})
   add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})

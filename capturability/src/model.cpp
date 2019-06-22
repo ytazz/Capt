@@ -211,10 +211,22 @@ void Model::callbackAttribute(const std::string &name,
     switch (shape) {
     case SHAPE_POLYGON:
       if (equalStr(name, "point")) {
-        if (foot == FOOT_R)
+        if (foot == FOOT_R) {
           foot_r.push_back(convertStrToVec(value) * unit_length);
-        if (foot == FOOT_L)
+          if (foot_r.size() > 3) {
+            polygon.clear();
+            polygon.setVertex(foot_r);
+            foot_r_convex = polygon.getConvexHull();
+          }
+        }
+        if (foot == FOOT_L) {
           foot_l.push_back(convertStrToVec(value) * unit_length);
+          if (foot_l.size() > 3) {
+            polygon.clear();
+            polygon.setVertex(foot_l);
+            foot_l_convex = polygon.getConvexHull();
+          }
+        }
       }
       break;
     case SHAPE_REVERSE:
@@ -224,13 +236,20 @@ void Model::callbackAttribute(const std::string &name,
           v.setCartesian(foot_l[i].x, -foot_l[i].y);
           foot_r.push_back(v);
         }
+        polygon.clear();
+        polygon.setVertex(foot_r);
+        foot_r_convex = polygon.getConvexHull();
       }
-      if (foot == FOOT_L)
+      if (foot == FOOT_L) {
         for (size_t i = 0; i < foot_r.size(); i++) {
           Vector2 v;
           v.setCartesian(foot_r[i].x, -foot_r[i].y);
           foot_l.push_back(v);
         }
+        polygon.clear();
+        polygon.setVertex(foot_l);
+        foot_l_convex = polygon.getConvexHull();
+      }
       break;
     default:
       break;
@@ -312,8 +331,12 @@ std::vector<Vector2> Model::getVec(const char *element_name,
   if (equalStr(element_name, "foot")) {
     if (equalStr(attribute_name, "foot_r"))
       vec = foot_r;
+    if (equalStr(attribute_name, "foot_r_convex"))
+      vec = foot_r_convex;
     if (equalStr(attribute_name, "foot_l"))
       vec = foot_l;
+    if (equalStr(attribute_name, "foot_l_convex"))
+      vec = foot_l_convex;
   }
   return vec;
 }
@@ -328,9 +351,19 @@ std::vector<Vector2> Model::getVec(const char *element_name,
         vec.push_back(foot_r[i] + translation);
       }
     }
+    if (equalStr(attribute_name, "foot_r_convex")) {
+      for (size_t i = 0; i < foot_r_convex.size(); i++) {
+        vec.push_back(foot_r_convex[i] + translation);
+      }
+    }
     if (equalStr(attribute_name, "foot_l")) {
       for (size_t i = 0; i < foot_l.size(); i++) {
         vec.push_back(foot_l[i] + translation);
+      }
+    }
+    if (equalStr(attribute_name, "foot_l_convex")) {
+      for (size_t i = 0; i < foot_l_convex.size(); i++) {
+        vec.push_back(foot_l_convex[i] + translation);
       }
     }
   }

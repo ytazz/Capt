@@ -213,14 +213,14 @@ void PlotTrajectory::plotXY(float dt) {
   fprintf(p.gp, "%f %f\n", world_p_com.x(), world_p_com.y());
   fprintf(p.gp, "e\n");
   // RLeg
-  foot = model.getVec("foot", "foot_r");
+  foot = model.getVec("foot", "foot_r_convex");
   for (size_t i = 0; i < foot.size(); i++) {
     fprintf(p.gp, "%f %f\n", world_p_rleg.x() + foot[i].x,
             world_p_rleg.y() + foot[i].y);
   }
   fprintf(p.gp, "e\n");
   // LLeg
-  foot = model.getVec("foot", "foot_l");
+  foot = model.getVec("foot", "foot_l_convex");
   for (size_t i = 0; i < foot.size(); i++) {
     fprintf(p.gp, "%f %f\n", world_p_lleg.x() + foot[i].x,
             world_p_lleg.y() + foot[i].y);

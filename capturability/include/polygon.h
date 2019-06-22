@@ -1,7 +1,6 @@
 #ifndef __POLYGON_H__
 #define __POLYGON_H__
 
-#include "model.h"
 #include "vector.h"
 #include <string>
 #include <vector>

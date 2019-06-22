@@ -2,6 +2,7 @@
 #define __MODEL_H__
 
 #include "loader.h"
+#include "polygon.h"
 #include "vector.h"
 #include <iostream>
 #include <math.h>
@@ -99,6 +100,8 @@ private:
   EShape shape;
   ELink link;
 
+  Polygon polygon;
+
   float pi;
 
   std::string robot_name;
@@ -107,6 +110,7 @@ private:
   float gravity, friction;
 
   std::vector<Vector2> foot_r, foot_l;
+  std::vector<Vector2> foot_r_convex, foot_l_convex;
 
   std::string link_name[NUM_LINK];
 

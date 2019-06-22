@@ -19,6 +19,8 @@ int main() {
   Param param(param_dir);
   Model model(model_dir);
 
+  vec2_t icp;
+  icp.setCartesian(-0.013626, 0.030283);
   vec3_t com;
   com << -0.0136255, -0.0262312, 0.251226;
   vec3_t com_vel;
@@ -30,15 +32,17 @@ int main() {
   vec3_t lleg;
   lleg << -0.00278837, 0.0571003, 0.0198305;
 
-  PlotTrajectory plot(model, param);
+  PlotTrajectory plot(model, param, 0.01);
+  plot.setIcp(icp);
   plot.setCom(com);
   plot.setComVel(com_vel);
   plot.setRLeg(rleg);
   plot.setLLeg(lleg);
-  plot.calcRef();
+  plot.calcDes();
 
   double t = 0.0;
-  while (t <= 0.5) {
+  while (t <= 1.0) {
+    // plot.plotXY(t);
     plot.plotYZ(t);
     // usleep(500 * 1000); // usleep takes sleep time in us
     t += 0.01;

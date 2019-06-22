@@ -25,6 +25,7 @@ public:
   Vector2 getCom(float dt);
   Vector2 getComVel(float dt);
   Vector2 getIcp(float dt);
+  Vector2 getIcpVel(float dt);
 
 private:
   Vector2 com, com_vel;

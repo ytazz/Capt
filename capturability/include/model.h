@@ -83,6 +83,10 @@ public:
   std::string getStr(const char *element_name, const char *attribute_name);
   std::vector<Vector2> getVec(const char *element_name,
                               const char *attribute_name);
+  std::vector<Vector2> getVec(const char *element_name,
+                              const char *attribute_name, vec2_t translation);
+  std::vector<Vector2> getVec(const char *element_name,
+                              const char *attribute_name, vec3_t translation);
   float getLinkVal(ELink link, const char *attribute_name);
   float getLinkVal(int link_id, const char *attribute_name);
   vec3_t getLinkVec(ELink link, const char *attribute_name);

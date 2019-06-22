@@ -53,4 +53,10 @@ Vector2 Pendulum::getIcp(float dt) {
   return icp_;
 }
 
+Vector2 Pendulum::getIcpVel(float dt) {
+  Vector2 icp_vel_;
+  icp_vel_ = omega * (icp - cop) * exp(omega * dt);
+  return icp_vel_;
+}
+
 } // namespace CA

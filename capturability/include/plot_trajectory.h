@@ -20,14 +20,15 @@ namespace CA {
 
 class PlotTrajectory {
 public:
-  PlotTrajectory(Model model, Param param);
+  PlotTrajectory(Model model, Param param, float timestep);
   ~PlotTrajectory();
 
+  void setIcp(vec2_t icp);
   void setCom(vec3_t com);
   void setComVel(vec3_t com_vel);
   void setRLeg(vec3_t rleg);
   void setLLeg(vec3_t lleg);
-  void calcRef();
+  void calcDes();
 
   void plotXY(float t);
   void plotYZ(float t);

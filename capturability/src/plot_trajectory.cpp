@@ -4,8 +4,8 @@ using namespace std;
 
 namespace CA {
 
-PlotTrajectory::PlotTrajectory(Model model, Param param)
-    : model(model), param(param), planning(model, param) {
+PlotTrajectory::PlotTrajectory(Model model, Param param, float timestep)
+    : model(model), param(param), planning(model, param, timestep) {
   string output = "file";
 
   p("set title \"Reference Trajectory\"");
@@ -22,7 +22,7 @@ PlotTrajectory::PlotTrajectory(Model model, Param param)
   p("set grid mxtics mytics");
 
   if (output == "file") {
-    p("set terminal gif animate optimize delay 10 size 600,900");
+    p("set terminal gif animate optimize delay 20 size 600,900");
     p("set output 'plot.gif'");
   }
 
@@ -38,6 +38,8 @@ PlotTrajectory::PlotTrajectory(Model model, Param param)
 
 PlotTrajectory::~PlotTrajectory() {}
 
+void PlotTrajectory::setIcp(vec2_t icp) { planning.setIcp(icp); }
+
 void PlotTrajectory::setCom(vec3_t com) { planning.setCom(com); }
 
 void PlotTrajectory::setComVel(vec3_t com_vel) { planning.setComVel(com_vel); }
@@ -46,7 +48,7 @@ void PlotTrajectory::setRLeg(vec3_t rleg) { planning.setRLeg(rleg); }
 
 void PlotTrajectory::setLLeg(vec3_t lleg) { planning.setLLeg(lleg); }
 
-void PlotTrajectory::calcRef() { planning.calcRef(); }
+void PlotTrajectory::calcDes() { planning.calcDes(); }
 
 void PlotTrajectory::fileOutput(vec2_t vec) {
   fprintf(fp, "%f,%f,", vec.x, vec.y);
@@ -84,12 +86,22 @@ void PlotTrajectory::plotYZ(float dt) {
   fprintf(p.gp, "'-' t 'Left Leg' with lines linewidth 1 "
                 "lc \"black\"\n");
 
-  world_p_icp = planning.getIcp(dt);
+  planning.getIcpDes(dt);
+  planning.getIcpVelDes(dt);
+
   world_p_cop = planning.getCop(dt);
+  world_p_icp = planning.getIcp(dt);
   world_p_com = planning.getCom(dt);
   world_p_com_vel = planning.getComVel(dt);
   world_p_rleg = planning.getRLeg(dt);
   world_p_lleg = planning.getLLeg(dt);
+
+  planning.setCom(world_p_com);
+  planning.setComVel(world_p_com_vel);
+  vec2_t icp;
+  icp.setCartesian(world_p_com.x() + world_p_com_vel.x() / 6.26311,
+                   world_p_com.y() + world_p_com_vel.y() / 6.26311);
+  planning.setIcp(icp);
 
   fprintf(fp, "%f,", dt);
   fileOutput(world_p_icp);
@@ -160,12 +172,22 @@ void PlotTrajectory::plotXY(float dt) {
   fprintf(p.gp, "'-' t 'Left Leg' with lines linewidth 1 "
                 "lc \"black\"\n");
 
-  world_p_icp = planning.getIcp(dt);
+  planning.getIcpDes(dt);
+  planning.getIcpVelDes(dt);
+
   world_p_cop = planning.getCop(dt);
+  world_p_icp = planning.getIcp(dt);
   world_p_com = planning.getCom(dt);
   world_p_com_vel = planning.getComVel(dt);
   world_p_rleg = planning.getRLeg(dt);
   world_p_lleg = planning.getLLeg(dt);
+
+  planning.setCom(world_p_com);
+  planning.setComVel(world_p_com_vel);
+  vec2_t icp;
+  icp.setCartesian(world_p_com.x() + world_p_com_vel.x() / 6.26311,
+                   world_p_com.y() + world_p_com_vel.y() / 6.26311);
+  planning.setIcp(icp);
 
   fprintf(fp, "%f,", dt);
   fileOutput(world_p_icp);

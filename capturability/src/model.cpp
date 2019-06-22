@@ -318,6 +318,34 @@ std::vector<Vector2> Model::getVec(const char *element_name,
   return vec;
 }
 
+std::vector<Vector2> Model::getVec(const char *element_name,
+                                   const char *attribute_name,
+                                   vec2_t translation) {
+  std::vector<Vector2> vec;
+  if (equalStr(element_name, "foot")) {
+    if (equalStr(attribute_name, "foot_r")) {
+      for (size_t i = 0; i < foot_r.size(); i++) {
+        vec.push_back(foot_r[i] + translation);
+      }
+    }
+    if (equalStr(attribute_name, "foot_l")) {
+      for (size_t i = 0; i < foot_l.size(); i++) {
+        vec.push_back(foot_l[i] + translation);
+      }
+    }
+  }
+  return vec;
+}
+
+std::vector<Vector2> Model::getVec(const char *element_name,
+                                   const char *attribute_name,
+                                   vec3_t translation) {
+  vec2_t trans;
+  trans.setCartesian(translation.x(), translation.y());
+  std::vector<Vector2> vec = getVec(element_name, attribute_name, trans);
+  return vec;
+}
+
 float Model::getLinkVal(ELink link, const char *attribute_name) {
   float val = 0.0;
   if (equalStr(attribute_name, "lower_limit"))

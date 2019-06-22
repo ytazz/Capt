@@ -152,15 +152,15 @@ vec2_t Planning::getIcpVelDes(float time) {
 vec2_t Planning::getCop(float time) {
   vec2_t cop_cmd_;
   cop_cmd_ = icp_cr + k * (icp_cr - icp_des) / omega - icp_vel_des / omega;
-  // std::vector<vec2_t> region;
-  // if (time < step_time) {
-  //   region = model.getVec("foot", "foot_r", rleg_des[0]);
-  // } else {
-  //   region = model.getVec("foot", "foot_l", lleg_des[1]);
-  // }
-  // polygon.setVertex(region);
-  // region = polygon.getConvexHull();
-  // cop_cmd = polygon.getClosestPoint(cop_cmd_, region);
+  std::vector<vec2_t> region;
+  if (time < step_time) {
+    region = model.getVec("foot", "foot_r", rleg_des[0]);
+  } else {
+    region = model.getVec("foot", "foot_l", lleg_des[1]);
+  }
+  polygon.setVertex(region);
+  region = polygon.getConvexHull();
+  cop_cmd = polygon.getClosestPoint(cop_cmd_, region);
   cop_cmd = cop_cmd_;
   return cop_cmd;
 }

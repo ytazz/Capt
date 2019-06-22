@@ -114,19 +114,19 @@ vec2_t Planning::getCop(float time) {
 }
 
 vec3_t Planning::getCom(float time) {
-  vec2_t com2_ref;
   if (time <= step_time) {
     pendulum.setCom(com);
     pendulum.setComVel(com_vel);
     pendulum.setCop(cop);
-    com2_ref = pendulum.getCom(time);
-  } else {
+    com_ref.x() = pendulum.getCom(time).x;
+    com_ref.y() = pendulum.getCom(time).y;
+  } else if (time <= 0.25) {
     pendulum.setCom(com_);
     pendulum.setComVel(com_vel_);
     pendulum.setCop(cop_);
-    com2_ref = pendulum.getCom(time - step_time);
+    com_ref.x() = pendulum.getCom(time - step_time).x;
+    com_ref.y() = pendulum.getCom(time - step_time).y;
   }
-  com_ref = vec2tovec3(com2_ref);
   com_ref.z() = h;
   return com_ref;
 }
@@ -138,11 +138,13 @@ vec3_t Planning::getComVel(float time) {
     pendulum.setComVel(com_vel);
     pendulum.setCop(cop);
     com_vel2_ref = pendulum.getComVel(time);
-  } else {
+  } else if (time <= 0.25) {
     pendulum.setCom(com_);
     pendulum.setComVel(com_vel_);
     pendulum.setCop(cop_);
     com_vel2_ref = pendulum.getComVel(time - step_time);
+  } else {
+    com_vel2_ref.clear();
   }
   com_vel_ref = vec2tovec3(com_vel2_ref);
   com_vel_ref.z() = 0.0;
@@ -158,8 +160,8 @@ vec2_t Planning::getIcp(float time) {
 vec3_t Planning::getRLeg(float time) {
   rleg_ref = rleg;
   if (time > step_time) {
-    rleg_ref.y() += 0.00001;
-    rleg_ref.z() += 0.00001;
+    rleg_ref.y() += 0.0001;
+    rleg_ref.z() += 0.0001;
   }
   return rleg_ref;
 }

@@ -38,7 +38,7 @@ int main() {
   plot.calcRef();
 
   double t = 0.0;
-  while (t <= 0.4) {
+  while (t <= 0.5) {
     plot.plotYZ(t);
     // usleep(500 * 1000); // usleep takes sleep time in us
     t += 0.01;

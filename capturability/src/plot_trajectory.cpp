@@ -97,6 +97,8 @@ void PlotTrajectory::plotYZ(float dt) {
   world_p_lleg = planning.getLLeg(dt);
 
   planning.setCom(world_p_com);
+  world_p_com_vel.y() += (5 - rand() % 11) * 0.005;
+  world_p_com_vel.x() += (5 - rand() % 11) * 0.005;
   planning.setComVel(world_p_com_vel);
   vec2_t icp;
   icp.setCartesian(world_p_com.x() + world_p_com_vel.x() / 6.26311,
@@ -183,6 +185,8 @@ void PlotTrajectory::plotXY(float dt) {
   world_p_lleg = planning.getLLeg(dt);
 
   planning.setCom(world_p_com);
+  world_p_com_vel.y() += (5 - rand() % 11) * 0.005;
+  world_p_com_vel.x() += (5 - rand() % 11) * 0.005;
   planning.setComVel(world_p_com_vel);
   vec2_t icp;
   icp.setCartesian(world_p_com.x() + world_p_com_vel.x() / 6.26311,

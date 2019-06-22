@@ -179,8 +179,6 @@ vec3_t Planning::getComVel(float time) {
   pendulum.setCom(com_cr);
   pendulum.setComVel(com_vel_cr);
   pendulum.setCop(cop_cmd);
-  // std::cout << "time: " << time << '\n';
-  // std::cout << "cop_cmd" << cop_cmd.x << ", " << cop_cmd.y << '\n';
   com_vel_cmd.x() = pendulum.getComVel(dt).x;
   com_vel_cmd.y() = pendulum.getComVel(dt).y;
   com_vel_cmd.z() = 0.0;
@@ -190,14 +188,6 @@ vec3_t Planning::getComVel(float time) {
 vec2_t Planning::getIcp(float time) {
   pendulum.setIcp(icp_cr);
   pendulum.setCop(cop_cmd);
-  std::cout << "time: " << time << '\n';
-  std::cout << "com_cr" << '\n';
-  std::cout << com_cr << '\n';
-  std::cout << "com_vel_cr" << '\n';
-  std::cout << com_vel_cr << '\n';
-  std::cout << "icp_cr" << icp_cr.x << ", " << icp_cr.y << '\n';
-  std::cout << "cop_cmd" << cop_cmd.x << ", " << cop_cmd.y << '\n';
-
   icp_cmd = pendulum.getIcp(dt);
   return icp_cmd;
 }

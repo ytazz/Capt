@@ -4,8 +4,9 @@ using namespace std;
 
 namespace CA {
 
-CRPlot::CRPlot(Model model, Param param) : model(model), param(param) {
-  string output = "file";
+CRPlot::CRPlot(Model model, Param param, std::string output)
+    : model(model), param(param) {
+  this->output = output;
 
   p("set title \"Capture Region (polar coordinate)\"");
   p("set encoding utf8");
@@ -32,9 +33,13 @@ CRPlot::CRPlot(Model model, Param param) : model(model), param(param) {
   p("set rtics format \"\"");
   p("unset raxis");
 
-  if (output == "file") {
+  if (output == "gif") {
     p("set terminal gif animate optimize delay 50 size 600,900");
     p("set output 'plot.gif'");
+  }
+  if (output == "svg") {
+    p("set terminal svg");
+    p("set output 'plot.svg'");
   }
 }
 
@@ -53,8 +58,8 @@ void CRPlot::plot(State state, std::vector<CaptureSet> region) {
   fprintf(p.gp, "'-' t 'Valid Stepping Region' with lines linewidth 1 "
                 "lc \"black\",");
   // icp
-  fprintf(p.gp, "'-' t 'Instantaneous Capture Point' with points pointsize 1.5 "
-                "pointtype 7 lc \"orange\",");
+  fprintf(p.gp, "'-' t 'Instantaneous Capture Point' with points pointsize 1 "
+                "pointtype 7 lc \"blue\",");
   // swing foot
   fprintf(p.gp, "'-' t 'Current Swing Foot' with lines linewidth 2 "
                 "lc \"black\",");
@@ -64,8 +69,9 @@ void CRPlot::plot(State state, std::vector<CaptureSet> region) {
   // capture region
   int step_num = 1;
   fprintf(p.gp,
-          "'-' t '%d-step' with points pointsize 1.5 pointtype 7 lc \"%s\"\n",
-          step_num, p.int_color[step_num].c_str());
+          "'-' t '%d-step' with points pointsize 1 pointtype 7 lc \"%s\"\n",
+          step_num, "gray");
+  // step_num, p.int_color[step_num].c_str());
 
   // plot
   // steppable region

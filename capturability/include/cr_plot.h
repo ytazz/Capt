@@ -22,8 +22,10 @@ class CRPlot {
   Model model;
   Param param;
 
+  std::string output;
+
 public:
-  CRPlot(Model model, Param param);
+  CRPlot(Model model, Param param, std::string output);
   ~CRPlot();
 
   void plot(State state, std::vector<CaptureSet> region);

@@ -30,7 +30,7 @@ int main() {
   state.icp.setCartesian(-0.013626, 0.1388);
   state.swft.setPolar(0.11, 3.14159 / 2);
 
-  CRPlot cr_plot(model, param);
+  CRPlot cr_plot(model, param, "gif");
   GridState gstate;
   std::vector<CaptureSet> region;
 

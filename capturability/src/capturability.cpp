@@ -86,8 +86,8 @@ bool Capturability::capturable(State state, int n_step) {
 
   if (n_step == 0) {
     Polygon polygon;
-    polygon.setVertex(model.getVec("foot", "foot_r"));
-    flag = polygon.inPolygon(state.icp, polygon.getConvexHull());
+    std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
+    flag = polygon.inPolygon(state.icp, region);
   } else {
     std::vector<CaptureSet> capture_region;
     capture_region = getCaptureRegion(state, n_step);

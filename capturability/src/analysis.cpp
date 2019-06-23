@@ -42,8 +42,8 @@ State Analysis::step(const State state, const Input input) {
 
   pendulum.setIcp(state.icp);
   Polygon polygon;
-  polygon.setVertex(model.getVec("foot", "foot_r"));
-  cop = polygon.getClosestPoint(state.icp, polygon.getConvexHull());
+  std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
+  cop = polygon.getClosestPoint(state.icp, region);
   Vector2 cop_;
   cop_.setCartesian(cop.x, cop.y);
   pendulum.setCop(cop);

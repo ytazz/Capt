@@ -14,6 +14,7 @@ grid minor;
 data = csvread('~/choreonoid/build/data.csv',1,0);
 line('XData',data(:,1),'YData',data(:,4)-data(:,2),'Color','r');
 line('XData',data(:,1),'YData',data(:,5)-data(:,3),'Color','b');
+legend('icp\_x','icp\_y');
 
 %% Plot
 figure('Name','Com');
@@ -30,6 +31,7 @@ line('XData',data(:,1),'YData',data(:,8),'Color','b','LineStyle','--');
 line('XData',data(:,1),'YData',data(:,9),'Color','r');
 line('XData',data(:,1),'YData',data(:,10),'Color','g');
 line('XData',data(:,1),'YData',data(:,11),'Color','b');
+legend('com\_x\_des','com\_y\_des','com\_z\_des','com\_x\_sim','com\_y\_sim','com\_z\_sim','Location','best');
 
 %% Plot
 figure('Name','Torso');

@@ -42,8 +42,8 @@ int main() {
 
   double t = 0.0;
   while (t <= 1.0) {
-    plot.plotXY(t);
-    // plot.plotYZ(t);
+    // plot.plotXY(t);
+    plot.plotYZ(t);
     // usleep(500 * 1000); // usleep takes sleep time in us
     t += 0.01;
   }

@@ -131,7 +131,9 @@ vec2_t Planning::getIcpDes(float time) {
     pendulum.setComVel(com_vel_0_des[0]);
     icp_des = pendulum.getIcp(time);
   } else {
-    icp_des = icp_0_des[1];
+    // icp_des = icp_0_des[1];
+    icp_des.x = lleg_des[1].x();
+    icp_des.y = lleg_des[1].y();
   }
   return icp_des;
 }
@@ -195,8 +197,13 @@ vec2_t Planning::getIcp(float time) {
 vec3_t Planning::getRLeg(float time) {
   rleg_cmd = rleg_des[0];
   if (time > step_time) {
-    rleg_cmd.y() = -0.05 + 0.1 * (time - step_time) / 0.5;
-    rleg_cmd.z() = 0 + 0.1 * (time - step_time) / 0.5;
+    if (time <= 0.2) {
+      rleg_cmd.y() = -0.05 + 0.1 * (time - step_time) / 0.5;
+      rleg_cmd.z() = 0 + 0.2 * (time - step_time) / 0.5;
+    } else {
+      rleg_cmd.y() = -0.05 + 0.1 * (0.2 - step_time) / 0.5;
+      rleg_cmd.z() = 0 + 0.2 * (0.2 - step_time) / 0.5;
+    }
   }
   return rleg_cmd;
 }

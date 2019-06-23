@@ -194,10 +194,10 @@ vec2_t Planning::getIcp(float time) {
 
 vec3_t Planning::getRLeg(float time) {
   rleg_cmd = rleg_des[0];
-  // if (time > step_time) {
-  //   rleg_ref.y() += 0.0001;
-  //   rleg_ref.z() += 0.0001;
-  // }
+  if (time > step_time) {
+    rleg_cmd.y() = -0.05 + 0.1 * (time - step_time) / 0.5;
+    rleg_cmd.z() = 0 + 0.1 * (time - step_time) / 0.5;
+  }
   return rleg_cmd;
 }
 

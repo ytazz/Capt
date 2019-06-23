@@ -2,6 +2,19 @@
 clear all;
 close all;
 
+
+%% Plot
+figure('Name','ICP');
+hold on;
+% axis equal;
+grid on;
+grid minor;
+
+% ICP
+data = csvread('~/choreonoid/build/data.csv',1,0);
+line('XData',data(:,1),'YData',data(:,4)-data(:,2),'Color','r');
+line('XData',data(:,1),'YData',data(:,5)-data(:,3),'Color','b');
+
 %% Plot
 figure('Name','Com');
 hold on;
@@ -11,12 +24,12 @@ grid minor;
 
 % CoM
 data = csvread('~/choreonoid/build/data.csv',1,0);
-line('XData',data(:,1),'YData',data(:,2),'Color','r','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,3),'Color','g','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,4),'Color','b','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,5),'Color','r');
-line('XData',data(:,1),'YData',data(:,6),'Color','g');
-line('XData',data(:,1),'YData',data(:,7),'Color','b');
+line('XData',data(:,1),'YData',data(:,6),'Color','r','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,7),'Color','g','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,8),'Color','b','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,9),'Color','r');
+line('XData',data(:,1),'YData',data(:,10),'Color','g');
+line('XData',data(:,1),'YData',data(:,11),'Color','b');
 
 %% Plot
 figure('Name','Torso');
@@ -27,12 +40,12 @@ grid minor;
 
 % RLEG
 data = csvread('~/choreonoid/build/data.csv',1,0);
-line('XData',data(:,1),'YData',data(:,8),'Color','r','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,9),'Color','g','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,10),'Color','b','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,11),'Color','r');
-line('XData',data(:,1),'YData',data(:,12),'Color','g');
-line('XData',data(:,1),'YData',data(:,13),'Color','b');
+line('XData',data(:,1),'YData',data(:,12),'Color','r','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,13),'Color','g','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,14),'Color','b','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,15),'Color','r');
+line('XData',data(:,1),'YData',data(:,16),'Color','g');
+line('XData',data(:,1),'YData',data(:,17),'Color','b');
 
 %% Plot
 figure('Name','Right');
@@ -43,12 +56,12 @@ grid minor;
 
 % RLEG
 data = csvread('~/choreonoid/build/data.csv',1,0);
-line('XData',data(:,1),'YData',data(:,14),'Color','r','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,15),'Color','g','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,16),'Color','b','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,17),'Color','r');
-line('XData',data(:,1),'YData',data(:,18),'Color','g');
-line('XData',data(:,1),'YData',data(:,19),'Color','b');
+line('XData',data(:,1),'YData',data(:,18),'Color','r','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,19),'Color','g','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,20),'Color','b','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,21),'Color','r');
+line('XData',data(:,1),'YData',data(:,22),'Color','g');
+line('XData',data(:,1),'YData',data(:,23),'Color','b');
 
 
 %% Plot
@@ -60,12 +73,12 @@ grid minor;
 
 % LLEG
 data = csvread('~/choreonoid/build/data.csv',1,0);
-line('XData',data(:,1),'YData',data(:,20),'Color','r','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,21),'Color','g','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,22),'Color','b','LineStyle','--');
-line('XData',data(:,1),'YData',data(:,23),'Color','r');
-line('XData',data(:,1),'YData',data(:,24),'Color','g');
-line('XData',data(:,1),'YData',data(:,25),'Color','b');
+line('XData',data(:,1),'YData',data(:,24),'Color','r','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,25),'Color','g','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,26),'Color','b','LineStyle','--');
+line('XData',data(:,1),'YData',data(:,27),'Color','r');
+line('XData',data(:,1),'YData',data(:,28),'Color','g');
+line('XData',data(:,1),'YData',data(:,29),'Color','b');
 
 %% Tracking
 figure('Name','IK');

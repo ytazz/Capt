@@ -6,6 +6,7 @@
 #include "param.h"
 #include "pendulum.h"
 #include "state.h"
+#include <chrono>
 #include <stdlib.h>
 #include <vector>
 
@@ -31,28 +32,40 @@ int main() {
   capturability.load("1step.csv");
 
   State state;
-  state.icp.setCartesian(0.0, 0.08);
-  state.swft.setPolar(0.14, 3.14159 * 3 / 4);
+  // state.icp.setCartesian(-0.010953, 0.083149);
+  state.icp.setCartesian(0.0, 0.07);
+  state.swft.setCartesian(-0.100307, 0.109682);
 
   CRPlot cr_plot(model, param, "svg");
   GridState gstate;
   std::vector<CaptureSet> region;
-
-  // cr_plot.plot();
-  gstate = grid.roundState(state);
-  region = capturability.getCaptureRegion(gstate.id, 1);
+  std::vector<CaptureSet> modified_region;
 
   FrictionFilter friction_filter(capturability, pendulum);
-  friction_filter.setCaptureRegion(region);
   vec2_t icp, com, com_vel;
-  icp = state.icp;
-  com.setPolar(0.03, 100 * 3.14159 / 180);
-  com.printCartesian();
-  com_vel = (icp - com) * 5.71741;
-  std::vector<CaptureSet> modified_region =
-      friction_filter.getCaptureRegion(com, com_vel, 0.2);
 
-  cr_plot.plot(gstate.state, modified_region);
+  auto start = std::chrono::system_clock::now(); // 計測スタート時刻を保存
+  gstate = grid.roundState(state);
+  gstate.state.printCartesian();
+  region = capturability.getCaptureRegion(gstate.id, 1);
+
+  friction_filter.setCaptureRegion(region);
+  icp = state.icp;
+  com.setCartesian(0.0, 0.0);
+  com.printCartesian();
+  com_vel = (icp - com) * sqrt(9.81 / 0.25);
+  modified_region = friction_filter.getCaptureRegion(com, com_vel, 0.2);
+
+  auto end = std::chrono::system_clock::now(); // 計測終了時刻を保存
+  auto dur = end - start;                      // 要した時間を計算
+  auto msec =
+      std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+  // 要した時間をマイクロ秒（1/1000ms）に変換して表示
+  std::cout << msec << " micro sec \n";
+  // cr_plot.plot(gstate.state, region, com);
+  cr_plot.plot(gstate.state, modified_region, com);
+  std::cout << "region: " << region.size() << '\n';
+  std::cout << "modified region: " << modified_region.size() << '\n';
 
   return 0;
 }

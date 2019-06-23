@@ -68,8 +68,8 @@ void CRPlot::plot(State state, std::vector<CaptureSet> region) {
                 "lc \"black\",");
   // capture region
   int step_num = 1;
-  fprintf(p.gp,
-          "'-' t '%d-step' with points pointsize 1 pointtype 7 lc \"%s\"\n",
+  fprintf(p.gp, "'-' t '%d-step Capture Region' with points pointsize 1 "
+                "pointtype 7 lc \"%s\"\n",
           step_num, "gray");
   // step_num, p.int_color[step_num].c_str());
 
@@ -108,6 +108,74 @@ void CRPlot::plot(State state, std::vector<CaptureSet> region) {
       fprintf(p.gp, "%f %f\n", region[i].swft.th, region[i].swft.r);
     }
   }
+  fprintf(p.gp, "e\n");
+
+  // flush
+  fflush(p.gp);
+}
+
+void CRPlot::plot(State state, std::vector<CaptureSet> region, vec2_t com) {
+  // setting
+  fprintf(p.gp, "plot ");
+  // steppable region
+  fprintf(p.gp, "'-' t 'Valid Stepping Region' with lines linewidth 1 "
+                "lc \"black\",");
+  // icp
+  fprintf(p.gp, "'-' t 'Instantaneous Capture Point' with points pointsize 1 "
+                "pointtype 7 lc \"blue\",");
+  // swing foot
+  fprintf(p.gp, "'-' t 'Current Swing Foot' with lines linewidth 2 "
+                "lc \"black\",");
+  // support foot
+  fprintf(p.gp, "'-' t 'Current Support Foot' with lines linewidth 2 "
+                "lc \"black\",");
+  // capture region
+  int step_num = 1;
+  fprintf(p.gp, "'-' t '%d-step Capture Region' with points pointsize 1 "
+                "pointtype 7 lc \"%s\",",
+          step_num, "gray");
+  // com
+  fprintf(p.gp, "'-' t 'Center of Mass' with points pointsize 1 lc "
+                "\"black\"\n");
+
+  // plot
+  // steppable region
+  double th = param.getVal("swft_th", "min");
+  while (th <= param.getVal("swft_th", "max")) {
+    th += 0.001;
+    fprintf(p.gp, "%f %f\n", th, param.getVal("swft_r", "min"));
+  }
+  while (th >= param.getVal("swft_th", "min")) {
+    th -= 0.001;
+    fprintf(p.gp, "%f %f\n", th, param.getVal("swft_r", "max"));
+  }
+  fprintf(p.gp, "%f %f\n", th, param.getVal("swft_r", "min"));
+  fprintf(p.gp, "e\n");
+  // icp
+  fprintf(p.gp, "%f %f\n", state.icp.th, state.icp.r);
+  fprintf(p.gp, "e\n");
+  // swing foot
+  std::vector<Vector2> polygon = model.getVec("foot", "foot_l");
+  for (size_t i = 0; i < polygon.size(); i++) {
+    fprintf(p.gp, "%f %f\n", (polygon[i] + state.swft).th,
+            (polygon[i] + state.swft).r);
+  }
+  fprintf(p.gp, "e\n");
+  // support foot
+  polygon = model.getVec("foot", "foot_r");
+  for (size_t i = 0; i < polygon.size(); i++) {
+    fprintf(p.gp, "%f %f\n", polygon[i].th, polygon[i].r);
+  }
+  fprintf(p.gp, "e\n");
+  // capture region
+  if (!region.empty()) {
+    for (size_t i = 0; i < region.size(); i++) {
+      fprintf(p.gp, "%f %f\n", region[i].swft.th, region[i].swft.r);
+    }
+  }
+  fprintf(p.gp, "e\n");
+  // com
+  fprintf(p.gp, "%f %f\n", com.th, com.r);
   fprintf(p.gp, "e\n");
 
   // flush

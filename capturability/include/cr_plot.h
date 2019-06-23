@@ -29,6 +29,7 @@ public:
   ~CRPlot();
 
   void plot(State state, std::vector<CaptureSet> region);
+  void plot(State state, std::vector<CaptureSet> region, vec2_t com);
   void plot();
 };
 }

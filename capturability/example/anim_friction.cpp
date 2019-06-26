@@ -33,8 +33,8 @@ int main() {
 
   State state;
   // state.icp.setCartesian(-0.010953, 0.083149);
-  state.icp.setCartesian(0.0, 0.07);
-  state.swft.setCartesian(-0.100307, 0.109682);
+  state.icp.setCartesian(-0.012082, 0.081432);
+  state.swft.setCartesian(-0.100742, 0.109221);
 
   CRPlot cr_plot(model, param, "svg");
   GridState gstate;
@@ -51,7 +51,7 @@ int main() {
 
   friction_filter.setCaptureRegion(region);
   icp = state.icp;
-  com.setCartesian(0.0, 0.0);
+  com.setCartesian(-0.0206967 + 0.00966615, -0.0266499 + 0.0515595);
   com.printCartesian();
   com_vel = (icp - com) * sqrt(9.81 / 0.25);
   modified_region = friction_filter.getCaptureRegion(com, com_vel, 0.2);
@@ -63,9 +63,9 @@ int main() {
   // 要した時間をマイクロ秒（1/1000ms）に変換して表示
   std::cout << msec << " micro sec \n";
   // cr_plot.plot(gstate.state, region, com);
-  cr_plot.plot(gstate.state, modified_region, com);
+  cr_plot.plot(gstate.state, region, com);
   std::cout << "region: " << region.size() << '\n';
-  std::cout << "modified region: " << modified_region.size() << '\n';
+  // std::cout << "modified region: " << modified_region.size() << '\n';
 
   return 0;
 }

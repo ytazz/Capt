@@ -95,7 +95,7 @@ void Planning::calcDes() {
   landing.x() = capture_set[dist_min_id].swft.x;
   landing.y() = capture_set[dist_min_id].swft.y;
   landing.z() = 0.0;
-  std::cout << "landing" << '\n';
+  std::cout << "landing no." << dist_min_id << '\n';
   std::cout << landing << '\n';
   lleg_des.push_back(rleg_des[0] + landing);
 

@@ -69,8 +69,10 @@ void CRPlot::plot(State state, std::vector<CaptureSet> region) {
   // capture region
   int step_num = 1;
   fprintf(p.gp, "'-' t '%d-step Capture Region' with points pointsize 1 "
-                "pointtype 7 lc \"%s\"\n",
+                "pointtype 7 lc \"%s\",",
           step_num, "gray");
+  fprintf(p.gp, "'-' t 'Next Landing Position' with points pointsize 1.5 "
+                "pointtype 7 lc \"red\"\n");
   // step_num, p.int_color[step_num].c_str());
 
   // plot
@@ -109,6 +111,9 @@ void CRPlot::plot(State state, std::vector<CaptureSet> region) {
     }
   }
   fprintf(p.gp, "e\n");
+  // capture region
+  fprintf(p.gp, "%f %f\n", region[3].swft.th, region[3].swft.r);
+  fprintf(p.gp, "e\n");
 
   // flush
   fflush(p.gp);
@@ -134,6 +139,8 @@ void CRPlot::plot(State state, std::vector<CaptureSet> region, vec2_t com) {
   fprintf(p.gp, "'-' t '%d-step Capture Region' with points pointsize 1 "
                 "pointtype 7 lc \"%s\",",
           step_num, "gray");
+  fprintf(p.gp, "'-' t 'Next Landing Position' with points pointsize 1.5 "
+                "pointtype 7 lc \"red\",");
   // com
   fprintf(p.gp, "'-' t 'Center of Mass' with points pointsize 1 lc "
                 "\"black\"\n");
@@ -173,6 +180,9 @@ void CRPlot::plot(State state, std::vector<CaptureSet> region, vec2_t com) {
       fprintf(p.gp, "%f %f\n", region[i].swft.th, region[i].swft.r);
     }
   }
+  fprintf(p.gp, "e\n");
+  // capture region
+  fprintf(p.gp, "%f %f\n", region[3].swft.th, region[3].swft.r);
   fprintf(p.gp, "e\n");
   // com
   fprintf(p.gp, "%f %f\n", com.th, com.r);

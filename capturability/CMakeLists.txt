@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(Capturability)
 
-# add_subdirectory(example)
-
 set(MAKE_LIBRARY  false CACHE BOOL "make capturability library")
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
 if(${MAKE_LIBRARY})
@@ -79,15 +77,16 @@ add_executable(main main.cpp ${SOURCES} ${HEADERS})
 add_executable(debug debug.cpp ${SOURCES} ${HEADERS})
 # add_executable(converter converter.cpp ${SOURCES} ${HEADERS})
 add_executable(test_ik example/test_ik.cpp ${SOURCES} ${HEADERS})
+add_executable(test_capture example/test_capture.cpp ${SOURCES} ${HEADERS})
 add_executable(animation example/animation.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
 add_executable(anim_traj example/anim_traj.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
 add_executable(anim_friction example/anim_friction.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
 add_executable(test_time example/test_time.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
 
-
 target_link_libraries(main ${EXPAT_LIBRARIES})
 target_link_libraries(debug ${EXPAT_LIBRARIES})
 target_link_libraries(test_ik ${EXPAT_LIBRARIES})
+target_link_libraries(test_capture ${EXPAT_LIBRARIES})
 # target_link_libraries(converter ${EXPAT_LIBRARIES})
 target_link_libraries(animation ${EXPAT_LIBRARIES})
 target_link_libraries(anim_traj ${EXPAT_LIBRARIES})

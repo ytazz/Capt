@@ -19,4 +19,10 @@
 #include "trajectory.h"
 #include "vector.h"
 
+namespace CA {
+
+enum Phase { DSP, SSP_R, SSP_L };
+
+} // namespace CA
+
 #endif // __CA_H__

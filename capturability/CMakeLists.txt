@@ -20,8 +20,10 @@ include_directories(${EXPAT_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 set(HEADERS
+  include/CA.h
   include/analysis.h
   include/capturability.h
+  include/footstep.h
   include/friction_filter.h
   include/grid.h
   include/interpolation.h
@@ -50,6 +52,7 @@ set(PLOT_HEADERS
 set(SOURCES
   src/analysis.cpp
   src/capturability.cpp
+  src/footstep.cpp
   src/friction_filter.cpp
   src/interpolation.cpp
   src/grid.cpp

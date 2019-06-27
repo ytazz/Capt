@@ -86,12 +86,16 @@ bool Capturability::capturable(State state, int n_step) {
 
   if (n_step == 0) {
     Polygon polygon;
-    // std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
-    std::vector<vec2_t> region_r = model.getVec("foot", "foot_r");
-    std::vector<vec2_t> region_l = model.getVec("foot", "foot_l", state.swft);
-    polygon.setVertex(region_r);
-    polygon.setVertex(region_l);
-    flag = polygon.inPolygon(state.icp, polygon.getConvexHull());
+
+    // only SSP
+    std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
+    flag = polygon.inPolygon(state.icp, region);
+
+    // considered DSP
+    // std::vector<vec2_t> region_r = model.getVec("foot", "foot_r");
+    // std::vector<vec2_t> region_l = model.getVec("foot", "foot_l",
+    // state.swft); polygon.setVertex(region_r); polygon.setVertex(region_l);
+    // flag = polygon.inPolygon(state.icp, polygon.getConvexHull());
   } else {
     std::vector<CaptureSet> capture_region;
     capture_region = getCaptureRegion(state, n_step);

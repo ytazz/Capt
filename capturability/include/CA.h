@@ -3,6 +3,7 @@
 
 #include "analysis.h"
 #include "capturability.h"
+#include "foot_planner.h"
 #include "friction_filter.h"
 #include "grid.h"
 #include "input.h"
@@ -21,7 +22,7 @@
 
 namespace CA {
 
-enum Phase { DSP, SSP_R, SSP_L };
+// enum SupportFoot { SUPPORT_R, SUPPORT_L };
 
 } // namespace CA
 

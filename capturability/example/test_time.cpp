@@ -20,22 +20,28 @@ using namespace CA;
 
 int main(int argc, char const *argv[]) {
   Model model("nao.xml");
-  Polygon polygon;
 
-  auto start = std::chrono::system_clock::now(); // 計測スタート時刻を保存
-  std::vector<vec2_t> region;
-  region = model.getVec("foot", "foot_l");
-  polygon.setVertex(region);
-  region = polygon.getConvexHull();
-  vec2_t vec;
-  vec.setCartesian(0.1, 0.1);
-  polygon.getClosestPoint(vec, region);
-  auto end = std::chrono::system_clock::now(); // 計測終了時刻を保存
-  auto dur = end - start;                      // 要した時間を計算
-  auto msec =
-      std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
-  // 要した時間をミリ秒（1/1000秒）に変換して表示
-  std::cout << msec << " milli sec \n";
+  for (int i = 0; i < 100; i++) {
+    auto start = std::chrono::system_clock::now(); // 計測スタート時刻を保存
+    Polygon polygon;
+    std::vector<vec2_t> region;
+    polygon.clear();
+    vec2_t l_foot;
+    l_foot.setCartesian(0.0, 0.11);
+    region = model.getVec("foot", "foot_r");
+    region = model.getVec("foot", "foot_l", l_foot);
+    polygon.setVertex(region);
+    region = polygon.getConvexHull();
+    vec2_t p;
+    p.setCartesian(0.1, 0.1);
+    polygon.inPolygon(p, region);
+    auto end = std::chrono::system_clock::now(); // 計測終了時刻を保存
+    auto dur = end - start;                      // 要した時間を計算
+    auto msec =
+        std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+    // 要した時間をミリ秒（1/1000秒）に変換して表示
+    std::cout << i << ": " << msec << " micro sec \n";
+  }
 
   return 0;
 }

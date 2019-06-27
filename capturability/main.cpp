@@ -19,7 +19,7 @@ int main(int argc, char const *argv[]) {
 
   Analysis analysis(model, param);
   analysis.exe(1);
-  analysis.save("1step_slowfoot.csv", 1);
+  analysis.save("1step_narrow.csv", 1);
   // analysis.save("2step.csv", 2);
 
   return 0;

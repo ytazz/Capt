@@ -4,8 +4,11 @@ using namespace std;
 
 namespace CA {
 
-PlotTrajectory::PlotTrajectory(Model model, Param param, float timestep)
-    : model(model), param(param), planning(model, param, timestep) {
+PlotTrajectory::PlotTrajectory(Model model, Param param,
+                               Capturability capturability, Grid grid,
+                               float timestep)
+    : model(model), param(param), planning(model, param, timestep),
+      foot_planner(&model, capturability, &grid) {
   string output = "file";
 
   p("set title \"Reference Trajectory\"");
@@ -17,8 +20,8 @@ PlotTrajectory::PlotTrajectory(Model model, Param param, float timestep)
   p("set mxtics 10");
   p("set ytics 0.1");
   p("set mytics 10");
-  p("set xrange [-0.1:0.3]");
-  p("set yrange [-0.1:0.3]");
+  p("set xrange [-0.2:0.2]");
+  p("set yrange [-0.2:0.2]");
   p("set grid mxtics mytics");
 
   if (output == "file") {
@@ -38,17 +41,20 @@ PlotTrajectory::PlotTrajectory(Model model, Param param, float timestep)
 
 PlotTrajectory::~PlotTrajectory() {}
 
-void PlotTrajectory::setIcp(vec2_t icp) { planning.setIcp(icp); }
+void PlotTrajectory::plan(vec2_t icp, vec3_t com, vec3_t com_vel, vec3_t rleg,
+                          vec3_t lleg) {
+  foot_planner.setComState(com, com_vel);
+  foot_planner.setRLeg(rleg);
+  foot_planner.setLLeg(lleg);
+  foot_planner.plan();
+  foot_planner.show();
 
-void PlotTrajectory::setCom(vec3_t com) { planning.setCom(com); }
-
-void PlotTrajectory::setComVel(vec3_t com_vel) { planning.setComVel(com_vel); }
-
-void PlotTrajectory::setRLeg(vec3_t rleg) { planning.setRLeg(rleg); }
-
-void PlotTrajectory::setLLeg(vec3_t lleg) { planning.setLLeg(lleg); }
-
-void PlotTrajectory::calcDes() { planning.calcDes(); }
+  planning.setIcp(icp);
+  planning.setCom(com);
+  planning.setComVel(com_vel);
+  planning.setFootstep(foot_planner.getFootstep());
+  planning.plan();
+}
 
 void PlotTrajectory::fileOutput(vec2_t vec) {
   fprintf(fp, "%f,%f,", vec.x, vec.y);
@@ -56,102 +62,6 @@ void PlotTrajectory::fileOutput(vec2_t vec) {
 
 void PlotTrajectory::fileOutput(vec3_t vec) {
   fprintf(fp, "%f,%f,%f,", vec.x(), vec.y(), vec.z());
-}
-
-void PlotTrajectory::plotYZ(float dt) {
-  // setting
-  fprintf(p.gp, "plot ");
-  // ICP
-  fprintf(p.gp, "'-' t 'ICP' with points pointsize 1.5 "
-                "pointtype 7 lc \"red\",");
-  // Cop
-  fprintf(p.gp, "'-' t 'Cop' with points pointsize 1.5 "
-                "pointtype 7 lc \"orange\",");
-  // Lod
-  fprintf(p.gp, "'-' with lines linewidth 1 "
-                "lc \"black\",");
-  // Com
-  fprintf(p.gp, "'-' t 'Com' with points pointsize 1.5 "
-                "pointtype 7 lc \"blue\",");
-  // ComVel
-  fprintf(p.gp, "'-' t 'Com Velocity' with lines linewidth 3 "
-                "lc \"blue\",");
-  // Torso
-  fprintf(p.gp, "'-' t 'Torso' with lines linewidth 1 "
-                "lc \"black\",");
-  // Right Leg
-  fprintf(p.gp, "'-' t 'Right Leg' with lines linewidth 1 "
-                "lc \"black\",");
-  // Left Leg
-  fprintf(p.gp, "'-' t 'Left Leg' with lines linewidth 1 "
-                "lc \"black\"\n");
-
-  planning.getIcpDes(dt);
-  planning.getIcpVelDes(dt);
-
-  world_p_cop = planning.getCop(dt);
-  world_p_icp = planning.getIcp(dt);
-  world_p_com = planning.getCom(dt);
-  world_p_com_vel = planning.getComVel(dt);
-  world_p_rleg = planning.getRLeg(dt);
-  world_p_lleg = planning.getLLeg(dt);
-
-  planning.setCom(world_p_com);
-  // world_p_com_vel.y() += (5 - rand() % 11) * 0.005;
-  // world_p_com_vel.x() += (5 - rand() % 11) * 0.005;
-  planning.setComVel(world_p_com_vel);
-  vec2_t icp;
-  icp.setCartesian(world_p_com.x() + world_p_com_vel.x() / 6.26311,
-                   world_p_com.y() + world_p_com_vel.y() / 6.26311);
-  planning.setIcp(icp);
-
-  fprintf(fp, "%f,", dt);
-  fileOutput(world_p_icp);
-  fileOutput(world_p_cop);
-  fileOutput(world_p_com);
-  fileOutput(world_p_com_vel);
-  fileOutput(world_p_rleg);
-  fileOutput(world_p_lleg);
-  fprintf(fp, "\n");
-
-  // plot (y, z)
-  // ICP
-  fprintf(p.gp, "%f %f\n", world_p_icp.y, 0.0);
-  fprintf(p.gp, "e\n");
-  // Cop
-  fprintf(p.gp, "%f %f\n", world_p_cop.y, 0.0);
-  fprintf(p.gp, "e\n");
-  // Lod
-  fprintf(p.gp, "%f %f\n", world_p_cop.y, 0.0);
-  fprintf(p.gp, "%f %f\n", world_p_com.y(), world_p_com.z());
-  fprintf(p.gp, "e\n");
-  // Com
-  fprintf(p.gp, "%f %f\n", world_p_com.y(), world_p_com.z());
-  fprintf(p.gp, "e\n");
-  // ComVel
-  fprintf(p.gp, "%f %f\n", world_p_com.y(), world_p_com.z());
-  fprintf(p.gp, "%f %f\n", world_p_com.y() + world_p_com_vel.y() * 0.05,
-          world_p_com.z());
-  fprintf(p.gp, "e\n");
-  // Torso
-  fprintf(p.gp, "e\n");
-  // RLeg
-  fprintf(p.gp, "%f %f\n", world_p_rleg.y() + 0.035, world_p_rleg.z());
-  fprintf(p.gp, "%f %f\n", world_p_rleg.y() + 0.035, world_p_rleg.z() + 0.045);
-  fprintf(p.gp, "%f %f\n", world_p_rleg.y() - 0.035, world_p_rleg.z() + 0.045);
-  fprintf(p.gp, "%f %f\n", world_p_rleg.y() - 0.035, world_p_rleg.z());
-  fprintf(p.gp, "%f %f\n", world_p_rleg.y() + 0.035, world_p_rleg.z());
-  fprintf(p.gp, "e\n");
-  // LLeg
-  fprintf(p.gp, "%f %f\n", world_p_lleg.y() + 0.035, world_p_lleg.z());
-  fprintf(p.gp, "%f %f\n", world_p_lleg.y() + 0.035, world_p_lleg.z() + 0.045);
-  fprintf(p.gp, "%f %f\n", world_p_lleg.y() - 0.035, world_p_lleg.z() + 0.045);
-  fprintf(p.gp, "%f %f\n", world_p_lleg.y() - 0.035, world_p_lleg.z());
-  fprintf(p.gp, "%f %f\n", world_p_lleg.y() + 0.035, world_p_lleg.z());
-  fprintf(p.gp, "e\n");
-
-  // flush
-  fflush(p.gp);
 }
 
 void PlotTrajectory::plotXY(float dt) {
@@ -173,9 +83,6 @@ void PlotTrajectory::plotXY(float dt) {
   // Left Leg
   fprintf(p.gp, "'-' t 'Left Leg' with lines linewidth 1 "
                 "lc \"black\"\n");
-
-  planning.getIcpDes(dt);
-  planning.getIcpVelDes(dt);
 
   world_p_cop = planning.getCop(dt);
   world_p_icp = planning.getIcp(dt);

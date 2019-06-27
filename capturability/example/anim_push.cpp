@@ -1,4 +1,5 @@
 #include "CA.h"
+#include "plot_trajectory.h"
 #include <stdlib.h>
 #include <vector>
 
@@ -20,29 +21,19 @@ int main() {
   Capturability capturability(model, param);
   capturability.load("1step.csv");
 
-  FootPlanner foot_planner(&model, &capturability, &grid);
-
   vec2_t icp;
-  icp.setCartesian(-0.013626, 0.030283);
-  vec3_t com;
-  com << -0.0136255, -0.0262312, 0.251226;
-  vec3_t com_vel;
-  com_vel << -5.81843e-07, 0.353957, -0.00553961;
-  vec3_t torso;
-  torso << -0.022417, -0.038482, 0.293978;
-  vec3_t rleg;
-  rleg << -0.00441721, -0.0530343, 0.000301669;
-  vec3_t lleg;
-  lleg << -0.00278837, 0.0571003, 0.0198305;
+  vec3_t com, com_vel;
+  vec3_t rleg, lleg;
+  com << 0, 0, 0;
+  icp.setCartesian(-0.035, 0.035);
+  com_vel.x() = (icp.x - com.x()) * sqrt(9.81 / 0.25);
+  com_vel.y() = (icp.y - com.y()) * sqrt(9.81 / 0.25);
+  com_vel.z() = 0.0;
+  rleg << 0, -0.055, 0;
+  lleg << 0, 0.055, 0;
 
-  PlotTrajectory plot(model, param, 0.01);
-  plot.setIcp(icp);
-  plot.setCom(com);
-  plot.setComVel(com_vel);
-  plot.setRLeg(rleg);
-  plot.setLLeg(lleg);
-  plot.calcDes();
-
+  PlotTrajectory plot(model, param, capturability, grid, 0.01);
+  plot.plan(icp, com, com_vel, rleg, lleg);
   double t = 0.0;
   while (t <= 1.0) {
     plot.plotXY(t);

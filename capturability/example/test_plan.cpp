@@ -12,13 +12,17 @@ int main(int argc, char const *argv[]) {
   Capturability capturability(model, param);
   capturability.load("1step.csv");
 
-  FootPlanner foot_planner(&model, &capturability, &grid);
+  FootPlanner foot_planner(&model, capturability, &grid);
   vec3_t com, com_vel;
   vec3_t rleg, lleg;
-  com << -0.0206913, -0.0266439, 0.250184;
-  com_vel << -0.000980377, 0.359949, 0.00233465;
-  rleg << -0.00966615, -0.0515594, -9.12238e-05;
-  lleg << -0.110408, 0.0576617, 0;
+  com << 0, 0, 0;
+  vec2_t icp;
+  icp.setCartesian(0, -0.025);
+  com_vel.x() = (icp.x - com.x()) * sqrt(9.81 / 0.25);
+  com_vel.y() = (icp.y - com.y()) * sqrt(9.81 / 0.25);
+  com_vel.z() = 0.0;
+  rleg << 0, -0.055, 0;
+  lleg << 0, 0.055, 0;
   foot_planner.setComState(com, com_vel);
   foot_planner.setRLeg(rleg);
   foot_planner.setLLeg(lleg);

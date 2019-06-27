@@ -20,18 +20,13 @@ namespace CA {
 
 class PlotTrajectory {
 public:
-  PlotTrajectory(Model model, Param param, float timestep);
+  PlotTrajectory(Model model, Param param, Capturability capturability,
+                 Grid grid, float timestep);
   ~PlotTrajectory();
 
-  void setIcp(vec2_t icp);
-  void setCom(vec3_t com);
-  void setComVel(vec3_t com_vel);
-  void setRLeg(vec3_t rleg);
-  void setLLeg(vec3_t lleg);
-  void calcDes();
+  void plan(vec2_t icp, vec3_t com, vec3_t com_vel, vec3_t rleg, vec3_t lleg);
 
   void plotXY(float t);
-  void plotYZ(float t);
 
 private:
   void fileOutput(vec2_t vec);
@@ -41,6 +36,7 @@ private:
   Model model;
   Param param;
   Planning planning;
+  FootPlanner foot_planner;
 
   FILE *fp;
 

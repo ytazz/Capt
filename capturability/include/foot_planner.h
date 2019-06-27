@@ -1,13 +1,22 @@
 #ifndef __FOOT_PLANNER_H__
 #define __FOOT_PLANNER_H__
 
-#include "CA.h"
+#include "capturability.h"
+#include "grid.h"
+#include "kinematics.h"
+#include "model.h"
+#include "monitor.h"
+#include "pendulum.h"
+#include "polygon.h"
+#include "swing_foot.h"
+#include "vector.h"
+#include <vector>
 
 namespace CA {
 
 enum SupportFoot { SUPPORT_R, SUPPORT_L };
 
-struct FootStep {
+struct Footstep {
   vec3_t foot_r_ini;
   vec3_t foot_l_ini;
 
@@ -21,7 +30,7 @@ struct FootStep {
 
 class FootPlanner {
 public:
-  FootPlanner(Model *model, Capturability *capturability, Grid *grid);
+  FootPlanner(Model *model, Capturability capturability, Grid *grid);
   ~FootPlanner();
 
   void setComState(vec3_t com, vec3_t com_vel);
@@ -32,7 +41,7 @@ public:
 
   bool plan();
 
-  FootStep getFootStep();
+  Footstep getFootstep();
 
   void show();
 
@@ -40,7 +49,7 @@ private:
   void getInitState();
 
   Model *model;
-  Capturability *capturability;
+  Capturability capturability;
   Grid *grid;
 
   GridState gstate;
@@ -56,7 +65,7 @@ private:
 
   int num_step;
   std::vector<CaptureSet> capture_set;
-  FootStep foot_step;
+  Footstep foot_step;
 };
 
 } // namespace CA

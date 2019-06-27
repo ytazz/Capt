@@ -2,6 +2,7 @@
 #define __PLANNING_H__
 
 #include "capturability.h"
+#include "foot_planner.h"
 #include "grid.h"
 #include "kinematics.h"
 #include "model.h"
@@ -24,11 +25,10 @@ public:
   void setIcp(vec2_t icp);
   void setCom(vec3_t com);
   void setComVel(vec3_t com_vel);
-  void setRLeg(vec3_t rleg);
-  void setLLeg(vec3_t lleg);
+  void setFootstep(Footstep footstep);
 
   // calculate desired trajectory
-  void calcDes();
+  void plan();
 
   // get desired value
   vec2_t getIcpDes(float time);
@@ -45,10 +45,11 @@ public:
 private:
   Model model;
   Polygon polygon;
-  Pendulum pendulum;
   Capturability capturability;
   Grid grid;
-  SwingFoot swing_foot;
+  std::vector<Pendulum> pendulum_des;
+  Pendulum pendulum_cr;
+  std::vector<SwingFoot> swft;
 
   // gain
   const float k;
@@ -64,8 +65,8 @@ private:
   // timestep
   float dt;
 
-  // step time
-  float step_time;
+  // footstep
+  Footstep footstep;
 
   // current value
   vec2_t icp_cr;
@@ -75,12 +76,6 @@ private:
   vec2_t icp_cmd, cop_cmd;
   vec3_t com_cmd, com_vel_cmd;
   vec3_t rleg_cmd, lleg_cmd;
-
-  // desired value
-  vec2_t icp_des, icp_vel_des;
-  std::vector<vec2_t> cop_0_des, icp_0_des;
-  std::vector<vec3_t> com_0_des, com_vel_0_des;
-  std::vector<vec3_t> rleg_des, lleg_des;
 };
 
 } // namespace CA

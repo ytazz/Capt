@@ -4,7 +4,15 @@ namespace CA {
 
 Analysis::Analysis(Model model, Param param)
     : grid(param), model(model), pendulum(model), swing_foot(model),
-      capturability(model, param) {}
+      capturability(model, param) {
+  is_database.resize(grid.getNumState());
+  for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
+    is_database[state_id].resize(grid.getNumInput());
+    for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
+      is_database[state_id].push_back(false);
+    }
+  }
+}
 
 Analysis::~Analysis() {}
 
@@ -16,23 +24,48 @@ void Analysis::exe(int n_step) {
   printf("Start %d-step capturability analysis\n", n_step);
   printf("state:%d, input:%d\n", grid.getNumState(), grid.getNumInput());
 
-  for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
-    state = grid.getState(state_id);
-    for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
-      input = grid.getInput(input_id);
-      state_ = step(state, input);
-      if (grid.existState(state_)) {
-        if (capturability.capturable(state_, n_step - 1)) {
-          capturability.setCaptureSet(state_id, input_id,
-                                      grid.getStateIndex(state_), n_step, cop,
-                                      step_time);
+  if (n_step == 0) {
+    for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
+      state = grid.getState(state_id);
+      for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
+        input = grid.getInput(input_id);
+        if (!is_database[state_id][input_id]) {
+          if (capturability.capturable(state_, n_step)) {
+            capturability.setCaptureSet(state_id, input_id,
+                                        grid.getStateIndex(state_), n_step, cop,
+                                        step_time);
+            is_database[state_id][input_id] = true;
+          }
         }
       }
+      if ((state_id % 1000) == 0) {
+        float percentage = (float)state_id / grid.getNumState() * 100;
+        printf("%d \t/ %d \t(%lf %%)\n", state_id, grid.getNumState(),
+               percentage);
+      }
     }
-    if ((state_id % 1000) == 0) {
-      float percentage = (float)state_id / grid.getNumState() * 100;
-      printf("%d \t/ %d \t(%lf %%)\n", state_id, grid.getNumState(),
-             percentage);
+  } else {
+    for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
+      state = grid.getState(state_id);
+      for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
+        input = grid.getInput(input_id);
+        state_ = step(state, input);
+        if (!is_database[state_id][input_id]) {
+          if (grid.existState(state_)) {
+            if (capturability.capturable(state_, n_step - 1)) {
+              capturability.setCaptureSet(state_id, input_id,
+                                          grid.getStateIndex(state_), n_step,
+                                          cop, step_time);
+              is_database[state_id][input_id] = true;
+            }
+          }
+        }
+      }
+      if ((state_id % 1000) == 0) {
+        float percentage = (float)state_id / grid.getNumState() * 100;
+        printf("%d \t/ %d \t(%lf %%)\n", state_id, grid.getNumState(),
+               percentage);
+      }
     }
   }
 }

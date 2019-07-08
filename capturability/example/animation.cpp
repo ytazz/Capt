@@ -24,11 +24,11 @@ int main() {
 
   Grid grid(param);
   Capturability capturability(model, param);
-  capturability.load("1step.csv");
+  capturability.load("csv/0step_dsp.csv");
 
   State state;
-  state.icp.setPolar(0.08, 0);
-  state.swft.setPolar(0.11, 3.14159 / 2);
+  state.icp.setPolar(0.05, 0);
+  state.swft.setPolar(0.10, 3.14159 / 2);
 
   CRPlot cr_plot(model, param, "gif");
   GridState gstate;
@@ -42,8 +42,9 @@ int main() {
     gstate = grid.roundState(state);
     region = capturability.getCaptureRegion(gstate.id, 1);
 
-    cr_plot.plot(gstate.state, region);
-    usleep(500 * 1000); // usleep takes sleep time in us
+    if (!region.empty()) {
+      cr_plot.plot(gstate.state, region);
+    }
   }
 
   return 0;

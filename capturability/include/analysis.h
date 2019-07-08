@@ -47,6 +47,8 @@ private:
 
   vec2_t cop;
   float step_time;
+
+  std::vector<std::vector<bool>> is_database;
 };
 
 } // namespace CA

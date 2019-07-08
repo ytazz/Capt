@@ -94,7 +94,9 @@ bool Capturability::capturable(State state, int n_step) {
     // considered DSP
     // std::vector<vec2_t> region_r = model.getVec("foot", "foot_r");
     // std::vector<vec2_t> region_l = model.getVec("foot", "foot_l",
-    // state.swft); polygon.setVertex(region_r); polygon.setVertex(region_l);
+    // state.swft);
+    // polygon.setVertex(region_r);
+    // polygon.setVertex(region_l);
     // flag = polygon.inPolygon(state.icp, polygon.getConvexHull());
   } else {
     std::vector<CaptureSet> capture_region;
@@ -117,7 +119,7 @@ bool Capturability::capturable(int state_id, int n_step) {
 
 void Capturability::save(const char *file_name, const int n_step) {
   FILE *fp = fopen(file_name, "w");
-  fprintf(fp, "state_id,input_id,next_state_id,n_step\n");
+  fprintf(fp, "state_id,input_id,next_state_id,n_step,cop_x,cop_y,time\n");
   for (size_t i = 0; i < capture_set.size(); i++) {
     if (capture_set[i].n_step == n_step) {
       fprintf(fp, "%d,", capture_set[i].state_id);

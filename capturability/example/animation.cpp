@@ -13,38 +13,43 @@ using namespace std;
 using namespace CA;
 
 int main() {
-  string root_dir = getenv("HOME");
-  root_dir += "/study/capturability";
-  string data_dir = root_dir + "/result/1step_new.csv";
-  string model_dir = root_dir + "/data/nao.xml";
-  string param_dir = root_dir + "/data/analysis.xml";
-
-  Param param(param_dir);
-  Model model(model_dir);
+  Param param("analysis.xml");
+  Model model("nao.xml");
+  std::cout << "0" << '\n';
 
   Grid grid(param);
   Capturability capturability(model, param);
-  capturability.load("csv/0step_dsp.csv");
+  std::cout << "1" << '\n';
+  capturability.load("csv/0step_ssp.csv");
+  std::cout << "2" << '\n';
 
   State state;
-  state.icp.setPolar(0.05, 0);
+  state.icp.setPolar(0.03, 0);
   state.swft.setPolar(0.10, 3.14159 / 2);
 
+  std::cout << "3" << '\n';
   CRPlot cr_plot(model, param, "gif");
   GridState gstate;
   std::vector<CaptureSet> region;
+  std::cout << "4" << '\n';
 
-  // cr_plot.plot();
   while (true) {
+    std::cout << "5" << '\n';
     state.icp.th += param.getVal("icp_th", "step");
     if (state.icp.th > 3.14)
       break;
+    std::cout << "6" << '\n';
     gstate = grid.roundState(state);
-    region = capturability.getCaptureRegion(gstate.id, 1);
+    std::cout << "7" << '\n';
+    region = capturability.getCaptureRegion(gstate.id, 0);
+    std::cout << "8" << '\n';
 
     if (!region.empty()) {
+      std::cout << "9" << '\n';
       cr_plot.plot(gstate.state, region);
     }
+
+    std::cout << "10" << '\n';
   }
 
   return 0;

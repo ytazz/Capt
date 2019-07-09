@@ -10,6 +10,7 @@
 #include "state.h"
 #include "swing_foot.h"
 #include "vector.h"
+#include <chrono>
 #include <iostream>
 #include <stdio.h>
 #include <vector>
@@ -39,11 +40,19 @@ public:
   State step(const State state, const Input input);
 
 private:
+  void exe0();
+  void exeN(int n_step);
+
+  void progress(int state_id);
+
   Grid grid;
   Model model;
   Pendulum pendulum;
   SwingFoot swing_foot;
   Capturability capturability;
+
+  // save calculation log
+  FILE *fp;
 
   vec2_t cop;
   float step_time;

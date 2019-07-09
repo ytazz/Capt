@@ -17,6 +17,14 @@ Analysis::Analysis(Model model, Param param)
 Analysis::~Analysis() {}
 
 void Analysis::exe(int n_step) {
+  if (n_step == 0)
+    exe0();
+  else
+    exeN(n_step);
+}
+
+void Analysis::exe0() {
+  int n_step = 0;
   State state, state_;
   Input input;
 
@@ -24,13 +32,56 @@ void Analysis::exe(int n_step) {
   printf("Start %d-step capturability analysis\n", n_step);
   printf("state:%d, input:%d\n", grid.getNumState(), grid.getNumInput());
 
-  if (n_step == 0) {
-    for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
-      state = grid.getState(state_id);
-      for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
-        input = grid.getInput(input_id);
-        if (!is_database[state_id][input_id]) {
-          if (capturability.capturable(state_, n_step)) {
+  std::string file_name = "csv/analysis_0.csv";
+  fp = fopen(file_name.c_str(), "w");
+  fprintf(fp, "time[us]\n");
+
+  for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
+    state = grid.getState(state_id);
+    for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
+      auto start = std::chrono::system_clock::now(); // 計測スタート時刻を保存
+      input = grid.getInput(input_id);
+      if (!is_database[state_id][input_id]) {
+        if (capturability.capturable(state, 0)) {
+          capturability.setCaptureSet(state_id, input_id,
+                                      grid.getStateIndex(state_), n_step, cop,
+                                      step_time);
+          is_database[state_id][input_id] = true;
+        }
+      }
+      auto end = std::chrono::system_clock::now(); // 計測終了時刻を保存
+      auto dur = end - start;                      // 要した時間を計算
+      auto msec =
+          std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+      fprintf(fp, "%d\n", msec);
+    }
+    progress(state_id);
+  }
+
+  fclose(fp);
+}
+
+void Analysis::exeN(int n_step) {
+  State state, state_;
+  Input input;
+
+  printf("-----------------------------------------\n");
+  printf("Start %d-step capturability analysis\n", n_step);
+  printf("state:%d, input:%d\n", grid.getNumState(), grid.getNumInput());
+
+  std::string file_name = "csv/analysis_" + std::to_string(n_step) + ".csv";
+  fp = fopen(file_name.c_str(), "w");
+  fprintf(fp, "time[us]\n");
+
+  for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
+    state = grid.getState(state_id);
+    for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
+      auto start = std::chrono::system_clock::now(); // 計測スタート時刻を保存
+      input = grid.getInput(input_id);
+      state_ = step(state, input);
+      if (!is_database[state_id][input_id]) {
+        if (grid.existState(state_)) {
+          if (capturability.capturable(state_, n_step - 1)) {
             capturability.setCaptureSet(state_id, input_id,
                                         grid.getStateIndex(state_), n_step, cop,
                                         step_time);
@@ -38,35 +89,22 @@ void Analysis::exe(int n_step) {
           }
         }
       }
-      if ((state_id % 1000) == 0) {
-        float percentage = (float)state_id / grid.getNumState() * 100;
-        printf("%d \t/ %d \t(%lf %%)\n", state_id, grid.getNumState(),
-               percentage);
-      }
+      auto end = std::chrono::system_clock::now(); // 計測終了時刻を保存
+      auto dur = end - start;                      // 要した時間を計算
+      auto msec =
+          std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+      fprintf(fp, "%d\n", msec);
     }
-  } else {
-    for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
-      state = grid.getState(state_id);
-      for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
-        input = grid.getInput(input_id);
-        state_ = step(state, input);
-        if (!is_database[state_id][input_id]) {
-          if (grid.existState(state_)) {
-            if (capturability.capturable(state_, n_step - 1)) {
-              capturability.setCaptureSet(state_id, input_id,
-                                          grid.getStateIndex(state_), n_step,
-                                          cop, step_time);
-              is_database[state_id][input_id] = true;
-            }
-          }
-        }
-      }
-      if ((state_id % 1000) == 0) {
-        float percentage = (float)state_id / grid.getNumState() * 100;
-        printf("%d \t/ %d \t(%lf %%)\n", state_id, grid.getNumState(),
-               percentage);
-      }
-    }
+    progress(state_id);
+  }
+
+  fclose(fp);
+}
+
+void Analysis::progress(int state_id) {
+  if ((state_id % 1000) == 0) {
+    float percentage = (float)state_id / grid.getNumState() * 100;
+    printf("%d \t/ %d \t(%lf %%)\n", state_id, grid.getNumState(), percentage);
   }
 }
 

@@ -19,9 +19,11 @@ int main(int argc, char const *argv[]) {
 
   Analysis analysis(model, param);
   analysis.exe(0);
-  // analysis.exe(1);
-  analysis.save("csv/0step_dsp.csv", 0);
-  // analysis.save("csv/1step_dsp.csv", 1);
+  analysis.exe(1);
+  analysis.exe(2);
+  analysis.save("csv/0step_ssp.csv", 0);
+  analysis.save("csv/1step_ssp.csv", 1);
+  analysis.save("csv/2step_ssp.csv", 2);
   // analysis.save("2step.csv", 2);
 
   return 0;

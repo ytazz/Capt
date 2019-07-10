@@ -32,7 +32,7 @@ void Analysis::exe0() {
   printf("Start %d-step capturability analysis\n", n_step);
   printf("state:%d, input:%d\n", grid.getNumState(), grid.getNumInput());
 
-  std::string file_name = "analysis_0.csv";
+  std::string file_name = "csv/analysis_0.csv";
   FILE *fp = fopen(file_name.c_str(), "w");
   fprintf(fp, "time[us]\n");
 
@@ -67,7 +67,7 @@ void Analysis::exeN(int n_step) {
   printf("Start %d-step capturability analysis\n", n_step);
   printf("state:%d, input:%d\n", grid.getNumState(), grid.getNumInput());
 
-  std::string file_name = "analysis_" + std::to_string(n_step) + ".csv";
+  std::string file_name = "csv/analysis_" + std::to_string(n_step) + ".csv";
   FILE *fp = fopen(file_name.c_str(), "w");
   fprintf(fp, "time[us]\n");
 

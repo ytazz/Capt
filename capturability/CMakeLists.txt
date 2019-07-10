@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 project(Capturability)
 
+set(BUILD_GPU     false CACHE BOOL "build programs for GPU")
 set(MAKE_LIBRARY  false CACHE BOOL "make capturability library")
+
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
 # if(${MAKE_LIBRARY})
 #   set(CMAKE_CXX_FLAGS "-shared -fPIC")
@@ -9,6 +11,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 find_package(EXPAT REQUIRED)
 find_package(Eigen3 REQUIRED)
@@ -20,85 +23,68 @@ include_directories(${EXPAT_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 set(HEADERS
-  include/CA.h
-  include/analysis.h
-  include/capturability.h
-  include/foot_planner.h
-  include/friction_filter.h
-  include/grid.h
-  include/interpolation.h
-  include/input.h
-  include/kinematics.h
-  include/loader.h
-  include/model.h
-  include/monitor.h
-  include/param.h
-  include/pendulum.h
-  include/planning.h
-  include/polygon.h
-  include/state.h
-  include/swing_foot.h
-  include/trajectory.h
-  include/vector.h
+  ${PROJECT_SOURCE_DIR}/include/CA.h
+  ${PROJECT_SOURCE_DIR}/include/capturability.h
+  ${PROJECT_SOURCE_DIR}/include/foot_planner.h
+  ${PROJECT_SOURCE_DIR}/include/friction_filter.h
+  ${PROJECT_SOURCE_DIR}/include/grid.h
+  ${PROJECT_SOURCE_DIR}/include/interpolation.h
+  ${PROJECT_SOURCE_DIR}/include/input.h
+  ${PROJECT_SOURCE_DIR}/include/kinematics.h
+  ${PROJECT_SOURCE_DIR}/include/loader.h
+  ${PROJECT_SOURCE_DIR}/include/model.h
+  ${PROJECT_SOURCE_DIR}/include/monitor.h
+  ${PROJECT_SOURCE_DIR}/include/param.h
+  ${PROJECT_SOURCE_DIR}/include/pendulum.h
+  ${PROJECT_SOURCE_DIR}/include/planning.h
+  ${PROJECT_SOURCE_DIR}/include/polygon.h
+  ${PROJECT_SOURCE_DIR}/include/state.h
+  ${PROJECT_SOURCE_DIR}/include/swing_foot.h
+  ${PROJECT_SOURCE_DIR}/include/trajectory.h
+  ${PROJECT_SOURCE_DIR}/include/vector.h
 )
-# file(GLOB_RECURSE HEADERS include/*.h)
+
+set(CPU_HEADERS
+  ${PROJECT_SOURCE_DIR}/include/analysis.h
+)
 
 set(PLOT_HEADERS
-  include/cr_plot.h
-  include/plot_trajectory.h
-  include/gnuplot.h
+  ${PROJECT_SOURCE_DIR}/include/cr_plot.h
+  ${PROJECT_SOURCE_DIR}/include/plot_trajectory.h
+  ${PROJECT_SOURCE_DIR}/include/gnuplot.h
 )
 
 set(SOURCES
-  src/analysis.cpp
-  src/capturability.cpp
-  src/foot_planner.cpp
-  src/friction_filter.cpp
-  src/interpolation.cpp
-  src/grid.cpp
-  src/kinematics.cpp
-  src/loader.cpp
-  src/model.cpp
-  src/monitor.cpp
-  src/param.cpp
-  src/pendulum.cpp
-  src/planning.cpp
-  src/polygon.cpp
-  src/swing_foot.cpp
-  src/trajectory.cpp
-  src/vector.cpp
+  ${PROJECT_SOURCE_DIR}/src/capturability.cpp
+  ${PROJECT_SOURCE_DIR}/src/foot_planner.cpp
+  ${PROJECT_SOURCE_DIR}/src/friction_filter.cpp
+  ${PROJECT_SOURCE_DIR}/src/interpolation.cpp
+  ${PROJECT_SOURCE_DIR}/src/grid.cpp
+  ${PROJECT_SOURCE_DIR}/src/kinematics.cpp
+  ${PROJECT_SOURCE_DIR}/src/loader.cpp
+  ${PROJECT_SOURCE_DIR}/src/model.cpp
+  ${PROJECT_SOURCE_DIR}/src/monitor.cpp
+  ${PROJECT_SOURCE_DIR}/src/param.cpp
+  ${PROJECT_SOURCE_DIR}/src/pendulum.cpp
+  ${PROJECT_SOURCE_DIR}/src/planning.cpp
+  ${PROJECT_SOURCE_DIR}/src/polygon.cpp
+  ${PROJECT_SOURCE_DIR}/src/swing_foot.cpp
+  ${PROJECT_SOURCE_DIR}/src/trajectory.cpp
+  ${PROJECT_SOURCE_DIR}/src/vector.cpp
 )
-# file(GLOB_RECURSE SOURCES src/*.cpp)
+
+set(CPU_SOURCES
+  ${PROJECT_SOURCE_DIR}/src/analysis.cpp
+)
 
 set(PLOT_SOURCES
-  src/cr_plot.cpp
-  src/plot_trajectory.cpp
-  src/gnuplot.cpp
+  ${PROJECT_SOURCE_DIR}/src/cr_plot.cpp
+  ${PROJECT_SOURCE_DIR}/src/plot_trajectory.cpp
+  ${PROJECT_SOURCE_DIR}/src/gnuplot.cpp
 )
 
-add_executable(main main.cpp ${SOURCES} ${HEADERS})
-add_executable(debug debug.cpp ${SOURCES} ${HEADERS})
-add_executable(converter converter.cpp ${SOURCES} ${HEADERS})
-add_executable(test_ik example/test_ik.cpp ${SOURCES} ${HEADERS})
-add_executable(test_capture example/test_capture.cpp ${SOURCES} ${HEADERS})
-add_executable(animation example/animation.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
-# add_executable(anim_traj example/anim_traj.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
-# add_executable(anim_friction example/anim_friction.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
-add_executable(anim_push example/anim_push.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
-add_executable(test_time example/test_time.cpp ${SOURCES} ${HEADERS})
-add_executable(test_plan example/test_plan.cpp ${SOURCES} ${HEADERS})
-
+add_executable(main main.cpp ${SOURCES} ${HEADERS} ${CPU_SOURCES} ${CPU_HEADERS})
 target_link_libraries(main ${EXPAT_LIBRARIES})
-target_link_libraries(debug ${EXPAT_LIBRARIES})
-target_link_libraries(test_ik ${EXPAT_LIBRARIES})
-target_link_libraries(test_capture ${EXPAT_LIBRARIES})
-target_link_libraries(converter ${EXPAT_LIBRARIES})
-target_link_libraries(animation ${EXPAT_LIBRARIES})
-# target_link_libraries(anim_traj ${EXPAT_LIBRARIES})
-# target_link_libraries(anim_friction ${EXPAT_LIBRARIES})
-target_link_libraries(anim_push ${EXPAT_LIBRARIES})
-target_link_libraries(test_time ${EXPAT_LIBRARIES})
-target_link_libraries(test_plan ${EXPAT_LIBRARIES})
 
 if(${MAKE_LIBRARY})
   add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})
@@ -107,6 +93,7 @@ if(${MAKE_LIBRARY})
   # install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
 
-configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-# configure_file(data/graph.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-configure_file(data/analysis.xml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)
+configure_file(data/analysis.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)
+
+add_subdirectory(example)

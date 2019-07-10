@@ -1,7 +1,6 @@
 #ifndef __CA_H__
 #define __CA_H__
 
-#include "analysis.h"
 #include "capturability.h"
 #include "foot_planner.h"
 #include "friction_filter.h"

@@ -51,9 +51,6 @@ private:
   SwingFoot swing_foot;
   Capturability capturability;
 
-  // save calculation log
-  FILE *fp;
-
   vec2_t cop;
   float step_time;
 

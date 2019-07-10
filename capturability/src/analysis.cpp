@@ -33,7 +33,7 @@ void Analysis::exe0() {
   printf("state:%d, input:%d\n", grid.getNumState(), grid.getNumInput());
 
   std::string file_name = "csv/analysis_0.csv";
-  fp = fopen(file_name.c_str(), "w");
+  FILE *fp = fopen(file_name.c_str(), "w");
   fprintf(fp, "time[us]\n");
 
   for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
@@ -41,13 +41,11 @@ void Analysis::exe0() {
     for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
       auto start = std::chrono::system_clock::now(); // 計測スタート時刻を保存
       input = grid.getInput(input_id);
-      if (!is_database[state_id][input_id]) {
-        if (capturability.capturable(state, 0)) {
-          capturability.setCaptureSet(state_id, input_id,
-                                      grid.getStateIndex(state_), n_step, cop,
-                                      step_time);
-          is_database[state_id][input_id] = true;
-        }
+      if (capturability.capturable(state, 0)) {
+        capturability.setCaptureSet(state_id, input_id,
+                                    grid.getStateIndex(state_), n_step, cop,
+                                    step_time);
+        is_database[state_id][input_id] = true;
       }
       auto end = std::chrono::system_clock::now(); // 計測終了時刻を保存
       auto dur = end - start;                      // 要した時間を計算
@@ -70,7 +68,7 @@ void Analysis::exeN(int n_step) {
   printf("state:%d, input:%d\n", grid.getNumState(), grid.getNumInput());
 
   std::string file_name = "csv/analysis_" + std::to_string(n_step) + ".csv";
-  fp = fopen(file_name.c_str(), "w");
+  FILE *fp = fopen(file_name.c_str(), "w");
   fprintf(fp, "time[us]\n");
 
   for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
@@ -79,16 +77,16 @@ void Analysis::exeN(int n_step) {
       auto start = std::chrono::system_clock::now(); // 計測スタート時刻を保存
       input = grid.getInput(input_id);
       state_ = step(state, input);
-      if (!is_database[state_id][input_id]) {
-        if (grid.existState(state_)) {
-          if (capturability.capturable(state_, n_step - 1)) {
-            capturability.setCaptureSet(state_id, input_id,
-                                        grid.getStateIndex(state_), n_step, cop,
-                                        step_time);
-            is_database[state_id][input_id] = true;
-          }
+      // if (!is_database[state_id][input_id]) {
+      if (grid.existState(state_)) {
+        if (capturability.capturable(state_, n_step - 1)) {
+          capturability.setCaptureSet(state_id, input_id,
+                                      grid.getStateIndex(state_), n_step, cop,
+                                      step_time);
+          is_database[state_id][input_id] = true;
         }
       }
+      // }
       auto end = std::chrono::system_clock::now(); // 計測終了時刻を保存
       auto dur = end - start;                      // 要した時間を計算
       auto msec =

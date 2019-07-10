@@ -83,13 +83,19 @@ int main(int argc, char const *argv[]) {
       std::cout << "state_idを入力してください";
       std::cin >> state_id;
       state = grid.getState(state_id);
+      printf("cartesian:\n");
       state.printCartesian();
+      printf("polar:\n");
+      state.printPolar();
       break;
     case 4:
       std::cout << "input_idを入力してください";
       std::cin >> input_id;
       input = grid.getInput(input_id);
+      printf("cartesian:\n");
       input.printCartesian();
+      printf("polar:\n");
+      input.printPolar();
       break;
     default:
       break;

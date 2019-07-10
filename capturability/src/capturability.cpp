@@ -20,10 +20,8 @@ void Capturability::load(const char *file_name) {
     printf("Error: Couldn't find the file \"%s\"\n", file_name);
     exit(EXIT_FAILURE);
   } else {
-    std::cout << "01" << '\n';
     while (fscanf(fp, "%d,%d,%d,%d,%f,%f,%f", &ibuf[0], &ibuf[1], &ibuf[2],
                   &ibuf[3], &fbuf[0], &fbuf[1], &fbuf[2]) != EOF) {
-      std::cout << "02" << '\n';
       set.state_id = ibuf[0];
       set.input_id = ibuf[1];
       set.next_state_id = ibuf[2];
@@ -34,7 +32,6 @@ void Capturability::load(const char *file_name) {
       capture_set.push_back(set);
       num_data++;
     }
-    std::cout << "03" << '\n';
     fclose(fp);
   }
 
@@ -101,6 +98,7 @@ bool Capturability::capturable(State state, int n_step) {
     // polygon.setVertex(region_r);
     // polygon.setVertex(region_l);
     // flag = polygon.inPolygon(state.icp, polygon.getConvexHull());
+
   } else {
     if (!getCaptureRegion(state, n_step).empty())
       flag = true;
@@ -132,6 +130,7 @@ void Capturability::save(const char *file_name, const int n_step) {
       fprintf(fp, "\n");
     }
   }
+  fclose(fp);
 }
 
 } // namespace CA

@@ -32,7 +32,7 @@ void Analysis::exe0() {
   printf("Start %d-step capturability analysis\n", n_step);
   printf("state:%d, input:%d\n", grid.getNumState(), grid.getNumInput());
 
-  std::string file_name = "csv/analysis_0.csv";
+  std::string file_name = "analysis_0.csv";
   FILE *fp = fopen(file_name.c_str(), "w");
   fprintf(fp, "time[us]\n");
 
@@ -51,7 +51,7 @@ void Analysis::exe0() {
       auto dur = end - start;                      // 要した時間を計算
       auto msec =
           std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
-      fprintf(fp, "%d\n", msec);
+      fprintf(fp, "%d\n", (int)msec);
     }
     progress(state_id);
   }
@@ -67,7 +67,7 @@ void Analysis::exeN(int n_step) {
   printf("Start %d-step capturability analysis\n", n_step);
   printf("state:%d, input:%d\n", grid.getNumState(), grid.getNumInput());
 
-  std::string file_name = "csv/analysis_" + std::to_string(n_step) + ".csv";
+  std::string file_name = "analysis_" + std::to_string(n_step) + ".csv";
   FILE *fp = fopen(file_name.c_str(), "w");
   fprintf(fp, "time[us]\n");
 
@@ -77,21 +77,21 @@ void Analysis::exeN(int n_step) {
       auto start = std::chrono::system_clock::now(); // 計測スタート時刻を保存
       input = grid.getInput(input_id);
       state_ = step(state, input);
-      // if (!is_database[state_id][input_id]) {
-      if (grid.existState(state_)) {
-        if (capturability.capturable(state_, n_step - 1)) {
-          capturability.setCaptureSet(state_id, input_id,
-                                      grid.getStateIndex(state_), n_step, cop,
-                                      step_time);
-          is_database[state_id][input_id] = true;
+      if (!is_database[state_id][input_id]) {
+        if (grid.existState(state_)) {
+          if (capturability.capturable(state_, n_step - 1)) {
+            capturability.setCaptureSet(state_id, input_id,
+                                        grid.getStateIndex(state_), n_step, cop,
+                                        step_time);
+            is_database[state_id][input_id] = true;
+          }
         }
       }
-      // }
       auto end = std::chrono::system_clock::now(); // 計測終了時刻を保存
       auto dur = end - start;                      // 要した時間を計算
       auto msec =
           std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
-      fprintf(fp, "%d\n", msec);
+      fprintf(fp, "%d\n", (int)msec);
     }
     progress(state_id);
   }

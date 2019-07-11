@@ -1,5 +1,5 @@
-#ifndef __ANALYSIS_GPU_H__
-#define __ANALYSIS_GPU_H__
+#ifndef __ANALYSIS_CUH__
+#define __ANALYSIS_CUH__
 
 #include "capturability.h"
 #include "grid.h"
@@ -17,6 +17,8 @@
 #include <stdio.h>
 #include <vector>
 
-namespace CA {} // namespace CA
+using namespace CA;
 
-#endif // __ANALYSIS_GPU_H__
+__global__ void exeZero(Capturability *capturability, Grid *grid);
+
+#endif // __ANALYSIS_CUH__

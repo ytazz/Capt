@@ -1,15 +1,15 @@
-#include "capturability.h"
+#include "capturability.cuh"
 
-namespace CA {
+namespace GPGPU {
 
-Capturability::Capturability(Model model, Param param)
+__device__ Capturability::Capturability(Model model, Param param)
     : grid(param), model(model) {
   // this->model = model;
 }
 
-Capturability::~Capturability() {}
+__device__ Capturability::~Capturability() {}
 
-void Capturability::load(const char *file_name) {
+__device__ void Capturability::load(const char *file_name) {
   FILE *fp;
   int num_data = 0;
   int ibuf[4];
@@ -38,9 +38,11 @@ void Capturability::load(const char *file_name) {
   printf("Read success! (%d datas)\n", num_data);
 }
 
-void Capturability::setCaptureSet(const int state_id, const int input_id,
-                                  const int next_state_id, const int n_step,
-                                  const vec2_t cop, const float step_time) {
+__device__ void Capturability::setCaptureSet(const int state_id,
+                                             const int input_id,
+                                             const int next_state_id,
+                                             const int n_step, const vec2_t cop,
+                                             const float step_time) {
   CaptureSet set;
   set.state_id = state_id;
   set.input_id = input_id;
@@ -53,8 +55,10 @@ void Capturability::setCaptureSet(const int state_id, const int input_id,
   capture_set.push_back(set);
 }
 
-void Capturability::setCaptureSet(const int state_id, const int input_id,
-                                  const int next_state_id, const int n_step) {
+__device__ void Capturability::setCaptureSet(const int state_id,
+                                             const int input_id,
+                                             const int next_state_id,
+                                             const int n_step) {
   vec2_t v;
   v.clear();
 
@@ -70,8 +74,8 @@ void Capturability::setCaptureSet(const int state_id, const int input_id,
   capture_set.push_back(set);
 }
 
-std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id,
-                                                        const int n_step) {
+__device__ std::vector<CaptureSet>
+Capturability::getCaptureRegion(const int state_id, const int n_step) {
 
   std::vector<CaptureSet> sets;
 
@@ -86,8 +90,8 @@ std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id,
   return sets;
 }
 
-std::vector<CaptureSet> Capturability::getCaptureRegion(const State state,
-                                                        const int n_step) {
+__device__ std::vector<CaptureSet>
+Capturability::getCaptureRegion(const State state, const int n_step) {
 
   std::vector<CaptureSet> sets;
 
@@ -98,7 +102,7 @@ std::vector<CaptureSet> Capturability::getCaptureRegion(const State state,
   return sets;
 }
 
-bool Capturability::capturable(State state, int n_step) {
+__device__ bool Capturability::capturable(State state, int n_step) {
   bool flag = false;
 
   if (n_step == 0) {
@@ -124,7 +128,7 @@ bool Capturability::capturable(State state, int n_step) {
   return flag;
 }
 
-bool Capturability::capturable(int state_id, int n_step) {
+__device__ bool Capturability::capturable(int state_id, int n_step) {
   bool flag = false;
 
   State state_ = grid.getState(state_id);
@@ -133,7 +137,7 @@ bool Capturability::capturable(int state_id, int n_step) {
   return flag;
 }
 
-void Capturability::save(const char *file_name, const int n_step) {
+__device__ void Capturability::save(const char *file_name, const int n_step) {
   FILE *fp = fopen(file_name, "w");
   // fprintf(fp, "state_id,input_id,next_state_id,n_step,cop_x,cop_y,time\n");
   for (size_t i = 0; i < capture_set.size(); i++) {
@@ -150,4 +154,4 @@ void Capturability::save(const char *file_name, const int n_step) {
   fclose(fp);
 }
 
-} // namespace CA
+} // namespace GPGPU

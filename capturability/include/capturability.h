@@ -45,6 +45,8 @@ public:
   void setCaptureSet(const int state_id, const int input_id,
                      const int next_state_id, const int n_step,
                      const vec2_t cop, const float step_time);
+  void setCaptureSet(const int state_id, const int input_id,
+                     const int next_state_id, const int n_step);
   std::vector<CaptureSet> getCaptureRegion(const int state_id,
                                            const int n_step);
   std::vector<CaptureSet> getCaptureRegion(const State state, const int n_step);

@@ -7,6 +7,7 @@ set(BUILD_EXAMPLE false CACHE BOOL "build sample programs")
 set(MAKE_LIBRARY  false CACHE BOOL "make capturability library")
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
+# set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --ptxas-options=-v")
 # if(${MAKE_LIBRARY})
 #   set(CMAKE_CXX_FLAGS "-shared -fPIC")
 # endif()
@@ -24,6 +25,7 @@ endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/cuda/include)
 include_directories(${EXPAT_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIR})
 
@@ -53,10 +55,10 @@ set(CPU_HEADERS
   ${PROJECT_SOURCE_DIR}/include/analysis_cpu.h
 )
 
-set(GPU_HEADERS
-  ${PROJECT_SOURCE_DIR}/include/nvidia.cuh
-  ${PROJECT_SOURCE_DIR}/include/analysis_gpu.cuh
-)
+# set(GPU_HEADERS
+#   ${PROJECT_SOURCE_DIR}/include/nvidia.cuh
+#   ${PROJECT_SOURCE_DIR}/include/analysis_gpu.cuh
+# )
 
 set(PLOT_HEADERS
   ${PROJECT_SOURCE_DIR}/include/cr_plot.h
@@ -88,7 +90,14 @@ set(CPU_SOURCES
 )
 
 set(GPU_SOURCES
-  ${PROJECT_SOURCE_DIR}/src/analysis_gpu.cu
+  ${PROJECT_SOURCE_DIR}/cuda/src/analysis_gpu.cu
+  # ${PROJECT_SOURCE_DIR}/cuda/src/capturability.cu
+  # ${PROJECT_SOURCE_DIR}/cuda/src/grid.cu
+  # ${PROJECT_SOURCE_DIR}/cuda/src/loader.cu
+  # ${PROJECT_SOURCE_DIR}/cuda/src/model.cu
+  # ${PROJECT_SOURCE_DIR}/cuda/src/param.cu
+  # ${PROJECT_SOURCE_DIR}/cuda/src/polygon.cu
+  # ${PROJECT_SOURCE_DIR}/cuda/src/vector.cu
 )
 
 set(PLOT_SOURCES
@@ -112,9 +121,7 @@ if(${BUILD_GPU})
   cuda_add_executable( main_gpu
     main.cu
     ${SOURCES}
-    ${HEADERS}
     ${GPU_SOURCES}
-    ${GPU_HEADERS}
   )
   target_link_libraries(main_gpu ${EXPAT_LIBRARIES})
 endif()

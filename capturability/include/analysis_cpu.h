@@ -59,4 +59,4 @@ private:
 
 } // namespace CA
 
-#endif // __ANALYSIS_H__
+#endif // __ANALYSIS_CPU_H__

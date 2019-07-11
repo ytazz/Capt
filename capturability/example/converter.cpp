@@ -1,4 +1,3 @@
-#include "analysis.h"
 #include "capturability.h"
 #include "grid.h"
 #include "loader.h"

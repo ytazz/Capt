@@ -1,4 +1,4 @@
-#include "analysis.h"
+#include "analysis_cpu.h"
 #include "grid.h"
 #include "loader.h"
 #include "model.h"

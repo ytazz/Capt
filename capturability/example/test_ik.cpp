@@ -1,4 +1,3 @@
-#include "analysis.h"
 #include "capturability.h"
 #include "friction_filter.h"
 #include "grid.h"

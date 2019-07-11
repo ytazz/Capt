@@ -1,5 +1,5 @@
-#ifndef __ANALYSIS_H__
-#define __ANALYSIS_H__
+#ifndef __ANALYSIS_CPU_H__
+#define __ANALYSIS_CPU_H__
 
 #include "capturability.h"
 #include "grid.h"

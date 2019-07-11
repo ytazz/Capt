@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.0)
 project(Capturability)
 
 set(BUILD_GPU     false CACHE BOOL "build programs for GPU")
+set(BUILD_CPU     false CACHE BOOL "build programs for CPU")
+set(BUILD_EXAMPLE false CACHE BOOL "build sample programs")
 set(MAKE_LIBRARY  false CACHE BOOL "make capturability library")
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
@@ -15,6 +17,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 find_package(EXPAT REQUIRED)
 find_package(Eigen3 REQUIRED)
+if(${BUILD_GPU})
+  find_package(CUDA REQUIRED)
+endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -45,7 +50,12 @@ set(HEADERS
 )
 
 set(CPU_HEADERS
-  ${PROJECT_SOURCE_DIR}/include/analysis.h
+  ${PROJECT_SOURCE_DIR}/include/analysis_cpu.h
+)
+
+set(GPU_HEADERS
+  ${PROJECT_SOURCE_DIR}/include/nvidia.cuh
+  ${PROJECT_SOURCE_DIR}/include/analysis_gpu.cuh
 )
 
 set(PLOT_HEADERS
@@ -74,7 +84,11 @@ set(SOURCES
 )
 
 set(CPU_SOURCES
-  ${PROJECT_SOURCE_DIR}/src/analysis.cpp
+  ${PROJECT_SOURCE_DIR}/src/analysis_cpu.cpp
+)
+
+set(GPU_SOURCES
+  ${PROJECT_SOURCE_DIR}/src/analysis_gpu.cu
 )
 
 set(PLOT_SOURCES
@@ -83,8 +97,27 @@ set(PLOT_SOURCES
   ${PROJECT_SOURCE_DIR}/src/gnuplot.cpp
 )
 
-add_executable(main main.cpp ${SOURCES} ${HEADERS} ${CPU_SOURCES} ${CPU_HEADERS})
-target_link_libraries(main ${EXPAT_LIBRARIES})
+if(${BUILD_CPU})
+  add_executable( main_cpu
+    main.cpp
+    ${SOURCES}
+    ${HEADERS}
+    ${CPU_SOURCES}
+    ${CPU_HEADERS}
+  )
+  target_link_libraries(main_cpu ${EXPAT_LIBRARIES})
+endif()
+
+if(${BUILD_GPU})
+  cuda_add_executable( main_gpu
+    main.cu
+    ${SOURCES}
+    ${HEADERS}
+    ${GPU_SOURCES}
+    ${GPU_HEADERS}
+  )
+  target_link_libraries(main_gpu ${EXPAT_LIBRARIES})
+endif()
 
 if(${MAKE_LIBRARY})
   add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})
@@ -96,4 +129,6 @@ endif()
 configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)
 configure_file(data/analysis.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)
 
-add_subdirectory(example)
+if(${BUILD_EXAMPLE})
+  add_subdirectory(example)
+endif()

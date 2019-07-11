@@ -19,3 +19,15 @@ sudo cp /home/kuribayashi/study/capturability/lib/libCapturability.so /usr/local
     $ ./configure --with-gd
     $ make -j4
     $ sudo make install
+
+# Setting
+
+## CUDA
+
+    $ sudo gedit /usr/local/cuda/include/crt/common_functions.h
+
+comment out follow line
+
+```cpp
+    // #define __CUDACC_VER__ "__CUDACC_VER__ is no longer supported. Use __CUDACC_VER_MAJOR__, __CUDACC_VER_MINOR__, and __CUDACC_VER_BUILD__ instead."
+```

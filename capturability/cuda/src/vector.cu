@@ -1,6 +1,6 @@
 #include "vector.cuh"
 
-namespace GPGPU {
+__device__ void deviceFunc2() {}
 
 __device__ Vector2::Vector2() { clear(); }
 
@@ -109,5 +109,3 @@ __device__ Vector2 operator*(const float &d, const Vector2 &v) {
   vec.th = v.th;
   return vec;
 }
-
-} // namespace GPGPU

@@ -11,8 +11,6 @@
 #include <stdio.h>
 #include <vector>
 
-namespace GPGPU {
-
 struct CaptureSet {
   int state_id;
   int input_id;
@@ -60,7 +58,5 @@ private:
   Model model;
   std::vector<CaptureSet> capture_set;
 };
-
-} // namespace GPGPU
 
 #endif // __CAPTURABILITY_CUH__

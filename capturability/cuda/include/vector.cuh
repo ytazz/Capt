@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string>
 
-namespace GPGPU {
+extern __device__ void deviceFunc2();
 
 typedef struct Vector2 {
 
@@ -39,7 +39,5 @@ public:
 } vec2_t;
 
 __device__ Vector2 operator*(const float &d, const Vector2 &v);
-
-} // namespace GPGPU
 
 #endif // __VECTOR_CUH__

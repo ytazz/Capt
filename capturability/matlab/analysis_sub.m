@@ -4,22 +4,17 @@ close all;
 
 %% range
 global t_max;
-t_max = 100; %[us]
+t_max = 300; %[us]
 global t_step;
-t_step = 5; %[us]
+t_step = 15; %[us]
 
-%% 0step
-time_plot('0step','../build/bin/csv/analysis_0.csv');
-
-%% 1step
-time_plot('1step','../build/bin/csv/analysis_1.csv');
-
-%% 2step
-time_plot('2step','../build/bin/csv/analysis_2.csv');
+time_plot('1','../build/bin/csv/2step_sub.csv',1);
+time_plot('2','../build/bin/csv/2step_sub.csv',2);
+time_plot('3','../build/bin/csv/2step_sub.csv',3);
 
 
 %% function
-function time_plot(name, data_file)
+function time_plot(name, data_file,i)
 global t_max;
 global t_step;
     figure('Name',name);
@@ -28,12 +23,12 @@ global t_step;
     grid on;
     grid minor;
 
-    data = csvread(data_file,1,0);
+    data = csvread(data_file,0,0);
     edge = [0:t_step:t_max];
-    histogram(data(:,1),edge);
+    histogram(data(:,i),edge);
 
     % average
-    ave = mean(data(:,1));
+    ave = mean(data(:,i));
     line('XData',[ave ave],'YData',[10^0 10^6],'Color','k','LineWidth',2);
 
     % x軸対数化
@@ -48,7 +43,7 @@ global t_step;
     set(gca,'FontSize',14);
     
     disp('Average: ');
-    disp(mean(data(:,1)));
+    disp(mean(data(:,i)));
     disp('Max: ');
-    disp(max(data(:,1)));
+    disp(max(data(:,i)));
 end

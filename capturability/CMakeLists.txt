@@ -8,6 +8,8 @@ set(MAKE_LIBRARY  false CACHE BOOL "make capturability library")
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
 # set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --ptxas-options=-v")
+set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -std=c++11 -gencode arch=compute_30,code=sm_30)
+set(CUDA_SEPARABLE_COMPILATION ON)
 # if(${MAKE_LIBRARY})
 #   set(CMAKE_CXX_FLAGS "-shared -fPIC")
 # endif()
@@ -20,6 +22,9 @@ find_package(EXPAT REQUIRED)
 find_package(Eigen3 REQUIRED)
 if(${BUILD_GPU})
   find_package(CUDA REQUIRED)
+  if(CUDA_FOUND)
+    message("Cuda version: " ${CUDA_VERSION})
+  endif()
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -55,11 +60,6 @@ set(CPU_HEADERS
   ${PROJECT_SOURCE_DIR}/include/analysis_cpu.h
 )
 
-# set(GPU_HEADERS
-#   ${PROJECT_SOURCE_DIR}/include/nvidia.cuh
-#   ${PROJECT_SOURCE_DIR}/include/analysis_gpu.cuh
-# )
-
 set(PLOT_HEADERS
   ${PROJECT_SOURCE_DIR}/include/cr_plot.h
   ${PROJECT_SOURCE_DIR}/include/plot_trajectory.h
@@ -89,6 +89,17 @@ set(CPU_SOURCES
   ${PROJECT_SOURCE_DIR}/src/analysis_cpu.cpp
 )
 
+set(GPU_HEADERS
+  ${PROJECT_SOURCE_DIR}/cuda/include/analysis_gpu.cuh
+  # ${PROJECT_SOURCE_DIR}/cuda/include/capturability.cuh
+  # ${PROJECT_SOURCE_DIR}/cuda/include/grid.cuh
+  # ${PROJECT_SOURCE_DIR}/cuda/include/loader.cuh
+  # ${PROJECT_SOURCE_DIR}/cuda/include/model.cuh
+  # ${PROJECT_SOURCE_DIR}/cuda/include/param.cuh
+  # ${PROJECT_SOURCE_DIR}/cuda/include/polygon.cuh
+  ${PROJECT_SOURCE_DIR}/cuda/include/vector.cuh
+)
+
 set(GPU_SOURCES
   ${PROJECT_SOURCE_DIR}/cuda/src/analysis_gpu.cu
   # ${PROJECT_SOURCE_DIR}/cuda/src/capturability.cu
@@ -97,7 +108,7 @@ set(GPU_SOURCES
   # ${PROJECT_SOURCE_DIR}/cuda/src/model.cu
   # ${PROJECT_SOURCE_DIR}/cuda/src/param.cu
   # ${PROJECT_SOURCE_DIR}/cuda/src/polygon.cu
-  # ${PROJECT_SOURCE_DIR}/cuda/src/vector.cu
+  ${PROJECT_SOURCE_DIR}/cuda/src/vector.cu
 )
 
 set(PLOT_SOURCES
@@ -118,12 +129,12 @@ if(${BUILD_CPU})
 endif()
 
 if(${BUILD_GPU})
-  cuda_add_executable( main_gpu
-    main.cu
-    ${SOURCES}
+  cuda_add_executable( test_gpu
+    test.cu
     ${GPU_SOURCES}
+    ${GPU_HEADERS}
   )
-  target_link_libraries(main_gpu ${EXPAT_LIBRARIES})
+  # target_link_libraries(test_gpu ${EXPAT_LIBRARIES})
 endif()
 
 if(${MAKE_LIBRARY})

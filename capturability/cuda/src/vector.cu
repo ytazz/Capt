@@ -7,105 +7,116 @@ __device__ Vector2::Vector2() { clear(); }
 __device__ Vector2::~Vector2() {}
 
 __device__ void Vector2::clear() {
-  this->r = 0.0;
-  this->th = 0.0;
-  this->x = 0.0;
-  this->y = 0.0;
+  this->r_ = 0.0;
+  this->th_ = 0.0;
+  this->x_ = 0.0;
+  this->y_ = 0.0;
 }
 
 __device__ void Vector2::setPolar(float radius, float theta) {
-  this->r = radius;
-  this->th = theta;
+  this->r_ = radius;
+  this->th_ = theta;
   polarToCartesian();
 }
 
 __device__ void Vector2::setCartesian(float x, float y) {
-  this->x = x;
-  this->y = y;
+  this->x_ = x;
+  this->y_ = y;
   cartesianToPolar();
 }
 
 __device__ void Vector2::polarToCartesian() {
-  this->x = this->r * cos(this->th);
-  this->y = this->r * sin(this->th);
+  this->x_ = this->r_ * cos(this->th_);
+  this->y_ = this->r_ * sin(this->th_);
 }
 
 __device__ void Vector2::cartesianToPolar() {
-  this->r = norm();
-  this->th = atan2f(this->y, this->x);
-  if (this->th < 0.0) {
-    this->th += 2 * M_PI;
+  this->r_ = norm();
+  this->th_ = atan2f(this->y_, this->x_);
+  if (this->th_ < 0.0) {
+    this->th_ += 2 * M_PI;
   }
 }
 
-__device__ float Vector2::norm() { return sqrt(x * x + y * y); }
+__device__ float Vector2::x() { return this->x_; }
+
+__device__ float Vector2::y() { return this->y_; }
+
+__device__ float Vector2::r() { return this->r_; }
+
+__device__ float Vector2::th() { return this->th_; }
+
+__device__ float Vector2::norm() { return sqrt(x_ * x_ + y_ * y_); }
 
 __device__ Vector2 Vector2::normal() {
   Vector2 normal_vector;
   // rotate -90 deg around +z direction
-  normal_vector.setCartesian(this->y, -this->x);
+  normal_vector.setCartesian(this->y_, -this->x_);
   return normal_vector;
 }
 
-__device__ void Vector2::operator=(const Vector2 &v) {
-  this->x = v.x;
-  this->y = v.y;
-  this->r = v.r;
-  this->th = v.th;
+__device__ Vector2 &Vector2::operator=(const Vector2 &v) {
+  this->x_ = v.x_;
+  this->y_ = v.y_;
+  this->r_ = v.r_;
+  this->th_ = v.th_;
+  return *this;
 }
 
 __device__ Vector2 Vector2::operator+(const Vector2 &v) {
   Vector2 vec;
-  vec.x = this->x + v.x;
-  vec.y = this->y + v.y;
-  vec.cartesianToPolar();
+  double x, y;
+  x = this->x_ + v.x_;
+  y = this->y_ + v.y_;
+  vec.setCartesian(x, y);
   return vec;
 }
 
-__device__ Vector2 Vector2::operator-(const Vector2 &v) const {
+__device__ Vector2 Vector2::operator-(const Vector2 &v) {
   Vector2 vec;
-  vec.x = this->x - v.x;
-  vec.y = this->y - v.y;
-  vec.cartesianToPolar();
+  double x, y;
+  x = this->x_ - v.x_;
+  y = this->y_ - v.y_;
+  vec.setCartesian(x, y);
   return vec;
 }
 
 __device__ float Vector2::operator%(const Vector2 &v) {
   float product;
-  product = this->x * v.y - this->y * v.x;
+  product = this->x_ * v.y_ - this->y_ * v.x_;
   return product;
 }
 
 __device__ Vector2 Vector2::operator*(const float &d) {
   Vector2 vec;
-  vec.x = this->x * d;
-  vec.y = this->y * d;
-  vec.r = this->r * d;
-  vec.th = this->th;
+  double x, y;
+  x = this->x_ * d;
+  y = this->y_ * d;
+  vec.setCartesian(x, y);
   return vec;
 }
 
 __device__ float Vector2::operator*(const Vector2 &v) {
   float product = 0.0;
-  product += this->x * v.x;
-  product += this->y * v.y;
+  product += this->x_ * v.x_;
+  product += this->y_ * v.y_;
   return product;
 }
 
 __device__ Vector2 Vector2::operator/(const float &d) {
   Vector2 vec;
-  vec.x = this->x / d;
-  vec.y = this->y / d;
-  vec.r = this->r / d;
-  vec.th = this->th;
+  double x, y;
+  x = this->x_ / d;
+  y = this->y_ / d;
+  vec.setCartesian(x, y);
   return vec;
 }
 
 __device__ Vector2 operator*(const float &d, const Vector2 &v) {
   Vector2 vec;
-  vec.x = v.x * d;
-  vec.y = v.y * d;
-  vec.r = v.r * d;
-  vec.th = v.th;
+  double x, y;
+  x = v.x_ * d;
+  y = v.y_ * d;
+  vec.setCartesian(x, y);
   return vec;
 }

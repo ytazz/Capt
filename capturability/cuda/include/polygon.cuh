@@ -5,49 +5,26 @@
 #include <string>
 #include <vector>
 
-namespace GPGPU {
-
 class Polygon {
 public:
-  Polygon();
-  ~Polygon();
+  __device__ Polygon();
+  __device__ ~Polygon();
 
-  // Set vertices (x, y)
-  void setVertex(Vector2 vertex);
-  void setVertex(std::vector<Vector2> vertex);
-
-  // Get setted vertices (x, y)
-  std::vector<Vector2> getVertex();
+  __device__ int size(Vector2 *array);
 
   // Find the vertices that make up the convex hull
   // by using gift wrapping algorithm
-  std::vector<Vector2> getConvexHull();
+  __device__ void getConvexHull(Vector2 *vertex, Vector2 *convex);
 
   // Find closest point from a point to polygon
-  Vector2 getClosestPoint(Vector2 point, std::vector<Vector2> vertex);
+  __device__ Vector2 getClosestPoint(Vector2 point, Vector2 *vertex);
 
   // Determine whether a point (x,y) is within a polygon
   // by using the sign of cross product
   // Especially, ICP and supporting polygon
   // in  -> true
   // out -> false
-  bool inPolygon(Vector2 point, std::vector<Vector2> vertex_);
-
-  // Output to the console
-  // all vertices
-  void printVertex(std::string str);
-  void printVertex();
-  // the vertices that make up the convex hull
-  void printConvex(std::string str);
-  void printConvex();
-
-  void clear();
-
-private:
-  std::vector<Vector2> vertex;
-  std::vector<Vector2> vertex_convex;
+  __device__ bool inPolygon(Vector2 point, Vector2 *vertex);
 };
-
-} // namespace GPGPU
 
 #endif // __POLYGON_CUH__

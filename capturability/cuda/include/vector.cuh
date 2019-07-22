@@ -17,16 +17,17 @@ typedef struct Vector2 {
   __device__ void setPolar(float radius, float theta);
   __device__ void setCartesian(float x, float y);
 
-  float r, th;
-  float x, y;
+  __device__ float x();
+  __device__ float y();
+  __device__ float r();
+  __device__ float th();
   __device__ float norm();
 
   __device__ Vector2 normal();
 
-  __device__ void operator=(const Vector2 &v);
-
+  __device__ Vector2 &operator=(const Vector2 &v);
   __device__ Vector2 operator+(const Vector2 &v);
-  __device__ Vector2 operator-(const Vector2 &v) const;
+  __device__ Vector2 operator-(const Vector2 &v);
   __device__ float operator%(const Vector2 &v);
   __device__ Vector2 operator*(const float &d);
   __device__ float operator*(const Vector2 &v);
@@ -35,6 +36,9 @@ typedef struct Vector2 {
 public:
   __device__ void cartesianToPolar();
   __device__ void polarToCartesian();
+
+  float r_, th_;
+  float x_, y_;
 
 } vec2_t;
 

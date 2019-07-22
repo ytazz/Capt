@@ -93,10 +93,7 @@ set(GPU_HEADERS
   ${PROJECT_SOURCE_DIR}/cuda/include/analysis_gpu.cuh
   # ${PROJECT_SOURCE_DIR}/cuda/include/capturability.cuh
   # ${PROJECT_SOURCE_DIR}/cuda/include/grid.cuh
-  # ${PROJECT_SOURCE_DIR}/cuda/include/loader.cuh
-  # ${PROJECT_SOURCE_DIR}/cuda/include/model.cuh
-  # ${PROJECT_SOURCE_DIR}/cuda/include/param.cuh
-  # ${PROJECT_SOURCE_DIR}/cuda/include/polygon.cuh
+  ${PROJECT_SOURCE_DIR}/cuda/include/polygon.cuh
   ${PROJECT_SOURCE_DIR}/cuda/include/vector.cuh
 )
 
@@ -104,10 +101,7 @@ set(GPU_SOURCES
   ${PROJECT_SOURCE_DIR}/cuda/src/analysis_gpu.cu
   # ${PROJECT_SOURCE_DIR}/cuda/src/capturability.cu
   # ${PROJECT_SOURCE_DIR}/cuda/src/grid.cu
-  # ${PROJECT_SOURCE_DIR}/cuda/src/loader.cu
-  # ${PROJECT_SOURCE_DIR}/cuda/src/model.cu
-  # ${PROJECT_SOURCE_DIR}/cuda/src/param.cu
-  # ${PROJECT_SOURCE_DIR}/cuda/src/polygon.cu
+  ${PROJECT_SOURCE_DIR}/cuda/src/polygon.cu
   ${PROJECT_SOURCE_DIR}/cuda/src/vector.cu
 )
 

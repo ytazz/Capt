@@ -15,7 +15,7 @@ __device__ int Grid::round(double value) {
   return result;
 }
 
-__device__ int Grid::getStateIndex(State state, StateTable table) {
+__device__ int Grid::getStateIndex(State state, GridTable table) {
   int icp_r_id = 0, icp_th_id = 0;
   int swf_r_id = 0, swf_th_id = 0;
 

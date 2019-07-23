@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-struct StateTable {
+struct GridTable {
   State *state;
   Input *input;
 
@@ -31,7 +31,7 @@ public:
   __device__ Grid();
   __device__ ~Grid();
 
-  __device__ int getStateIndex(State state, StateTable table);
+  __device__ int getStateIndex(State state, GridTable table);
 
 public:
   __device__ int round(double value);

@@ -98,11 +98,10 @@ set(GPU_HEADERS
 )
 
 set(GPU_SOURCES
-  ${PROJECT_SOURCE_DIR}/cuda/src/analysis_gpu.cu
-  # ${PROJECT_SOURCE_DIR}/cuda/src/capturability.cu
-  ${PROJECT_SOURCE_DIR}/cuda/src/grid.cu
-  ${PROJECT_SOURCE_DIR}/cuda/src/polygon.cu
-  ${PROJECT_SOURCE_DIR}/cuda/src/vector.cu
+  ${PROJECT_SOURCE_DIR}/cuda/src/cuda_analysis.cu
+  ${PROJECT_SOURCE_DIR}/cuda/src/cuda_grid.cu
+  ${PROJECT_SOURCE_DIR}/cuda/src/cuda_polygon.cu
+  ${PROJECT_SOURCE_DIR}/cuda/src/cuda_vector.cu
 )
 
 set(PLOT_SOURCES

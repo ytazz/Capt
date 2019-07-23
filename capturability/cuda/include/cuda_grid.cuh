@@ -1,16 +1,16 @@
-#ifndef __GRID_CUH__
-#define __GRID_CUH__
+#ifndef __CUDA_GRID_CUH__
+#define __CUDA_GRID_CUH__
 
-#include "input.cuh"
-#include "state.cuh"
-#include "vector.cuh"
+#include "cuda_input.cuh"
+#include "cuda_state.cuh"
+#include "cuda_vector.cuh"
 #include <iostream>
 #include <string>
 #include <vector>
 
-struct GridTable {
-  State *state;
-  Input *input;
+struct CudaGrid {
+  CudaState *state;
+  CudaInput *input;
 
   int num_state;
   int num_input;
@@ -24,17 +24,9 @@ struct GridTable {
   double icp_th_min, icp_th_max, icp_th_step;
   double swf_r_min, swf_r_max, swf_r_step;
   double swf_th_min, swf_th_max, swf_th_step;
-};
 
-class Grid {
-public:
-  __device__ Grid();
-  __device__ ~Grid();
-
-  __device__ int getStateIndex(State state, GridTable table);
-
-public:
+  __device__ int getStateIndex(CudaState state);
   __device__ int round(double value);
 };
 
-#endif // __GRID_CUH__
+#endif // __CUDA_GRID_CUH__

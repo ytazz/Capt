@@ -1,4 +1,4 @@
-#include "analysis_gpu.cuh"
+#include "cuda_analysis.cuh"
 
 // __global__ void exeZero(Capturability *capturability, Grid *grid) {
 //   int tid = threadIdx.x + blockIdx.x * blockDim.x;
@@ -19,10 +19,7 @@
 //   }
 // }
 
-__device__ void deviceFunc() {}
-
 __global__ void exeNstep() {
   printf("a\n");
   vec2_t vec;
-  deviceFunc2();
 }

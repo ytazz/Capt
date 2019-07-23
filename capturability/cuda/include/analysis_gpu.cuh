@@ -2,12 +2,12 @@
 #define __ANALYSIS_CUH__
 
 // #include "capturability.cuh"
-// #include "grid.cuh"
-// #include "input.cuh"
+#include "grid.cuh"
+#include "input.cuh"
 #include "nvidia.cuh"
-// #include "polygon.cuh"
+#include "polygon.cuh"
 // #include "pendulum.cuh"
-// #include "state.cuh"
+#include "state.cuh"
 // #include "swing_foot.cuh"
 #include "vector.cuh"
 #include <chrono>

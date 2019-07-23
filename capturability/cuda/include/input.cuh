@@ -5,14 +5,10 @@
 #include <iostream>
 #include <string>
 
-namespace GPGPU {
-
 struct Input {
-  Vector2 swft;
+  Vector2 swf;
 
-  __device__ void operator=(const Input &input) { this->swft = input.swft; }
+  __device__ void operator=(const Input &input) { this->swf = input.swf; }
 };
-
-} // namespace GPGPU
 
 #endif // __INPUT_CUH__

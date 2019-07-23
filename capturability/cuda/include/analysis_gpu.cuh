@@ -7,6 +7,7 @@
 #include "nvidia.cuh"
 #include "polygon.cuh"
 // #include "pendulum.cuh"
+#include "physics.cuh"
 #include "state.cuh"
 // #include "swing_foot.cuh"
 #include "vector.cuh"

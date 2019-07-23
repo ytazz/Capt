@@ -11,6 +11,7 @@
 struct CudaGrid {
   CudaState *state;
   CudaInput *input;
+  int *nstep;
 
   int num_state;
   int num_input;

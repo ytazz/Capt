@@ -8,7 +8,6 @@
 typedef struct CudaVector2 {
 
   __device__ CudaVector2(); // constructor
-  __device__ ~CudaVector2();
 
   __device__ void clear();
 

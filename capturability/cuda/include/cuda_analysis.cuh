@@ -7,6 +7,7 @@
 #include "cuda_polygon.cuh"
 #include "cuda_state.cuh"
 #include "cuda_vector.cuh"
+#include "grid.h"
 #include "nvidia.cuh"
 #include <chrono>
 #include <cuda.h>
@@ -14,6 +15,9 @@
 #include <stdio.h>
 #include <vector>
 
-__global__ void exeNstep();
+void copyGrid(CA::Grid *grid, CudaGrid *cgrid);
+
+__global__ void exeZeroStep(CudaGrid *grid);
+// __global__ void exeNstep();
 
 #endif // __CUDA_ANALYSIS_CUH__

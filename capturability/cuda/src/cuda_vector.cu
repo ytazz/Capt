@@ -2,8 +2,6 @@
 
 __device__ CudaVector2::CudaVector2() { clear(); }
 
-__device__ CudaVector2::~CudaVector2() {}
-
 __device__ void CudaVector2::clear() {
   this->r_ = 0.0;
   this->th_ = 0.0;

@@ -89,14 +89,6 @@ set(CPU_SOURCES
   ${PROJECT_SOURCE_DIR}/src/analysis_cpu.cpp
 )
 
-set(GPU_HEADERS
-  # ${PROJECT_SOURCE_DIR}/cuda/include/analysis_gpu.cuh
-  # ${PROJECT_SOURCE_DIR}/cuda/include/capturability.cuh
-  # ${PROJECT_SOURCE_DIR}/cuda/include/grid.cuh
-  # ${PROJECT_SOURCE_DIR}/cuda/include/polygon.cuh
-  # ${PROJECT_SOURCE_DIR}/cuda/include/vector.cuh
-)
-
 set(GPU_SOURCES
   ${PROJECT_SOURCE_DIR}/cuda/src/cuda_analysis.cu
   ${PROJECT_SOURCE_DIR}/cuda/src/cuda_grid.cu
@@ -124,10 +116,10 @@ endif()
 if(${BUILD_GPU})
   cuda_add_executable( test_gpu
     test.cu
+    ${SOURCES}
     ${GPU_SOURCES}
-    ${GPU_HEADERS}
   )
-  # target_link_libraries(test_gpu ${EXPAT_LIBRARIES})
+  target_link_libraries(test_gpu ${EXPAT_LIBRARIES})
 endif()
 
 if(${MAKE_LIBRARY})

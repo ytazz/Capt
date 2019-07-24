@@ -11,6 +11,7 @@
 struct CudaGrid {
   int num_state;
   int num_input;
+  int num_foot; // vertex of foot
   int num_nstep;
 
   int icp_r_num;

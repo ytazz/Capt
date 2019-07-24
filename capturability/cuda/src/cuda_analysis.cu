@@ -28,10 +28,12 @@ void copyInput(CA::Grid grid, CudaInput *cinput) {
   }
 }
 
-void copyGrid(CA::Grid grid, CA::Param param, CudaGrid *cgrid) {
+void copyGrid(CA::Grid grid, CA::Model model, CA::Param param,
+              CudaGrid *cgrid) {
   cgrid->num_state = grid.getNumState();
   cgrid->num_input = grid.getNumInput();
   cgrid->num_nstep = grid.getNumState() * grid.getNumInput();
+  cgrid->num_foot = model.getVec("foot", "foot_r").size();
 
   cgrid->icp_r_min = param.getVal("icp_r", "min");
   cgrid->icp_r_max = param.getVal("icp_r", "max");
@@ -55,6 +57,7 @@ void copyGrid(CA::Grid grid, CA::Param param, CudaGrid *cgrid) {
 }
 
 __global__ void exeZeroStep(CudaState *state, CudaInput *input, int *nstep,
+                            CudaVector2 *foot_r, CudaVector2 *foot_l,
                             CudaGrid *grid) {
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 

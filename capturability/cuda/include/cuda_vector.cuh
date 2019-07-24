@@ -6,9 +6,6 @@
 #include <string>
 
 typedef struct CudaVector2 {
-
-  __device__ CudaVector2(); // constructor
-
   __device__ void clear();
 
   __device__ void setPolar(float radius, float theta);

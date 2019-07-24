@@ -21,6 +21,33 @@ int main(void) {
   const int num_input = grid.getNumInput();
   const int num_nstep = num_state * num_input;
 
+  /* 足形状 */
+  const int num_foot = (int)model.getVec("foot", "foot_r").size();
+  // ホスト側
+  CudaVector2 *cfoot_r = new CudaVector2[model.getVec("foot", "foot_r").size()];
+  CudaVector2 *cfoot_l = new CudaVector2[model.getVec("foot", "foot_l").size()];
+  for (size_t i = 0; i < model.getVec("foot", "foot_r").size(); i++) {
+    cfoot_r[i].x_ = model.getVec("foot", "foot_r")[i].x;
+    cfoot_r[i].y_ = model.getVec("foot", "foot_r")[i].y;
+    cfoot_r[i].r_ = model.getVec("foot", "foot_r")[i].r;
+    cfoot_r[i].th_ = model.getVec("foot", "foot_r")[i].th;
+    cfoot_l[i].x_ = model.getVec("foot", "foot_l")[i].x;
+    cfoot_l[i].y_ = model.getVec("foot", "foot_l")[i].y;
+    cfoot_l[i].r_ = model.getVec("foot", "foot_l")[i].r;
+    cfoot_l[i].th_ = model.getVec("foot", "foot_l")[i].th;
+  }
+  // デバイス側
+  CudaVector2 *dev_cfoot_r;
+  CudaVector2 *dev_cfoot_l;
+  HANDLE_ERROR(
+      cudaMalloc((void **)&dev_cfoot_r, num_foot * sizeof(CudaVector2)));
+  HANDLE_ERROR(
+      cudaMalloc((void **)&dev_cfoot_l, num_foot * sizeof(CudaVector2)));
+  HANDLE_ERROR(cudaMemcpy(dev_cfoot_r, cfoot_r, num_foot * sizeof(CudaVector2),
+                          cudaMemcpyHostToDevice));
+  HANDLE_ERROR(cudaMemcpy(dev_cfoot_l, cfoot_l, num_foot * sizeof(CudaVector2),
+                          cudaMemcpyHostToDevice));
+
   /* グリッド */
   // ホスト側
   CudaState *cstate = new CudaState[num_state];
@@ -30,7 +57,7 @@ int main(void) {
   initNstep(grid, cnstep);
   copyState(grid, cstate);
   copyInput(grid, cinput);
-  copyGrid(grid, param, cgrid);
+  copyGrid(grid, model, param, cgrid);
   // デバイス側
   CudaState *dev_cstate;
   CudaInput *dev_cinput;
@@ -49,7 +76,8 @@ int main(void) {
   HANDLE_ERROR(
       cudaMemcpy(dev_cgrid, cgrid, sizeof(CudaGrid), cudaMemcpyHostToDevice));
 
-  exeZeroStep<<<BPG, TPB>>>(dev_cstate, dev_cinput, dev_cnstep, dev_cgrid);
+  exeZeroStep<<<BPG, TPB>>>(dev_cstate, dev_cinput, dev_cnstep, dev_cfoot_r,
+                            dev_cfoot_l, dev_cgrid);
 
   HANDLE_ERROR(cudaMemcpy(cnstep, dev_cnstep, num_nstep * sizeof(int),
                           cudaMemcpyDeviceToHost));

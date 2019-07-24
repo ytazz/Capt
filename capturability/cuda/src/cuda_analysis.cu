@@ -65,10 +65,25 @@ __global__ void exeZeroStep(CudaState *state, CudaInput *input, int *nstep,
     int state_id = tid / grid->num_input;
     int input_id = tid % grid->num_input;
 
-    nstep[0] = grid->icp_r_num;
-    nstep[1] = grid->icp_th_num;
-    nstep[2] = grid->swf_r_num;
-    nstep[3] = grid->swf_th_num;
+    CudaVector2 *foot;
+    foot = new CudaVector2[grid->num_foot * 2];
+    for (int i = 0; i < grid->num_foot; i++) {
+      foot[i] = foot_r[i];
+    }
+    for (int i = 0; i < grid->num_foot; i++) {
+      foot[i + grid->num_foot] = foot_l[i] + state[state_id].swf;
+    }
+
+    CudaVector2 *foot_convex;
+    CudaPolygon polygon;
+    polygon.getConvexHull(foot, foot_convex);
+    // bool flag = polygon.inPolygon(state[state_id].icp, foot_convex);
+    //
+    // if (flag)
+    //   nstep[state_id * grid->num_input + input_id] = 100;
+
+    delete foot;
+    delete foot_convex;
 
     tid += blockDim.x * gridDim.x;
   }

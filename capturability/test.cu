@@ -30,7 +30,7 @@ int main(void) {
   initNstep(grid, cnstep);
   copyState(grid, cstate);
   copyInput(grid, cinput);
-  copyGrid(grid, cgrid);
+  copyGrid(grid, param, cgrid);
   // デバイス側
   CudaState *dev_cstate;
   CudaInput *dev_cinput;
@@ -54,7 +54,7 @@ int main(void) {
   HANDLE_ERROR(cudaMemcpy(cnstep, dev_cnstep, num_nstep * sizeof(int),
                           cudaMemcpyDeviceToHost));
 
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 4; i++) {
     printf("id: %d,\t nstep: %d\n", i, cnstep[i]);
   }
 

@@ -9,18 +9,14 @@
 #include <vector>
 
 struct CudaGrid {
-  // CudaState *state;
-  // CudaInput *input;
-  // int *nstep;
-
   int num_state;
   int num_input;
   int num_nstep;
 
-  int num_icp_r;
-  int num_icp_th;
-  int num_swf_r;
-  int num_swf_th;
+  int icp_r_num;
+  int icp_th_num;
+  int swf_r_num;
+  int swf_th_num;
 
   double icp_r_min, icp_r_max, icp_r_step;
   double icp_th_min, icp_th_max, icp_th_step;

@@ -28,12 +28,30 @@ void copyInput(CA::Grid grid, CudaInput *cinput) {
   }
 }
 
-void copyGrid(CA::Grid grid, CudaGrid *cgrid) {
+void copyGrid(CA::Grid grid, CA::Param param, CudaGrid *cgrid) {
   cgrid->num_state = grid.getNumState();
   cgrid->num_input = grid.getNumInput();
   cgrid->num_nstep = grid.getNumState() * grid.getNumInput();
 
-  // 後いろいろ代入
+  cgrid->icp_r_min = param.getVal("icp_r", "min");
+  cgrid->icp_r_max = param.getVal("icp_r", "max");
+  cgrid->icp_r_step = param.getVal("icp_r", "step");
+  cgrid->icp_r_num = param.getVal("icp_r", "num");
+
+  cgrid->icp_th_min = param.getVal("icp_th", "min");
+  cgrid->icp_th_max = param.getVal("icp_th", "max");
+  cgrid->icp_th_step = param.getVal("icp_th", "step");
+  cgrid->icp_th_num = param.getVal("icp_th", "num");
+
+  cgrid->swf_r_min = param.getVal("swft_r", "min");
+  cgrid->swf_r_max = param.getVal("swft_r", "max");
+  cgrid->swf_r_step = param.getVal("swft_r", "step");
+  cgrid->swf_r_num = param.getVal("swft_r", "num");
+
+  cgrid->swf_th_min = param.getVal("swft_th", "min");
+  cgrid->swf_th_max = param.getVal("swft_th", "max");
+  cgrid->swf_th_step = param.getVal("swft_th", "step");
+  cgrid->swf_th_num = param.getVal("swft_th", "num");
 }
 
 __global__ void exeZeroStep(CudaState *state, CudaInput *input, int *nstep,
@@ -44,10 +62,10 @@ __global__ void exeZeroStep(CudaState *state, CudaInput *input, int *nstep,
     int state_id = tid / grid->num_input;
     int input_id = tid % grid->num_input;
 
-    if ((input_id % 2) == 0)
-      nstep[state_id * grid->num_input + input_id] = 2;
-    else
-      nstep[state_id * grid->num_input + input_id] = 3;
+    nstep[0] = grid->icp_r_num;
+    nstep[1] = grid->icp_th_num;
+    nstep[2] = grid->swf_r_num;
+    nstep[3] = grid->swf_th_num;
 
     tid += blockDim.x * gridDim.x;
   }

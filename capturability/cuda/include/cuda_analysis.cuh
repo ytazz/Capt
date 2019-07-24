@@ -9,6 +9,7 @@
 #include "cuda_vector.cuh"
 #include "grid.h"
 #include "nvidia.cuh"
+#include "param.h"
 #include <chrono>
 #include <cuda.h>
 #include <iostream>
@@ -19,7 +20,7 @@ void initNstep(CA::Grid grid, int *cnstep);
 
 void copyState(CA::Grid grid, CudaState *cstate);
 void copyInput(CA::Grid grid, CudaInput *cinput);
-void copyGrid(CA::Grid grid, CudaGrid *cgrid);
+void copyGrid(CA::Grid grid, CA::Param param, CudaGrid *cgrid);
 
 __global__ void exeZeroStep(CudaState *state, CudaInput *input, int *nstep,
                             CudaGrid *grid);

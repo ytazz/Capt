@@ -76,6 +76,7 @@ void Param::callbackElement(const std::string &name, const bool is_start) {
     switch (element) {
     case COORDINATE:
       element = NOELEMENT;
+      calcNum();
       break;
     case UNIT:
       element = COORDINATE;
@@ -191,6 +192,8 @@ float Param::getVal(const char *element_name, const char *attribute_name) {
       val = icp_r_max;
     if (equalStr(attribute_name, "step"))
       val = icp_r_step;
+    if (equalStr(attribute_name, "num"))
+      val = icp_r_num;
   }
   if (equalStr(element_name, "icp_th")) {
     if (equalStr(attribute_name, "min"))
@@ -199,6 +202,8 @@ float Param::getVal(const char *element_name, const char *attribute_name) {
       val = icp_th_max;
     if (equalStr(attribute_name, "step"))
       val = icp_th_step;
+    if (equalStr(attribute_name, "num"))
+      val = icp_th_num;
   }
   if (equalStr(element_name, "swft_r")) {
     if (equalStr(attribute_name, "min"))
@@ -207,6 +212,8 @@ float Param::getVal(const char *element_name, const char *attribute_name) {
       val = swft_r_max;
     if (equalStr(attribute_name, "step"))
       val = swft_r_step;
+    if (equalStr(attribute_name, "num"))
+      val = swft_r_num;
   }
   if (equalStr(element_name, "swft_th")) {
     if (equalStr(attribute_name, "min"))
@@ -215,8 +222,28 @@ float Param::getVal(const char *element_name, const char *attribute_name) {
       val = swft_th_max;
     if (equalStr(attribute_name, "step"))
       val = swft_th_step;
+    if (equalStr(attribute_name, "num"))
+      val = swft_th_num;
   }
   return val;
+}
+
+int Param::round(float value) {
+  int result = (int)value;
+
+  float decimal = value - (int)value;
+  if (decimal >= 0.5) {
+    result += 1;
+  }
+
+  return result;
+}
+
+void Param::calcNum() {
+  icp_r_num = round((icp_r_max - icp_r_min) / icp_r_step) + 1;
+  icp_th_num = round((icp_th_max - icp_th_min) / icp_th_step) + 1;
+  swft_r_num = round((swft_r_max - swft_r_min) / swft_r_step) + 1;
+  swft_th_num = round((swft_th_max - swft_th_min) / swft_th_step) + 1;
 }
 
 void Param::print() {
@@ -237,20 +264,24 @@ void Param::print() {
   printf("\t\tmin : %lf\n", icp_r_min);
   printf("\t\tmax : %lf\n", icp_r_max);
   printf("\t\tstep: %lf\n", icp_r_step);
+  printf("\t\tnum : %d\n", icp_r_num);
   printf("\tangle:\n");
   printf("\t\tmin : %lf\n", icp_th_min);
   printf("\t\tmax : %lf\n", icp_th_max);
   printf("\t\tstep: %lf\n", icp_th_step);
+  printf("\t\tnum : %d\n", icp_th_num);
 
   printf("swing:\n");
   printf("\tradius:\n");
   printf("\t\tmin : %lf\n", swft_r_min);
   printf("\t\tmax : %lf\n", swft_r_max);
   printf("\t\tstep: %lf\n", swft_r_step);
+  printf("\t\tnum : %d\n", swft_r_num);
   printf("\tangle:\n");
   printf("\t\tmin : %lf\n", swft_th_min);
   printf("\t\tmax : %lf\n", swft_th_max);
   printf("\t\tstep: %lf\n", swft_th_step);
+  printf("\t\tnum : %d\n", swft_th_num);
   printf("-------------------------------------------\n");
 }
 

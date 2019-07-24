@@ -35,12 +35,20 @@ public:
   void print();
 
 private:
+  int round(float value);
+  void calcNum();
+
   Pa::ParamElement element;
   Pa::Coordinate coordinate;
   Pa::Axis axis;
 
   // unit
   float unit_length, unit_angle;
+  // number
+  int icp_r_num;
+  int icp_th_num;
+  int swft_r_num;
+  int swft_th_num;
   // polar
   float icp_r_min, icp_r_max, icp_r_step;
   float icp_th_min, icp_th_max, icp_th_step;

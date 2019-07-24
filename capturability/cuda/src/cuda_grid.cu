@@ -24,8 +24,8 @@ __device__ int CudaGrid::getStateIndex(CudaState state) {
   if (icp_r_id < 0 || icp_th_id < 0 || swf_r_id < 0 || swf_th_id < 0) {
     state_id = -1;
   } else {
-    state_id = num_swf_th * num_swf_r * num_icp_th * icp_r_id +
-               num_swf_th * num_swf_r * icp_th_id + num_swf_th * swf_r_id +
+    state_id = swf_th_num * swf_r_num * icp_th_num * icp_r_id +
+               swf_th_num * swf_r_num * icp_th_id + swf_th_num * swf_r_id +
                swf_th_id;
   }
 

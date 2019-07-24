@@ -16,33 +16,57 @@ int main(void) {
   Param param("analysis.xml");
 
   /* グリッド */
+  Grid grid(param);
+  const int num_state = grid.getNumState();
+  const int num_input = grid.getNumInput();
+  const int num_nstep = num_state * num_input;
+
+  /* グリッド */
   // ホスト側
-  Grid *grid;
-  grid = new Grid(param);
-  CudaGrid *cgrid;
-  cgrid = new CudaGrid();
+  CudaState *cstate = new CudaState[num_state];
+  CudaInput *cinput = new CudaInput[num_input];
+  int *cnstep = new int[num_nstep];
+  CudaGrid *cgrid = new CudaGrid;
+  initNstep(grid, cnstep);
+  copyState(grid, cstate);
+  copyInput(grid, cinput);
   copyGrid(grid, cgrid);
   // デバイス側
+  CudaState *dev_cstate;
+  CudaInput *dev_cinput;
+  int *dev_cnstep;
   CudaGrid *dev_cgrid;
+  HANDLE_ERROR(cudaMalloc((void **)&dev_cstate, num_state * sizeof(CudaState)));
+  HANDLE_ERROR(cudaMalloc((void **)&dev_cinput, num_input * sizeof(CudaInput)));
+  HANDLE_ERROR(cudaMalloc((void **)&dev_cnstep, num_nstep * sizeof(int)));
   HANDLE_ERROR(cudaMalloc((void **)&dev_cgrid, sizeof(CudaGrid)));
+  HANDLE_ERROR(cudaMemcpy(dev_cstate, cstate, num_state * sizeof(CudaState),
+                          cudaMemcpyHostToDevice));
+  HANDLE_ERROR(cudaMemcpy(dev_cinput, cinput, num_input * sizeof(CudaInput),
+                          cudaMemcpyHostToDevice));
+  HANDLE_ERROR(cudaMemcpy(dev_cnstep, cnstep, num_nstep * sizeof(int),
+                          cudaMemcpyHostToDevice));
   HANDLE_ERROR(
       cudaMemcpy(dev_cgrid, cgrid, sizeof(CudaGrid), cudaMemcpyHostToDevice));
 
-  exeZeroStep<<<BPG, TPB>>>(dev_cgrid);
-  HANDLE_ERROR(
-      cudaMemcpy(cgrid, dev_cgrid, sizeof(CudaGrid), cudaMemcpyDeviceToHost));
+  exeZeroStep<<<BPG, TPB>>>(dev_cstate, dev_cinput, dev_cnstep, dev_cgrid);
 
-  for (int i = 0; i < grid->getNumState() * grid->getNumInput(); i++) {
-    if (cgrid->nstep[i] == 0)
-      printf("id: %d,\t nstep: %d\n", i, cgrid->nstep[i]);
+  HANDLE_ERROR(cudaMemcpy(cnstep, dev_cnstep, num_nstep * sizeof(int),
+                          cudaMemcpyDeviceToHost));
+
+  for (int i = 0; i < 10; i++) {
+    printf("id: %d,\t nstep: %d\n", i, cnstep[i]);
   }
-  std::cout << cgrid->num_icp_r << '\n';
 
   /* メモリの開放 */
   // ホスト側
-  delete grid;
+  delete cstate;
+  delete cinput;
   delete cgrid;
   // デバイス側
+  cudaFree(dev_cstate);
+  cudaFree(dev_cinput);
+  cudaFree(dev_cnstep);
   cudaFree(dev_cgrid);
 
   return 0;

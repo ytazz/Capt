@@ -9,12 +9,13 @@
 #include <vector>
 
 struct CudaGrid {
-  CudaState *state;
-  CudaInput *input;
-  int *nstep;
+  // CudaState *state;
+  // CudaInput *input;
+  // int *nstep;
 
   int num_state;
   int num_input;
+  int num_nstep;
 
   int num_icp_r;
   int num_icp_th;

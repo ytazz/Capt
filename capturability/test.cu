@@ -76,14 +76,36 @@ int main(void) {
   HANDLE_ERROR(
       cudaMemcpy(dev_cgrid, cgrid, sizeof(CudaGrid), cudaMemcpyHostToDevice));
 
-  exeZeroStep<<<BPG, TPB>>>(dev_cstate, dev_cinput, dev_cnstep, dev_cfoot_r,
-                            dev_cfoot_l, dev_cgrid);
+  /* デバッグ用変数 */
+  CudaDebug *cdebug = new CudaDebug[2 * num_nstep];
+  CudaDebug *dev_cdebug;
+  HANDLE_ERROR(
+      cudaMalloc((void **)&dev_cdebug, 2 * num_nstep * sizeof(CudaDebug)));
+  HANDLE_ERROR(cudaMemcpy(dev_cdebug, cdebug, 2 * num_nstep * sizeof(CudaDebug),
+                          cudaMemcpyHostToDevice));
 
-  HANDLE_ERROR(cudaMemcpy(cnstep, dev_cnstep, num_nstep * sizeof(int),
+  exeZeroStep<<<BPG, TPB>>>(dev_cstate, dev_cinput, dev_cnstep, dev_cfoot_r,
+                            dev_cfoot_l, dev_cgrid, dev_cdebug);
+
+  // HANDLE_ERROR(cudaMemcpy(cnstep, dev_cnstep, num_nstep * sizeof(int),
+  //                         cudaMemcpyDeviceToHost));
+  HANDLE_ERROR(cudaMemcpy(cdebug, dev_cdebug, 2 * num_nstep * sizeof(CudaDebug),
                           cudaMemcpyDeviceToHost));
 
   for (int i = 0; i < 4; i++) {
     printf("id: %d,\t nstep: %d\n", i, cnstep[i]);
+  }
+
+  FILE *fp = fopen("debug.csv", "w");
+  fprintf(fp,
+          ",(int)a,(int)b,(double)c,(double)d,(vec2)e_x,(vec2)e_y,(vec2)f_x,"
+          "(vec2)f_y\n");
+  for (int i = 0; i < 30; i++) {
+    fprintf(fp, "%d,", i);
+    fprintf(fp, "%d,%d,", cdebug[i].a, cdebug[i].b);
+    fprintf(fp, "%lf,%lf,", cdebug[i].c, cdebug[i].d);
+    fprintf(fp, "%lf,%lf,", cdebug[i].e.x_, cdebug[i].e.y_);
+    fprintf(fp, "%lf,%lf\n", cdebug[i].f.x_, cdebug[i].f.y_);
   }
 
   /* メモリの開放 */
@@ -91,11 +113,13 @@ int main(void) {
   delete cstate;
   delete cinput;
   delete cgrid;
+  delete cdebug;
   // デバイス側
   cudaFree(dev_cstate);
   cudaFree(dev_cinput);
   cudaFree(dev_cnstep);
   cudaFree(dev_cgrid);
+  cudaFree(dev_cdebug);
 
   return 0;
 }

@@ -22,7 +22,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 find_package(EXPAT REQUIRED)
 find_package(Eigen3 REQUIRED)
 if(${BUILD_GPU})
-  find_package(CUDA REQUIRED)
+  find_package(CUDA  QUIET REQUIRED)
   if(CUDA_FOUND)
     message("Cuda version: " ${CUDA_VERSION})
   endif()
@@ -129,6 +129,13 @@ if(${MAKE_LIBRARY})
   # install(TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_SOURCE_DIR}/lib)
   # install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
+
+add_executable( debug
+  debug.cpp
+  ${SOURCES}
+  ${HEADERS}
+)
+target_link_libraries(debug ${EXPAT_LIBRARIES})
 
 configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)
 configure_file(data/analysis.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)

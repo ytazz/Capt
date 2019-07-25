@@ -15,62 +15,61 @@ __device__ void CudaPolygon::getConvexHull(CudaVector2 *vertex,
   bool flag_continue = true;
   while (flag_continue) {
     flag_continue = false;
-    for (int i = 0; i < size(vertex) - 1; i++) {
-      if (((CudaVector2)vertex[i + 1]).y() < ((CudaVector2)vertex[i]).y()) {
-        tmp = (CudaVector2)vertex[i];
-        (CudaVector2) vertex[i] = (CudaVector2)vertex[i + 1];
-        (CudaVector2) vertex[i + 1] = tmp;
+    for (int i = 0; i < 22 - 1; i++) {
+      if ((vertex[i + 1]).y() < (vertex[i]).y()) {
+        tmp = vertex[i];
+        vertex[i] = vertex[i + 1];
+        vertex[i + 1] = tmp;
         flag_continue = true;
       }
     }
   }
 
-  bool *in_convex = new bool[size(vertex)];
-  for (int i = 0; i < size(vertex); i++) {
+  bool in_convex[22];
+  for (int i = 0; i < 22; i++) {
     in_convex[i] = false;
   }
 
   int convex_size = 0;
-  CudaVector2 *convex_ = new CudaVector2[size(vertex)];
-  convex_[convex_size] = vertex[0];
+  convex[convex_size] = vertex[0];
   in_convex[0] = true;
   flag_continue = true;
   int back = 0;
-  while (flag_continue) {
-    flag_continue = false;
-    for (int i = 0; i < size(vertex); i++) {
-      int product = 0;
-      if (!in_convex[i]) {
-        product = 1;
-        for (int j = 0; j < size(vertex); j++) {
-          if (i != j && !in_convex[i]) {
-            if (((CudaVector2)vertex[i] - (CudaVector2)vertex[back]) %
-                    ((CudaVector2)vertex[j] - (CudaVector2)vertex[i]) <
-                0.0) {
-              product *= 0;
-            }
+  // while (flag_continue) {
+  flag_continue = false;
+  for (int i = 0; i < 22; i++) {
+    int product = 0;
+    if (!in_convex[i]) {
+      product = 1;
+      for (int j = 0; j < 22; j++) {
+        if (i != j && !in_convex[i]) {
+          if ((vertex[i] - vertex[back]) % (vertex[j] - vertex[i]) < 0.0) {
+            product *= 0;
           }
         }
       }
-      if (product) {
-        if (!in_convex[i]) {
-          convex_size++;
-          convex_[convex_size] = vertex[i];
-          in_convex[i] = true;
-          flag_continue = true;
-          back = i;
-        }
-        break;
+    }
+    if (product) {
+      if (!in_convex[i]) {
+        convex_size++;
+        convex[convex_size] = vertex[i];
+        in_convex[i] = true;
+        flag_continue = true;
+        back = i;
       }
+      break;
     }
   }
+  // }
   convex_size++;
-  convex_[convex_size] = vertex[0];
+  convex[convex_size] = vertex[0];
 
-  convex = new CudaVector2[convex_size];
-  for (int i = 0; i < convex_size; i++) {
-    convex[i] = convex_[i];
+  for (int i = convex_size; i < size(vertex); i++) {
+    convex[i] = vertex[0];
   }
+  // for (int i = 0; i < 22; i++) {
+  //   convex[i] = vertex[i];
+  // }
 }
 
 __device__ CudaVector2 CudaPolygon::getClosestPoint(CudaVector2 point,

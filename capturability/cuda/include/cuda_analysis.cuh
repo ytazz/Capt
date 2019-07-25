@@ -17,6 +17,15 @@
 #include <stdio.h>
 #include <vector>
 
+struct CudaDebug {
+  int a;
+  int b;
+  double c;
+  double d;
+  CudaVector2 e;
+  CudaVector2 f;
+};
+
 void initNstep(CA::Grid grid, int *cnstep);
 
 void copyState(CA::Grid grid, CudaState *cstate);
@@ -25,6 +34,6 @@ void copyGrid(CA::Grid grid, CA::Model model, CA::Param param, CudaGrid *cgrid);
 
 __global__ void exeZeroStep(CudaState *state, CudaInput *input, int *nstep,
                             CudaVector2 *foot_r, CudaVector2 *foot_l,
-                            CudaGrid *grid);
+                            CudaGrid *grid, CudaDebug *debug);
 
 #endif // __CUDA_ANALYSIS_CUH__

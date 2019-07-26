@@ -49,7 +49,7 @@ __device__ CudaVector2 CudaVector2::normal() {
   return normal_vector;
 }
 
-__device__ CudaVector2 &CudaVector2::operator=(const CudaVector2 &v) {
+__host__ __device__ CudaVector2 &CudaVector2::operator=(const CudaVector2 &v) {
   this->x_ = v.x_;
   this->y_ = v.y_;
   this->r_ = v.r_;

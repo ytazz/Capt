@@ -19,7 +19,7 @@ typedef struct CudaVector2 {
 
   __device__ CudaVector2 normal();
 
-  __device__ CudaVector2 &operator=(const CudaVector2 &v);
+  __host__ __device__ CudaVector2 &operator=(const CudaVector2 &v);
   __device__ CudaVector2 operator+(const CudaVector2 &v);
   __device__ CudaVector2 operator-(const CudaVector2 &v);
   __device__ float operator%(const CudaVector2 &v);

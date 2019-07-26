@@ -92,8 +92,6 @@ set(CPU_SOURCES
 
 set(GPU_SOURCES
   ${PROJECT_SOURCE_DIR}/cuda/src/cuda_analysis.cu
-  ${PROJECT_SOURCE_DIR}/cuda/src/cuda_grid.cu
-  ${PROJECT_SOURCE_DIR}/cuda/src/cuda_polygon.cu
   ${PROJECT_SOURCE_DIR}/cuda/src/cuda_vector.cu
 )
 
@@ -130,12 +128,12 @@ if(${MAKE_LIBRARY})
   # install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
 
-add_executable( debug
-  debug.cpp
-  ${SOURCES}
-  ${HEADERS}
-)
-target_link_libraries(debug ${EXPAT_LIBRARIES})
+# add_executable( debug
+#   debug.cpp
+#   ${SOURCES}
+#   ${HEADERS}
+# )
+# target_link_libraries(debug ${EXPAT_LIBRARIES})
 
 configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)
 configure_file(data/analysis.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)

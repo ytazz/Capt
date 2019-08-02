@@ -7,6 +7,7 @@
 #include "param.h"
 #include "polygon.h"
 #include "state.h"
+#include "swing_foot.h"
 #include <iostream>
 #include <stdio.h>
 #include <vector>
@@ -39,7 +40,7 @@ public:
   Capturability(Model model, Param param);
   ~Capturability();
 
-  void load(const char *file_name);
+  void load(std::string file_name);
   void save(const char *file_name, int n_step);
 
   void setCaptureSet(const int state_id, const int input_id,

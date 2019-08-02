@@ -59,7 +59,10 @@ void setState(CA::Grid grid, CudaState *cstate);
 void setInput(CA::Grid grid, CudaInput *cinput);
 void setGrid(CA::Grid grid, CA::Model model, CA::Param param, CudaGrid *cgrid);
 
-__host__ void exeZeroStep(CA::Grid grid, CA::Model model, int *nstep);
+void init(int *next_state_id, int size);
+
+__host__ void exeZeroStep(CA::Grid grid, CA::Model model, int *nstep,
+                          int *next_state_id);
 
 /* device function */
 

@@ -78,8 +78,28 @@ void setFoot(CudaVector2 *cfoot, CudaVector2 *cfoot_r, CudaVector2 *cfoot_l,
   }
 }
 
-__host__ void exeZeroStep(CA::Grid grid, CA::Model model, int *nstep) {
+void init(int *next_state_id, int size) {
+  for (int i = 0; i < size; i++) {
+    next_state_id[i] = -1;
+  }
+}
+
+__host__ void exeZeroStep(CA::Grid grid, CA::Model model, int *nstep,
+                          int *next_state_id) {
   for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
+    bool flag = false;
+
+    CA::Polygon polygon;
+    flag = polygon.inPolygon(grid.getState(state_id).icp,
+                             model.getVec("foot", "foot_r_convex"));
+
+    if (flag) {
+      for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
+        int id = state_id * grid.getNumInput() + input_id;
+        nstep[id] = 0;
+        next_state_id[id] = 0;
+      }
+    }
   }
 }
 

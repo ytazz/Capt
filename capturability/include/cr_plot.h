@@ -4,6 +4,7 @@
 #include "gnuplot.h"
 
 #include "capturability.h"
+#include "grid.h"
 #include "input.h"
 #include "param.h"
 #include "state.h"
@@ -17,20 +18,23 @@
 
 namespace CA {
 
-class CRPlot {
+class CRPlot : public Gnuplot {
   Gnuplot p;
   Model model;
   Param param;
+  Capturability capturability;
 
-  std::string output;
+  std::string input;
 
 public:
-  CRPlot(Model model, Param param, std::string output);
+  CRPlot(Model model, Param param);
   ~CRPlot();
 
-  void plot(State state, std::vector<CaptureSet> region);
-  void plot(State state, std::vector<CaptureSet> region, vec2_t com);
-  void plot();
+  void setInput(std::string file_name);
+  void setOutput(std::string type);
+
+  void plotCaptureRegion();
+  void plotCaptureIcp();
 };
 }
 

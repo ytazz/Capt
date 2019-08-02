@@ -9,26 +9,37 @@ Capturability::Capturability(Model model, Param param)
 
 Capturability::~Capturability() {}
 
-void Capturability::load(const char *file_name) {
+void Capturability::load(std::string file_name) {
   FILE *fp;
   int num_data = 0;
-  int ibuf[4];
-  float fbuf[3];
+  int buf[4];
   CaptureSet set;
 
-  if ((fp = fopen(file_name, "r")) == NULL) {
-    printf("Error: Couldn't find the file \"%s\"\n", file_name);
+  if ((fp = fopen(file_name.c_str(), "r")) == NULL) {
+    printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str());
     exit(EXIT_FAILURE);
   } else {
-    while (fscanf(fp, "%d,%d,%d,%d,%f,%f,%f", &ibuf[0], &ibuf[1], &ibuf[2],
-                  &ibuf[3], &fbuf[0], &fbuf[1], &fbuf[2]) != EOF) {
-      set.state_id = ibuf[0];
-      set.input_id = ibuf[1];
-      set.next_state_id = ibuf[2];
-      set.n_step = ibuf[3];
-      set.swft = grid.getInput(set.input_id).swft;
-      set.cop.setCartesian(fbuf[0], fbuf[1]);
-      set.step_time = fbuf[2];
+    while (fscanf(fp, "%d,%d,%d,%d", &buf[0], &buf[1], &buf[2], &buf[3]) !=
+           EOF) {
+      set.state_id = buf[0];
+      set.input_id = buf[1];
+      set.next_state_id = buf[2];
+      set.n_step = buf[3];
+
+      State state = grid.getState(set.state_id);
+      Input input = grid.getInput(set.input_id);
+
+      set.swft = input.swft;
+
+      Polygon polygon;
+      std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
+      Vector2 cop = polygon.getClosestPoint(state.icp, region);
+      set.cop.setCartesian(cop.x, cop.y);
+
+      SwingFoot swing_foot(model);
+      swing_foot.set(state.swft, input.swft);
+      set.step_time = swing_foot.getTime();
+
       capture_set.push_back(set);
       num_data++;
     }

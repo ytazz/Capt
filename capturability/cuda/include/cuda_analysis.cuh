@@ -59,23 +59,17 @@ void setState(CA::Grid grid, CudaState *cstate);
 void setInput(CA::Grid grid, CudaInput *cinput);
 void setGrid(CA::Grid grid, CA::Model model, CA::Param param, CudaGrid *cgrid);
 
+__host__ void exeZeroStep(CA::Grid grid, CA::Model model, int *nstep);
+
 /* device function */
 
 __device__ int getStateIndex(CudaState state, CudaGrid grid);
 
 __device__ int roundValue(double value);
 
-__device__ int size(CudaVector2 *array);
-
-__device__ void getConvexHull(CudaVector2 *vertex, CudaVector2 *convex);
-
-__device__ CudaVector2 getClosestPoint(CudaVector2 point, CudaVector2 *vertex);
-
-__device__ bool inPolygon(CudaVector2 point, CudaVector2 *vertex);
-
 /* global function */
 
-__global__ void exeZeroStep(CudaState *state, CudaInput *input, int *nstep,
-                            CudaVector2 *foot, CudaGrid *grid);
+// __global__ void exeZeroStep(CudaState *state, CudaInput *input, int *nstep,
+//                             CudaVector2 *foot, CudaGrid *grid);
 
 #endif // __CUDA_ANALYSIS_CUH__

@@ -64,8 +64,8 @@ int main(void) {
   HANDLE_ERROR(cudaMemcpy(dev_cfoot, cfoot, 2 * num_foot * sizeof(CudaVector2),
                           cudaMemcpyHostToDevice));
 
-  exeZeroStep<<<BPG, TPB>>>(dev_cstate, dev_cinput, dev_cnstep, dev_cfoot,
-                            dev_cgrid);
+  // exeZeroStep<<<BPG, TPB>>>(dev_cstate, dev_cinput, dev_cnstep, dev_cfoot,
+  //                           dev_cgrid);
 
   // HANDLE_ERROR(cudaMemcpy(cnstep, dev_cnstep, num_nstep * sizeof(int),
   //                         cudaMemcpyDeviceToHost));

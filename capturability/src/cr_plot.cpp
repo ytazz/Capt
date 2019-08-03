@@ -146,34 +146,31 @@ void CRPlot::plotCaptureIcp() {
   // swing foot
   fprintf(p.gp, "'-' t 'Current Swing Foot' with lines linewidth 2 "
                 "lc \"black\",");
-  // capture region
+  // capturable ICP
   fprintf(p.gp, "'-' t 'Capturable ICP' with points pointsize 1 "
                 "pointtype 7 lc \"gray\"\n");
 
   // plot
   // support foot
-  std::vector<Vector2> foot_r = model.getVec("foot", "foot_r");
+  std::vector<Vector2> foot_r = model.getVec("foot", "foot_r_convex");
   for (size_t i = 0; i < foot_r.size(); i++) {
     fprintf(p.gp, "%f %f\n", foot_r[i].th, foot_r[i].r);
   }
   fprintf(p.gp, "e\n");
   // swing foot
-  std::vector<Vector2> foot_l = model.getVec("foot", "foot_l");
+  std::vector<Vector2> foot_l = model.getVec("foot", "foot_l_convex");
   for (size_t i = 0; i < foot_l.size(); i++) {
     fprintf(p.gp, "%f %f\n", (foot_l[i] + state.swft).th,
             (foot_l[i] + state.swft).r);
   }
   fprintf(p.gp, "e\n");
-  // capture region
+  // capturable ICP
   float icp_r = param.getVal("icp_r", "min");
   float icp_th = param.getVal("icp_th", "min");
   while (icp_r < param.getVal("icp_r", "max")) {
     icp_th = param.getVal("icp_th", "min");
     while (icp_th < param.getVal("icp_th", "max")) {
-      state.icp.setCartesian(icp_r, icp_th);
-      printf("icp: %1.3lf, %1.3lf\n", icp_r, icp_th);
-      int id = grid.getStateIndex(state);
-      printf("id: %d\n", id);
+      state.icp.setPolar(icp_r, icp_th);
       std::vector<CaptureSet> region = capturability.getCaptureRegion(state, 0);
       if (!region.empty()) {
         fprintf(p.gp, "%f %f\n", icp_th, icp_r);

@@ -289,10 +289,6 @@ bool Grid::existState(State state_) {
       state_.swft.th < swft_th[MAX] + swft_th[STEP] / 2.0) {
     flag_swft_th = true;
   }
-  printf("icp_r: %d\n", flag_icp_r);
-  printf("icp_th: %d\n", flag_icp_th);
-  printf("swft_r: %d\n", flag_swft_r);
-  printf("swft_th: %d\n", flag_swft_th);
 
   bool flag = flag_icp_r * flag_icp_th * flag_swft_r * flag_swft_th;
   return flag;

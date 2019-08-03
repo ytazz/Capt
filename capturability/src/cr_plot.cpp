@@ -6,8 +6,6 @@ namespace CA {
 
 CRPlot::CRPlot(Model model, Param param)
     : model(model), param(param), capturability(model, param) {
-  this->input = "default_input.csv";
-
   p("set title \"Capture Region (polar coordinate)\"");
   p("set encoding utf8");
   p("set size square");
@@ -31,7 +29,7 @@ CRPlot::CRPlot(Model model, Param param)
 
 CRPlot::~CRPlot() {}
 
-void CRPlot::setInput(std::string file_name) { input = file_name; }
+void CRPlot::setInput(std::string file_name) { capturability.load(file_name); }
 
 void CRPlot::setOutput(std::string type) {
   if (type == "gif") {
@@ -49,12 +47,6 @@ void CRPlot::setOutput(std::string type) {
 }
 
 void CRPlot::plotCaptureRegion() {
-  if (input == "default_input.csv") {
-    printf("Error: Please set correct input file!\n");
-    exit(EXIT_FAILURE);
-  }
-  capturability.load(input);
-
   State state;
   state.icp.setPolar(0.06, 0);
   state.swft.setPolar(0.1, 120 * 3.14159 / 180);
@@ -125,12 +117,6 @@ void CRPlot::plotCaptureRegion() {
 }
 
 void CRPlot::plotCaptureIcp() {
-  if (input == "default_input.csv") {
-    printf("Error: Please set correct input file!\n");
-    exit(EXIT_FAILURE);
-  }
-  capturability.load(input);
-
   Grid grid(param);
 
   State state;

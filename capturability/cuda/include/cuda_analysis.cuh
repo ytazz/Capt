@@ -6,6 +6,7 @@
 #include "model.h"
 #include "nvidia.cuh"
 #include "param.h"
+#include "state.h"
 #include <chrono>
 #include <cuda.h>
 #include <iostream>

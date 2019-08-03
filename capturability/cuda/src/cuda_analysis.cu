@@ -89,9 +89,12 @@ __host__ void exeZeroStep(CA::Grid grid, CA::Model model, int *nstep,
   for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
     bool flag = false;
 
+    CA::State state = grid.getState(state_id);
+
     CA::Polygon polygon;
-    flag = polygon.inPolygon(grid.getState(state_id).icp,
-                             model.getVec("foot", "foot_r_convex"));
+    polygon.setVertex(model.getVec("foot", "foot_r_convex"));
+    polygon.setVertex(model.getVec("foot", "foot_l_convex", state.swft));
+    flag = polygon.inPolygon(state.icp, polygon.getConvexHull());
 
     if (flag) {
       for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {

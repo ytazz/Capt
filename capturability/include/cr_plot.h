@@ -24,8 +24,6 @@ class CRPlot : public Gnuplot {
   Param param;
   Capturability capturability;
 
-  std::string input;
-
 public:
   CRPlot(Model model, Param param);
   ~CRPlot();

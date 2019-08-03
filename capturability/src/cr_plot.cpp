@@ -75,7 +75,7 @@ void CRPlot::plotCaptureRegion() {
                   "lc \"black\",");
     // capture region
     int step_num = 0;
-    fprintf(p.gp, "'-' t '%d-step Capture Region' with points pointsize 1 "
+    fprintf(p.gp, "'-' t '%d-step Capture Region' with points pointsize 0.5 "
                   "pointtype 7 lc \"%s\"\n",
             step_num, "gray");
 

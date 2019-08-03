@@ -17,8 +17,8 @@ int main() {
   CRPlot cr_plot(model, param);
   cr_plot.setInput("result.csv");
 
-  // cr_plot.setOutput("gif");
-  // cr_plot.plotCaptureRegion();
+  cr_plot.setOutput("gif");
+  cr_plot.plotCaptureRegion();
 
   // 点を小さく表示したいときはepsを使う
   cr_plot.setOutput("svg");

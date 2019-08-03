@@ -20,6 +20,7 @@ int main() {
   // cr_plot.setOutput("gif");
   // cr_plot.plotCaptureRegion();
 
+  // 点を小さく表示したいときはepsを使う
   cr_plot.setOutput("svg");
   cr_plot.plotCaptureIcp();
 

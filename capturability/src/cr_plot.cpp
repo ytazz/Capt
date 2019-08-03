@@ -13,20 +13,15 @@ CRPlot::CRPlot(Model model, Param param)
   p("set size square");
   // p("unset key");
 
-  string limit = "[";
-  limit += std::to_string(0);
-  limit += ":";
-  limit += std::to_string(param.getVal("swft_r", "max") + 0.05);
-  limit += "]";
   p("set xtics 0.05");
   p("set ytics 0.05");
-  // p("set yrange " + limit);
 
   p("set polar");
   p("set theta top");
   p("set theta counterclockwise");
-  p("set grid polar " + std::to_string(param.getVal("swft_th", "step")));
-  p("set rrange " + limit);
+  p("set grid polar " + std::to_string(param.getVal("swft_th", "step")) +
+    "lt 1 lc \"gray\"");
+  p("set rrange [0:0.20]");
   p("set trange [0:6.28]");
   p("set rtics scale 0");
   p("set rtics " + std::to_string(param.getVal("swft_r", "step")));
@@ -46,6 +41,10 @@ void CRPlot::setOutput(std::string type) {
   if (type == "svg") {
     p("set terminal svg");
     p("set output 'plot.svg'");
+  }
+  if (type == "eps") {
+    p("set terminal postscript eps enhanced");
+    p("set output 'plot.eps'");
   }
 }
 
@@ -147,8 +146,8 @@ void CRPlot::plotCaptureIcp() {
   fprintf(p.gp, "'-' t 'Current Swing Foot' with lines linewidth 2 "
                 "lc \"black\",");
   // capturable ICP
-  fprintf(p.gp, "'-' t 'Capturable ICP' with points pointsize 1 "
-                "pointtype 7 lc \"gray\"\n");
+  fprintf(p.gp, "'-' t 'Capturable ICP' with points pointsize 0.5 "
+                "pointtype 7 lc \"blue\"\n");
 
   // plot
   // support foot

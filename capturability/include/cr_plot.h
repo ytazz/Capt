@@ -31,8 +31,9 @@ public:
   void setInput(std::string file_name);
   void setOutput(std::string type);
 
-  void plotCaptureRegion();
-  void plotCaptureIcp();
+  void animCaptureRegion(State state);
+  void plotCaptureRegion(State state);
+  void plotCaptureIcp(State state);
 };
 }
 

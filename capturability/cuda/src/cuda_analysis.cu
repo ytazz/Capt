@@ -68,16 +68,6 @@ void setGrid(CA::Grid grid, CA::Model model, CA::Param param, CudaGrid *cgrid) {
   cgrid->swf_th_num = param.getVal("swft_th", "num");
 }
 
-void setFoot(CudaVector2 *cfoot, CudaVector2 *cfoot_r, CudaVector2 *cfoot_l,
-             const int num_foot) {
-  for (int i = 0; i < num_foot; i++) {
-    cfoot[i] = cfoot_r[i];
-  }
-  for (int i = 0; i < num_foot; i++) {
-    cfoot[i + num_foot] = cfoot_r[i];
-  }
-}
-
 void init(int *next_state_id, int size) {
   for (int i = 0; i < size; i++) {
     next_state_id[i] = -1;

@@ -11,6 +11,10 @@ const int TPB = 1024; // Threads Per Block (max: 1024)
 using namespace CA;
 
 int main(void) {
+  /* 前処理 */
+  /* ---------------------------------------------------------------------- */
+  printf("Prepare...\t");
+
   /* パラメータの読み込み */
   Model model("nao.xml");
   Param param("analysis.xml");
@@ -55,14 +59,27 @@ int main(void) {
   HANDLE_ERROR(
       cudaMemcpy(dev_cgrid, cgrid, sizeof(CudaGrid), cudaMemcpyHostToDevice));
 
+  printf("Done.\n");
+  /* ------------------------------------------------------------------------ */
+
+  /* 解析実行 */
+  /* ---------------------------------------------------------------------- */
+  printf("Execute...\t");
+
   exeZeroStep(grid, model, cnstep, next_state_id);
-  // exeZeroStep<<<BPG, TPB>>>(dev_cstate, dev_cinput, dev_cnstep, dev_cfoot,
+  // exeNStep<<<BPG, TPB>>>(dev_cstate, dev_cinput, dev_cnstep, dev_cfoot,
   //                           dev_cgrid);
+
+  printf("Done.\n");
+  /* ---------------------------------------------------------------------- */
 
   // HANDLE_ERROR(cudaMemcpy(cnstep, dev_cnstep, num_grid * sizeof(int),
   //                         cudaMemcpyDeviceToHost));
 
   /* ファイル書き出し */
+  /* ---------------------------------------------------------------------- */
+  printf("Output...\t");
+
   FILE *fp_output = fopen("result.csv", "w");
   fprintf(fp_output, "%s,", "state_id");
   fprintf(fp_output, "%s,", "input_id");
@@ -81,6 +98,13 @@ int main(void) {
   }
   fclose(fp_output);
 
+  printf("Done.\n");
+  /* ---------------------------------------------------------------------- */
+
+  /* 終了処理 */
+  /* ---------------------------------------------------------------------- */
+  printf("Finish...\t");
+
   /* メモリの開放 */
   // ホスト側
   delete cstate;
@@ -94,6 +118,9 @@ int main(void) {
   cudaFree(dev_next_state_id);
   cudaFree(dev_cnstep);
   cudaFree(dev_cgrid);
+
+  printf("Done.\n");
+  /* ---------------------------------------------------------------------- */
 
   return 0;
 }

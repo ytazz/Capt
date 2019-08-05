@@ -53,8 +53,6 @@ struct CudaPhysics {
 /* host function */
 
 void setNstep(CA::Grid grid, int *cnstep);
-void setFoot(CudaVector2 *cfoot, CudaVector2 *cfoot_r, CudaVector2 *cfoot_l,
-             const int num_foot);
 
 void setState(CA::Grid grid, CudaState *cstate);
 void setInput(CA::Grid grid, CudaInput *cinput);

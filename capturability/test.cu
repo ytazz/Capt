@@ -69,6 +69,16 @@ int main(void) {
   HANDLE_ERROR(cudaMemcpy(dev_cop, cop, num_state * sizeof(CudaVector2),
                           cudaMemcpyHostToDevice));
 
+  /* 物理情報 */
+  // ホスト側
+  CudaPhysics *physics = new CudaPhysics;
+  initPhysics(physics, cond);
+  // デバイス側
+  CudaPhysics *dev_physics;
+  HANDLE_ERROR(cudaMalloc((void **)&dev_physics, sizeof(CudaPhysics)));
+  HANDLE_ERROR(cudaMemcpy(dev_physics, physics, sizeof(CudaPhysics),
+                          cudaMemcpyHostToDevice));
+
   printf("Done.\n");
   /* ------------------------------------------------------------------------ */
 
@@ -77,8 +87,9 @@ int main(void) {
   printf("Execute...\t");
 
   exeZeroStep(grid, model, cnstep, next_state_id);
-  // exeNStep<<<BPG, TPB>>>(dev_cstate, dev_cinput, dev_cnstep, dev_cfoot,
-  //                           dev_cgrid);
+
+  exeNStep<<<BPG, TPB>>>(dev_cstate, dev_cinput, dev_cnstep, dev_next_state_id,
+                         dev_cgrid, dev_cop, dev_physics);
 
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
@@ -90,12 +101,6 @@ int main(void) {
   /* ---------------------------------------------------------------------- */
   printf("Output...\t");
   output("result.csv", cond, cnstep, next_state_id);
-  FILE *fp_out = fopen("cop_list.csv", "w");
-  for (int i = 0; i < num_state; i++) {
-    fprintf(fp_out, "%lf,", cop[i].x_);
-    fprintf(fp_out, "%lf\n", cop[i].y_);
-  }
-  fclose(fp_out);
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
 
@@ -110,12 +115,16 @@ int main(void) {
   delete cnstep;
   delete next_state_id;
   delete cgrid;
+  delete cop;
+  delete physics;
   // デバイス側
   cudaFree(dev_cstate);
   cudaFree(dev_cinput);
   cudaFree(dev_next_state_id);
   cudaFree(dev_cnstep);
   cudaFree(dev_cgrid);
+  cudaFree(dev_cop);
+  cudaFree(dev_physics);
 
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */

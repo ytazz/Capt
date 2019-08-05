@@ -13,7 +13,7 @@ __device__ void CudaInput::operator=(const CudaInput &input) {
 
 /* host function */
 
-void initState(CudaState *cstate, int *next_state_id, Condition cond) {
+__host__ void initState(CudaState *cstate, int *next_state_id, Condition cond) {
   const int num_state = cond.grid->getNumState();
   const int num_input = cond.grid->getNumInput();
 
@@ -36,7 +36,7 @@ void initState(CudaState *cstate, int *next_state_id, Condition cond) {
   }
 }
 
-void initInput(CudaInput *cinput, Condition cond) {
+__host__ void initInput(CudaInput *cinput, Condition cond) {
   for (int i = 0; i < cond.grid->getNumInput(); i++) {
     cinput[i].swf.x_ = cond.grid->getInput(i).swft.x;
     cinput[i].swf.y_ = cond.grid->getInput(i).swft.y;
@@ -45,14 +45,14 @@ void initInput(CudaInput *cinput, Condition cond) {
   }
 }
 
-void initNstep(int *cnstep, Condition cond) {
+__host__ void initNstep(int *cnstep, Condition cond) {
   for (int i = 0; i < cond.grid->getNumState() * cond.grid->getNumInput();
        i++) {
     cnstep[i] = -1;
   }
 }
 
-void initGrid(CudaGrid *cgrid, Condition cond) {
+__host__ void initGrid(CudaGrid *cgrid, Condition cond) {
   cgrid->num_state = cond.grid->getNumState();
   cgrid->num_input = cond.grid->getNumInput();
   cgrid->num_nstep = cond.grid->getNumState() * cond.grid->getNumInput();
@@ -79,7 +79,7 @@ void initGrid(CudaGrid *cgrid, Condition cond) {
   cgrid->swf_th_num = cond.param->getVal("swft_th", "num");
 }
 
-void initCop(CudaVector2 *cop, Condition cond) {
+__host__ void initCop(CudaVector2 *cop, Condition cond) {
   CA::State state;
   CA::Polygon polygon;
   std::vector<CA::Vector2> region = cond.model->getVec("foot", "foot_r_convex");
@@ -96,8 +96,16 @@ void initCop(CudaVector2 *cop, Condition cond) {
   }
 }
 
-void output(std::string file_name, Condition cond, int *cnstep,
-            int *next_state_id) {
+__host__ void initPhysics(CudaPhysics *physics, Condition cond) {
+  physics->g = cond.model->getVal("environment", "gravity");
+  physics->h = cond.model->getVal("physics", "com_height");
+  physics->v = cond.model->getVal("physics", "foot_vel_max");
+  physics->dt = cond.model->getVal("physics", "step_time_min");
+  physics->omega = sqrt(physics->g / physics->h);
+}
+
+__host__ void output(std::string file_name, Condition cond, int *cnstep,
+                     int *next_state_id) {
   FILE *fp = fopen("result.csv", "w");
   const int num_state = cond.grid->getNumState();
   const int num_input = cond.grid->getNumInput();
@@ -145,6 +153,11 @@ __host__ void exeZeroStep(CA::Grid grid, CA::Model model, int *nstep,
 
 /* device function */
 
+__device__ CudaState step(CudaState state, CudaInput input) {
+  CudaState state_;
+  return state_;
+}
+
 __device__ int roundValue(double value) {
   int result = (int)value;
 
@@ -178,3 +191,39 @@ __device__ int getStateIndex(CudaState state, CudaGrid grid) {
 }
 
 /* global function */
+
+__global__ void exeNStep(CudaState *state, CudaInput *input, int *nstep,
+                         int *next_state_id, CudaGrid *grid, CudaVector2 *cop,
+                         CudaPhysics *physics) {
+  int tid = threadIdx.x + blockIdx.x * blockDim.x;
+
+  if (tid == 0) {
+    printf("\n");
+    printf("g    : %1.3lf\n", physics->g);
+    printf("h    : %1.3lf\n", physics->h);
+    printf("v    : %1.3lf\n", physics->v);
+    printf("dt   : %1.3lf\n", physics->dt);
+    printf("omega: %1.3lf\n", physics->omega);
+    printf("\n");
+  }
+
+  if (tid == 21349) {
+    printf("\n");
+    printf("cop(x): %1.3lf\n", cop[21349].x_);
+    printf("cop(y): %1.3lf\n", cop[21349].y_);
+    printf("\n");
+  }
+
+  while (tid < grid->num_state * grid->num_input) {
+    int state_id = tid / grid->num_input;
+    int input_id = tid % grid->num_input;
+
+    // bool flag = polygon.inPolygon(state[state_id].icp, foot_convex);
+    //
+
+    // if (flag)
+    //   nstep[state_id * grid->num_input + input_id] = 100;
+
+    tid += blockDim.x * gridDim.x;
+  }
+}

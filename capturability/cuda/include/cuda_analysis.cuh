@@ -46,8 +46,11 @@ struct CudaInput {
 };
 
 struct CudaPhysics {
-  double g;
-  double h;
+  double g;     // gravity
+  double h;     // com_height
+  double v;     // foot_vel_max
+  double dt;    // step_time_min
+  double omega; // LIPM omega
 };
 
 struct Condition {
@@ -58,19 +61,22 @@ struct Condition {
 
 /* host function */
 
-void initState(CudaState *cstate, int *next_state_id, Condition cond);
-void initInput(CudaInput *cinput, Condition cond);
-void initNstep(int *cnstep, Condition cond);
-void initGrid(CudaGrid *cgrid, Condition cond);
-void initCop(CudaVector2 *cop, Condition cond);
+__host__ void initState(CudaState *cstate, int *next_state_id, Condition cond);
+__host__ void initInput(CudaInput *cinput, Condition cond);
+__host__ void initNstep(int *cnstep, Condition cond);
+__host__ void initGrid(CudaGrid *cgrid, Condition cond);
+__host__ void initCop(CudaVector2 *cop, Condition cond);
+__host__ void initPhysics(CudaPhysics *physics, Condition cond);
 
-void output(std::string file_name, Condition cond, int *cnstep,
-            int *next_state_id);
+__host__ void output(std::string file_name, Condition cond, int *cnstep,
+                     int *next_state_id);
 
 __host__ void exeZeroStep(CA::Grid grid, CA::Model model, int *nstep,
                           int *next_state_id);
 
 /* device function */
+
+__device__ CudaState step(CudaState state, CudaInput input);
 
 __device__ int getStateIndex(CudaState state, CudaGrid grid);
 
@@ -78,7 +84,8 @@ __device__ int roundValue(double value);
 
 /* global function */
 
-// __global__ void exeZeroStep(CudaState *state, CudaInput *input, int *nstep,
-//                             CudaVector2 *foot, CudaGrid *grid);
+__global__ void exeNStep(CudaState *state, CudaInput *input, int *nstep,
+                         int *next_state_id, CudaGrid *grid, CudaVector2 *cop,
+                         CudaPhysics *physics);
 
 #endif // __CUDA_ANALYSIS_CUH__

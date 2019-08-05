@@ -13,65 +13,97 @@ __device__ void CudaInput::operator=(const CudaInput &input) {
 
 /* host function */
 
-void setNstep(CA::Grid grid, int *cnstep) {
-  for (int i = 0; i < grid.getNumState() * grid.getNumInput(); i++) {
+void initState(CudaState *cstate, int *next_state_id, Condition cond) {
+  const int num_state = cond.grid->getNumState();
+  const int num_input = cond.grid->getNumInput();
+
+  for (int i = 0; i < cond.grid->getNumState(); i++) {
+    cstate[i].icp.x_ = cond.grid->getState(i).icp.x;
+    cstate[i].icp.y_ = cond.grid->getState(i).icp.y;
+    cstate[i].icp.r_ = cond.grid->getState(i).icp.r;
+    cstate[i].icp.th_ = cond.grid->getState(i).icp.th;
+    cstate[i].swf.x_ = cond.grid->getState(i).swft.x;
+    cstate[i].swf.y_ = cond.grid->getState(i).swft.y;
+    cstate[i].swf.r_ = cond.grid->getState(i).swft.r;
+    cstate[i].swf.th_ = cond.grid->getState(i).swft.th;
+  }
+
+  for (int state_id = 0; state_id < num_state; state_id++) {
+    for (int input_id = 0; input_id < num_input; input_id++) {
+      int id = state_id * num_input + input_id;
+      next_state_id[id] = -1;
+    }
+  }
+}
+
+void initInput(CudaInput *cinput, Condition cond) {
+  for (int i = 0; i < cond.grid->getNumInput(); i++) {
+    cinput[i].swf.x_ = cond.grid->getInput(i).swft.x;
+    cinput[i].swf.y_ = cond.grid->getInput(i).swft.y;
+    cinput[i].swf.r_ = cond.grid->getInput(i).swft.r;
+    cinput[i].swf.th_ = cond.grid->getInput(i).swft.th;
+  }
+}
+
+void initNstep(int *cnstep, Condition cond) {
+  for (int i = 0; i < cond.grid->getNumState() * cond.grid->getNumInput();
+       i++) {
     cnstep[i] = -1;
   }
 }
 
-void setState(CA::Grid grid, CudaState *cstate) {
-  for (int i = 0; i < grid.getNumState(); i++) {
-    cstate[i].icp.x_ = grid.getState(i).icp.x;
-    cstate[i].icp.y_ = grid.getState(i).icp.y;
-    cstate[i].icp.r_ = grid.getState(i).icp.r;
-    cstate[i].icp.th_ = grid.getState(i).icp.th;
-    cstate[i].swf.x_ = grid.getState(i).swft.x;
-    cstate[i].swf.y_ = grid.getState(i).swft.y;
-    cstate[i].swf.r_ = grid.getState(i).swft.r;
-    cstate[i].swf.th_ = grid.getState(i).swft.th;
-  }
+void initGrid(CudaGrid *cgrid, Condition cond) {
+  cgrid->num_state = cond.grid->getNumState();
+  cgrid->num_input = cond.grid->getNumInput();
+  cgrid->num_nstep = cond.grid->getNumState() * cond.grid->getNumInput();
+  cgrid->num_foot = cond.model->getVec("foot", "foot_r").size();
+
+  cgrid->icp_r_min = cond.param->getVal("icp_r", "min");
+  cgrid->icp_r_max = cond.param->getVal("icp_r", "max");
+  cgrid->icp_r_step = cond.param->getVal("icp_r", "step");
+  cgrid->icp_r_num = cond.param->getVal("icp_r", "num");
+
+  cgrid->icp_th_min = cond.param->getVal("icp_th", "min");
+  cgrid->icp_th_max = cond.param->getVal("icp_th", "max");
+  cgrid->icp_th_step = cond.param->getVal("icp_th", "step");
+  cgrid->icp_th_num = cond.param->getVal("icp_th", "num");
+
+  cgrid->swf_r_min = cond.param->getVal("swft_r", "min");
+  cgrid->swf_r_max = cond.param->getVal("swft_r", "max");
+  cgrid->swf_r_step = cond.param->getVal("swft_r", "step");
+  cgrid->swf_r_num = cond.param->getVal("swft_r", "num");
+
+  cgrid->swf_th_min = cond.param->getVal("swft_th", "min");
+  cgrid->swf_th_max = cond.param->getVal("swft_th", "max");
+  cgrid->swf_th_step = cond.param->getVal("swft_th", "step");
+  cgrid->swf_th_num = cond.param->getVal("swft_th", "num");
 }
 
-void setInput(CA::Grid grid, CudaInput *cinput) {
-  for (int i = 0; i < grid.getNumInput(); i++) {
-    cinput[i].swf.x_ = grid.getInput(i).swft.x;
-    cinput[i].swf.y_ = grid.getInput(i).swft.y;
-    cinput[i].swf.r_ = grid.getInput(i).swft.r;
-    cinput[i].swf.th_ = grid.getInput(i).swft.th;
+void initCop(CudaVector2 *cop, Condition cond) {}
+
+void output(std::string file_name, Condition cond, int *cnstep,
+            int *next_state_id) {
+  FILE *fp = fopen("result.csv", "w");
+  const int num_state = cond.grid->getNumState();
+  const int num_input = cond.grid->getNumInput();
+
+  fprintf(fp, "%s,", "state_id");
+  fprintf(fp, "%s,", "input_id");
+  fprintf(fp, "%s,", "next_state_id");
+  fprintf(fp, "%s,", "nstep");
+  fprintf(fp, "\n");
+  for (int state_id = 0; state_id < num_state; state_id++) {
+    for (int input_id = 0; input_id < num_input; input_id++) {
+      int id = state_id * num_input + input_id;
+      fprintf(fp, "%d,", state_id);
+      fprintf(fp, "%d,", input_id);
+      fprintf(fp, "%d,", next_state_id[id]);
+      fprintf(fp, "%d,", cnstep[id]);
+      fprintf(fp, "\n");
+    }
   }
-}
 
-void setGrid(CA::Grid grid, CA::Model model, CA::Param param, CudaGrid *cgrid) {
-  cgrid->num_state = grid.getNumState();
-  cgrid->num_input = grid.getNumInput();
-  cgrid->num_nstep = grid.getNumState() * grid.getNumInput();
-  cgrid->num_foot = model.getVec("foot", "foot_r").size();
-
-  cgrid->icp_r_min = param.getVal("icp_r", "min");
-  cgrid->icp_r_max = param.getVal("icp_r", "max");
-  cgrid->icp_r_step = param.getVal("icp_r", "step");
-  cgrid->icp_r_num = param.getVal("icp_r", "num");
-
-  cgrid->icp_th_min = param.getVal("icp_th", "min");
-  cgrid->icp_th_max = param.getVal("icp_th", "max");
-  cgrid->icp_th_step = param.getVal("icp_th", "step");
-  cgrid->icp_th_num = param.getVal("icp_th", "num");
-
-  cgrid->swf_r_min = param.getVal("swft_r", "min");
-  cgrid->swf_r_max = param.getVal("swft_r", "max");
-  cgrid->swf_r_step = param.getVal("swft_r", "step");
-  cgrid->swf_r_num = param.getVal("swft_r", "num");
-
-  cgrid->swf_th_min = param.getVal("swft_th", "min");
-  cgrid->swf_th_max = param.getVal("swft_th", "max");
-  cgrid->swf_th_step = param.getVal("swft_th", "step");
-  cgrid->swf_th_num = param.getVal("swft_th", "num");
-}
-
-void init(int *next_state_id, int size) {
-  for (int i = 0; i < size; i++) {
-    next_state_id[i] = -1;
-  }
+  fclose(fp);
 }
 
 __host__ void exeZeroStep(CA::Grid grid, CA::Model model, int *nstep,

@@ -25,6 +25,12 @@ int main(void) {
   const int num_input = grid.getNumInput();
   const int num_grid = num_state * num_input;
 
+  /* 解析条件 */
+  Condition cond;
+  cond.model = &model;
+  cond.param = &param;
+  cond.grid = &grid;
+
   /* グリッド */
   // ホスト側
   CudaState *cstate = new CudaState[num_state];
@@ -32,11 +38,10 @@ int main(void) {
   int *cnstep = new int[num_grid];
   int *next_state_id = new int[num_grid];
   CudaGrid *cgrid = new CudaGrid;
-  setNstep(grid, cnstep);
-  setState(grid, cstate);
-  setInput(grid, cinput);
-  init(next_state_id, num_grid);
-  setGrid(grid, model, param, cgrid);
+  initState(cstate, next_state_id, cond);
+  initInput(cinput, cond);
+  initNstep(cnstep, cond);
+  initGrid(cgrid, cond);
   // デバイス側
   CudaState *dev_cstate;
   CudaInput *dev_cinput;
@@ -59,6 +64,16 @@ int main(void) {
   HANDLE_ERROR(
       cudaMemcpy(dev_cgrid, cgrid, sizeof(CudaGrid), cudaMemcpyHostToDevice));
 
+  /* CoP List */
+  // ホスト側
+  CudaVector2 *cop = new CudaVector2[num_state];
+  initCop(cop, cond);
+  // デバイス側
+  CudaVector2 *dev_cop;
+  HANDLE_ERROR(cudaMalloc((void **)&dev_cop, num_state * sizeof(CudaVector2)));
+  HANDLE_ERROR(cudaMemcpy(dev_cop, cop, num_state * sizeof(CudaVector2),
+                          cudaMemcpyHostToDevice));
+
   printf("Done.\n");
   /* ------------------------------------------------------------------------ */
 
@@ -79,25 +94,7 @@ int main(void) {
   /* ファイル書き出し */
   /* ---------------------------------------------------------------------- */
   printf("Output...\t");
-
-  FILE *fp_output = fopen("result.csv", "w");
-  fprintf(fp_output, "%s,", "state_id");
-  fprintf(fp_output, "%s,", "input_id");
-  fprintf(fp_output, "%s,", "next_state_id");
-  fprintf(fp_output, "%s,", "nstep");
-  fprintf(fp_output, "\n");
-  for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
-    for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
-      int id = state_id * num_input + input_id;
-      fprintf(fp_output, "%d,", state_id);
-      fprintf(fp_output, "%d,", input_id);
-      fprintf(fp_output, "%d,", next_state_id[id]);
-      fprintf(fp_output, "%d,", cnstep[id]);
-      fprintf(fp_output, "\n");
-    }
-  }
-  fclose(fp_output);
-
+  output("result.csv", cond, cnstep, next_state_id);
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
 

@@ -79,7 +79,22 @@ void initGrid(CudaGrid *cgrid, Condition cond) {
   cgrid->swf_th_num = cond.param->getVal("swft_th", "num");
 }
 
-void initCop(CudaVector2 *cop, Condition cond) {}
+void initCop(CudaVector2 *cop, Condition cond) {
+  CA::State state;
+  CA::Polygon polygon;
+  std::vector<CA::Vector2> region = cond.model->getVec("foot", "foot_r_convex");
+  CA::Vector2 cop_;
+
+  for (int state_id = 0; state_id < cond.grid->getNumState(); state_id++) {
+    state = cond.grid->getState(state_id);
+    cop_ = polygon.getClosestPoint(state.icp, region);
+
+    cop[state_id].x_ = cop_.x;
+    cop[state_id].y_ = cop_.y;
+    cop[state_id].r_ = cop_.r;
+    cop[state_id].th_ = cop_.th;
+  }
+}
 
 void output(std::string file_name, Condition cond, int *cnstep,
             int *next_state_id) {

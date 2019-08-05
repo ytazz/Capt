@@ -1,9 +1,4 @@
 #include "cuda_analysis.cuh"
-#include "grid.h"
-#include "input.h"
-#include "model.h"
-#include "param.h"
-#include "state.h"
 
 const int BPG = 1024; // Blocks  Per Grid  (max: 65535)
 const int TPB = 1024; // Threads Per Block (max: 1024)
@@ -95,6 +90,12 @@ int main(void) {
   /* ---------------------------------------------------------------------- */
   printf("Output...\t");
   output("result.csv", cond, cnstep, next_state_id);
+  FILE *fp_out = fopen("cop_list.csv", "w");
+  for (int i = 0; i < num_state; i++) {
+    fprintf(fp_out, "%lf,", cop[i].x_);
+    fprintf(fp_out, "%lf\n", cop[i].y_);
+  }
+  fclose(fp_out);
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
 

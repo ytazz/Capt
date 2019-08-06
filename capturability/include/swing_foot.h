@@ -5,7 +5,7 @@
 #include "model.h"
 #include "vector.h"
 
-namespace CA {
+namespace Capt {
 
 class SwingFoot {
 public:
@@ -26,6 +26,6 @@ private:
   float foot_vel, foot_vel_x, foot_vel_y;
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __SWING_FOOT_H__

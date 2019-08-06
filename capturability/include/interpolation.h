@@ -1,7 +1,7 @@
 #ifndef __INTERPOLATION_H__
 #define __INTERPOLATION_H__
 
-namespace CA {
+namespace Capt {
 
 class Interpolation {
 public:

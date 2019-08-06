@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-namespace CA {
+namespace Capt {
 
 struct Input {
   Vector2 swft;
@@ -16,6 +16,6 @@ struct Input {
   void operator=(const Input &input) { this->swft = input.swft; }
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __INPUT_H__

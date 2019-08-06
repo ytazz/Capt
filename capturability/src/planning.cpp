@@ -1,6 +1,6 @@
 #include "planning.h"
 
-namespace CA {
+namespace Capt {
 
 Planning::Planning(Model model, Param param, float timestep)
     : model(model), polygon(), pendulum_cr(model), capturability(model, param),
@@ -164,4 +164,4 @@ vec3_t Planning::getLLeg(float time) {
   return lleg_cmd;
 }
 
-} // namespace CA
+} // namespace Capt

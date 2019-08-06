@@ -8,7 +8,7 @@
 #include <expat.h>
 #include <string.h>
 
-namespace CA {
+namespace Capt {
 
 typedef Eigen::Vector3f vec3_t;
 
@@ -44,6 +44,6 @@ protected:
   int depth;
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __XML_LOADER__

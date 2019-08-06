@@ -1,6 +1,6 @@
 #include "grid.h"
 
-namespace CA {
+namespace Capt {
 
 Grid::Grid(Param param) : param(param) {
   state.clear();
@@ -350,4 +350,4 @@ int Grid::getNumState() { return num_state; }
 
 int Grid::getNumInput() { return num_input; }
 
-} // namespace CA
+} // namespace Capt

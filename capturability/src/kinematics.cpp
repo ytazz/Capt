@@ -1,6 +1,6 @@
 #include "kinematics.h"
 
-namespace CA {
+namespace Capt {
 
 Kinematics::Kinematics(Model model)
     : model(model), pi(M_PI), lambda(0.5), accuracy(0.001), iteration_max(1000),
@@ -519,4 +519,4 @@ vec3_t Kinematics::log_func(mat3_t matrix) {
   return vec;
 }
 
-} // namespace CA
+} // namespace Capt

@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-namespace CA {
+namespace Capt {
 
 Loader::Loader(const std::string &name)
     : name(name), parser(XML_ParserCreate(NULL)), depth(0) {
@@ -127,4 +127,4 @@ vec3_t Loader::convertStrToVec3(const std::string &str) {
   return vec;
 }
 
-} // namespace CA
+} // namespace Capt

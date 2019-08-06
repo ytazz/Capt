@@ -1,6 +1,6 @@
 #include "gnuplot.h"
 
-namespace CA {
+namespace Capt {
 
 Gnuplot::Gnuplot() {
   gp = popen("gnuplot -persist", "w");

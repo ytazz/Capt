@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-namespace CA {
+namespace Capt {
 
 struct State {
   Vector2 icp;
@@ -26,6 +26,6 @@ struct State {
   }
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __STATE_H__

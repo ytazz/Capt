@@ -8,7 +8,7 @@
 
 using namespace std;
 
-namespace CA {
+namespace Capt {
 
 class Gnuplot {
 public:

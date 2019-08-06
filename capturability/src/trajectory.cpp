@@ -1,6 +1,6 @@
 #include "trajectory.h"
 
-namespace CA {
+namespace Capt {
 
 Trajectory::Trajectory(Model model)
     : kinematics(model), lambda(0.5), accuracy(0.0001) {
@@ -75,4 +75,4 @@ vec3_t Trajectory::getRLegRef() { return this->rleg_ref; }
 vec3_t Trajectory::getLLegRef() { return this->lleg_ref; }
 
 vec3_t Trajectory::getTorsoRef() { return this->torso_ref; }
-} // namespace CA
+} // namespace Capt

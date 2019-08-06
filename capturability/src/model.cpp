@@ -1,6 +1,6 @@
 #include "model.h"
 
-namespace CA {
+namespace Capt {
 
 Model::Model(const std::string &name) : Loader(name), pi(M_PI) {
   element = MODEL_ELE_NONE;
@@ -448,4 +448,4 @@ void Model::print() {
   printf("-------------------------------------------\n");
 }
 
-} // namespace CA
+} // namespace Capt

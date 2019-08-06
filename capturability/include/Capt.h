@@ -1,5 +1,5 @@
-#ifndef __CA_H__
-#define __CA_H__
+#ifndef __CAPT_H__
+#define __CAPT_H__
 
 #include "capturability.h"
 #include "foot_planner.h"
@@ -19,10 +19,10 @@
 #include "trajectory.h"
 #include "vector.h"
 
-namespace CA {
+namespace Capt {
 
 // enum SupportFoot { SUPPORT_R, SUPPORT_L };
 
-} // namespace CA
+} // namespace Capt
 
-#endif // __CA_H__
+#endif // __CAPT_H__

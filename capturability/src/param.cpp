@@ -1,6 +1,6 @@
 #include "param.h"
 
-namespace CA {
+namespace Capt {
 
 Param::Param(const std::string &name) : Loader(name), pi(M_PI) {
   element = Pa::NOELEMENT;
@@ -285,4 +285,4 @@ void Param::print() {
   printf("-------------------------------------------\n");
 }
 
-} // namespace CA
+} // namespace Capt

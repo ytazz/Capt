@@ -1,6 +1,6 @@
 #include "foot_planner.h"
 
-namespace CA {
+namespace Capt {
 
 FootPlanner::FootPlanner(Model *model, Capturability capturability, Grid *grid)
     : model(model), capturability(capturability), grid(grid) {
@@ -144,4 +144,4 @@ void FootPlanner::show() {
     printf("|%1.3f\t|\n", foot_step.step_time[i]);
   }
 }
-} // namespace CA
+} // namespace Capt

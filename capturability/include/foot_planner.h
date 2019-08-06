@@ -12,7 +12,7 @@
 #include "vector.h"
 #include <vector>
 
-namespace CA {
+namespace Capt {
 
 enum SupportFoot { SUPPORT_R, SUPPORT_L };
 
@@ -68,6 +68,6 @@ private:
   Footstep foot_step;
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __FOOT_PLANNER_H________

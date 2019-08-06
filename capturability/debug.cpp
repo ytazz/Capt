@@ -2,7 +2,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace CA;
+using namespace Capt;
 
 void getConvexHull(Vector2 *vertex, Vector2 *convex) {
   std::cout << "0" << '\n';

@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace CA {
+namespace Capt {
 
 namespace GridSpace {
 enum Element { MIN, MAX, STEP, NUMELEMENT };
@@ -89,6 +89,6 @@ private:
   float swft_th[GridSpace::NUMELEMENT];
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __GRID_H__

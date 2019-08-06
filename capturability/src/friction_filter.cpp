@@ -1,6 +1,6 @@
 #include "friction_filter.h"
 
-namespace CA {
+namespace Capt {
 
 FrictionFilter::FrictionFilter(Capturability capturability, Pendulum pendulum)
     : capturability(capturability), pendulum(pendulum){};
@@ -48,4 +48,4 @@ FrictionFilter::getCaptureRegion(vec2_t com, vec2_t com_vel, float mu) {
   return modified_cr;
 }
 
-} // namespace CA
+} // namespace Capt

@@ -8,7 +8,7 @@
 #include <vector>
 
 using namespace std;
-using namespace CA;
+using namespace Capt;
 
 int main() {
   Param param("analysis.xml");

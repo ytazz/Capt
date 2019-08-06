@@ -13,7 +13,7 @@
 #include "vector.h"
 #include <vector>
 
-namespace CA {
+namespace Capt {
 
 class Planning {
 public:
@@ -78,6 +78,6 @@ private:
   vec3_t rleg_cmd, lleg_cmd;
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __PLANNING_H__

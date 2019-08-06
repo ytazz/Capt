@@ -9,7 +9,7 @@
 #include <vector>
 
 using namespace std;
-using namespace CA;
+using namespace Capt;
 
 class AnimCop : public Gnuplot {
 public:

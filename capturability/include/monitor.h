@@ -7,7 +7,7 @@
 #include "vector.h"
 #include <string.h>
 
-namespace CA {
+namespace Capt {
 
 class Monitor {
 public:
@@ -33,6 +33,6 @@ private:
   EFoot e_suft;
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __MONITOR_H__

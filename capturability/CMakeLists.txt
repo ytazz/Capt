@@ -36,7 +36,6 @@ include_directories(${EXPAT_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 set(HEADERS
-  ${PROJECT_SOURCE_DIR}/include/CA.h
   ${PROJECT_SOURCE_DIR}/include/capturability.h
   ${PROJECT_SOURCE_DIR}/include/foot_planner.h
   ${PROJECT_SOURCE_DIR}/include/friction_filter.h

@@ -1,6 +1,6 @@
 #include "monitor.h"
 
-namespace CA {
+namespace Capt {
 
 Monitor::Monitor(Model model) : model(model), pendulum(model), polygon() {}
 
@@ -63,4 +63,4 @@ bool Monitor::judge() {
   return flag;
 }
 
-} // namespace CA
+} // namespace Capt

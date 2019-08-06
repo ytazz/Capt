@@ -7,7 +7,7 @@
 #include <iostream>
 #include <vector>
 
-namespace CA {
+namespace Capt {
 
 typedef Eigen::Matrix3f mat3_t;
 typedef Eigen::Matrix4f mat4_t;
@@ -93,6 +93,6 @@ private:
   vec3_t offset_rfoot, offset_lfoot;
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __KINEMATICS_H____

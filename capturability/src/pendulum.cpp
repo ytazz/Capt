@@ -1,6 +1,6 @@
 #include "pendulum.h"
 
-namespace CA {
+namespace Capt {
 
 Pendulum::Pendulum(Model model) {
   com.clear();
@@ -59,4 +59,4 @@ Vector2 Pendulum::getIcpVel(float dt) {
   return icp_vel_;
 }
 
-} // namespace CA
+} // namespace Capt

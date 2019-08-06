@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <vector>
 
-namespace CA {
+namespace Capt {
 
 struct CaptureState {
   int n_capturable;
@@ -57,6 +57,6 @@ private:
   std::vector<std::vector<bool>> is_database;
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __ANALYSIS_CPU_H__

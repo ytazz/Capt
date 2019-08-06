@@ -55,9 +55,9 @@ struct Physics {
 };
 
 struct Condition {
-  CA::Model *model;
-  CA::Param *param;
-  CA::Grid *grid;
+  Capt::Model *model;
+  Capt::Param *param;
+  Capt::Grid *grid;
 };
 
 /* host function */
@@ -72,7 +72,7 @@ __host__ void initPhysics(Physics *physics, Condition cond);
 __host__ void output(std::string file_name, Condition cond, int *cnstep,
                      int *next_state_id);
 
-__host__ void exeZeroStep(CA::Grid grid, CA::Model model, int *nstep,
+__host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *nstep,
                           int *next_state_id);
 
 /* device function */

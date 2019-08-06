@@ -1,4 +1,4 @@
-#include "CA.h"
+#include "Capt.h"
 #include "plot_trajectory.h"
 #include <stdlib.h>
 #include <vector>
@@ -6,7 +6,7 @@
 float PI = 3.1415;
 
 using namespace std;
-using namespace CA;
+using namespace Capt;
 
 int main() {
   string root_dir = getenv("HOME");

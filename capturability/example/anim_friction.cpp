@@ -13,7 +13,7 @@
 float PI = 3.1415;
 
 using namespace std;
-using namespace CA;
+using namespace Capt;
 
 int main() {
   string root_dir = getenv("HOME");

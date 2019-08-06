@@ -1,6 +1,6 @@
 #include "analysis_cpu.h"
 
-namespace CA {
+namespace Capt {
 
 Analysis::Analysis(Model model, Param param)
     : grid(param), model(model), pendulum(model), swing_foot(model),
@@ -137,4 +137,4 @@ void Analysis::save(const char *file_name, const int n_step_capturable) {
   capturability.save(file_name, n_step_capturable);
 }
 
-} // namespace CA
+} // namespace Capt

@@ -79,10 +79,10 @@ __host__ void initGrid(Grid *cgrid, Condition cond) {
 }
 
 __host__ void initCop(Vector2 *cop, Condition cond) {
-  CA::State state;
-  CA::Polygon polygon;
-  std::vector<CA::Vector2> region = cond.model->getVec("foot", "foot_r_convex");
-  CA::Vector2 cop_;
+  Capt::State state;
+  Capt::Polygon polygon;
+  std::vector<Capt::Vector2> region = cond.model->getVec("foot", "foot_r_convex");
+  Capt::Vector2 cop_;
 
   for (int state_id = 0; state_id < cond.grid->getNumState(); state_id++) {
     state = cond.grid->getState(state_id);
@@ -128,14 +128,14 @@ __host__ void output(std::string file_name, Condition cond, int *cnstep,
   fclose(fp);
 }
 
-__host__ void exeZeroStep(CA::Grid grid, CA::Model model, int *nstep,
+__host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *nstep,
                           int *next_state_id) {
   for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
     bool flag = false;
 
-    CA::State state = grid.getState(state_id);
+    Capt::State state = grid.getState(state_id);
 
-    CA::Polygon polygon;
+    Capt::Polygon polygon;
     polygon.setVertex(model.getVec("foot", "foot_r_convex"));
     polygon.setVertex(model.getVec("foot", "foot_l_convex", state.swft));
     flag = polygon.inPolygon(state.icp, polygon.getConvexHull());

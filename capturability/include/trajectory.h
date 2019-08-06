@@ -5,7 +5,7 @@
 #include "model.h"
 #include <iostream>
 
-namespace CA {
+namespace Capt {
 
 class Trajectory {
 public:
@@ -35,6 +35,6 @@ private:
   const float lambda; // 0 < lambda <= 1 stabilize calculation
   const float accuracy;
 };
-} // namespace CA
+} // namespace Capt
 
 #endif // __TRAJECTORY_H__

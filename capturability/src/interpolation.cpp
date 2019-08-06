@@ -1,6 +1,6 @@
 #include "interpolation.h"
 
-namespace CA {
+namespace Capt {
 
 Interpolation::Interpolation() {}
 

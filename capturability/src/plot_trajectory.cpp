@@ -2,7 +2,7 @@
 
 using namespace std;
 
-namespace CA {
+namespace Capt {
 
 PlotTrajectory::PlotTrajectory(Model model, Param param,
                                Capturability capturability, Grid grid,
@@ -137,4 +137,4 @@ void PlotTrajectory::plotXY(float dt) {
   // flush
   fflush(p.gp);
 }
-} // namespace CA
+} // namespace Capt

@@ -1,6 +1,6 @@
 #include "capturability.h"
 
-namespace CA {
+namespace Capt {
 
 Capturability::Capturability(Model model, Param param)
     : grid(param), model(model) {
@@ -161,4 +161,4 @@ void Capturability::save(const char *file_name, const int n_step) {
   fclose(fp);
 }
 
-} // namespace CA
+} // namespace Capt

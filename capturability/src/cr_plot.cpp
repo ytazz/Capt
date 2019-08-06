@@ -2,7 +2,7 @@
 
 using namespace std;
 
-namespace CA {
+namespace Capt {
 
 CRPlot::CRPlot(Model model, Param param)
     : model(model), param(param), capturability(model, param) {

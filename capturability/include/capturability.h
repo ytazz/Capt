@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <vector>
 
-namespace CA {
+namespace Capt {
 
 struct CaptureSet {
   int state_id;
@@ -61,6 +61,6 @@ private:
   std::vector<CaptureSet> capture_set;
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __CAPTURABILITY_H__

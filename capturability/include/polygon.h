@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace CA {
+namespace Capt {
 
 class Polygon {
 public:
@@ -48,6 +48,6 @@ private:
   std::vector<Vector2> vertex_convex;
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __POLYGON_H__

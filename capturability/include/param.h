@@ -4,7 +4,7 @@
 #include "loader.h"
 #include <math.h>
 
-namespace CA {
+namespace Capt {
 
 namespace Pa {
 enum ParamElement {
@@ -63,6 +63,6 @@ private:
   float pi;
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __PARAM_H__

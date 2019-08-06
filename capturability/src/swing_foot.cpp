@@ -1,6 +1,6 @@
 #include "swing_foot.h"
 
-namespace CA {
+namespace Capt {
 
 SwingFoot::SwingFoot(Model model) {
   foot = Eigen::Vector3f::Zero();
@@ -79,4 +79,4 @@ vec3_t SwingFoot::getTraj(float dt) {
   return swft;
 }
 
-} // namespace CA
+} // namespace Capt

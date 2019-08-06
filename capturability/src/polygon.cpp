@@ -1,6 +1,6 @@
 #include "polygon.h"
 
-namespace CA {
+namespace Capt {
 
 Polygon::Polygon() {
   vertex.clear();
@@ -162,4 +162,4 @@ void Polygon::clear() {
   vertex.clear();
   vertex_convex.clear();
 }
-} // namespace CA
+} // namespace Capt

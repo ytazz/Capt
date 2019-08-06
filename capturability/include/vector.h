@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string>
 
-namespace CA {
+namespace Capt {
 
 typedef struct Vector2 {
 
@@ -45,6 +45,6 @@ private:
 
 Vector2 operator*(const float &d, const Vector2 &v);
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __VECTOR_H__

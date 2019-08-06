@@ -8,7 +8,7 @@
 #include "vector.h"
 #include <iostream>
 
-namespace CA {
+namespace Capt {
 
 class FrictionFilter {
 public:
@@ -28,6 +28,6 @@ private:
   std::vector<CaptureSet> capture_set;
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __FRICTION_FILTER_H____

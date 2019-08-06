@@ -9,11 +9,11 @@ int main(void) {
   printf("Prepare...\t");
 
   /* パラメータの読み込み */
-  CA::Model model("nao.xml");
-  CA::Param param("analysis.xml");
+  Capt::Model model("nao.xml");
+  Capt::Param param("analysis.xml");
 
   /* グリッド */
-  CA::Grid grid(param);
+  Capt::Grid grid(param);
   const int num_state = grid.getNumState();
   const int num_input = grid.getNumInput();
   const int num_grid = num_state * num_input;

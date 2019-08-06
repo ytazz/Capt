@@ -14,7 +14,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace CA;
+using namespace Capt;
 
 int main(int argc, char const *argv[]) {
   Model model("nao.xml");

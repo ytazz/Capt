@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <vector>
 
-namespace CA {
+namespace Capt {
 
 class CRPlot : public Gnuplot {
   Gnuplot p;

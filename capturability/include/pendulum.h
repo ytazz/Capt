@@ -5,7 +5,7 @@
 #include "model.h"
 #include "vector.h"
 
-namespace CA {
+namespace Capt {
 
 class Pendulum {
 
@@ -36,6 +36,6 @@ private:
   float omega;
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __PENDULUM_H__

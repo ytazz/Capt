@@ -1,6 +1,6 @@
 #include "../include/vector.h"
 
-namespace CA {
+namespace Capt {
 
 Vector2::Vector2() { clear(); }
 
@@ -122,4 +122,4 @@ Vector2 operator*(const float &d, const Vector2 &v) {
   return vec;
 }
 
-} // namespace CA
+} // namespace Capt

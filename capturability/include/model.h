@@ -9,7 +9,7 @@
 #include <string.h>
 #include <vector>
 
-namespace CA {
+namespace Capt {
 
 enum EModelElement {
   MODEL_ELE_NONE,
@@ -122,6 +122,6 @@ private:
   float mass[NUM_LINK];
 };
 
-} // namespace CA
+} // namespace Capt
 
 #endif // __MODEL_H__

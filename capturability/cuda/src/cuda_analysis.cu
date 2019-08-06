@@ -56,7 +56,6 @@ __host__ void initGrid(CudaGrid *cgrid, Condition cond) {
   cgrid->num_state = cond.grid->getNumState();
   cgrid->num_input = cond.grid->getNumInput();
   cgrid->num_nstep = cond.grid->getNumState() * cond.grid->getNumInput();
-  cgrid->num_foot = cond.model->getVec("foot", "foot_r").size();
 
   cgrid->icp_r_min = cond.param->getVal("icp_r", "min");
   cgrid->icp_r_max = cond.param->getVal("icp_r", "max");
@@ -169,6 +168,35 @@ __device__ int roundValue(double value) {
   return result;
 }
 
+__device__ bool existState(CudaState state, CudaGrid grid) {
+  bool flag_icp_r = false, flag_icp_th = false;
+  bool flag_swft_r = false, flag_swft_th = false;
+
+  // icp_r
+  if (state.icp.r_ >= grid.icp_r_min - grid.icp_r_step / 2.0 &&
+      state.icp.r_ < grid.icp_r_max + grid.icp_r_step / 2.0) {
+    flag_icp_r = true;
+  }
+  // icp_th
+  if (state.icp.th_ >= grid.icp_th_min - grid.icp_th_step / 2.0 &&
+      state.icp.th_ < grid.icp_th_max + grid.icp_th_step / 2.0) {
+    flag_icp_th = true;
+  }
+  // swft_r
+  if (state.swf.r_ >= grid.swf_r_min - grid.swf_r_step / 2.0 &&
+      state.swf.r_ < grid.swf_r_max + grid.swf_r_step / 2.0) {
+    flag_swft_r = true;
+  }
+  // swft_th
+  if (state.swf.th_ >= grid.swf_th_min - grid.swf_th_step / 2.0 &&
+      state.swf.th_ < grid.swf_th_max + grid.swf_th_step / 2.0) {
+    flag_swft_th = true;
+  }
+
+  bool flag = flag_icp_r * flag_icp_th * flag_swft_r * flag_swft_th;
+  return flag;
+}
+
 __device__ int getStateIndex(CudaState state, CudaGrid grid) {
   int icp_r_id = 0, icp_th_id = 0;
   int swf_r_id = 0, swf_th_id = 0;
@@ -179,13 +207,9 @@ __device__ int getStateIndex(CudaState state, CudaGrid grid) {
   swf_th_id = roundValue((state.swf.th() - grid.swf_th_min) / grid.swf_th_step);
 
   int state_id = 0;
-  if (icp_r_id < 0 || icp_th_id < 0 || swf_r_id < 0 || swf_th_id < 0) {
-    state_id = -1;
-  } else {
-    state_id = grid.swf_th_num * grid.swf_r_num * grid.icp_th_num * icp_r_id +
-               grid.swf_th_num * grid.swf_r_num * icp_th_id +
-               grid.swf_th_num * swf_r_id + swf_th_id;
-  }
+  state_id = grid.swf_th_num * grid.swf_r_num * grid.icp_th_num * icp_r_id +
+             grid.swf_th_num * grid.swf_r_num * icp_th_id +
+             grid.swf_th_num * swf_r_id + swf_th_id;
 
   return state_id;
 }
@@ -197,32 +221,15 @@ __global__ void exeNStep(CudaState *state, CudaInput *input, int *nstep,
                          CudaPhysics *physics) {
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
-  if (tid == 0) {
-    printf("\n");
-    printf("g    : %1.3lf\n", physics->g);
-    printf("h    : %1.3lf\n", physics->h);
-    printf("v    : %1.3lf\n", physics->v);
-    printf("dt   : %1.3lf\n", physics->dt);
-    printf("omega: %1.3lf\n", physics->omega);
-    printf("\n");
-  }
-
-  if (tid == 21349) {
-    printf("\n");
-    printf("cop(x): %1.3lf\n", cop[21349].x_);
-    printf("cop(y): %1.3lf\n", cop[21349].y_);
-    printf("\n");
-  }
-
   while (tid < grid->num_state * grid->num_input) {
     int state_id = tid / grid->num_input;
     int input_id = tid % grid->num_input;
 
-    // bool flag = polygon.inPolygon(state[state_id].icp, foot_convex);
-    //
+    bool flag = false;
+    // flag = polygon.inPolygon(state[state_id].icp, foot_convex);
 
-    // if (flag)
-    //   nstep[state_id * grid->num_input + input_id] = 100;
+    if (flag)
+      nstep[tid] = 100;
 
     tid += blockDim.x * gridDim.x;
   }

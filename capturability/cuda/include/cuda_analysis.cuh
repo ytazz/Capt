@@ -18,7 +18,6 @@
 struct CudaGrid {
   int num_state;
   int num_input;
-  int num_foot; // vertex of feet
   int num_nstep;
 
   int icp_r_num;
@@ -78,6 +77,7 @@ __host__ void exeZeroStep(CA::Grid grid, CA::Model model, int *nstep,
 
 __device__ CudaState step(CudaState state, CudaInput input);
 
+__device__ bool existState(CudaState state, CudaGrid grid);
 __device__ int getStateIndex(CudaState state, CudaGrid grid);
 
 __device__ int roundValue(double value);

@@ -26,36 +26,36 @@ int main(void) {
 
   /* グリッド */
   // ホスト側
-  Cuda::State *state     = new Cuda::State[num_state];
-  Cuda::Input *input     = new Cuda::Input[num_input];
-  int         *zero_step = new int[num_state]; // if 0     => 0-step capturable
-  int         *n_step    = new int[num_grid];  // if n(>1) => n-step capturable
-  int         *next_id   = new int[num_grid];  // next state id
-  Cuda::Grid  *grid      = new Cuda::Grid;
+  Cuda::State *state   = new Cuda::State[num_state];
+  Cuda::Input *input   = new Cuda::Input[num_input];
+  int         *basin   = new int[num_state]; // if 0     => 0-step capturable
+  int         *nstep   = new int[num_grid];  // if n(>1) => n-step capturable
+  int         *next_id = new int[num_grid];  // next state id
+  Cuda::Grid  *grid    = new Cuda::Grid;
   initState(state, next_id, cond);
   initInput(input, cond);
-  initNstep(zero_step, n_step, cond);
+  initNstep(basin, nstep, cond);
   initGrid(grid, cond);
   // デバイス側
   Cuda::State *dev_state;
   Cuda::Input *dev_input;
-  int         *dev_zero_step;
-  int         *dev_n_step;
+  int         *dev_basin;
+  int         *dev_nstep;
   int         *dev_next_id;
   Cuda::Grid  *dev_grid;
   HANDLE_ERROR(
     cudaMalloc((void **)&dev_state, num_state * sizeof(Cuda::State)));
   HANDLE_ERROR(
     cudaMalloc((void **)&dev_input, num_input * sizeof(Cuda::Input)));
-  HANDLE_ERROR(cudaMalloc((void **)&dev_zero_step, num_state * sizeof(int)));
-  HANDLE_ERROR(cudaMalloc((void **)&dev_n_step, num_grid * sizeof(int)));
+  HANDLE_ERROR(cudaMalloc((void **)&dev_basin, num_state * sizeof(int)));
+  HANDLE_ERROR(cudaMalloc((void **)&dev_nstep, num_grid * sizeof(int)));
   HANDLE_ERROR(cudaMalloc((void **)&dev_next_id, num_grid * sizeof(int)));
   HANDLE_ERROR(cudaMalloc((void **)&dev_grid, sizeof(Cuda::Grid)));
   HANDLE_ERROR(cudaMemcpy(dev_state, state, num_state * sizeof(Cuda::State),
                           cudaMemcpyHostToDevice));
   HANDLE_ERROR(cudaMemcpy(dev_input, input, num_input * sizeof(Cuda::Input),
                           cudaMemcpyHostToDevice));
-  HANDLE_ERROR(cudaMemcpy(dev_n_step, n_step, num_grid * sizeof(int),
+  HANDLE_ERROR(cudaMemcpy(dev_nstep, nstep, num_grid * sizeof(int),
                           cudaMemcpyHostToDevice));
   HANDLE_ERROR(cudaMemcpy(dev_next_id, next_id, num_grid * sizeof(int),
                           cudaMemcpyHostToDevice));
@@ -102,19 +102,19 @@ int main(void) {
   printf("Execute...\n");
 
   printf("\t0-step\n");
-  Cuda::exeZeroStep(cgrid, cmodel, zero_step);
+  Cuda::exeZeroStep(cgrid, cmodel, basin);
 
   int  N    = 1;
   bool flag = false;
   while (flag) {
     printf("\t%d-step\n", N);
-    Cuda::exeNStep << < BPG, TPB >> > ( N, dev_zero_step, dev_n_step,
+    Cuda::exeNStep << < BPG, TPB >> > ( N, dev_basin, dev_nstep,
                                         dev_next_id, dev_grid);
-    HANDLE_ERROR(cudaMemcpy(n_step, dev_n_step, num_grid * sizeof(int),
+    HANDLE_ERROR(cudaMemcpy(nstep, dev_nstep, num_grid * sizeof(int),
                             cudaMemcpyDeviceToHost));
     flag = false;
     for (int i = 0; i < num_grid; i++) {
-      if (n_step[i] == -1)
+      if (nstep[i] == -1)
         flag = true;
     }
     N++;
@@ -127,8 +127,8 @@ int main(void) {
   /* ファイル書き出し */
   /* ---------------------------------------------------------------------- */
   printf("Output...\t");
-  Cuda::outputZeroStep("0step.csv", false, cond, zero_step);
-  Cuda::outputNStep("Nstep.csv", false, cond, n_step, next_id);
+  Cuda::outputZeroStep("0step.csv", false, cond, basin);
+  Cuda::outputNStep("Nstep.csv", false, cond, nstep, next_id);
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
 
@@ -140,8 +140,8 @@ int main(void) {
   // ホスト側
   delete state;
   delete input;
-  delete zero_step;
-  delete n_step;
+  delete basin;
+  delete nstep;
   delete next_id;
   delete grid;
   delete cop;
@@ -150,8 +150,8 @@ int main(void) {
   cudaFree(dev_state);
   cudaFree(dev_input);
   cudaFree(dev_next_id);
-  cudaFree(dev_zero_step);
-  cudaFree(dev_n_step);
+  cudaFree(dev_basin);
+  cudaFree(dev_nstep);
   cudaFree(dev_grid);
   cudaFree(dev_cop);
   cudaFree(dev_physics);

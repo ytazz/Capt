@@ -47,20 +47,20 @@ __host__ void initInput(Input *input, Condition cond) {
   }
 }
 
-__host__ void initNstep(int *zero_step, int *n_step, Condition cond) {
+__host__ void initNstep(int *basin, int *nstep, Condition cond) {
   for (int i = 0; i < cond.grid->getNumState(); i++) {
-    zero_step[i] = -1;
+    basin[i] = -1;
   }
 
   for (int i = 0; i < cond.grid->getNumState() * cond.grid->getNumInput(); i++) {
-    n_step[i] = -1;
+    nstep[i] = -1;
   }
 }
 
 __host__ void initGrid(Grid *cgrid, Condition cond) {
-  cgrid->num_state  = cond.grid->getNumState();
-  cgrid->num_input  = cond.grid->getNumInput();
-  cgrid->num_n_step = cond.grid->getNumState() * cond.grid->getNumInput();
+  cgrid->num_state = cond.grid->getNumState();
+  cgrid->num_input = cond.grid->getNumInput();
+  cgrid->num_nstep = cond.grid->getNumState() * cond.grid->getNumInput();
 
   cgrid->icp_r_min  = cond.param->getVal("icp_r", "min");
   cgrid->icp_r_max  = cond.param->getVal("icp_r", "max");
@@ -109,21 +109,21 @@ __host__ void initPhysics(Physics *physics, Condition cond) {
 }
 
 __host__ void outputZeroStep(std::string file_name, bool header, Condition cond,
-                             int *zero_step) {
+                             int *basin) {
   FILE     *fp        = fopen(file_name.c_str(), "w");
   const int num_state = cond.grid->getNumState();
 
   // Header
   if (header) {
     fprintf(fp, "%s,", "state_id");
-    fprintf(fp, "%s", "0_step");
+    fprintf(fp, "%s", "0step");
     fprintf(fp, "\n");
   }
 
   // Data
   for (int state_id = 0; state_id < num_state; state_id++) {
     fprintf(fp, "%d,", state_id);
-    fprintf(fp, "%d", zero_step[state_id]);
+    fprintf(fp, "%d", basin[state_id]);
     fprintf(fp, "\n");
   }
 
@@ -131,7 +131,7 @@ __host__ void outputZeroStep(std::string file_name, bool header, Condition cond,
 }
 
 __host__ void outputNStep(std::string file_name, bool header, Condition cond,
-                          int *n_step, int *next_id) {
+                          int *nstep, int *next_id) {
   FILE     *fp        = fopen(file_name.c_str(), "w");
   const int num_state = cond.grid->getNumState();
   const int num_input = cond.grid->getNumInput();
@@ -141,7 +141,7 @@ __host__ void outputNStep(std::string file_name, bool header, Condition cond,
     fprintf(fp, "%s,", "state_id");
     fprintf(fp, "%s,", "input_id");
     fprintf(fp, "%s,", "next_id");
-    fprintf(fp, "%s", "n_step");
+    fprintf(fp, "%s", "Nstep");
     fprintf(fp, "\n");
   }
 
@@ -152,7 +152,7 @@ __host__ void outputNStep(std::string file_name, bool header, Condition cond,
       fprintf(fp, "%d,", state_id);
       fprintf(fp, "%d,", input_id);
       fprintf(fp, "%d,", next_id[id]);
-      fprintf(fp, "%d", n_step[id]);
+      fprintf(fp, "%d", nstep[id]);
       fprintf(fp, "\n");
     }
   }
@@ -160,7 +160,7 @@ __host__ void outputNStep(std::string file_name, bool header, Condition cond,
   fclose(fp);
 }
 
-__host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *zero_step) {
+__host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *basin) {
   for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
     Capt::State state = grid.getState(state_id);
 
@@ -172,7 +172,7 @@ __host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *zero_step) {
     flag = polygon.inPolygon(state.icp, polygon.getConvexHull());
 
     if (flag) {
-      zero_step[state_id] = 0;
+      basin[state_id] = 0;
     }
   }
 }
@@ -271,12 +271,13 @@ __global__ void calcStateTrans(State *state, Input *input, int *next_id, Grid *g
       next_id[tid] = getStateIndex(state_, grid);
     else
       next_id[tid] = -1;
+
     tid += blockDim.x * gridDim.x;
   }
 }
 
-__global__ void exeNStep(int N, int *zero_step,
-                         int *n_step, int *next_id, Grid *grid) {
+__global__ void exeNStep(int N, int *basin,
+                         int *nstep, int *next_id, Grid *grid) {
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
   while (tid < grid->num_state * grid->num_input) {
@@ -285,15 +286,15 @@ __global__ void exeNStep(int N, int *zero_step,
 
     bool flag = false;
     // if (N == 1) {
-    //   if (zero_step[next_id[tid]] == 0)
-    //     n_step[tid] == 1;
+    //   if (basin[next_id[tid]] == 0)
+    //     nstep[tid] == 1;
     // }else{
-    //   if (n_step[next_id[tid]] == (N - 1))
-    //     n_step[tid] = N;
+    //   if (nstep[next_id[tid]] == (N - 1))
+    //     nstep[tid] = N;
     // }
 
     if (flag)
-      n_step[tid] = N;
+      nstep[tid] = N;
 
     tid += blockDim.x * gridDim.x;
   }

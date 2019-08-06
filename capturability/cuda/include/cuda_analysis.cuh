@@ -13,9 +13,11 @@
 #include <stdio.h>
 #include <vector>
 
+namespace Cuda {
+
 /* struct */
 
-struct CudaGrid {
+struct Grid {
   int num_state;
   int num_input;
   int num_nstep;
@@ -31,20 +33,20 @@ struct CudaGrid {
   double swf_th_min, swf_th_max, swf_th_step;
 };
 
-struct CudaState {
-  CudaVector2 icp;
-  CudaVector2 swf;
+struct State {
+  Vector2 icp;
+  Vector2 swf;
 
-  __device__ void operator=(const CudaState &state);
+  __device__ void operator=(const State &state);
 };
 
-struct CudaInput {
-  CudaVector2 swf;
+struct Input {
+  Vector2 swf;
 
-  __device__ void operator=(const CudaInput &input);
+  __device__ void operator=(const Input &input);
 };
 
-struct CudaPhysics {
+struct Physics {
   double g;     // gravity
   double h;     // com_height
   double v;     // foot_vel_max
@@ -60,12 +62,12 @@ struct Condition {
 
 /* host function */
 
-__host__ void initState(CudaState *cstate, int *next_state_id, Condition cond);
-__host__ void initInput(CudaInput *cinput, Condition cond);
+__host__ void initState(State *cstate, int *next_state_id, Condition cond);
+__host__ void initInput(Input *cinput, Condition cond);
 __host__ void initNstep(int *cnstep, Condition cond);
-__host__ void initGrid(CudaGrid *cgrid, Condition cond);
-__host__ void initCop(CudaVector2 *cop, Condition cond);
-__host__ void initPhysics(CudaPhysics *physics, Condition cond);
+__host__ void initGrid(Grid *cgrid, Condition cond);
+__host__ void initCop(Vector2 *cop, Condition cond);
+__host__ void initPhysics(Physics *physics, Condition cond);
 
 __host__ void output(std::string file_name, Condition cond, int *cnstep,
                      int *next_state_id);
@@ -75,17 +77,18 @@ __host__ void exeZeroStep(CA::Grid grid, CA::Model model, int *nstep,
 
 /* device function */
 
-__device__ CudaState step(CudaState state, CudaInput input);
+__device__ State step(State state, Input input);
 
-__device__ bool existState(CudaState state, CudaGrid grid);
-__device__ int getStateIndex(CudaState state, CudaGrid grid);
+__device__ bool existState(State state, Grid grid);
+__device__ int getStateIndex(State state, Grid grid);
 
 __device__ int roundValue(double value);
 
 /* global function */
 
-__global__ void exeNStep(CudaState *state, CudaInput *input, int *nstep,
-                         int *next_state_id, CudaGrid *grid, CudaVector2 *cop,
-                         CudaPhysics *physics);
+__global__ void exeNStep(State *state, Input *input, int *nstep,
+                         int *next_state_id, Grid *grid, Vector2 *cop,
+                         Physics *physics);
+} // namespace Cuda
 
 #endif // __CUDA_ANALYSIS_CUH__

@@ -5,7 +5,9 @@
 #include <stdio.h>
 #include <string>
 
-typedef struct CudaVector2 {
+namespace Cuda {
+
+typedef struct Vector2 {
   __device__ void clear();
 
   __device__ void setPolar(float radius, float theta);
@@ -17,17 +19,16 @@ typedef struct CudaVector2 {
   __device__ float th();
   __device__ float norm();
 
-  __device__ CudaVector2 normal();
+  __device__ Vector2 normal();
 
-  __host__ __device__ CudaVector2 &operator=(const CudaVector2 &v);
-  __device__ CudaVector2 operator+(const CudaVector2 &v);
-  __device__ CudaVector2 operator-(const CudaVector2 &v);
-  __device__ float operator%(const CudaVector2 &v);
-  __device__ CudaVector2 operator*(const float &d);
-  __device__ float operator*(const CudaVector2 &v);
-  __device__ CudaVector2 operator/(const float &d);
+  __host__ __device__ Vector2 &operator=(const Vector2 &v);
+  __device__ Vector2 operator+(const Vector2 &v);
+  __device__ Vector2 operator-(const Vector2 &v);
+  __device__ float operator%(const Vector2 &v);
+  __device__ Vector2 operator*(const float &d);
+  __device__ float operator*(const Vector2 &v);
+  __device__ Vector2 operator/(const float &d);
 
-public:
   __device__ void cartesianToPolar();
   __device__ void polarToCartesian();
 
@@ -36,6 +37,8 @@ public:
 
 } vec2_t;
 
-__device__ CudaVector2 operator*(const float &d, const CudaVector2 &v);
+__device__ Vector2 operator*(const float &d, const Vector2 &v);
+
+} // namespace Cuda
 
 #endif // __CUDA_VECTOR_CUH__

@@ -3,47 +3,67 @@
 namespace Capt {
 
 Capturability::Capturability(Model model, Param param)
-    : grid(param), model(model) {
+  : grid(param), model(model) {
   // this->model = model;
+  zero_data = new int [grid.getNumState()];
 }
 
-Capturability::~Capturability() {}
+Capturability::~Capturability() {
+}
 
-void Capturability::load(std::string file_name) {
+void Capturability::load(std::string file_name, DataType type) {
   FILE *fp;
-  int num_data = 0;
-  int buf[4];
-  CaptureSet set;
+  int   num_data = 0;
 
-  if ((fp = fopen(file_name.c_str(), "r")) == NULL) {
-    printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str());
-    exit(EXIT_FAILURE);
-  } else {
-    while (fscanf(fp, "%d,%d,%d,%d", &buf[0], &buf[1], &buf[2], &buf[3]) !=
-           EOF) {
-      set.state_id = buf[0];
-      set.input_id = buf[1];
-      set.next_state_id = buf[2];
-      set.n_step = buf[3];
+  if (type == ZERO_STEP) {
+    int        buf[2];
+    CaptureSet set;
 
-      State state = grid.getState(set.state_id);
-      Input input = grid.getInput(set.input_id);
-
-      set.swft = input.swft;
-
-      Polygon polygon;
-      std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
-      Vector2 cop = polygon.getClosestPoint(state.icp, region);
-      set.cop.setCartesian(cop.x, cop.y);
-
-      SwingFoot swing_foot(model);
-      swing_foot.set(state.swft, input.swft);
-      set.step_time = swing_foot.getTime();
-
-      capture_set.push_back(set);
-      num_data++;
+    if ((fp = fopen(file_name.c_str(), "r")) == NULL) {
+      printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str());
+      exit(EXIT_FAILURE);
+    } else {
+      printf("Find 0-step database.\n");
+      while (fscanf(fp, "%d, %d", &buf[0], &buf[1]) != EOF) {
+        zero_data[buf[0]] = buf[1];
+        num_data++;
+      }
+      fclose(fp);
     }
-    fclose(fp);
+  } else if (type == N_STEP) {
+    int        buf[4];
+    CaptureSet set;
+
+    if ((fp = fopen(file_name.c_str(), "r")) == NULL) {
+      printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str());
+      exit(EXIT_FAILURE);
+    } else {
+      printf("Find N-step database.\n");
+      while (fscanf(fp, "%d,%d,%d,%d", &buf[0], &buf[1], &buf[2], &buf[3]) != EOF) {
+        set.state_id      = buf[0];
+        set.input_id      = buf[1];
+        set.next_state_id = buf[2];
+        set.n_step        = buf[3];
+
+        State state = grid.getState(set.state_id);
+        Input input = grid.getInput(set.input_id);
+
+        set.swft = input.swft;
+
+        Polygon             polygon;
+        std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
+        Vector2             cop    = polygon.getClosestPoint(state.icp, region);
+        set.cop.setCartesian(cop.x, cop.y);
+
+        SwingFoot swing_foot(model);
+        swing_foot.set(state.swft, input.swft);
+        set.step_time = swing_foot.getTime();
+
+        n_data.push_back(set);
+        num_data++;
+      }
+      fclose(fp);
+    }
   }
 
   printf("Read success! (%d datas)\n", num_data);
@@ -53,15 +73,15 @@ void Capturability::setCaptureSet(const int state_id, const int input_id,
                                   const int next_state_id, const int n_step,
                                   const vec2_t cop, const float step_time) {
   CaptureSet set;
-  set.state_id = state_id;
-  set.input_id = input_id;
+  set.state_id      = state_id;
+  set.input_id      = input_id;
   set.next_state_id = next_state_id;
-  set.n_step = n_step;
-  set.swft = grid.getInput(set.input_id).swft;
-  set.cop = cop;
-  set.step_time = step_time;
+  set.n_step        = n_step;
+  set.swft          = grid.getInput(set.input_id).swft;
+  set.cop           = cop;
+  set.step_time     = step_time;
 
-  capture_set.push_back(set);
+  n_data.push_back(set);
 }
 
 void Capturability::setCaptureSet(const int state_id, const int input_id,
@@ -70,15 +90,15 @@ void Capturability::setCaptureSet(const int state_id, const int input_id,
   v.clear();
 
   CaptureSet set;
-  set.state_id = state_id;
-  set.input_id = input_id;
+  set.state_id      = state_id;
+  set.input_id      = input_id;
   set.next_state_id = next_state_id;
-  set.n_step = n_step;
-  set.swft = grid.getInput(set.input_id).swft;
-  set.cop = v;
-  set.step_time = 0.0;
+  set.n_step        = n_step;
+  set.swft          = grid.getInput(set.input_id).swft;
+  set.cop           = v;
+  set.step_time     = 0.0;
 
-  capture_set.push_back(set);
+  n_data.push_back(set);
 }
 
 std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id,
@@ -87,10 +107,10 @@ std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id,
   std::vector<CaptureSet> sets;
 
   sets.clear();
-  for (size_t i = 0; i < capture_set.size(); i++) {
-    if (capture_set[i].state_id == state_id &&
-        capture_set[i].n_step == n_step) {
-      sets.push_back(capture_set[i]);
+  for (size_t i = 0; i < n_data.size(); i++) {
+    if (n_data[i].state_id == state_id &&
+        n_data[i].n_step == n_step) {
+      sets.push_back(n_data[i]);
     }
   }
 
@@ -112,21 +132,11 @@ std::vector<CaptureSet> Capturability::getCaptureRegion(const State state,
 bool Capturability::capturable(State state, int n_step) {
   bool flag = false;
 
+  int state_id = grid.getStateIndex(state);
+
   if (n_step == 0) {
-    Polygon polygon;
-
-    // only SSP
-    std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
-    flag = polygon.inPolygon(state.icp, region);
-
-    // considered DSP
-    // std::vector<vec2_t> region_r = model.getVec("foot", "foot_r");
-    // std::vector<vec2_t> region_l = model.getVec("foot", "foot_l",
-    // state.swft);
-    // polygon.setVertex(region_r);
-    // polygon.setVertex(region_l);
-    // flag = polygon.inPolygon(state.icp, polygon.getConvexHull());
-
+    if (zero_data[state_id] == 0)
+      flag = true;
   } else {
     if (!getCaptureRegion(state, n_step).empty())
       flag = true;
@@ -147,14 +157,14 @@ bool Capturability::capturable(int state_id, int n_step) {
 void Capturability::save(const char *file_name, const int n_step) {
   FILE *fp = fopen(file_name, "w");
   // fprintf(fp, "state_id,input_id,next_state_id,n_step,cop_x,cop_y,time\n");
-  for (size_t i = 0; i < capture_set.size(); i++) {
-    if (capture_set[i].n_step == n_step) {
-      fprintf(fp, "%d,", capture_set[i].state_id);
-      fprintf(fp, "%d,", capture_set[i].input_id);
-      fprintf(fp, "%d,", capture_set[i].next_state_id);
-      fprintf(fp, "%d,", capture_set[i].n_step);
-      fprintf(fp, "%f,%f,", capture_set[i].cop.x, capture_set[i].cop.y);
-      fprintf(fp, "%f,", capture_set[i].step_time);
+  for (size_t i = 0; i < n_data.size(); i++) {
+    if (n_data[i].n_step == n_step) {
+      fprintf(fp, "%d,", n_data[i].state_id);
+      fprintf(fp, "%d,", n_data[i].input_id);
+      fprintf(fp, "%d,", n_data[i].next_state_id);
+      fprintf(fp, "%d,", n_data[i].n_step);
+      fprintf(fp, "%f,%f,", n_data[i].cop.x, n_data[i].cop.y);
+      fprintf(fp, "%f,", n_data[i].step_time);
       fprintf(fp, "\n");
     }
   }

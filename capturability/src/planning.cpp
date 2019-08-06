@@ -3,33 +3,42 @@
 namespace Capt {
 
 Planning::Planning(Model model, Param param, float timestep)
-    : model(model), polygon(), pendulum_cr(model), capturability(model, param),
-      grid(param), k(0.5), dt(timestep) {
+  : model(model), polygon(), pendulum_cr(model), capturability(model, param),
+    grid(param), k(0.5), dt(timestep) {
   this->cop_cmd.clear();
-  this->com_cmd = vec3_t::Zero();
+  this->com_cmd  = vec3_t::Zero();
   this->rleg_cmd = vec3_t::Zero();
   this->lleg_cmd = vec3_t::Zero();
 
   this->pendulum_des.clear();
   this->swft.clear();
 
-  g = model.getVal("environment", "gravity");
-  h = model.getVal("physics", "com_height");
+  g     = model.getVal("environment", "gravity");
+  h     = model.getVal("physics", "com_height");
   omega = sqrt(g / h);
   std::cout << "omega" << omega << '\n';
 
-  capturability.load("1step.csv");
+  capturability.load("1step.csv", DataType::N_STEP);
 }
 
-Planning::~Planning() {}
+Planning::~Planning() {
+}
 
-void Planning::setCom(vec3_t com) { this->com_cr = com; }
+void Planning::setCom(vec3_t com) {
+  this->com_cr = com;
+}
 
-void Planning::setComVel(vec3_t com_vel) { this->com_vel_cr = com_vel; }
+void Planning::setComVel(vec3_t com_vel) {
+  this->com_vel_cr = com_vel;
+}
 
-void Planning::setIcp(vec2_t icp) { this->icp_cr = icp; }
+void Planning::setIcp(vec2_t icp) {
+  this->icp_cr = icp;
+}
 
-void Planning::setFootstep(Footstep footstep) { this->footstep = footstep; }
+void Planning::setFootstep(Footstep footstep) {
+  this->footstep = footstep;
+}
 
 vec3_t Planning::vec2tovec3(vec2_t vec2) {
   vec3_t vec3;
@@ -76,10 +85,10 @@ vec2_t Planning::getCop(float time) {
 
   vec2_t icp_des, icp_vel_des;
   if (time < footstep.step_time[0]) {
-    icp_des = pendulum_des[0].getIcp(time);
+    icp_des     = pendulum_des[0].getIcp(time);
     icp_vel_des = pendulum_des[0].getIcpVel(time);
   } else {
-    icp_des = pendulum_des[1].getIcp(time - footstep.step_time[0]);
+    icp_des     = pendulum_des[1].getIcp(time - footstep.step_time[0]);
     icp_vel_des = pendulum_des[1].getIcpVel(time - footstep.step_time[0]);
   }
   cop_cmd_ = icp_cr + k * (icp_cr - icp_des) / omega - icp_vel_des / omega;

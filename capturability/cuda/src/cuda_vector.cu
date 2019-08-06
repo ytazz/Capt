@@ -3,14 +3,14 @@
 namespace Cuda {
 
 __device__ void Vector2::clear() {
-  this->r_ = 0.0;
+  this->r_  = 0.0;
   this->th_ = 0.0;
-  this->x_ = 0.0;
-  this->y_ = 0.0;
+  this->x_  = 0.0;
+  this->y_  = 0.0;
 }
 
 __device__ void Vector2::setPolar(float radius, float theta) {
-  this->r_ = radius;
+  this->r_  = radius;
   this->th_ = theta;
   polarToCartesian();
 }
@@ -27,22 +27,32 @@ __device__ void Vector2::polarToCartesian() {
 }
 
 __device__ void Vector2::cartesianToPolar() {
-  this->r_ = norm();
+  this->r_  = norm();
   this->th_ = atan2f(this->y_, this->x_);
   if (this->th_ < 0.0) {
     this->th_ += 2 * M_PI;
   }
 }
 
-__device__ float Vector2::x() { return this->x_; }
+__device__ float Vector2::x() {
+  return this->x_;
+}
 
-__device__ float Vector2::y() { return this->y_; }
+__device__ float Vector2::y() {
+  return this->y_;
+}
 
-__device__ float Vector2::r() { return this->r_; }
+__device__ float Vector2::r() {
+  return this->r_;
+}
 
-__device__ float Vector2::th() { return this->th_; }
+__device__ float Vector2::th() {
+  return this->th_;
+}
 
-__device__ float Vector2::norm() { return sqrt(x_ * x_ + y_ * y_); }
+__device__ float Vector2::norm() {
+  return sqrt(x_ * x_ + y_ * y_);
+}
 
 __device__ Vector2 Vector2::normal() {
   Vector2 normal_vector;
@@ -52,16 +62,16 @@ __device__ Vector2 Vector2::normal() {
 }
 
 __host__ __device__ Vector2 &Vector2::operator=(const Vector2 &v) {
-  this->x_ = v.x_;
-  this->y_ = v.y_;
-  this->r_ = v.r_;
+  this->x_  = v.x_;
+  this->y_  = v.y_;
+  this->r_  = v.r_;
   this->th_ = v.th_;
   return *this;
 }
 
 __device__ Vector2 Vector2::operator+(const Vector2 &v) {
   Vector2 vec;
-  double x, y;
+  double  x, y;
   x = this->x_ + v.x_;
   y = this->y_ + v.y_;
   vec.setCartesian(x, y);
@@ -70,7 +80,7 @@ __device__ Vector2 Vector2::operator+(const Vector2 &v) {
 
 __device__ Vector2 Vector2::operator-(const Vector2 &v) {
   Vector2 vec;
-  double x, y;
+  double  x, y;
   x = this->x_ - v.x_;
   y = this->y_ - v.y_;
   vec.setCartesian(x, y);
@@ -85,7 +95,7 @@ __device__ float Vector2::operator%(const Vector2 &v) {
 
 __device__ Vector2 Vector2::operator*(const float &d) {
   Vector2 vec;
-  double x, y;
+  double  x, y;
   x = this->x_ * d;
   y = this->y_ * d;
   vec.setCartesian(x, y);
@@ -101,7 +111,7 @@ __device__ float Vector2::operator*(const Vector2 &v) {
 
 __device__ Vector2 Vector2::operator/(const float &d) {
   Vector2 vec;
-  double x, y;
+  double  x, y;
   x = this->x_ / d;
   y = this->y_ / d;
   vec.setCartesian(x, y);
@@ -110,7 +120,7 @@ __device__ Vector2 Vector2::operator/(const float &d) {
 
 __device__ Vector2 operator*(const float &d, const Vector2 &v) {
   Vector2 vec;
-  double x, y;
+  double  x, y;
   x = v.x_ * d;
   y = v.y_ * d;
   vec.setCartesian(x, y);

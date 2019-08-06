@@ -9,55 +9,58 @@ int main(void) {
   printf("Prepare...\t");
 
   /* パラメータの読み込み */
-  Capt::Model model("nao.xml");
-  Capt::Param param("analysis.xml");
+  Capt::Model cmodel("nao.xml");
+  Capt::Param cparam("analysis.xml");
 
   /* グリッド */
-  Capt::Grid grid(param);
-  const int num_state = grid.getNumState();
-  const int num_input = grid.getNumInput();
-  const int num_grid = num_state * num_input;
+  Capt::Grid cgrid(cparam);
+  const int  num_state = cgrid.getNumState();
+  const int  num_input = cgrid.getNumInput();
+  const int  num_grid  = num_state * num_input;
 
   /* 解析条件 */
   Cuda::Condition cond;
-  cond.model = &model;
-  cond.param = &param;
-  cond.grid = &grid;
+  cond.model = &cmodel;
+  cond.param = &cparam;
+  cond.grid  = &cgrid;
 
   /* グリッド */
   // ホスト側
-  Cuda::State *cstate = new Cuda::State[num_state];
-  Cuda::Input *cinput = new Cuda::Input[num_input];
-  int *cnstep = new int[num_grid];
-  int *next_state_id = new int[num_grid];
-  Cuda::Grid *cgrid = new Cuda::Grid;
-  initState(cstate, next_state_id, cond);
-  initInput(cinput, cond);
-  initNstep(cnstep, cond);
-  initGrid(cgrid, cond);
+  Cuda::State *state     = new Cuda::State[num_state];
+  Cuda::Input *input     = new Cuda::Input[num_input];
+  int         *zero_step = new int[num_state]; // if 0     => 0-step capturable
+  int         *n_step    = new int[num_grid];  // if n(>1) => n-step capturable
+  int         *next_id   = new int[num_grid];  // next state id
+  Cuda::Grid  *grid      = new Cuda::Grid;
+  initState(state, next_id, cond);
+  initInput(input, cond);
+  initNstep(zero_step, n_step, cond);
+  initGrid(grid, cond);
   // デバイス側
-  Cuda::State *dev_cstate;
-  Cuda::Input *dev_cinput;
-  int *dev_cnstep;
-  int *dev_next_state_id;
-  Cuda::Grid *dev_cgrid;
+  Cuda::State *dev_state;
+  Cuda::Input *dev_input;
+  int         *dev_zero_step;
+  int         *dev_n_step;
+  int         *dev_next_id;
+  Cuda::Grid  *dev_grid;
   HANDLE_ERROR(
-      cudaMalloc((void **)&dev_cstate, num_state * sizeof(Cuda::State)));
+    cudaMalloc((void **)&dev_state, num_state * sizeof(Cuda::State)));
   HANDLE_ERROR(
-      cudaMalloc((void **)&dev_cinput, num_input * sizeof(Cuda::Input)));
-  HANDLE_ERROR(cudaMalloc((void **)&dev_cnstep, num_grid * sizeof(int)));
-  HANDLE_ERROR(cudaMalloc((void **)&dev_next_state_id, num_grid * sizeof(int)));
-  HANDLE_ERROR(cudaMalloc((void **)&dev_cgrid, sizeof(Cuda::Grid)));
-  HANDLE_ERROR(cudaMemcpy(dev_cstate, cstate, num_state * sizeof(Cuda::State),
+    cudaMalloc((void **)&dev_input, num_input * sizeof(Cuda::Input)));
+  HANDLE_ERROR(cudaMalloc((void **)&dev_zero_step, num_state * sizeof(int)));
+  HANDLE_ERROR(cudaMalloc((void **)&dev_n_step, num_grid * sizeof(int)));
+  HANDLE_ERROR(cudaMalloc((void **)&dev_next_id, num_grid * sizeof(int)));
+  HANDLE_ERROR(cudaMalloc((void **)&dev_grid, sizeof(Cuda::Grid)));
+  HANDLE_ERROR(cudaMemcpy(dev_state, state, num_state * sizeof(Cuda::State),
                           cudaMemcpyHostToDevice));
-  HANDLE_ERROR(cudaMemcpy(dev_cinput, cinput, num_input * sizeof(Cuda::Input),
+  HANDLE_ERROR(cudaMemcpy(dev_input, input, num_input * sizeof(Cuda::Input),
                           cudaMemcpyHostToDevice));
-  HANDLE_ERROR(cudaMemcpy(dev_cnstep, cnstep, num_grid * sizeof(int),
+  HANDLE_ERROR(cudaMemcpy(dev_n_step, n_step, num_grid * sizeof(int),
                           cudaMemcpyHostToDevice));
-  HANDLE_ERROR(cudaMemcpy(dev_next_state_id, next_state_id,
-                          num_grid * sizeof(int), cudaMemcpyHostToDevice));
+  HANDLE_ERROR(cudaMemcpy(dev_next_id, next_id, num_grid * sizeof(int),
+                          cudaMemcpyHostToDevice));
   HANDLE_ERROR(
-      cudaMemcpy(dev_cgrid, cgrid, sizeof(Cuda::Grid), cudaMemcpyHostToDevice));
+    cudaMemcpy(dev_grid, grid, sizeof(Cuda::Grid), cudaMemcpyHostToDevice));
 
   /* CoP List */
   // ホスト側
@@ -66,7 +69,7 @@ int main(void) {
   // デバイス側
   Cuda::Vector2 *dev_cop;
   HANDLE_ERROR(
-      cudaMalloc((void **)&dev_cop, num_state * sizeof(Cuda::Vector2)));
+    cudaMalloc((void **)&dev_cop, num_state * sizeof(Cuda::Vector2)));
   HANDLE_ERROR(cudaMemcpy(dev_cop, cop, num_state * sizeof(Cuda::Vector2),
                           cudaMemcpyHostToDevice));
 
@@ -87,22 +90,22 @@ int main(void) {
   /* ---------------------------------------------------------------------- */
   printf("Execute...\t");
 
-  Cuda::exeZeroStep(grid, model, cnstep, next_state_id);
+  Cuda::exeZeroStep(cgrid, cmodel, zero_step);
 
-  Cuda::exeNStep<<<BPG, TPB>>>(dev_cstate, dev_cinput, dev_cnstep,
-                               dev_next_state_id, dev_cgrid, dev_cop,
-                               dev_physics);
+  // Cuda::exeNStep<<<BPG, TPB>>>(dev_state, dev_input, dev_n_step, dev_next_id,
+  //                              dev_grid, dev_cop, dev_physics);
 
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
 
-  // HANDLE_ERROR(cudaMemcpy(cnstep, dev_cnstep, num_grid * sizeof(int),
+  // HANDLE_ERROR(cudaMemcpy(n_step, dev_n_step, num_grid * sizeof(int),
   //                         cudaMemcpyDeviceToHost));
 
   /* ファイル書き出し */
   /* ---------------------------------------------------------------------- */
   printf("Output...\t");
-  output("result.csv", cond, cnstep, next_state_id);
+  Cuda::outputZeroStep("0step.csv", false, cond, zero_step);
+  Cuda::outputNStep("Nstep.csv", false, cond, n_step, next_id);
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
 
@@ -112,19 +115,21 @@ int main(void) {
 
   /* メモリの開放 */
   // ホスト側
-  delete cstate;
-  delete cinput;
-  delete cnstep;
-  delete next_state_id;
-  delete cgrid;
+  delete state;
+  delete input;
+  delete zero_step;
+  delete n_step;
+  delete next_id;
+  delete grid;
   delete cop;
   delete physics;
   // デバイス側
-  cudaFree(dev_cstate);
-  cudaFree(dev_cinput);
-  cudaFree(dev_next_state_id);
-  cudaFree(dev_cnstep);
-  cudaFree(dev_cgrid);
+  cudaFree(dev_state);
+  cudaFree(dev_input);
+  cudaFree(dev_next_id);
+  cudaFree(dev_zero_step);
+  cudaFree(dev_n_step);
+  cudaFree(dev_grid);
   cudaFree(dev_cop);
   cudaFree(dev_physics);
 

@@ -19,16 +19,16 @@
 namespace Capt {
 
 class CRPlot : public Gnuplot {
-  Gnuplot p;
-  Model model;
-  Param param;
+  Gnuplot       p;
+  Model         model;
+  Param         param;
   Capturability capturability;
 
 public:
   CRPlot(Model model, Param param);
   ~CRPlot();
 
-  void setInput(std::string file_name);
+  void setInput(std::string file_name, DataType type);
   void setOutput(std::string type);
 
   void animCaptureRegion(State state);

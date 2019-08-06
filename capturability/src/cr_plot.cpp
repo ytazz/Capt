@@ -5,7 +5,7 @@ using namespace std;
 namespace Capt {
 
 CRPlot::CRPlot(Model model, Param param)
-    : model(model), param(param), capturability(model, param) {
+  : model(model), param(param), capturability(model, param) {
   p("set title \"Capture Region (polar coordinate)\"");
   p("set encoding utf8");
   p("set size square");
@@ -14,7 +14,7 @@ CRPlot::CRPlot(Model model, Param param)
   p("set xtics 0.05");
   p("set ytics 0.05");
 
-  std::string step_r = std::to_string(param.getVal("swft_r", "step"));
+  std::string step_r  = std::to_string(param.getVal("swft_r", "step"));
   std::string step_th = std::to_string(param.getVal("swft_th", "step"));
 
   p("set polar");
@@ -29,9 +29,12 @@ CRPlot::CRPlot(Model model, Param param)
   p("unset raxis");
 }
 
-CRPlot::~CRPlot() {}
+CRPlot::~CRPlot() {
+}
 
-void CRPlot::setInput(std::string file_name) { capturability.load(file_name); }
+void CRPlot::setInput(std::string file_name, DataType type) {
+  capturability.load(file_name, type);
+}
 
 void CRPlot::setOutput(std::string type) {
   if (type == "gif") {
@@ -62,20 +65,20 @@ void CRPlot::plotCaptureRegion(State state) {
   fprintf(p.gp, "plot ");
   // steppable region
   fprintf(p.gp, "'-' t 'Valid Stepping Region' with lines linewidth 1 "
-                "lc \"black\",");
+          "lc \"black\",");
   // icp
   fprintf(p.gp, "'-' t 'Instantaneous Capture Point' with points pointsize 1 "
-                "pointtype 7 lc \"blue\",");
+          "pointtype 7 lc \"blue\",");
   // support foot
   fprintf(p.gp, "'-' t 'Current Support Foot' with lines linewidth 2 "
-                "lc \"black\",");
+          "lc \"black\",");
   // swing foot
   fprintf(p.gp, "'-' t 'Current Swing Foot' with lines linewidth 2 "
-                "lc \"black\",");
+          "lc \"black\",");
   // capture region
   int step_num = 0;
   fprintf(p.gp, "'-' t '%d-step Capture Region' with points pointsize 0.5 "
-                "pointtype 7 lc \"%s\"\n",
+          "pointtype 7 lc \"%s\"\n",
           step_num, "gray");
 
   // plot
@@ -125,37 +128,36 @@ void CRPlot::plotCaptureIcp(State state) {
   fprintf(p.gp, "plot ");
   // support foot
   fprintf(p.gp, "'-' t 'Current Support Foot' with lines linewidth 2 "
-                "lc \"black\",");
+          "lc \"black\",");
   // swing foot
   fprintf(p.gp, "'-' t 'Current Swing Foot' with lines linewidth 2 "
-                "lc \"black\",");
+          "lc \"black\",");
   // capturable ICP
   fprintf(p.gp, "'-' t 'Capturable ICP' with points pointsize 0.5 "
-                "pointtype 7 lc \"blue\"\n");
+          "pointtype 7 lc \"blue\"\n");
 
   // plot
   // support foot
-  std::vector<Vector2> foot_r = model.getVec("foot", "foot_r_convex");
+  std::vector<Vector2> foot_r = model.getVec("foot", "foot_r");
   for (size_t i = 0; i < foot_r.size(); i++) {
     fprintf(p.gp, "%f %f\n", foot_r[i].th, foot_r[i].r);
   }
   fprintf(p.gp, "e\n");
   // swing foot
-  std::vector<Vector2> foot_l = model.getVec("foot", "foot_l_convex");
+  std::vector<Vector2> foot_l = model.getVec("foot", "foot_l");
   for (size_t i = 0; i < foot_l.size(); i++) {
     fprintf(p.gp, "%f %f\n", (foot_l[i] + state.swft).th,
             (foot_l[i] + state.swft).r);
   }
   fprintf(p.gp, "e\n");
   // capturable ICP
-  float icp_r = param.getVal("icp_r", "min");
+  float icp_r  = param.getVal("icp_r", "min");
   float icp_th = param.getVal("icp_th", "min");
   while (icp_r < param.getVal("icp_r", "max")) {
     icp_th = param.getVal("icp_th", "min");
     while (icp_th < param.getVal("icp_th", "max")) {
       state.icp.setPolar(icp_r, icp_th);
-      std::vector<CaptureSet> region = capturability.getCaptureRegion(state, 0);
-      if (!region.empty()) {
+      if (capturability.capturable(state, 0)) {
         fprintf(p.gp, "%f %f\n", icp_th, icp_r);
       }
       icp_th += param.getVal("icp_th", "step");

@@ -22,12 +22,12 @@ typedef struct Vector2 {
   __device__ Vector2 normal();
 
   __host__ __device__ Vector2 &operator=(const Vector2 &v);
-  __device__ Vector2 operator+(const Vector2 &v);
-  __device__ Vector2 operator-(const Vector2 &v);
-  __device__ float operator%(const Vector2 &v);
-  __device__ Vector2 operator*(const float &d);
-  __device__ float operator*(const Vector2 &v);
-  __device__ Vector2 operator/(const float &d);
+  __device__ Vector2 operator          +(const Vector2 &v);
+  __device__ Vector2 operator          -(const Vector2 &v);
+  __device__ float operator            %(const Vector2 &v);
+  __device__ Vector2 operator          *(const float &d);
+  __device__ float operator            *(const Vector2 &v);
+  __device__ Vector2 operator          /(const float &d);
 
   __device__ void cartesianToPolar();
   __device__ void polarToCartesian();

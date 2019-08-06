@@ -20,7 +20,7 @@ namespace Cuda {
 struct Grid {
   int num_state;
   int num_input;
-  int num_nstep;
+  int num_n_step;
 
   int icp_r_num;
   int icp_th_num;
@@ -57,38 +57,38 @@ struct Physics {
 struct Condition {
   Capt::Model *model;
   Capt::Param *param;
-  Capt::Grid *grid;
+  Capt::Grid  *grid;
 };
 
 /* host function */
 
-__host__ void initState(State *cstate, int *next_state_id, Condition cond);
-__host__ void initInput(Input *cinput, Condition cond);
-__host__ void initNstep(int *cnstep, Condition cond);
-__host__ void initGrid(Grid *cgrid, Condition cond);
+__host__ void initState(State *state, int *next_id, Condition cond);
+__host__ void initInput(Input *input, Condition cond);
+__host__ void initNstep(int *zero_step, int *n_step, Condition cond);
+__host__ void initGrid(Grid *grid, Condition cond);
 __host__ void initCop(Vector2 *cop, Condition cond);
 __host__ void initPhysics(Physics *physics, Condition cond);
 
-__host__ void output(std::string file_name, Condition cond, int *cnstep,
-                     int *next_state_id);
+__host__ void outputZeroStep(std::string file_name, bool header, Condition cond,
+                             int *zero_step);
+__host__ void outputNStep(std::string file_name, bool header, Condition cond,
+                          int *n_step, int *next_id);
 
-__host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *nstep,
-                          int *next_state_id);
+__host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *zero_step);
 
 /* device function */
 
 __device__ State step(State state, Input input);
-
-__device__ bool existState(State state, Grid grid);
-__device__ int getStateIndex(State state, Grid grid);
-
-__device__ int roundValue(double value);
+__device__ bool  existState(State state, Grid grid);
+__device__ int   getStateIndex(State state, Grid grid);
+__device__ int   roundValue(double value);
 
 /* global function */
 
-__global__ void exeNStep(State *state, Input *input, int *nstep,
-                         int *next_state_id, Grid *grid, Vector2 *cop,
+__global__ void exeNStep(State *state, Input *input, int *n_step,
+                         int *next_id, Grid *grid, Vector2 *cop,
                          Physics *physics);
+
 } // namespace Cuda
 
 #endif // __CUDA_ANALYSIS_CUH__

@@ -86,20 +86,43 @@ int main(void) {
   printf("Done.\n");
   /* ------------------------------------------------------------------------ */
 
-  /* 解析実行 */
+  /* 状態遷移計算 */
   /* ---------------------------------------------------------------------- */
-  printf("Execute...\t");
+  printf("Calculate...\t");
 
-  Cuda::exeZeroStep(cgrid, cmodel, zero_step);
-
-  // Cuda::exeNStep<<<BPG, TPB>>>(dev_state, dev_input, dev_n_step, dev_next_id,
-  //                              dev_grid, dev_cop, dev_physics);
+  Cuda::calcStateTrans << < BPG, TPB >> > (dev_state, dev_input, dev_next_id, dev_grid, dev_cop, dev_physics);
+  HANDLE_ERROR(cudaMemcpy(next_id, dev_next_id, num_grid * sizeof(int),
+                          cudaMemcpyDeviceToHost));
 
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
 
-  // HANDLE_ERROR(cudaMemcpy(n_step, dev_n_step, num_grid * sizeof(int),
-  //                         cudaMemcpyDeviceToHost));
+  /* 解析実行 */
+  /* ---------------------------------------------------------------------- */
+  printf("Execute...\n");
+
+  printf("\t0-step\n");
+  Cuda::exeZeroStep(cgrid, cmodel, zero_step);
+
+  int  N    = 1;
+  bool flag = false;
+  while (flag) {
+    printf("\t%d-step\n", N);
+    Cuda::exeNStep << < BPG, TPB >> > ( N, dev_zero_step, dev_n_step,
+                                        dev_next_id, dev_grid);
+    HANDLE_ERROR(cudaMemcpy(n_step, dev_n_step, num_grid * sizeof(int),
+                            cudaMemcpyDeviceToHost));
+    flag = false;
+    for (int i = 0; i < num_grid; i++) {
+      if (n_step[i] == -1)
+        flag = true;
+    }
+    N++;
+  }
+
+  printf("\t\tDone.\n");
+  /* ---------------------------------------------------------------------- */
+
 
   /* ファイル書き出し */
   /* ---------------------------------------------------------------------- */

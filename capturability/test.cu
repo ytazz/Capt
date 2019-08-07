@@ -103,31 +103,45 @@ int main(void) {
 
   printf("\t0-step\n");
   Cuda::exeZeroStep(cgrid, cmodel, basin);
+  HANDLE_ERROR(cudaMemcpy(dev_basin, basin, num_state * sizeof(int),
+                          cudaMemcpyHostToDevice));
 
   int  N    = 1;
-  bool flag = false;
+  bool flag = true;
   while (flag) {
     printf("\t%d-step\n", N);
     Cuda::exeNStep << < BPG, TPB >> > ( N, dev_basin, dev_nstep,
                                         dev_next_id, dev_grid);
-    HANDLE_ERROR(cudaMemcpy(nstep, dev_nstep, num_grid * sizeof(int),
+    HANDLE_ERROR(cudaMemcpy(basin, dev_basin, num_state * sizeof(int),
                             cudaMemcpyDeviceToHost));
+
     flag = false;
-    for (int i = 0; i < num_grid; i++) {
-      if (nstep[i] == -1)
-        flag = true;
-    }
+    // for (int i = 0; i < num_state; i++) {
+    //   if (basin[i] == -1) // basin[i] != prev_basin[i]とするべき
+    //     flag = true;
+    // }
+    if(N < 3)
+      flag = true;
     N++;
   }
 
   printf("\t\tDone.\n");
   /* ---------------------------------------------------------------------- */
 
+  /* 解析結果をデバイス側からホスト側にコピー */
+  /* ---------------------------------------------------------------------- */
+  HANDLE_ERROR(cudaMemcpy(basin, dev_basin, num_state * sizeof(int),
+                          cudaMemcpyDeviceToHost));
+  HANDLE_ERROR(cudaMemcpy(nstep, dev_nstep, num_grid * sizeof(int),
+                          cudaMemcpyDeviceToHost));
+  HANDLE_ERROR(cudaMemcpy(next_id, dev_next_id, num_grid * sizeof(int),
+                          cudaMemcpyDeviceToHost));
+  /* ---------------------------------------------------------------------- */
 
   /* ファイル書き出し */
   /* ---------------------------------------------------------------------- */
   printf("Output...\t");
-  Cuda::outputZeroStep("0step.csv", false, cond, basin);
+  Cuda::outputBasin("Basin.csv", false, cond, basin);
   Cuda::outputNStep("Nstep.csv", false, cond, nstep, next_id);
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */

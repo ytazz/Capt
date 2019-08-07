@@ -108,15 +108,15 @@ __host__ void initPhysics(Physics *physics, Condition cond) {
   physics->omega = sqrt(physics->g / physics->h);
 }
 
-__host__ void outputZeroStep(std::string file_name, bool header, Condition cond,
-                             int *basin) {
+__host__ void outputBasin(std::string file_name, bool header, Condition cond,
+                          int *basin) {
   FILE     *fp        = fopen(file_name.c_str(), "w");
   const int num_state = cond.grid->getNumState();
 
   // Header
   if (header) {
     fprintf(fp, "%s,", "state_id");
-    fprintf(fp, "%s", "0step");
+    fprintf(fp, "%s", "nstep");
     fprintf(fp, "\n");
   }
 
@@ -141,7 +141,7 @@ __host__ void outputNStep(std::string file_name, bool header, Condition cond,
     fprintf(fp, "%s,", "state_id");
     fprintf(fp, "%s,", "input_id");
     fprintf(fp, "%s,", "next_id");
-    fprintf(fp, "%s", "Nstep");
+    fprintf(fp, "%s", "nstep");
     fprintf(fp, "\n");
   }
 
@@ -284,17 +284,14 @@ __global__ void exeNStep(int N, int *basin,
     int state_id = tid / grid->num_input;
     int input_id = tid % grid->num_input;
 
-    bool flag = false;
-    // if (N == 1) {
-    //   if (basin[next_id[tid]] == 0)
-    //     nstep[tid] == 1;
-    // }else{
-    //   if (nstep[next_id[tid]] == (N - 1))
-    //     nstep[tid] = N;
-    // }
-
-    if (flag)
-      nstep[tid] = N;
+    if(next_id[tid] >= 0) {
+      if (basin[next_id[tid]] == (N - 1)) {
+        nstep[tid] = N;
+        if(basin[state_id] != -1) {
+          basin[state_id] = N;
+        }
+      }
+    }
 
     tid += blockDim.x * gridDim.x;
   }

@@ -69,8 +69,8 @@ __host__ void initGrid(Grid *grid, Condition cond);
 __host__ void initCop(Vector2 *cop, Condition cond);
 __host__ void initPhysics(Physics *physics, Condition cond);
 
-__host__ void outputZeroStep(std::string file_name, bool header, Condition cond,
-                             int *basin);
+__host__ void outputBasin(std::string file_name, bool header, Condition cond,
+                          int *basin);
 __host__ void outputNStep(std::string file_name, bool header, Condition cond,
                           int *nstep, int *next_id);
 

@@ -76,10 +76,10 @@ void CRPlot::plotCaptureRegion(State state) {
   fprintf(p.gp, "'-' t 'Current Swing Foot' with lines linewidth 2 "
           "lc \"black\",");
   // capture region
-  int step_num = 0;
-  fprintf(p.gp, "'-' t '%d-step Capture Region' with points pointsize 0.5 "
+  int step_num = 1;
+  fprintf(p.gp, "'-' t '%d-step Capture Point' with points pointsize 0.5 "
           "pointtype 7 lc \"%s\"\n",
-          step_num, "gray");
+          step_num, "red");
 
   // plot
   // steppable region
@@ -111,7 +111,7 @@ void CRPlot::plotCaptureRegion(State state) {
   }
   fprintf(p.gp, "e\n");
   // capture region
-  std::vector<CaptureSet> region = capturability.getCaptureRegion(state, 0);
+  std::vector<CaptureSet> region = capturability.getCaptureRegion(state, step_num);
   if (!region.empty()) {
     for (size_t i = 0; i < region.size(); i++) {
       fprintf(p.gp, "%f %f\n", region[i].swft.th, region[i].swft.r);

@@ -287,7 +287,7 @@ __global__ void exeNStep(int N, int *basin,
     if(next_id[tid] >= 0) {
       if (basin[next_id[tid]] == (N - 1)) {
         nstep[tid] = N;
-        if(basin[state_id] != -1) {
+        if(basin[state_id] < 0) {
           basin[state_id] = N;
         }
       }

@@ -16,7 +16,7 @@ int main() {
   Grid  grid(param);
 
   State state;
-  state.icp.setPolar(0.06, 150 * 3.14159 / 180);
+  state.icp.setPolar(0.06, 141 * 3.14159 / 180);
   state.swft.setPolar(0.1, 120 * 3.14159 / 180);
 
   int state_id = grid.getStateIndex(state);

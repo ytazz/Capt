@@ -6,6 +6,10 @@ Capturability::Capturability(Model model, Param param)
   : grid(param), model(model) {
   // this->model = model;
   zero_data = new int [grid.getNumState()];
+  n_data    = new CaptureSet*[grid.getNumState()];
+  for (int i = 0; i < grid.getNumState(); i++) {
+    n_data[i] = new CaptureSet[grid.getNumInput()];
+  }
 }
 
 Capturability::~Capturability() {
@@ -49,17 +53,17 @@ void Capturability::load(std::string file_name, DataType type) {
         Input input = grid.getInput(set.input_id);
 
         set.swft = input.swft;
+        //
+        // Polygon             polygon;
+        // std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
+        // Vector2             cop    = polygon.getClosestPoint(state.icp, region);
+        // set.cop.setCartesian(cop.x, cop.y);
+        //
+        // SwingFoot swing_foot(model);
+        // swing_foot.set(state.swft, input.swft);
+        // set.step_time = swing_foot.getTime();
 
-        Polygon             polygon;
-        std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
-        Vector2             cop    = polygon.getClosestPoint(state.icp, region);
-        set.cop.setCartesian(cop.x, cop.y);
-
-        SwingFoot swing_foot(model);
-        swing_foot.set(state.swft, input.swft);
-        set.step_time = swing_foot.getTime();
-
-        n_data.push_back(set);
+        n_data[set.state_id][set.input_id] = set;
         num_data++;
       }
       fclose(fp);
@@ -81,7 +85,7 @@ void Capturability::setCaptureSet(const int state_id, const int input_id,
   set.cop           = cop;
   set.step_time     = step_time;
 
-  n_data.push_back(set);
+  // n_data.push_back(set);
 }
 
 void Capturability::setCaptureSet(const int state_id, const int input_id,
@@ -98,7 +102,7 @@ void Capturability::setCaptureSet(const int state_id, const int input_id,
   set.cop           = v;
   set.step_time     = 0.0;
 
-  n_data.push_back(set);
+  // n_data.push_back(set);
 }
 
 std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id,
@@ -107,10 +111,9 @@ std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id,
   std::vector<CaptureSet> sets;
 
   sets.clear();
-  for (size_t i = 0; i < n_data.size(); i++) {
-    if (n_data[i].state_id == state_id &&
-        n_data[i].n_step == n_step) {
-      sets.push_back(n_data[i]);
+  for (size_t i = 0; i < grid.getNumInput(); i++) {
+    if (n_data[state_id][i].n_step == n_step) {
+      sets.push_back(n_data[state_id][i]);
     }
   }
 
@@ -157,17 +160,17 @@ bool Capturability::capturable(int state_id, int n_step) {
 void Capturability::save(const char *file_name, const int n_step) {
   FILE *fp = fopen(file_name, "w");
   // fprintf(fp, "state_id,input_id,next_state_id,n_step,cop_x,cop_y,time\n");
-  for (size_t i = 0; i < n_data.size(); i++) {
-    if (n_data[i].n_step == n_step) {
-      fprintf(fp, "%d,", n_data[i].state_id);
-      fprintf(fp, "%d,", n_data[i].input_id);
-      fprintf(fp, "%d,", n_data[i].next_state_id);
-      fprintf(fp, "%d,", n_data[i].n_step);
-      fprintf(fp, "%f,%f,", n_data[i].cop.x, n_data[i].cop.y);
-      fprintf(fp, "%f,", n_data[i].step_time);
-      fprintf(fp, "\n");
-    }
-  }
+  // for (size_t i = 0; i < n_data.size(); i++) {
+  //   if (n_data[i].n_step == n_step) {
+  //     fprintf(fp, "%d,", n_data[i].state_id);
+  //     fprintf(fp, "%d,", n_data[i].input_id);
+  //     fprintf(fp, "%d,", n_data[i].next_state_id);
+  //     fprintf(fp, "%d,", n_data[i].n_step);
+  //     fprintf(fp, "%f,%f,", n_data[i].cop.x, n_data[i].cop.y);
+  //     fprintf(fp, "%f,", n_data[i].step_time);
+  //     fprintf(fp, "\n");
+  //   }
+  // }
   fclose(fp);
 }
 

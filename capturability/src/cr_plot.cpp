@@ -38,7 +38,7 @@ void CRPlot::setInput(std::string file_name, DataType type) {
 
 void CRPlot::setOutput(std::string type) {
   if (type == "gif") {
-    p("set terminal gif animate optimize delay 50 size 600,900");
+    p("set terminal gif animate optimize delay 30 size 600,900");
     p("set output 'plot.gif'");
   }
   if (type == "svg") {
@@ -75,11 +75,15 @@ void CRPlot::plotCaptureRegion(State state) {
   // swing foot
   fprintf(p.gp, "'-' t 'Current Swing Foot' with lines linewidth 2 "
           "lc \"black\",");
-  // capture region
-  int step_num = 1;
-  fprintf(p.gp, "'-' t '%d-step Capture Point' with points pointsize 0.5 "
-          "pointtype 7 lc \"%s\"\n",
-          step_num, "red");
+  // 1-step capture region
+  fprintf(p.gp, "'-' t '1-step Capture Point' with points pointsize 0.5 "
+          "pointtype 7 lc \"%s\",", "red");
+  // 2-step capture region
+  fprintf(p.gp, "'-' t '2-step Capture Point' with points pointsize 0.5 "
+          "pointtype 7 lc \"%s\",", "green");
+  // 2-step capture region
+  fprintf(p.gp, "'-' t '3-step Capture Point' with points pointsize 0.5 "
+          "pointtype 7 lc \"%s\"\n", "blue");
 
   // plot
   // steppable region
@@ -111,7 +115,26 @@ void CRPlot::plotCaptureRegion(State state) {
   }
   fprintf(p.gp, "e\n");
   // capture region
-  std::vector<CaptureSet> region = capturability.getCaptureRegion(state, step_num);
+  std::vector<CaptureSet> region;
+  region = capturability.getCaptureRegion(state, 1);
+  if (!region.empty()) {
+    for (size_t i = 0; i < region.size(); i++) {
+      fprintf(p.gp, "%f %f\n", region[i].swft.th, region[i].swft.r);
+    }
+  }
+  fprintf(p.gp, "e\n");
+  // capture region
+  region.clear();
+  region = capturability.getCaptureRegion(state, 2);
+  if (!region.empty()) {
+    for (size_t i = 0; i < region.size(); i++) {
+      fprintf(p.gp, "%f %f\n", region[i].swft.th, region[i].swft.r);
+    }
+  }
+  fprintf(p.gp, "e\n");
+  // capture region
+  region.clear();
+  region = capturability.getCaptureRegion(state, 3);
   if (!region.empty()) {
     for (size_t i = 0; i < region.size(); i++) {
       fprintf(p.gp, "%f %f\n", region[i].swft.th, region[i].swft.r);

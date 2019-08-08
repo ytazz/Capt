@@ -59,10 +59,10 @@ public:
   bool capturable(int state_id, int n_step);
 
 private:
-  Grid                    grid;
-  Model                   model;
-  int                    *zero_data; // size = number of state
-  std::vector<CaptureSet> n_data;
+  Grid         grid;
+  Model        model;
+  int         *zero_data;            // size = number of state
+  CaptureSet **n_data;
 };
 
 } // namespace Capt

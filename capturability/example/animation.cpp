@@ -16,11 +16,11 @@ int main() {
   Grid  grid(param);
 
   State state;
-  state.icp.setPolar(0.06, 141 * 3.14159 / 180);
-  state.swft.setPolar(0.1, 120 * 3.14159 / 180);
+  state.icp.setPolar(0.08, 30 * 3.14159 / 180);
+  state.swft.setPolar(0.1, 90 * 3.14159 / 180);
 
   int state_id = grid.getStateIndex(state);
-  std::cout << "state_id: " << state_id<< '\n';
+  std::cout << "state_id: " << state_id << '\n';
 
   CRPlot cr_plot(model, param);
   cr_plot.setInput("Basin.csv", DataType::ZERO_STEP);

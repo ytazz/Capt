@@ -1,19 +1,16 @@
 cmake_minimum_required(VERSION 3.0)
-project(Capturability)
+project(Capt)
 
 set(BUILD_GPU     false CACHE BOOL "build programs for GPU")
 set(BUILD_CPU     false CACHE BOOL "build programs for CPU")
 set(BUILD_EXAMPLE false CACHE BOOL "build sample programs")
-set(MAKE_LIBRARY  false CACHE BOOL "make capturability library")
+set(MAKE_LIBRARY  false CACHE BOOL "make Capt library")
 
-# set(CMAKE_CXX_FLAGS "-std=c++11")
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
-# set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --ptxas-options=-v")
-# set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-gencode arch=compute_30,code=sm_30)
 set(CUDA_SEPARABLE_COMPILATION ON)
-# if(${MAKE_LIBRARY})
-#   set(CMAKE_CXX_FLAGS "-shared -fPIC")
-# endif()
+if(${MAKE_LIBRARY})
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -shared -fPIC")
+endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
@@ -96,7 +93,7 @@ set(GPU_SOURCES
 
 set(PLOT_SOURCES
   ${PROJECT_SOURCE_DIR}/src/cr_plot.cpp
-  ${PROJECT_SOURCE_DIR}/src/plot_trajectory.cpp
+  # ${PROJECT_SOURCE_DIR}/src/plot_trajectory.cpp
   ${PROJECT_SOURCE_DIR}/src/gnuplot.cpp
 )
 
@@ -121,22 +118,13 @@ if(${BUILD_GPU})
 endif()
 
 if(${MAKE_LIBRARY})
-  add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})
+  add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
   target_link_libraries(${PROJECT_NAME} ${EXPAT_LIBRARIES})
-  # install(TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_SOURCE_DIR}/lib)
-  # install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
-
-# add_executable( debug
-#   debug.cpp
-#   ${SOURCES}
-#   ${HEADERS}
-# )
-# target_link_libraries(debug ${EXPAT_LIBRARIES})
-
-configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)
-configure_file(data/analysis.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)
 
 if(${BUILD_EXAMPLE})
   add_subdirectory(example)
 endif()
+
+configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)
+configure_file(data/analysis.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)

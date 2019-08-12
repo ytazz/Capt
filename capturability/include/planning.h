@@ -43,12 +43,11 @@ public:
   vec3_t getLLeg(float time);
 
 private:
-  Model model;
-  Polygon polygon;
-  Capturability capturability;
-  Grid grid;
-  std::vector<Pendulum> pendulum_des;
-  Pendulum pendulum_cr;
+  Model                  model;
+  Polygon                polygon;
+  Grid                   grid;
+  std::vector<Pendulum>  pendulum_des;
+  Pendulum               pendulum_cr;
   std::vector<SwingFoot> swft;
 
   // gain

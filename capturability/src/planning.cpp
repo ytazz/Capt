@@ -3,7 +3,7 @@
 namespace Capt {
 
 Planning::Planning(Model model, Param param, float timestep)
-  : model(model), polygon(), pendulum_cr(model), capturability(model, param),
+  : model(model), polygon(), pendulum_cr(model),
     grid(param), k(0.5), dt(timestep) {
   this->cop_cmd.clear();
   this->com_cmd  = vec3_t::Zero();
@@ -16,9 +16,6 @@ Planning::Planning(Model model, Param param, float timestep)
   g     = model.getVal("environment", "gravity");
   h     = model.getVal("physics", "com_height");
   omega = sqrt(g / h);
-  std::cout << "omega" << omega << '\n';
-
-  capturability.load("1step.csv", DataType::N_STEP);
 }
 
 Planning::~Planning() {
@@ -50,15 +47,15 @@ vec3_t Planning::vec2tovec3(vec2_t vec2) {
 
 vec2_t Planning::vec3tovec2(vec3_t vec3) {
   vec2_t vec2;
-  vec2.setCartesian(vec3.x(), vec3.y());
+  vec2.setCartesian(vec3.x(), vec3.y() );
   return vec2;
 }
 
 void Planning::plan() {
   // memory
   for (size_t i = 0; i < footstep.size(); i++) {
-    pendulum_des.push_back(Pendulum(model));
-    swft.push_back(SwingFoot(model));
+    pendulum_des.push_back(Pendulum(model) );
+    swft.push_back(SwingFoot(model) );
   }
 
   std::cout << "footstep.cop[0]" << '\n';
@@ -69,15 +66,12 @@ void Planning::plan() {
   pendulum_des[0].setCom(com_cr);
   pendulum_des[0].setComVel(com_vel_cr);
 
-  pendulum_des[1].setCop(pendulum_des[0].getIcp(footstep.step_time[0]));
-  pendulum_des[1].setIcp(pendulum_des[0].getIcp(footstep.step_time[0]));
-  pendulum_des[1].setCom(pendulum_des[0].getCom(footstep.step_time[0]));
-  pendulum_des[1].setComVel(pendulum_des[0].getComVel(footstep.step_time[0]));
+  pendulum_des[1].setCop(pendulum_des[0].getIcp(footstep.step_time[0]) );
+  pendulum_des[1].setIcp(pendulum_des[0].getIcp(footstep.step_time[0]) );
+  pendulum_des[1].setCom(pendulum_des[0].getCom(footstep.step_time[0]) );
+  pendulum_des[1].setComVel(pendulum_des[0].getComVel(footstep.step_time[0]) );
 
-  if (footstep.suft[0] == SUPPORT_R)
-    swft[0].set(footstep.foot_l_ini, footstep.foot[1]);
-  if (footstep.suft[0] == SUPPORT_L)
-    swft[0].set(footstep.foot_r_ini, footstep.foot[1]);
+  swft[0].set(footstep.foot_l_ini, footstep.foot[1]);
 }
 
 vec2_t Planning::getCop(float time) {
@@ -91,27 +85,16 @@ vec2_t Planning::getCop(float time) {
     icp_des     = pendulum_des[1].getIcp(time - footstep.step_time[0]);
     icp_vel_des = pendulum_des[1].getIcpVel(time - footstep.step_time[0]);
   }
-  cop_cmd_ = icp_cr + k * (icp_cr - icp_des) / omega - icp_vel_des / omega;
+  cop_cmd_ = icp_cr + k * ( icp_cr - icp_des ) / omega - icp_vel_des / omega;
 
   std::vector<vec2_t> region;
   if (time < footstep.step_time[0]) {
-    if (footstep.suft[0] == SUPPORT_R)
-      region = model.getVec("foot", "foot_r_convex", footstep.foot[0]);
-    if (footstep.suft[0] == SUPPORT_L)
-      region = model.getVec("foot", "foot_l_convex", footstep.foot[0]);
+    region = model.getVec("foot", "foot_r_convex", footstep.foot[0]);
   } else {
-    if (footstep.suft[1] == SUPPORT_R)
-      region = model.getVec("foot", "foot_r_convex", footstep.foot[1]);
-    if (footstep.suft[1] == SUPPORT_L)
-      region = model.getVec("foot", "foot_l_convex", footstep.foot[1]);
+    region = model.getVec("foot", "foot_l_convex", footstep.foot[1]);
   }
   cop_cmd = polygon.getClosestPoint(cop_cmd_, region);
   cop_cmd = cop_cmd_;
-
-  // if (time < footstep.step_time[0]) {
-  //   cop_cmd.x = footstep.cop[0].x();
-  //   cop_cmd.y = footstep.cop[0].y();
-  // }
 
   return cop_cmd;
 }
@@ -144,31 +127,15 @@ vec2_t Planning::getIcp(float time) {
 }
 
 vec3_t Planning::getRLeg(float time) {
-  if (time < footstep.step_time[0]) {
-    if (footstep.suft[0] == SUPPORT_R)
-      rleg_cmd = footstep.foot[0];
-    if (footstep.suft[0] == SUPPORT_L)
-      rleg_cmd = swft[0].getTraj(time);
-  } else {
-    if (footstep.suft[1] == SUPPORT_R)
-      rleg_cmd = footstep.foot[1];
-    if (footstep.suft[1] == SUPPORT_L)
-      rleg_cmd = footstep.foot[0];
-  }
+  rleg_cmd = footstep.foot[0];
   return rleg_cmd;
 }
 
 vec3_t Planning::getLLeg(float time) {
   if (time < footstep.step_time[0]) {
-    if (footstep.suft[0] == SUPPORT_L)
-      lleg_cmd = footstep.foot[0];
-    if (footstep.suft[0] == SUPPORT_R)
-      lleg_cmd = swft[0].getTraj(time);
+    lleg_cmd = swft[0].getTraj(time);
   } else {
-    if (footstep.suft[1] == SUPPORT_L)
-      lleg_cmd = footstep.foot[1];
-    if (footstep.suft[1] == SUPPORT_R)
-      lleg_cmd = footstep.foot[0];
+    lleg_cmd = footstep.foot[1];
   }
   return lleg_cmd;
 }

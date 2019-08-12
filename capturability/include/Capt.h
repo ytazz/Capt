@@ -2,6 +2,7 @@
 #define __CAPT_H__
 
 #include "capturability.h"
+#include "cycloid.h"
 #include "foot_planner.h"
 #include "friction_filter.h"
 #include "grid.h"

@@ -10,6 +10,9 @@ Capturability::Capturability(Model model, Param param)
   for (int i = 0; i < grid.getNumState(); i++) {
     n_data[i] = new CaptureSet[grid.getNumInput()];
   }
+
+  foot_vel      = model.getVal("physics", "foot_vel_max");
+  step_time_min = model.getVal("physics", "step_time_min");
 }
 
 Capturability::~Capturability() {
@@ -23,8 +26,8 @@ void Capturability::load(std::string file_name, DataType type) {
     int        buf[2];
     CaptureSet set;
 
-    if ((fp = fopen(file_name.c_str(), "r")) == NULL) {
-      printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str());
+    if ( ( fp = fopen(file_name.c_str(), "r") ) == NULL) {
+      printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str() );
       exit(EXIT_FAILURE);
     } else {
       printf("Find 0-step database.\n");
@@ -38,8 +41,8 @@ void Capturability::load(std::string file_name, DataType type) {
     int        buf[4];
     CaptureSet set;
 
-    if ((fp = fopen(file_name.c_str(), "r")) == NULL) {
-      printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str());
+    if ( ( fp = fopen(file_name.c_str(), "r") ) == NULL) {
+      printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str() );
       exit(EXIT_FAILURE);
     } else {
       printf("Find N-step database.\n");
@@ -53,15 +56,13 @@ void Capturability::load(std::string file_name, DataType type) {
         Input input = grid.getInput(set.input_id);
 
         set.swft = input.swft;
-        //
-        // Polygon             polygon;
-        // std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
-        // Vector2             cop    = polygon.getClosestPoint(state.icp, region);
-        // set.cop.setCartesian(cop.x, cop.y);
-        //
-        // SwingFoot swing_foot(model);
-        // swing_foot.set(state.swft, input.swft);
-        // set.step_time = swing_foot.getTime();
+
+        Polygon             polygon;
+        std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
+        Vector2             cop    = polygon.getClosestPoint(state.icp, region);
+        set.cop.setCartesian(cop.x, cop.y);
+
+        set.step_time =( input.swft - state.swft ).norm() / foot_vel + step_time_min;
 
         n_data[set.state_id][set.input_id] = set;
         num_data++;
@@ -111,7 +112,7 @@ std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id,
   std::vector<CaptureSet> sets;
 
   sets.clear();
-  for (size_t i = 0; i < grid.getNumInput(); i++) {
+  for (int i = 0; i < grid.getNumInput(); i++) {
     if (n_data[state_id][i].n_step == n_step) {
       sets.push_back(n_data[state_id][i]);
     }
@@ -125,7 +126,7 @@ std::vector<CaptureSet> Capturability::getCaptureRegion(const State state,
 
   std::vector<CaptureSet> sets;
 
-  if (grid.existState(state)) {
+  if (grid.existState(state) ) {
     sets = getCaptureRegion(grid.getStateIndex(state), n_step);
   }
 
@@ -141,7 +142,7 @@ bool Capturability::capturable(State state, int n_step) {
     if (zero_data[state_id] == 0)
       flag = true;
   } else {
-    if (!getCaptureRegion(state, n_step).empty())
+    if (!getCaptureRegion(state, n_step).empty() )
       flag = true;
   }
 

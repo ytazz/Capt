@@ -1,9 +1,9 @@
 #ifndef __CYCLOID_H__
 #define __CYCLOID_H__
 
-#include "vector.h"
+#include "loader.h"
 #include <string>
-#include <math>
+#include <math.h>
 
 namespace Capt {
 
@@ -15,11 +15,12 @@ public:
   // p0: initial position
   // pf: terminal position
   // t : stepping time
-  void set(vec2_t p0, vec2_t pf, double t);
+  void set(vec3_t p0, vec3_t pf, double t);
   // t : elapsed time
   vec3_t get(double t);
 
 private:
+  double height;
   double direction;
   double radius;
   double omega;

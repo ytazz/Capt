@@ -63,6 +63,9 @@ private:
   Model        model;
   int         *zero_data;            // size = number of state
   CaptureSet **n_data;
+
+  double foot_vel;
+  double step_time_min;
 };
 
 } // namespace Capt

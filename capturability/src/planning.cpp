@@ -94,7 +94,7 @@ vec2_t Planning::getCop(float time) {
     region = model.getVec("foot", "foot_l_convex", footstep.foot[1]);
   }
   cop_cmd = polygon.getClosestPoint(cop_cmd_, region);
-  cop_cmd = cop_cmd_;
+  // cop_cmd = cop_cmd_;
 
   return cop_cmd;
 }

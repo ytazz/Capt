@@ -17,7 +17,7 @@ void Cycloid::set(vec3_t p0, vec3_t pf, double t){
   direction = atan2(dist_y, dist_x);
   radius    = dist / ( 2 * M_PI );
   T         = t;
-  omega     = M_PI / T;
+  omega     = 2 * M_PI / T;
   height    = p0.z();
 }
 

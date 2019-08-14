@@ -65,6 +65,7 @@ set(PLOT_HEADERS
 
 set(SOURCES
   ${PROJECT_SOURCE_DIR}/src/capturability.cpp
+  ${PROJECT_SOURCE_DIR}/src/cycloid.cpp
   ${PROJECT_SOURCE_DIR}/src/foot_planner.cpp
   ${PROJECT_SOURCE_DIR}/src/friction_filter.cpp
   ${PROJECT_SOURCE_DIR}/src/interpolation.cpp

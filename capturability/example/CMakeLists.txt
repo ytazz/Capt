@@ -5,9 +5,11 @@ add_executable(anim_cop anim_cop.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLO
 add_executable(anim_sim anim_sim.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
 add_executable(anim_step anim_step.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
 add_executable(converter converter.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
+add_executable(traj traj.cpp ${SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
 
 target_link_libraries(animation ${EXPAT_LIBRARIES})
 target_link_libraries(anim_cop ${EXPAT_LIBRARIES})
 target_link_libraries(anim_sim ${EXPAT_LIBRARIES})
 target_link_libraries(anim_step ${EXPAT_LIBRARIES})
 target_link_libraries(converter ${EXPAT_LIBRARIES})
+target_link_libraries(traj ${EXPAT_LIBRARIES})

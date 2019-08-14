@@ -20,7 +20,8 @@ public:
   vec3_t get(double t);
 
 private:
-  double height;
+  vec3_t origin;
+
   double direction;
   double radius;
   double omega;

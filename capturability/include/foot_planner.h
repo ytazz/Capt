@@ -39,7 +39,7 @@ public:
   void setRLeg(vec3_t rleg);
   void setLLeg(vec3_t lleg);
 
-  GridState calcCurrentState();
+  void calcCurrentState();
 
   bool plan();
 

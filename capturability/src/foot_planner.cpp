@@ -30,9 +30,8 @@ void FootPlanner::setLLeg(vec3_t lleg) {
   this->foot_step.foot_l_ini = lleg;
 }
 
-GridState FootPlanner::calcCurrentState() {
-  State     state;
-  GridState gstate;
+void FootPlanner::calcCurrentState() {
+  State state;
 
   state.icp.setCartesian(icp_cr.x - foot_step.foot_r_ini.x(),
                          icp_cr.y - foot_step.foot_r_ini.y() );
@@ -41,10 +40,10 @@ GridState FootPlanner::calcCurrentState() {
     foot_step.foot_l_ini.y() - foot_step.foot_r_ini.y() );
   gstate = grid->roundState(state);
   printf("in foot planner\n");
+  printf(" from\n");
   state.printCartesian();
+  printf(" to\n");
   gstate.state.printCartesian();
-
-  return gstate;
 }
 
 bool FootPlanner::plan() {
@@ -57,9 +56,12 @@ bool FootPlanner::plan() {
   float  dist        = 0.0, dist_min = 0.0;
   int    dist_min_id = 0;
 
+  FILE *fp=fopen("capture_region.csv", "w");
+
   capture_set = capturability->getCaptureRegion(gstate.id, 1);
   for (size_t i = 0; i < capture_set.size(); i++) {
-    dist = ( capture_set[i].swft - gstate.state.swft ).norm();
+    dist = fabs( capture_set[i].swft.th - gstate.state.icp.th );
+    fprintf(fp, "%lf,%lf\n", capture_set[i].swft.x, capture_set[i].swft.y);
     if (i == 0) {
       dist_min    = dist;
       dist_min_id = i;
@@ -68,11 +70,10 @@ bool FootPlanner::plan() {
       dist_min_id = i;
     }
   }
+  fclose(fp);
   landing.x() = capture_set[dist_min_id].swft.x;
   landing.y() = capture_set[dist_min_id].swft.y;
   landing.z() = 0.0;
-  std::cout << "landing no." << dist_min_id << '\n';
-  std::cout << landing << '\n';
 
   // set footstep
   vec3_t foot;
@@ -82,10 +83,16 @@ bool FootPlanner::plan() {
   cop.y() = foot_step.foot_r_ini.y() + capture_set[dist_min_id].cop.y;
   cop.z() = 0.0;
 
+  printf("%s\n", "Selected Landing Position");
+  printf("\tState id: %d\n", capture_set[dist_min_id].state_id);
+  printf("\tInput id: %d\n", capture_set[dist_min_id].input_id);
+  printf("\tCapture id: %d\n", dist_min_id);
+  printf("\tPosition  : %1.3lf, %1.3lf\n", foot.x(), foot.y() );
+  printf("\tCoP       : %1.3lf, %1.3lf\n", cop.x(), cop.y() );
+
   foot_step.foot.push_back(foot_step.foot_r_ini);
   foot_step.cop.push_back(cop);
-  // foot_step.step_time.push_back(capture_set[dist_min_id].step_time);
-  foot_step.step_time.push_back(0.108550 + 0.1);
+  foot_step.step_time.push_back(capture_set[dist_min_id].step_time);
 
   foot_step.foot.push_back(foot);
   foot_step.cop.push_back(cop);

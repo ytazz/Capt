@@ -58,9 +58,6 @@ void Planning::plan() {
     swft.push_back(SwingFoot(model) );
   }
 
-  std::cout << "footstep.cop[0]" << '\n';
-  std::cout << footstep.cop[0].x() << '\n';
-  std::cout << footstep.cop[0].y() << '\n';
   pendulum_des[0].setCop(footstep.cop[0]);
   pendulum_des[0].setIcp(icp_cr);
   pendulum_des[0].setCom(com_cr);
@@ -91,7 +88,14 @@ vec2_t Planning::getCop(float time) {
   if (time < footstep.step_time[0]) {
     region = model.getVec("foot", "foot_r_convex", footstep.foot[0]);
   } else {
-    region = model.getVec("foot", "foot_l_convex", footstep.foot[1]);
+    std::vector<vec2_t> region_r, region_l;
+    region_r = model.getVec("foot", "foot_r_convex", footstep.foot[0]);
+    region_l = model.getVec("foot", "foot_l_convex", footstep.foot[1]);
+
+    polygon.clear();
+    polygon.setVertex(region_r);
+    polygon.setVertex(region_l);
+    region = polygon.getConvexHull();
   }
   cop_cmd = polygon.getClosestPoint(cop_cmd_, region);
   // cop_cmd = cop_cmd_;

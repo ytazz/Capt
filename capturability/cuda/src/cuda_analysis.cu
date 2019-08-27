@@ -30,11 +30,8 @@ __host__ void initState(State *state, int *next_id, Condition cond) {
     state[i].swf.th_ = cond.grid->getState(i).swft.th;
   }
 
-  for (int state_id = 0; state_id < num_state; state_id++) {
-    for (int input_id = 0; input_id < num_input; input_id++) {
-      int id = state_id * num_input + input_id;
-      next_id[id] = -1;
-    }
+  for (int id = 0; id < num_state * num_input; id++) {
+    next_id[id] = -1;
   }
 }
 
@@ -135,6 +132,7 @@ __host__ void outputNStep(std::string file_name, bool header, Condition cond,
   FILE     *fp        = fopen(file_name.c_str(), "w");
   const int num_state = cond.grid->getNumState();
   const int num_input = cond.grid->getNumInput();
+  int       max       = 0;
 
   // Header
   if (header) {
@@ -154,8 +152,12 @@ __host__ void outputNStep(std::string file_name, bool header, Condition cond,
       fprintf(fp, "%d,", next_id[id]);
       fprintf(fp, "%d", nstep[id]);
       fprintf(fp, "\n");
+      if(max < nstep[id])
+        max = nstep[id];
     }
   }
+
+  printf("max(nstep) = %d\n", max);
 
   fclose(fp);
 }
@@ -165,11 +167,11 @@ __host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *basin) {
     Capt::State state = grid.getState(state_id);
 
     Capt::Polygon polygon;
-    polygon.setVertex(model.getVec("foot", "foot_r_convex"));
-    polygon.setVertex(model.getVec("foot", "foot_l_convex", state.swft));
+    polygon.setVertex(model.getVec("foot", "foot_r_convex") );
+    polygon.setVertex(model.getVec("foot", "foot_l_convex", state.swft) );
 
     bool flag = false;
-    flag = polygon.inPolygon(state.icp, polygon.getConvexHull());
+    flag = polygon.inPolygon(state.icp, polygon.getConvexHull() );
 
     if (flag) {
       basin[state_id] = 0;
@@ -185,16 +187,16 @@ __device__ State step(State state, Input input, Vector2 cop, Physics *physics) {
   // 踏み出し時間
   Vector2 foot_dist = state.swf - input.swf;
   double  dist
-    = sqrt(foot_dist.x() * foot_dist.x() + foot_dist.y() * foot_dist.y());
+    = sqrt(foot_dist.x() * foot_dist.x() + foot_dist.y() * foot_dist.y() );
   double t = dist / physics->v + physics->dt;
 
   // LIPM
   Vector2 icp = state.icp;
-  icp = (icp - cop) * exp(physics->omega * t) + cop;
+  icp = ( icp - cop ) * exp(physics->omega * t) + cop;
 
   // 状態変換
-  state_.icp.setCartesian(-input.swf.x() + icp.x(), input.swf.y() - icp.y());
-  state_.swf.setCartesian(-input.swf.x(), input.swf.y());
+  state_.icp.setCartesian(-input.swf.x() + icp.x(), input.swf.y() - icp.y() );
+  state_.swf.setCartesian(-input.swf.x(), input.swf.y() );
 
   return state_;
 }
@@ -243,10 +245,10 @@ __device__ int getStateIndex(State state, Grid *grid) {
   int icp_r_id = 0, icp_th_id = 0;
   int swf_r_id = 0, swf_th_id = 0;
 
-  icp_r_id  = roundValue((state.icp.r() - grid->icp_r_min) / grid->icp_r_step);
-  icp_th_id = roundValue((state.icp.th() - grid->icp_th_min) / grid->icp_th_step);
-  swf_r_id  = roundValue((state.swf.r() - grid->swf_r_min) / grid->swf_r_step);
-  swf_th_id = roundValue((state.swf.th() - grid->swf_th_min) / grid->swf_th_step);
+  icp_r_id  = roundValue( ( state.icp.r() - grid->icp_r_min ) / grid->icp_r_step);
+  icp_th_id = roundValue( ( state.icp.th() - grid->icp_th_min ) / grid->icp_th_step);
+  swf_r_id  = roundValue( ( state.swf.r() - grid->swf_r_min ) / grid->swf_r_step);
+  swf_th_id = roundValue( ( state.swf.th() - grid->swf_th_min ) / grid->swf_th_step);
 
   int state_id = 0;
   state_id = grid->swf_th_num * grid->swf_r_num * grid->icp_th_num * icp_r_id +
@@ -267,7 +269,7 @@ __global__ void calcStateTrans(State *state, Input *input, int *next_id, Grid *g
     int input_id = tid % grid->num_input;
 
     State state_ = step(state[state_id], input[input_id], cop[state_id], physics);
-    if (existState(state_, grid))
+    if (existState(state_, grid) )
       next_id[tid] = getStateIndex(state_, grid);
     else
       next_id[tid] = -1;
@@ -285,7 +287,7 @@ __global__ void exeNStep(int N, int *basin,
     int input_id = tid % grid->num_input;
 
     if(next_id[tid] >= 0) {
-      if (basin[next_id[tid]] == (N - 1)) {
+      if (basin[next_id[tid]] == ( N - 1 ) ) {
         nstep[tid] = N;
         if(basin[state_id] < 0) {
           basin[state_id] = N;

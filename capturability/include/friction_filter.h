@@ -12,7 +12,7 @@ namespace Capt {
 
 class FrictionFilter {
 public:
-  FrictionFilter(Capturability capturability, Pendulum pendulum);
+  FrictionFilter(Capturability *capturability, Model model);
   ~FrictionFilter();
 
   void setCaptureRegion(std::vector<CaptureSet> capture_set);
@@ -21,8 +21,8 @@ public:
                    float mu); // mu = friction coefficient
 
 private:
-  Capturability capturability;
-  Pendulum pendulum;
+  Capturability *capturability;
+  Pendulum       pendulum;
 
   // current target capture region
   std::vector<CaptureSet> capture_set;

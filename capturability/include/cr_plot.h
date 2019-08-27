@@ -4,6 +4,7 @@
 #include "gnuplot.h"
 
 #include "capturability.h"
+#include "friction_filter.h"
 #include "grid.h"
 #include "input.h"
 #include "param.h"
@@ -34,6 +35,11 @@ public:
   void animCaptureRegion(State state);
   void plotCaptureRegion(State state);
   void plotCaptureIcp(State state);
+
+  double omega;
+
+  vec2_t com;
+  double mu;
 };
 }
 

@@ -39,10 +39,10 @@ void Capturability::load(std::string file_name, DataType type) {
     }
   } else if (type == N_STEP) {
     // make cop list
-    vec2_t              cop[grid.getNumState()];
+    vec2_t             *cop = (vec2_t*)malloc(sizeof( vec2_t ) * grid.getNumState() );
     Polygon             polygon;
     std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
-    for(int state_id=0; state_id < grid.getNumState(); state_id++) {
+    for(int state_id = 0; state_id < grid.getNumState(); state_id++) {
       State state = grid.getState(state_id);
       cop[state_id] = polygon.getClosestPoint(state.icp, region);
     }
@@ -56,20 +56,22 @@ void Capturability::load(std::string file_name, DataType type) {
     } else {
       printf("Find N-step database.\n");
       while (fscanf(fp, "%d,%d,%d,%d", &buf[0], &buf[1], &buf[2], &buf[3]) != EOF) {
-        set.state_id      = buf[0];
-        set.input_id      = buf[1];
-        set.next_state_id = buf[2];
-        set.n_step        = buf[3];
+        if(buf[0] == 367846) {
+          set.state_id      = buf[0];
+          set.input_id      = buf[1];
+          set.next_state_id = buf[2];
+          set.n_step        = buf[3];
 
-        State state = grid.getState(set.state_id);
-        Input input = grid.getInput(set.input_id);
+          State state = grid.getState(set.state_id);
+          Input input = grid.getInput(set.input_id);
 
-        set.swft      = input.swft;
-        set.cop       = cop[set.state_id];
-        set.step_time =( input.swft - state.swft ).norm() / foot_vel + step_time_min;
+          set.swft      = input.swft;
+          set.cop       = cop[set.state_id];
+          set.step_time = ( input.swft - state.swft ).norm() / foot_vel + step_time_min;
 
-        n_data[set.state_id][set.input_id] = set;
-        num_data++;
+          n_data[set.state_id][set.input_id] = set;
+          num_data++;
+        }
       }
       fclose(fp);
     }

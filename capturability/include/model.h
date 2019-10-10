@@ -80,34 +80,34 @@ public:
 
   std::vector<Vector2> reverseShape(std::vector<Vector2> points);
 
-  float getVal(const char *element_name, const char *attribute_name);
-  std::string getStr(const char *element_name, const char *attribute_name);
+  double               getVal(const char *element_name, const char *attribute_name);
+  std::string          getStr(const char *element_name, const char *attribute_name);
   std::vector<Vector2> getVec(const char *element_name,
                               const char *attribute_name);
   std::vector<Vector2> getVec(const char *element_name,
                               const char *attribute_name, vec2_t translation);
   std::vector<Vector2> getVec(const char *element_name,
                               const char *attribute_name, vec3_t translation);
-  float getLinkVal(ELink link, const char *attribute_name);
-  float getLinkVal(int link_id, const char *attribute_name);
+  double getLinkVal(ELink link, const char *attribute_name);
+  double getLinkVal(int link_id, const char *attribute_name);
   vec3_t getLinkVec(ELink link, const char *attribute_name);
   vec3_t getLinkVec(int link_id, const char *attribute_name);
-  void print();
+  void   print();
 
 private:
   EModelElement element;
-  EFoot foot;
-  EShape shape;
-  ELink link;
+  EFoot         foot;
+  EShape        shape;
+  ELink         link;
 
   Polygon polygon;
 
-  float pi;
+  double pi;
 
   std::string robot_name;
-  float unit_length, unit_mass, unit_time, unit_angle;
-  float total_mass, com_height, step_time_min, foot_vel_max, step_height;
-  float gravity, friction;
+  double      unit_length, unit_mass, unit_time, unit_angle;
+  double      total_mass, com_height, step_time_min, foot_vel_max, step_height;
+  double      gravity, friction;
 
   std::vector<Vector2> foot_r, foot_l;
   std::vector<Vector2> foot_r_convex, foot_l_convex;
@@ -117,9 +117,9 @@ private:
   vec3_t trn[NUM_LINK];
   vec3_t axis[NUM_LINK];
   // limit[*][0] = lower limit, limit[*][1] = upper limit
-  float limit[NUM_LINK][NUM_LIMIT];
+  double limit[NUM_LINK][NUM_LIMIT];
   vec3_t com[NUM_LINK];
-  float mass[NUM_LINK];
+  double mass[NUM_LINK];
 };
 
 } // namespace Capt

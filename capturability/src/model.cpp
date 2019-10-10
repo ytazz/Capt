@@ -303,8 +303,8 @@ std::string Model::getStr(const char *element_name,
   return str;
 }
 
-float Model::getVal(const char *element_name, const char *attribute_name) {
-  float val = 0.0;
+double Model::getVal(const char *element_name, const char *attribute_name) {
+  double val = 0.0;
   if (equalStr(element_name, "physics") ) {
     if (equalStr(attribute_name, "mass") )
       val = total_mass;
@@ -380,8 +380,8 @@ std::vector<Vector2> Model::getVec(const char *element_name,
   return vec;
 }
 
-float Model::getLinkVal(ELink link, const char *attribute_name) {
-  float val = 0.0;
+double Model::getLinkVal(ELink link, const char *attribute_name) {
+  double val = 0.0;
   if (equalStr(attribute_name, "lower_limit") )
     val = limit[link][LIMIT_LOWER];
   if (equalStr(attribute_name, "upper_limit") )
@@ -391,7 +391,7 @@ float Model::getLinkVal(ELink link, const char *attribute_name) {
   return val;
 }
 
-float Model::getLinkVal(int link_id, const char *attribute_name) {
+double Model::getLinkVal(int link_id, const char *attribute_name) {
   ELink link = static_cast<ELink>( link_id );
   return getLinkVal(link, attribute_name);
 }

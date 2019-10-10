@@ -1,16 +1,9 @@
-#include "capturability.h"
-#include "friction_filter.h"
 #include "grid.h"
-#include "kinematics.h"
 #include "loader.h"
 #include "model.h"
-#include "monitor.h"
 #include "param.h"
-#include "pendulum.h"
-#include "planning.h"
-#include "polygon.h"
-#include "trajectory.h"
 #include "vector.h"
+#include "cr_plot.h"
 #include <iostream>
 
 using namespace std;
@@ -22,8 +15,9 @@ int main(int argc, char const *argv[]) {
   Param param("param_val_xy.xml");
   param.print();
 
-  Grid grid(param);
-  // Pendulum pendulum(model);
+  Grid   grid(param);
+  CRPlot cr_plot(model, param);
+  cr_plot.setOutput("svg");
 
   return 0;
 }

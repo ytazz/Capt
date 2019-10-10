@@ -6,17 +6,17 @@
 #include <stdio.h>
 #include <string>
 
-using namespace std;
-
 namespace Capt {
 
 class Gnuplot {
 public:
   Gnuplot();
   ~Gnuplot();
-  void operator()(const string &command);
-  FILE *gp;
-  map<int, string> int_color;
+
+  void operator()(const std::string &command);
+
+  FILE                      *gp;
+  std::map<int, std::string> color;
 };
 }
 

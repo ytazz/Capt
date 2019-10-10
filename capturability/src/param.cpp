@@ -10,12 +10,12 @@ Param::Param(const std::string &name) : Loader(name), pi(M_PI) {
   unit_length = 0.0;
   unit_angle  = 0.0;
 
-  icp_r_min    = 0.0;
-  icp_r_max    = 0.0;
-  icp_r_step   = 0.0;
-  icp_th_min   = 0.0;
-  icp_th_max   = 0.0;
-  icp_th_step  = 0.0;
+  icp_r_min   = 0.0;
+  icp_r_max   = 0.0;
+  icp_r_step  = 0.0;
+  icp_th_min  = 0.0;
+  icp_th_max  = 0.0;
+  icp_th_step = 0.0;
   swf_r_min   = 0.0;
   swf_r_max   = 0.0;
   swf_r_step  = 0.0;
@@ -23,12 +23,12 @@ Param::Param(const std::string &name) : Loader(name), pi(M_PI) {
   swf_th_max  = 0.0;
   swf_th_step = 0.0;
 
-  icp_x_min   = 0.0;
-  icp_x_max   = 0.0;
-  icp_x_step  = 0.0;
-  icp_y_min   = 0.0;
-  icp_y_max   = 0.0;
-  icp_y_step  = 0.0;
+  icp_x_min  = 0.0;
+  icp_x_max  = 0.0;
+  icp_x_step = 0.0;
+  icp_y_min  = 0.0;
+  icp_y_max  = 0.0;
+  icp_y_step = 0.0;
   swf_x_min  = 0.0;
   swf_x_max  = 0.0;
   swf_x_step = 0.0;
@@ -228,8 +228,8 @@ std::string Param::getStr(const char *element_name,
   return str;
 }
 
-float Param::getVal(const char *element_name, const char *attribute_name) {
-  float val = 0.0;
+double Param::getVal(const char *element_name, const char *attribute_name) {
+  double val = 0.0;
   if (equalStr(element_name, "icp_x") ) {
     if (equalStr(attribute_name, "min") )
       val = icp_x_min;
@@ -313,10 +313,10 @@ float Param::getVal(const char *element_name, const char *attribute_name) {
   return val;
 }
 
-int Param::round(float value) {
+int Param::round(double value) {
   int result = (int)value;
 
-  float decimal = value - (int)value;
+  double decimal = value - (int)value;
   if (decimal >= 0.5) {
     result += 1;
   }
@@ -327,14 +327,14 @@ int Param::round(float value) {
 void Param::calcNum() {
   using namespace Pa;
   if (coordinate == CARTESIAN) {
-  icp_x_num  = round( ( icp_x_max - icp_x_min ) / icp_x_step) + 1;
-  icp_y_num  = round( ( icp_y_max - icp_y_min ) / icp_y_step) + 1;
+  icp_x_num = round( ( icp_x_max - icp_x_min ) / icp_x_step) + 1;
+  icp_y_num = round( ( icp_y_max - icp_y_min ) / icp_y_step) + 1;
   swf_x_num = round( ( swf_x_max - swf_x_min ) / swf_x_step) + 1;
   swf_y_num = round( ( swf_y_max - swf_y_min ) / swf_y_step) + 1;
   }
   if (coordinate == POLAR) {
-    icp_r_num   = round( ( icp_r_max - icp_r_min ) / icp_r_step) + 1;
-    icp_th_num  = round( ( icp_th_max - icp_th_min ) / icp_th_step) + 1;
+    icp_r_num  = round( ( icp_r_max - icp_r_min ) / icp_r_step) + 1;
+    icp_th_num = round( ( icp_th_max - icp_th_min ) / icp_th_step) + 1;
     swf_r_num  = round( ( swf_r_max - swf_r_min ) / swf_r_step) + 1;
     swf_th_num = round( ( swf_th_max - swf_th_min ) / swf_th_step) + 1;
   }

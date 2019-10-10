@@ -59,7 +59,6 @@ set(CPU_HEADERS
 
 set(PLOT_HEADERS
   ${PROJECT_SOURCE_DIR}/include/cr_plot.h
-  ${PROJECT_SOURCE_DIR}/include/plot_trajectory.h
   ${PROJECT_SOURCE_DIR}/include/gnuplot.h
 )
 
@@ -94,7 +93,6 @@ set(GPU_SOURCES
 
 set(PLOT_SOURCES
   ${PROJECT_SOURCE_DIR}/src/cr_plot.cpp
-  # ${PROJECT_SOURCE_DIR}/src/plot_trajectory.cpp
   ${PROJECT_SOURCE_DIR}/src/gnuplot.cpp
 )
 

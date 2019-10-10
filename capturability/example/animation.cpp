@@ -28,14 +28,14 @@ int main() {
   state.swf.printCartesian();
 
   CRPlot cr_plot(model, param);
-  cr_plot.setInput("Basin.csv", DataType::ZERO_STEP);
-  cr_plot.setInput("Nstep.csv", DataType::N_STEP);
+  // cr_plot.setInput("Basin.csv", DataType::ZERO_STEP);
+  // cr_plot.setInput("Nstep.csv", DataType::N_STEP);
 
   // cr_plot.setOutput("gif");
   // cr_plot.animCaptureRegion(state);
 
-  cr_plot.setOutput("svg");
-  cr_plot.plotCaptureRegion(state);
+  // cr_plot.setOutput("svg");
+  // cr_plot.plotCaptureRegion(state);
 
   // cr_plot.setOutput("svg");
   // cr_plot.plotCaptureIcp(state);

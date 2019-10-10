@@ -30,12 +30,12 @@ public:
   void callbackAttribute(const std::string &name,
                          const std::string &value) override;
 
-  float       getVal(const char *element_name, const char *attribute_name);
+  double      getVal(const char *element_name, const char *attribute_name);
   std::string getStr(const char *element_name, const char *attribute_name);
   void        print();
 
 private:
-  int  round(float value);
+  int  round(double value);
   void calcNum();
 
   Pa::ParamElement element;
@@ -43,7 +43,7 @@ private:
   Pa::Axis         axis;
 
   // unit
-  float unit_length, unit_angle;
+  double unit_length, unit_angle;
   // number
   int icp_x_num;
   int icp_y_num;
@@ -54,17 +54,17 @@ private:
   int swf_r_num;
   int swf_th_num;
   // polar
-  float icp_r_min, icp_r_max, icp_r_step;
-  float icp_th_min, icp_th_max, icp_th_step;
-  float swf_r_min, swf_r_max, swf_r_step;
-  float swf_th_min, swf_th_max, swf_th_step;
+  double icp_r_min, icp_r_max, icp_r_step;
+  double icp_th_min, icp_th_max, icp_th_step;
+  double swf_r_min, swf_r_max, swf_r_step;
+  double swf_th_min, swf_th_max, swf_th_step;
   // cartesian
-  float icp_x_min, icp_x_max, icp_x_step;
-  float icp_y_min, icp_y_max, icp_y_step;
-  float swf_x_min, swf_x_max, swf_x_step;
-  float swf_y_min, swf_y_max, swf_y_step;
+  double icp_x_min, icp_x_max, icp_x_step;
+  double icp_y_min, icp_y_max, icp_y_step;
+  double swf_x_min, swf_x_max, swf_x_step;
+  double swf_y_min, swf_y_max, swf_y_step;
 
-  float pi;
+  double pi;
 };
 
 } // namespace Capt

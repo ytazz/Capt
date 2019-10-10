@@ -59,17 +59,17 @@ int main(int argc, char const *argv[]) {
       std::cout << "1: polar, 2: cartesian" << '\n';
       std::cin >> coord;
       if (coord == 1) {
-        std::cout << "swft_rを入力してください";
+        std::cout << "swf_rを入力してください";
         std::cin >> tmp1;
-        std::cout << "swft_thを入力してください";
+        std::cout << "swf_thを入力してください";
         std::cin >> tmp2;
-        state.swft.setPolar(tmp1, tmp2);
+        state.swf.setPolar(tmp1, tmp2);
       } else if (coord == 2) {
-        std::cout << "swft_xを入力してください";
+        std::cout << "swf_xを入力してください";
         std::cin >> tmp1;
-        std::cout << "swft_yを入力してください";
+        std::cout << "swf_yを入力してください";
         std::cin >> tmp2;
-        state.swft.setCartesian(tmp1, tmp2);
+        state.swf.setCartesian(tmp1, tmp2);
       } else {
         std::cout << "error" << '\n';
         break;

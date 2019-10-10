@@ -65,9 +65,9 @@ void Capturability::load(std::string file_name, DataType type) {
           State state = grid.getState(set.state_id);
           Input input = grid.getInput(set.input_id);
 
-          set.swft      = input.swft;
+          set.swf      = input.swf;
           set.cop       = cop[set.state_id];
-          set.step_time = ( input.swft - state.swft ).norm() / foot_vel + step_time_min;
+          set.step_time = ( input.swf - state.swf ).norm() / foot_vel + step_time_min;
 
           n_data[set.state_id][set.input_id] = set;
           num_data++;
@@ -88,7 +88,7 @@ void Capturability::setCaptureSet(const int state_id, const int input_id,
   set.input_id      = input_id;
   set.next_state_id = next_state_id;
   set.n_step        = n_step;
-  set.swft          = grid.getInput(set.input_id).swft;
+  set.swf          = grid.getInput(set.input_id).swf;
   set.cop           = cop;
   set.step_time     = step_time;
 
@@ -105,7 +105,7 @@ void Capturability::setCaptureSet(const int state_id, const int input_id,
   set.input_id      = input_id;
   set.next_state_id = next_state_id;
   set.n_step        = n_step;
-  set.swft          = grid.getInput(set.input_id).swft;
+  set.swf          = grid.getInput(set.input_id).swf;
   set.cop           = v;
   set.step_time     = 0.0;
 

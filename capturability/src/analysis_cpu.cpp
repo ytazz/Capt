@@ -117,18 +117,18 @@ State Analysis::step(const State state, const Input input) {
   cop_.setCartesian(cop.x, cop.y);
   pendulum.setCop(cop);
 
-  swing_foot.set(state.swft, input.swft);
+  swing_foot.set(state.swf, input.swf);
   step_time = swing_foot.getTime();
 
   icp = pendulum.getIcp(step_time);
 
-  Vector2 icp_, swft_;
-  icp_.setCartesian(-input.swft.x + icp.x, input.swft.y - icp.y);
-  swft_.setCartesian(-input.swft.x, input.swft.y);
+  Vector2 icp_, swf_;
+  icp_.setCartesian(-input.swf.x + icp.x, input.swf.y - icp.y);
+  swf_.setCartesian(-input.swf.x, input.swf.y);
 
   State state_;
   state_.icp = icp_;
-  state_.swft = swft_;
+  state_.swf = swf_;
 
   return state_;
 }

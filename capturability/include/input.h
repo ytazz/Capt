@@ -8,12 +8,12 @@
 namespace Capt {
 
 struct Input {
-  Vector2 swft;
+  Vector2 swf;
 
-  void printPolar() { printf("swft = [ %lf, %lf ]\n", swft.r, swft.th); }
-  void printCartesian() { printf("swft = [ %lf, %lf ]\n", swft.x, swft.y); }
+  void printPolar() { printf("swf = [ %lf, %lf ]\n", swf.r, swf.th); }
+  void printCartesian() { printf("swf = [ %lf, %lf ]\n", swf.x, swf.y); }
 
-  void operator=(const Input &input) { this->swft = input.swft; }
+  void operator=(const Input &input) { this->swf = input.swf; }
 };
 
 } // namespace Capt

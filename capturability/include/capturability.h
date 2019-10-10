@@ -22,7 +22,7 @@ struct CaptureSet {
   int next_state_id;
   int n_step; // N-step capturable
 
-  vec2_t swft; // next landing position
+  vec2_t swf; // next landing position
   vec2_t cop;
   float  step_time;
 
@@ -31,7 +31,7 @@ struct CaptureSet {
     this->input_id      = capture_set.input_id;
     this->next_state_id = capture_set.next_state_id;
     this->n_step        = capture_set.n_step;
-    this->swft          = capture_set.swft;
+    this->swf          = capture_set.swf;
     this->cop           = capture_set.cop;
     this->step_time     = capture_set.step_time;
   }

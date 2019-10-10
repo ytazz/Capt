@@ -11,7 +11,7 @@ Planning::Planning(Model model, Param param, float timestep)
   this->lleg_cmd = vec3_t::Zero();
 
   this->pendulum_des.clear();
-  this->swft.clear();
+  this->swf.clear();
 
   g     = model.getVal("environment", "gravity");
   h     = model.getVal("physics", "com_height");
@@ -55,7 +55,7 @@ void Planning::plan() {
   // memory
   for (size_t i = 0; i < footstep.size(); i++) {
     pendulum_des.push_back(Pendulum(model) );
-    swft.push_back(SwingFoot(model) );
+    swf.push_back(SwingFoot(model) );
   }
 
   pendulum_des[0].setCop(footstep.cop[0]);
@@ -68,7 +68,7 @@ void Planning::plan() {
   pendulum_des[1].setCom(pendulum_des[0].getCom(footstep.step_time[0]) );
   pendulum_des[1].setComVel(pendulum_des[0].getComVel(footstep.step_time[0]) );
 
-  swft[0].set(footstep.foot_l_ini, footstep.foot[1]);
+  swf[0].set(footstep.foot_l_ini, footstep.foot[1]);
 }
 
 vec2_t Planning::getCop(float time) {
@@ -137,7 +137,7 @@ vec3_t Planning::getRLeg(float time) {
 
 vec3_t Planning::getLLeg(float time) {
   if (time < footstep.step_time[0]) {
-    lleg_cmd = swft[0].getTraj(time);
+    lleg_cmd = swf[0].getTraj(time);
   } else {
     lleg_cmd = footstep.foot[1];
   }

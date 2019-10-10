@@ -48,7 +48,7 @@ private:
   Grid                   grid;
   std::vector<Pendulum>  pendulum_des;
   Pendulum               pendulum_cr;
-  std::vector<SwingFoot> swft;
+  std::vector<SwingFoot> swf;
 
   // gain
   const float k;

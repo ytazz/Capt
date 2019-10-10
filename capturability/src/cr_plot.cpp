@@ -14,8 +14,8 @@ CRPlot::CRPlot(Model model, Param param)
   p("set xtics 0.05");
   p("set ytics 0.05");
 
-  std::string step_r  = std::to_string(param.getVal("swft_r", "step") );
-  std::string step_th = std::to_string(param.getVal("swft_th", "step") );
+  std::string step_r  = std::to_string(param.getVal("swf_r", "step") );
+  std::string step_th = std::to_string(param.getVal("swf_th", "step") );
 
   p("set polar");
   p("set theta top");
@@ -100,16 +100,16 @@ void CRPlot::plotCaptureRegion(State state) {
 
   // plot
   // steppable region
-  double th = param.getVal("swft_th", "min");
-  while (th <= param.getVal("swft_th", "max") ) {
+  double th = param.getVal("swf_th", "min");
+  while (th <= param.getVal("swf_th", "max") ) {
     th += 0.001;
-    fprintf(p.gp, "%f %f\n", th, param.getVal("swft_r", "min") );
+    fprintf(p.gp, "%f %f\n", th, param.getVal("swf_r", "min") );
   }
-  while (th >= param.getVal("swft_th", "min") ) {
+  while (th >= param.getVal("swf_th", "min") ) {
     th -= 0.001;
-    fprintf(p.gp, "%f %f\n", th, param.getVal("swft_r", "max") );
+    fprintf(p.gp, "%f %f\n", th, param.getVal("swf_r", "max") );
   }
-  fprintf(p.gp, "%f %f\n", th, param.getVal("swft_r", "min") );
+  fprintf(p.gp, "%f %f\n", th, param.getVal("swf_r", "min") );
   fprintf(p.gp, "e\n");
   // icp
   fprintf(p.gp, "%f %f\n", state.icp.th, state.icp.r);
@@ -126,8 +126,8 @@ void CRPlot::plotCaptureRegion(State state) {
   // swing foot
   std::vector<Vector2> foot_l = model.getVec("foot", "foot_l");
   for (size_t i = 0; i < foot_l.size(); i++) {
-    fprintf(p.gp, "%f %f\n", ( foot_l[i] + state.swft ).th,
-            ( foot_l[i] + state.swft ).r);
+    fprintf(p.gp, "%f %f\n", ( foot_l[i] + state.swf ).th,
+            ( foot_l[i] + state.swf ).r);
   }
   fprintf(p.gp, "e\n");
   // capture point
@@ -144,7 +144,7 @@ void CRPlot::plotCaptureRegion(State state) {
 
     if (!region_.empty() ) {
       for (size_t j = 0; j < region_.size(); j++) {
-        fprintf(p.gp, "%f %f\n", region_[j].swft.th, region_[j].swft.r);
+        fprintf(p.gp, "%f %f\n", region_[j].swf.th, region_[j].swf.r);
       }
     }
     fprintf(p.gp, "e\n");
@@ -177,8 +177,8 @@ void CRPlot::plotCaptureIcp(State state) {
   // swing foot
   std::vector<Vector2> foot_l = model.getVec("foot", "foot_l");
   for (size_t i = 0; i < foot_l.size(); i++) {
-    fprintf(p.gp, "%f %f\n", ( foot_l[i] + state.swft ).th,
-            ( foot_l[i] + state.swft ).r);
+    fprintf(p.gp, "%f %f\n", ( foot_l[i] + state.swf ).th,
+            ( foot_l[i] + state.swf ).r);
   }
   fprintf(p.gp, "e\n");
   // capturable ICP

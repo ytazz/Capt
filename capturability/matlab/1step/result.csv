@@ -1,4 +1,4 @@
-state_id, state_icp_x, state_icp_y, state_swft_x, state_swft_y, input_id, input_swft_x, input_swft_y
+state_id, state_icp_x, state_icp_y, state_swf_x, state_swf_y, input_id, input_swf_x, input_swf_y
 462641,-0.030000, 0.051962,0.107246, 0.089990,82,-0.017173, 0.088346,
 462641,-0.030000, 0.051962,0.107246, 0.089990,83,-0.018712, 0.088033,
 462641,-0.030000, 0.051962,0.107246, 0.089990,84,-0.020246, 0.087693,

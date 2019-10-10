@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<robot name="valkyrie">
+
+  <unit length="m" mass="kg" time="s" angle="deg"/>
+
+  <physics mass="135.899" com_height="1.0" step_time_min="0.1" foot_vel_max="0.5" step_height="0.1"/>
+
+  <environment gravity="9.80665" friction="1000"/>
+
+  <foot name="foot_r">
+    <shape type="polygon" trn="0 0" rot="0">
+      <polygon point="+0.115 +0.065"/>
+      <polygon point="+0.115 -0.065"/>
+      <polygon point="-0.115 -0.065"/>
+      <polygon point="-0.115 +0.065"/>
+      <polygon point="+0.115 +0.065"/>
+    </shape>
+  </foot>
+
+  <foot name="foot_l">
+    <shape type="reverse"/>
+  </foot>
+
+  <!-- link is not setted. -->
+  <!-- Becasuse this model use choreonoid's IK. NOT Capt's IK. -->
+
+</robot>

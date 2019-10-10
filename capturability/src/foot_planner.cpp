@@ -35,7 +35,7 @@ void FootPlanner::calcCurrentState() {
 
   state.icp.setCartesian(icp_cr.x - foot_step.foot_r_ini.x(),
                          icp_cr.y - foot_step.foot_r_ini.y() );
-  state.swft.setCartesian(
+  state.swf.setCartesian(
     foot_step.foot_l_ini.x() - foot_step.foot_r_ini.x(),
     foot_step.foot_l_ini.y() - foot_step.foot_r_ini.y() );
   gstate = grid->roundState(state);
@@ -60,8 +60,8 @@ bool FootPlanner::plan() {
 
   capture_set = capturability->getCaptureRegion(gstate.id, 1);
   for (size_t i = 0; i < capture_set.size(); i++) {
-    dist = fabs( capture_set[i].swft.th - gstate.state.icp.th );
-    fprintf(fp, "%lf,%lf\n", capture_set[i].swft.x, capture_set[i].swft.y);
+    dist = fabs( capture_set[i].swf.th - gstate.state.icp.th );
+    fprintf(fp, "%lf,%lf\n", capture_set[i].swf.x, capture_set[i].swf.y);
     if (i == 0) {
       dist_min    = dist;
       dist_min_id = i;
@@ -71,8 +71,8 @@ bool FootPlanner::plan() {
     }
   }
   fclose(fp);
-  landing.x() = capture_set[dist_min_id].swft.x;
-  landing.y() = capture_set[dist_min_id].swft.y;
+  landing.x() = capture_set[dist_min_id].swf.x;
+  landing.y() = capture_set[dist_min_id].swf.y;
   landing.z() = 0.0;
 
   // set footstep

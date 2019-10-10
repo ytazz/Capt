@@ -5,8 +5,8 @@ close all;
 %% Param
 sfwt_r_min=0.1;
 sfwt_r_max=0.2;
-swft_th_min=20; %[deg]
-swft_th_max=160; %[deg]
+swf_th_min=20; %[deg]
+swf_th_max=160; %[deg]
 
 %% Plot
 figure('Name','Result');
@@ -32,16 +32,16 @@ draw_foot([0 0],0,[0.5 0.5 0.5]);
 draw_foot_polygon([0 0],0,'black');
 
 % Steppable region
-swft_th_min_ = swft_th_min * pi/180;
-swft_th_max_ = swft_th_max * pi/180;
-line([sfwt_r_min*cos(swft_th_min_) sfwt_r_max*cos(swft_th_min_)], ... 
-        [sfwt_r_min*sin(swft_th_min_) sfwt_r_max*sin(swft_th_min_)], ...
+swf_th_min_ = swf_th_min * pi/180;
+swf_th_max_ = swf_th_max * pi/180;
+line([sfwt_r_min*cos(swf_th_min_) sfwt_r_max*cos(swf_th_min_)], ... 
+        [sfwt_r_min*sin(swf_th_min_) sfwt_r_max*sin(swf_th_min_)], ...
         'Color', [0.5 0.5 0.5])
-line([sfwt_r_min*cos(swft_th_max_) sfwt_r_max*cos(swft_th_max_)], ...
-        [sfwt_r_min*sin(swft_th_max_) sfwt_r_max*sin(swft_th_max_)], ...
+line([sfwt_r_min*cos(swf_th_max_) sfwt_r_max*cos(swf_th_max_)], ...
+        [sfwt_r_min*sin(swf_th_max_) sfwt_r_max*sin(swf_th_max_)], ...
         'Color', [0.5 0.5 0.5])
-draw_circle([0 0],sfwt_r_min,[swft_th_min swft_th_max],[0.5 0.5 0.5]);
-draw_circle([0 0],sfwt_r_max,[swft_th_min swft_th_max],[0.5 0.5 0.5]);
+draw_circle([0 0],sfwt_r_min,[swf_th_min swf_th_max],[0.5 0.5 0.5]);
+draw_circle([0 0],sfwt_r_max,[swf_th_min swf_th_max],[0.5 0.5 0.5]);
 
 % CoM
 %data = csvread('com.csv');

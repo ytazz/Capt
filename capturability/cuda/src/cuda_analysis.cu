@@ -24,10 +24,10 @@ __host__ void initState(State *state, int *next_id, Condition cond) {
     state[i].icp.y_  = cond.grid->getState(i).icp.y;
     state[i].icp.r_  = cond.grid->getState(i).icp.r;
     state[i].icp.th_ = cond.grid->getState(i).icp.th;
-    state[i].swf.x_  = cond.grid->getState(i).swft.x;
-    state[i].swf.y_  = cond.grid->getState(i).swft.y;
-    state[i].swf.r_  = cond.grid->getState(i).swft.r;
-    state[i].swf.th_ = cond.grid->getState(i).swft.th;
+    state[i].swf.x_  = cond.grid->getState(i).swf.x;
+    state[i].swf.y_  = cond.grid->getState(i).swf.y;
+    state[i].swf.r_  = cond.grid->getState(i).swf.r;
+    state[i].swf.th_ = cond.grid->getState(i).swf.th;
   }
 
   for (int id = 0; id < num_state * num_input; id++) {
@@ -37,10 +37,10 @@ __host__ void initState(State *state, int *next_id, Condition cond) {
 
 __host__ void initInput(Input *input, Condition cond) {
   for (int i = 0; i < cond.grid->getNumInput(); i++) {
-    input[i].swf.x_  = cond.grid->getInput(i).swft.x;
-    input[i].swf.y_  = cond.grid->getInput(i).swft.y;
-    input[i].swf.r_  = cond.grid->getInput(i).swft.r;
-    input[i].swf.th_ = cond.grid->getInput(i).swft.th;
+    input[i].swf.x_  = cond.grid->getInput(i).swf.x;
+    input[i].swf.y_  = cond.grid->getInput(i).swf.y;
+    input[i].swf.r_  = cond.grid->getInput(i).swf.r;
+    input[i].swf.th_ = cond.grid->getInput(i).swf.th;
   }
 }
 
@@ -69,15 +69,15 @@ __host__ void initGrid(Grid *cgrid, Condition cond) {
   cgrid->icp_th_step = cond.param->getVal("icp_th", "step");
   cgrid->icp_th_num  = cond.param->getVal("icp_th", "num");
 
-  cgrid->swf_r_min  = cond.param->getVal("swft_r", "min");
-  cgrid->swf_r_max  = cond.param->getVal("swft_r", "max");
-  cgrid->swf_r_step = cond.param->getVal("swft_r", "step");
-  cgrid->swf_r_num  = cond.param->getVal("swft_r", "num");
+  cgrid->swf_r_min  = cond.param->getVal("swf_r", "min");
+  cgrid->swf_r_max  = cond.param->getVal("swf_r", "max");
+  cgrid->swf_r_step = cond.param->getVal("swf_r", "step");
+  cgrid->swf_r_num  = cond.param->getVal("swf_r", "num");
 
-  cgrid->swf_th_min  = cond.param->getVal("swft_th", "min");
-  cgrid->swf_th_max  = cond.param->getVal("swft_th", "max");
-  cgrid->swf_th_step = cond.param->getVal("swft_th", "step");
-  cgrid->swf_th_num  = cond.param->getVal("swft_th", "num");
+  cgrid->swf_th_min  = cond.param->getVal("swf_th", "min");
+  cgrid->swf_th_max  = cond.param->getVal("swf_th", "max");
+  cgrid->swf_th_step = cond.param->getVal("swf_th", "step");
+  cgrid->swf_th_num  = cond.param->getVal("swf_th", "num");
 }
 
 __host__ void initCop(Vector2 *cop, Condition cond) {
@@ -168,7 +168,7 @@ __host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *basin) {
 
     Capt::Polygon polygon;
     polygon.setVertex(model.getVec("foot", "foot_r_convex") );
-    polygon.setVertex(model.getVec("foot", "foot_l_convex", state.swft) );
+    polygon.setVertex(model.getVec("foot", "foot_l_convex", state.swf) );
 
     bool flag = false;
     flag = polygon.inPolygon(state.icp, polygon.getConvexHull() );
@@ -214,7 +214,7 @@ __device__ int roundValue(double value) {
 
 __device__ bool existState(State state, Grid *grid) {
   bool flag_icp_r  = false, flag_icp_th = false;
-  bool flag_swft_r = false, flag_swft_th = false;
+  bool flag_swf_r = false, flag_swf_th = false;
 
   // icp_r
   if (state.icp.r_ >= grid->icp_r_min - grid->icp_r_step / 2.0 &&
@@ -226,18 +226,18 @@ __device__ bool existState(State state, Grid *grid) {
       state.icp.th_ < grid->icp_th_max + grid->icp_th_step / 2.0) {
     flag_icp_th = true;
   }
-  // swft_r
+  // swf_r
   if (state.swf.r_ >= grid->swf_r_min - grid->swf_r_step / 2.0 &&
       state.swf.r_ < grid->swf_r_max + grid->swf_r_step / 2.0) {
-    flag_swft_r = true;
+    flag_swf_r = true;
   }
-  // swft_th
+  // swf_th
   if (state.swf.th_ >= grid->swf_th_min - grid->swf_th_step / 2.0 &&
       state.swf.th_ < grid->swf_th_max + grid->swf_th_step / 2.0) {
-    flag_swft_th = true;
+    flag_swf_th = true;
   }
 
-  bool flag = flag_icp_r * flag_icp_th * flag_swft_r * flag_swft_th;
+  bool flag = flag_icp_r * flag_icp_th * flag_swf_r * flag_swf_th;
   return flag;
 }
 

@@ -9,20 +9,20 @@ namespace Capt {
 
 struct State {
   Vector2 icp;
-  Vector2 swft;
+  Vector2 swf;
 
   void printPolar() {
     printf("icp  = [ %lf, %lf ]\n", icp.r, icp.th);
-    printf("swft = [ %lf, %lf ]\n", swft.r, swft.th);
+    printf("swf = [ %lf, %lf ]\n", swf.r, swf.th);
   }
   void printCartesian() {
     printf("icp  = [ %lf, %lf ]\n", icp.x, icp.y);
-    printf("swft = [ %lf, %lf ]\n", swft.x, swft.y);
+    printf("swf = [ %lf, %lf ]\n", swf.x, swf.y);
   }
 
   void operator=(const State &state) {
     this->icp = state.icp;
-    this->swft = state.swft;
+    this->swf = state.swf;
   }
 };
 

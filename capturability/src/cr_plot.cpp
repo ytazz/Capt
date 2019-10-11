@@ -8,7 +8,7 @@ CRPlot::CRPlot(Model model, Param param)
   : model(model), param(param) {
   p("set title \"Capture Region (polar coordinate)\"");
   // p("unset key");
-  p("set encoding utf8");
+  // p("set encoding utf8");
   // p("set size square");
 
   if (strcmp(param.getStr("coordinate", "type").c_str(), "cartesian") == 0) {
@@ -22,18 +22,37 @@ CRPlot::CRPlot(Model model, Param param)
     std::string xrange = "[" + str(x_min - x_step / 2.0) + ":" + str(x_max + x_step / 2.0) + "]";
     std::string yrange = "[" + str(y_min - y_step / 2.0) + ":" + str(y_max + y_step / 2.0) + "]";
 
-    p("set xtics "  + str(x_min) + ", " + str(x_step * 2.0) );
-    p("set ytics " + str(y_step * 2.0) );
-    p("set x2tics " + str(x_min - x_step / 2.0) + ", " + str(x_step) );
-    printf("x_min %s\n", str(x_min).c_str() );
-    printf("x_max %s\n", str(x_max).c_str() );
-    printf("x_step %s\n", str(x_step).c_str() );
-    p("set format x2 \"\"");
-    p("set xrange " + xrange);
-    p("set yrange " + yrange);
-    p("set x2tics scale 0");
+    // p("set xtics "  + str(x_min) + ", " + str(x_step * 2.0) );
+    // p("set ytics " + str(y_step * 2.0) );
+    // p("set x2tics " + str(x_min - x_step / 2.0) + ", " + str(x_step) );
+    // printf("x_min %s\n", str(x_min).c_str() );
+    // printf("x_max %s\n", str(x_max).c_str() );
+    // printf("x_step %s\n", str(x_step).c_str() );
+    // p("set format x2 \"\"");
+    // p("set xrange " + xrange);
+    // p("set yrange " + yrange);
+    // p("set x2tics scale 0");
+    //
+    // p("set grid x2tics");
 
-    p("set grid x2tics");
+    // p("set terminal svg");
+    // p("set output 'plot.svg'");
+    p("set size ratio 1");
+    p("set palette gray negative");
+    p("set autoscale xfix");
+    p("set autoscale yfix");
+    p("set xtics 1");
+    p("set ytics 1");
+    p("set title \"Resolution Matrix for E\"");
+
+    p("set cbrange[0:3]");
+    p("set cbtics 1");
+
+    p("set tics scale 0,0.1");
+    p("set mxtics 2");
+    p("set mytics 2");
+    p("set grid front mxtics mytics lw 1.5 lt -1 lc rgb 'white'");
+
   }else if (strcmp(param.getStr("coordinate", "type").c_str(), "cartesian") == 0) {
     p("set xtics 0.05");
     p("set ytics 0.05");
@@ -74,10 +93,10 @@ void CRPlot::setOutput(std::string type) {
     p("set output 'plot.gif'");
   }
   if (type == "svg") {
-    p("set terminal svg");
-    p("set output 'plot.svg'");
-    fprintf(p.gp, "plot sin(x)\n");
-    fflush(p.gp);
+    // p("set terminal svg");
+    // p("set output 'plot.svg'");
+    fprintf(p.gp, "plot \"datafile.dat\" matrix w image notitle\n");
+    // fflush(p.gp);
   }
   if (type == "eps") {
     p("set terminal postscript eps enhanced");

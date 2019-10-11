@@ -11,13 +11,13 @@ CRPlot::CRPlot(Model model, Param param)
   // p("set encoding utf8");
   // p("set size square");
 
+  x_min  = param.getVal("icp_x", "min");
+  x_max  = param.getVal("icp_x", "max");
+  x_step = param.getVal("icp_x", "step");
+  y_min  = param.getVal("icp_y", "min");
+  y_max  = param.getVal("icp_y", "max");
+  y_step = param.getVal("icp_y", "step");
   if (strcmp(param.getStr("coordinate", "type").c_str(), "cartesian") == 0) {
-    double x_min  = param.getVal("icp_x", "min");
-    double x_max  = param.getVal("icp_x", "max");
-    double x_step = param.getVal("icp_x", "step");
-    double y_min  = param.getVal("icp_y", "min");
-    double y_max  = param.getVal("icp_y", "max");
-    double y_step = param.getVal("icp_y", "step");
 
     std::string xrange = "[" + str(x_min - x_step / 2.0) + ":" + str(x_max + x_step / 2.0) + "]";
     std::string yrange = "[" + str(y_min - y_step / 2.0) + ":" + str(y_max + y_step / 2.0) + "]";
@@ -37,7 +37,7 @@ CRPlot::CRPlot(Model model, Param param)
 
     // p("set terminal svg");
     // p("set output 'plot.svg'");
-    p("set size ratio 1");
+    p("set size square");
     p("set palette gray negative");
     p("set autoscale xfix");
     p("set autoscale yfix");
@@ -45,13 +45,16 @@ CRPlot::CRPlot(Model model, Param param)
     p("set ytics 1");
     p("set title \"Resolution Matrix for E\"");
 
-    p("set cbrange[0:3]");
+    p("set cbrange[0:4]");
     p("set cbtics 1");
 
     p("set tics scale 0,0.1");
     p("set mxtics 2");
     p("set mytics 2");
-    p("set grid front mxtics mytics lw 1.5 lt -1 lc rgb 'white'");
+    p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'white'");
+
+    // rename
+    p("set xtics add (\"1\" 0, \"\" 1, \"\" 2, \"\" 3, \"5\" 4, \"\" 5, \"\" 6, \"\" 7, \"\" 8, \"10\" 9, \"\" 10,)");
 
   }else if (strcmp(param.getStr("coordinate", "type").c_str(), "cartesian") == 0) {
     p("set xtics 0.05");
@@ -104,151 +107,19 @@ void CRPlot::setOutput(std::string type) {
   }
 }
 
-void CRPlot::plotGrid(){
-  // fprintf(p.gp, "plot ");
-  // fprintf(p.gp, "'-' with lines lw 1 lc \"black\"\n");
-  // double x,y;
-  // for(int i = 0; i < param.getVal("icp_x", "num"); i++) {
-  //   for(int j = 0; j < param.getVal("icp_y", "num"); j++) {
-  //     fprintf(p.gp, "%f %f\n", x, y );
-  //   }
-  // }
-  // fprintf(p.gp, "e\n");
+void CRPlot::plot(){
+  FILE  *fp = fopen("data.dat", "w");
+  double x  = x_min, y = y_min;
+  while(x < x_max + x_step / 2.0) {
+    y = y_min;
+    while(y < y_max + y_step / 2.0) {
+      fprintf(fp, "%d ", rand() % 5);
+      y += y_step;
+    }
+    fprintf(fp, "\n");
+    x += x_step;
+  }
+  fclose(fp);
+  fprintf(p.gp, "plot \"data.dat\" matrix w image notitle\n");
 }
-
-/*
-   void CRPlot::animCaptureRegion(State state) {
-   state.icp.th = param.getVal("icp_th", "min");
-
-   while (state.icp.th < param.getVal("icp_th", "max") ) {
-    state.icp.th += param.getVal("icp_th", "step");
-    plotCaptureRegion(state);
-   }
-   }
-
-   void CRPlot::plotCaptureRegion(State state) {
-   // setting
-   fprintf(p.gp, "plot ");
-   // steppable region
-   fprintf(p.gp, "'-' t 'Valid Stepping Region' with lines linewidth 1 "
-          "lc \"black\",");
-   // icp
-   fprintf(p.gp, "'-' t 'Instantaneous Capture Point' with points pointsize 1 "
-          "pointtype 6 lc \"blue\",");
-   // com
-   fprintf(p.gp, "'-' t 'Center of Mass' with points pointsize 1 "
-          "pointtype 26 lc \"black\",");
-   // support foot
-   fprintf(p.gp, "'-' t 'Current Support Foot' with lines linewidth 2 "
-          "lc \"black\",");
-   // swing foot
-   fprintf(p.gp, "'-' t 'Current Swing Foot' with lines linewidth 2 "
-          "lc \"black\",");
-   // n-step capture point
-   int max_step = 3;
-   for(int i = 1; i <= max_step; i++) {
-    if(i == max_step) {
-      fprintf(p.gp, "'-' t '%d-step Capture Point' with points pointsize 0.5 "
-              "pointtype 7 lc rgb hsv2rgb(%lf, 1, 1)\n", i, 0.3 * ( i - 1 ) );
-    }else{
-      fprintf(p.gp, "'-' t '%d-step Capture Point' with points pointsize 0.5 "
-              "pointtype 7 lc rgb hsv2rgb(%lf, 1, 1),", i, 0.3 * ( i - 1 ) );
-    }
-   }
-
-   // plot
-   // steppable region
-   double th = param.getVal("swf_th", "min");
-   while (th <= param.getVal("swf_th", "max") ) {
-    th += 0.001;
-    fprintf(p.gp, "%f %f\n", th, param.getVal("swf_r", "min") );
-   }
-   while (th >= param.getVal("swf_th", "min") ) {
-    th -= 0.001;
-    fprintf(p.gp, "%f %f\n", th, param.getVal("swf_r", "max") );
-   }
-   fprintf(p.gp, "%f %f\n", th, param.getVal("swf_r", "min") );
-   fprintf(p.gp, "e\n");
-   // icp
-   fprintf(p.gp, "%f %f\n", state.icp.th, state.icp.r);
-   fprintf(p.gp, "e\n");
-   // com
-   fprintf(p.gp, "%f %f\n", com.th, com.r);
-   fprintf(p.gp, "e\n");
-   // support foot
-   std::vector<Vector2> foot_r = model.getVec("foot", "foot_r");
-   for (size_t i = 0; i < foot_r.size(); i++) {
-    fprintf(p.gp, "%f %f\n", foot_r[i].th, foot_r[i].r);
-   }
-   fprintf(p.gp, "e\n");
-   // swing foot
-   std::vector<Vector2> foot_l = model.getVec("foot", "foot_l");
-   for (size_t i = 0; i < foot_l.size(); i++) {
-    fprintf(p.gp, "%f %f\n", ( foot_l[i] + state.swf ).th,
-            ( foot_l[i] + state.swf ).r);
-   }
-   fprintf(p.gp, "e\n");
-   // capture point
-   for(int i = 1; i <= max_step; i++) {
-    std::vector<CaptureSet> region;
-    region = capturability.getCaptureRegion(state, i);
-    if (!region.empty() ) {
-      for (size_t j = 0; j < region.size(); j++) {
-        fprintf(p.gp, "%f %f\n", region[j].swf.th, region[j].swf.r);
-      }
-    }
-    fprintf(p.gp, "e\n");
-   }
-
-   // flush
-   fflush(p.gp);
-   }
-
-   void CRPlot::plotCaptureIcp(State state) {
-   // setting
-   fprintf(p.gp, "plot ");
-   // support foot
-   fprintf(p.gp, "'-' t 'Current Support Foot' with lines linewidth 2 "
-          "lc \"black\",");
-   // swing foot
-   fprintf(p.gp, "'-' t 'Current Swing Foot' with lines linewidth 2 "
-          "lc \"black\",");
-   // capturable ICP
-   fprintf(p.gp, "'-' t 'Capturable ICP' with points pointsize 0.5 "
-          "pointtype 7 lc \"blue\"\n");
-
-   // plot
-   // support foot
-   std::vector<Vector2> foot_r = model.getVec("foot", "foot_r");
-   for (size_t i = 0; i < foot_r.size(); i++) {
-    fprintf(p.gp, "%f %f\n", foot_r[i].th, foot_r[i].r);
-   }
-   fprintf(p.gp, "e\n");
-   // swing foot
-   std::vector<Vector2> foot_l = model.getVec("foot", "foot_l");
-   for (size_t i = 0; i < foot_l.size(); i++) {
-    fprintf(p.gp, "%f %f\n", ( foot_l[i] + state.swf ).th,
-            ( foot_l[i] + state.swf ).r);
-   }
-   fprintf(p.gp, "e\n");
-   // capturable ICP
-   float icp_r  = param.getVal("icp_r", "min");
-   float icp_th = param.getVal("icp_th", "min");
-   while (icp_r < param.getVal("icp_r", "max") ) {
-    icp_th = param.getVal("icp_th", "min");
-    while (icp_th < param.getVal("icp_th", "max") ) {
-      state.icp.setPolar(icp_r, icp_th);
-      if (capturability.capturable(state, 0) ) {
-        fprintf(p.gp, "%f %f\n", icp_th, icp_r);
-      }
-      icp_th += param.getVal("icp_th", "step");
-    }
-    icp_r += param.getVal("icp_r", "step");
-   }
-   fprintf(p.gp, "e\n");
-
-   // flush
-   fflush(p.gp);
-   }
- */
 }

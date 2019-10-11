@@ -18,6 +18,7 @@ int main(int argc, char const *argv[]) {
   Grid   grid(param);
   CRPlot cr_plot(model, param);
   cr_plot.setOutput("svg");
+  cr_plot.plot();
 
   return 0;
 }

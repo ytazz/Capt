@@ -31,7 +31,7 @@ public:
 
   void setOutput(std::string type);
 
-  void plotGrid();
+  void plot();
 
   void animCaptureRegion(State state);
   void plotCaptureRegion(State state);
@@ -42,6 +42,9 @@ public:
 
 private:
   std::string str(double val);
+
+  double x_min, x_max, x_step;
+  double y_min, y_max, y_step;
 };
 }
 

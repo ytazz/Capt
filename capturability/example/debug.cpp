@@ -11,13 +11,13 @@ using namespace Capt;
 
 int main(int argc, char const *argv[]) {
   Model model("val.xml");
-  model.print();
+  // model.print();
   Param param("param_val_xy.xml");
-  param.print();
+  // param.print();
 
   Grid   grid(param);
   CRPlot cr_plot(model, param);
-  cr_plot.setOutput("svg");
+  // cr_plot.setOutput("eps");
   cr_plot.plot();
 
   return 0;

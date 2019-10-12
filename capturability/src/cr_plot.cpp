@@ -14,47 +14,50 @@ CRPlot::CRPlot(Model model, Param param)
   x_min  = param.getVal("icp_x", "min");
   x_max  = param.getVal("icp_x", "max");
   x_step = param.getVal("icp_x", "step");
+  x_num  = param.getVal("icp_x", "num");
   y_min  = param.getVal("icp_y", "min");
   y_max  = param.getVal("icp_y", "max");
   y_step = param.getVal("icp_y", "step");
+  y_num  = param.getVal("icp_y", "num");
+
   if (strcmp(param.getStr("coordinate", "type").c_str(), "cartesian") == 0) {
 
     std::string xrange = "[" + str(x_min - x_step / 2.0) + ":" + str(x_max + x_step / 2.0) + "]";
     std::string yrange = "[" + str(y_min - y_step / 2.0) + ":" + str(y_max + y_step / 2.0) + "]";
 
-    // p("set xtics "  + str(x_min) + ", " + str(x_step * 2.0) );
-    // p("set ytics " + str(y_step * 2.0) );
-    // p("set x2tics " + str(x_min - x_step / 2.0) + ", " + str(x_step) );
-    // printf("x_min %s\n", str(x_min).c_str() );
-    // printf("x_max %s\n", str(x_max).c_str() );
-    // printf("x_step %s\n", str(x_step).c_str() );
-    // p("set format x2 \"\"");
-    // p("set xrange " + xrange);
-    // p("set yrange " + yrange);
-    // p("set x2tics scale 0");
-    //
-    // p("set grid x2tics");
-
-    // p("set terminal svg");
-    // p("set output 'plot.svg'");
     p("set size square");
     p("set palette gray negative");
     p("set autoscale xfix");
     p("set autoscale yfix");
     p("set xtics 1");
     p("set ytics 1");
-    p("set title \"Resolution Matrix for E\"");
+    p("set title \"Capture Region\"");
 
     p("set cbrange[0:4]");
     p("set cbtics 1");
 
-    p("set tics scale 0,0.1");
+    p("set tics scale 0,0.001");
     p("set mxtics 2");
     p("set mytics 2");
     p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'white'");
 
-    // rename
-    p("set xtics add (\"1\" 0, \"\" 1, \"\" 2, \"\" 3, \"5\" 4, \"\" 5, \"\" 6, \"\" 7, \"\" 8, \"10\" 9, \"\" 10,)");
+    // set tics numbers
+    std::string x_tics, y_tics;
+    for(int i = 0; i < x_num; i++) {
+      x_tics += "\"\" " + str(i);
+      if(i != x_num - 1)
+        x_tics += ", ";
+    }
+    for(int i = 0; i < y_num; i++) {
+      y_tics += "\"\" " + str(i);
+      if(i != y_num - 1)
+        y_tics += ", ";
+    }
+    fprintf(p.gp, "set xtics add (%s)\n", x_tics.c_str() );
+    fprintf(p.gp, "set ytics add (%s)\n", y_tics.c_str() );
+
+    p("set xtics add (\"-0.2\" 0, \"-0.1\" 5, \"0\" 10, \"0.1\" 15, \"0.2\" 20)");
+    p("set ytics add (\"-0.2\" 0, \"-0.1\" 5, \"0\" 10, \"0.1\" 15, \"0.2\" 20)");
 
   }else if (strcmp(param.getStr("coordinate", "type").c_str(), "cartesian") == 0) {
     p("set xtics 0.05");
@@ -90,16 +93,18 @@ std::string CRPlot::str(double val){
   return std::to_string(val);
 }
 
+std::string CRPlot::str(int val){
+  return std::to_string(val);
+}
+
 void CRPlot::setOutput(std::string type) {
   if (type == "gif") {
     p("set terminal gif animate optimize delay 30 size 600,900");
     p("set output 'plot.gif'");
   }
   if (type == "svg") {
-    // p("set terminal svg");
-    // p("set output 'plot.svg'");
-    fprintf(p.gp, "plot \"datafile.dat\" matrix w image notitle\n");
-    // fflush(p.gp);
+    p("set terminal svg");
+    p("set output 'plot.svg'");
   }
   if (type == "eps") {
     p("set terminal postscript eps enhanced");

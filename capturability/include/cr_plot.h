@@ -42,9 +42,12 @@ public:
 
 private:
   std::string str(double val);
+  std::string str(int val);
 
   double x_min, x_max, x_step;
   double y_min, y_max, y_step;
+  int    x_num;
+  int    y_num;
 };
 }
 

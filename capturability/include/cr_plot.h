@@ -31,11 +31,13 @@ public:
 
   void setOutput(std::string type);
 
-  void plot();
+  // void setCaptureRegion(State state);
+  void setCaptureRegion();
 
-  void animCaptureRegion(State state);
-  void plotCaptureRegion(State state);
-  void plotCaptureIcp(State state);
+  void initCaptureMap();
+  void setCaptureMap(double x, double y, int n_step);
+
+  void plot();
 
   double omega;
   vec2_t com;
@@ -48,6 +50,8 @@ private:
   double y_min, y_max, y_step;
   int    x_num;
   int    y_num;
+
+  std::vector<std::vector<int> > capture_map;
 };
 }
 

@@ -18,7 +18,7 @@ int main(int argc, char const *argv[]) {
   Grid   grid(param);
   CRPlot cr_plot(model, param);
   // cr_plot.setOutput("eps");
-  cr_plot.plot();
+  cr_plot.setCaptureRegion();
 
   return 0;
 }

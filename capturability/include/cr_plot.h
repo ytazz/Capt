@@ -40,7 +40,6 @@ public:
   void plot();
 
   double omega;
-  vec2_t com;
 
 private:
   std::string str(double val);

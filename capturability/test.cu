@@ -3,6 +3,9 @@
 const int BPG = 65535; // Blocks  Per Grid  (max: 65535)
 const int TPB = 1024;  // Threads Per Block (max: 1024)
 
+// typedef Cuda::GridCartesian grid_t;
+typedef Cuda::GridPolar grid_t;
+
 int main(void) {
   /* 前処理 */
   /* ---------------------------------------------------------------------- */
@@ -29,14 +32,14 @@ int main(void) {
 
   /* パラメータの用意 */
   // ホスト側
-  Cuda::State     *state   = (Cuda::State*)malloc(sizeof( Cuda::State ) * num_state);
-  Cuda::Input     *input   = (Cuda::Input*)malloc(sizeof( Cuda::Input ) * num_input );
-  int             *trans   = (int*)malloc(sizeof( int ) * num_state * num_input );
-  int             *basin   = (int*)malloc(sizeof( int ) * num_state );
-  int             *nstep   = (int*)malloc(sizeof( int ) * num_grid );
-  Cuda::GridPolar *grid    = new Cuda::GridPolar;
-  Cuda::Vector2   *cop     = new Cuda::Vector2[num_state];
-  Cuda::Physics   *physics = new Cuda::Physics;
+  Cuda::State   *state   = (Cuda::State*)malloc(sizeof( Cuda::State ) * num_state);
+  Cuda::Input   *input   = (Cuda::Input*)malloc(sizeof( Cuda::Input ) * num_input );
+  int           *trans   = (int*)malloc(sizeof( int ) * num_state * num_input );
+  int           *basin   = (int*)malloc(sizeof( int ) * num_state );
+  int           *nstep   = (int*)malloc(sizeof( int ) * num_grid );
+  grid_t        *grid    = new grid_t;
+  Cuda::Vector2 *cop     = new Cuda::Vector2[num_state];
+  Cuda::Physics *physics = new Cuda::Physics;
   mm.initHostState(state, cond);
   mm.initHostTrans(trans, cond);
   mm.initHostInput(input, cond);
@@ -47,14 +50,14 @@ int main(void) {
   mm.initPhysics(physics, cond);
   mm.setGrid(grid);
   // デバイス側
-  Cuda::State     *dev_state;
-  Cuda::Input     *dev_input;
-  int             *dev_basin;
-  int             *dev_nstep;
-  int             *dev_trans;
-  Cuda::GridPolar *dev_grid;
-  Cuda::Vector2   *dev_cop;
-  Cuda::Physics   *dev_physics;
+  Cuda::State   *dev_state;
+  Cuda::Input   *dev_input;
+  int           *dev_basin;
+  int           *dev_nstep;
+  int           *dev_trans;
+  grid_t        *dev_grid;
+  Cuda::Vector2 *dev_cop;
+  Cuda::Physics *dev_physics;
   // mm.initDevState(dev_state);
   // mm.initDevInput(dev_input);
   // mm.initDevTrans(dev_trans);
@@ -68,7 +71,7 @@ int main(void) {
   HANDLE_ERROR(cudaMalloc( (void **)&dev_trans, num_grid * sizeof( int ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_basin, num_state * sizeof( int ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_nstep, num_grid * sizeof( int ) ) );
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_grid, sizeof( Cuda::GridPolar ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_grid, sizeof( grid_t ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_cop, num_state * sizeof( Cuda::Vector2 ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_physics, sizeof( Cuda::Physics ) ) );
 

@@ -18,15 +18,20 @@ __host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *basin);
 /* device function */
 
 __device__ State step(State state, Input input, Vector2 cop, Physics *physics);
+__device__ bool  existState(State state, GridCartesian *grid);
 __device__ bool  existState(State state, GridPolar *grid);
+__device__ int   getStateIndex(State state, GridCartesian *grid);
 __device__ int   getStateIndex(State state, GridPolar *grid);
 __device__ int   roundValue(double value);
 
 /* global function */
 
+__global__ void calcStateTrans(State *state, Input *input, int *trans, GridCartesian *grid,
+                               Vector2 *cop, Physics *physics);
 __global__ void calcStateTrans(State *state, Input *input, int *trans, GridPolar *grid,
                                Vector2 *cop, Physics *physics);
 
+__global__ void exeNStep(int N, int *basin, int *nstep, int *trans, GridCartesian *grid);
 __global__ void exeNStep(int N, int *basin, int *nstep, int *trans, GridPolar *grid);
 
 } // namespace Cuda

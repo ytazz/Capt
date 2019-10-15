@@ -109,6 +109,35 @@ __device__ int roundValue(double value) {
   return result;
 }
 
+__device__ bool existState(State state, GridCartesian *grid) {
+  bool flag_icp_x = false, flag_icp_y = false;
+  bool flag_swf_x = false, flag_swf_y = false;
+
+  // icp_x
+  if (state.icp.r_ >= grid->icp_x_min - grid->icp_x_step / 2.0 &&
+      state.icp.r_ < grid->icp_x_max + grid->icp_x_step / 2.0) {
+    flag_icp_x = true;
+  }
+  // icp_y
+  if (state.icp.th_ >= grid->icp_y_min - grid->icp_y_step / 2.0 &&
+      state.icp.th_ < grid->icp_y_max + grid->icp_y_step / 2.0) {
+    flag_icp_y = true;
+  }
+  // swf_x
+  if (state.swf.r_ >= grid->swf_x_min - grid->swf_x_step / 2.0 &&
+      state.swf.r_ < grid->swf_x_max + grid->swf_x_step / 2.0) {
+    flag_swf_x = true;
+  }
+  // swf_y
+  if (state.swf.th_ >= grid->swf_y_min - grid->swf_y_step / 2.0 &&
+      state.swf.th_ < grid->swf_y_max + grid->swf_y_step / 2.0) {
+    flag_swf_y = true;
+  }
+
+  bool flag = flag_icp_x * flag_icp_y * flag_swf_x * flag_swf_y;
+  return flag;
+}
+
 __device__ bool existState(State state, GridPolar *grid) {
   bool flag_icp_r = false, flag_icp_th = false;
   bool flag_swf_r = false, flag_swf_th = false;
@@ -138,6 +167,23 @@ __device__ bool existState(State state, GridPolar *grid) {
   return flag;
 }
 
+__device__ int getStateIndex(State state, GridCartesian *grid) {
+  int icp_x_id = 0, icp_y_id = 0;
+  int swf_x_id = 0, swf_y_id = 0;
+
+  icp_x_id = roundValue( ( state.icp.r() - grid->icp_x_min ) / grid->icp_x_step);
+  icp_y_id = roundValue( ( state.icp.th() - grid->icp_y_min ) / grid->icp_y_step);
+  swf_x_id = roundValue( ( state.swf.r() - grid->swf_x_min ) / grid->swf_x_step);
+  swf_y_id = roundValue( ( state.swf.th() - grid->swf_y_min ) / grid->swf_y_step);
+
+  int state_id = 0;
+  state_id = grid->swf_y_num * grid->swf_x_num * grid->icp_y_num * icp_x_id +
+             grid->swf_y_num * grid->swf_x_num * icp_y_id +
+             grid->swf_y_num * swf_x_id + swf_y_id;
+
+  return state_id;
+}
+
 __device__ int getStateIndex(State state, GridPolar *grid) {
   int icp_r_id = 0, icp_th_id = 0;
   int swf_r_id = 0, swf_th_id = 0;
@@ -157,6 +203,24 @@ __device__ int getStateIndex(State state, GridPolar *grid) {
 
 /* global function */
 
+__global__ void calcStateTrans(State *state, Input *input, int *trans, GridCartesian *grid,
+                               Vector2 *cop, Physics *physics){
+  int tid = threadIdx.x + blockIdx.x * blockDim.x;
+
+  while (tid < grid->num_state * grid->num_input) {
+    int state_id = tid / grid->num_input;
+    int input_id = tid % grid->num_input;
+
+    State state_ = step(state[state_id], input[input_id], cop[state_id], physics);
+    if (existState(state_, grid) )
+      trans[tid] = getStateIndex(state_, grid);
+    else
+      trans[tid] = -1;
+
+    tid += blockDim.x * gridDim.x;
+  }
+}
+
 __global__ void calcStateTrans(State *state, Input *input, int *trans, GridPolar *grid,
                                Vector2 *cop, Physics *physics){
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
@@ -170,6 +234,27 @@ __global__ void calcStateTrans(State *state, Input *input, int *trans, GridPolar
       trans[tid] = getStateIndex(state_, grid);
     else
       trans[tid] = -1;
+
+    tid += blockDim.x * gridDim.x;
+  }
+}
+
+__global__ void exeNStep(int N, int *basin,
+                         int *nstep, int *trans, GridCartesian *grid) {
+  int tid = threadIdx.x + blockIdx.x * blockDim.x;
+
+  while (tid < grid->num_state * grid->num_input) {
+    int state_id = tid / grid->num_input;
+    int input_id = tid % grid->num_input;
+
+    if (trans[tid] >= 0) {
+      if (basin[trans[tid]] == ( N - 1 ) ) {
+        nstep[tid] = N;
+        if (basin[state_id] < 0) {
+          basin[state_id] = N;
+        }
+      }
+    }
 
     tid += blockDim.x * gridDim.x;
   }

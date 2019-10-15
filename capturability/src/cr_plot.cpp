@@ -4,8 +4,8 @@ using namespace std;
 
 namespace Capt {
 
-CRPlot::CRPlot(Model model, Param param)
-  : model(model), param(param) {
+CRPlot::CRPlot(Model model, Param param, Capturability *capturability)
+  : model(model), param(param), capturability(capturability) {
   p("set title \"Capture Region\"");
   // p("unset key");
   p("set encoding utf8");
@@ -107,6 +107,14 @@ void CRPlot::setOutput(std::string type) {
   if (type == "eps") {
     p("set terminal postscript eps enhanced");
     p("set output 'plot.eps'");
+  }
+}
+
+void CRPlot::setZerostep(State state){
+  initCaptureMap();
+  std::vector<CaptureSet> capture_region = capturability->getCaptureRegion(state, 0);
+  for(size_t i = 0; capture_region.size(); i++) {
+    setCaptureMap(capture_region[i].swf.x, capture_region[i].swf.y, 3);
   }
 }
 

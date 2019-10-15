@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<coordinate type="cartesian">
+
+  <unit length="m" angle="deg"/>
+
+  <icp>
+    <x min="-0.2" max="0.2" step="0.02"/>
+    <y min="-0.2" max="0.2" step="0.02"/>
+  </icp>
+
+  <swing>
+    <x min="-0.08" max="0.08" step="0.02"/>
+    <y min="0.08" max="0.14" step="0.02"/>
+  </swing>
+
+</coordinate>

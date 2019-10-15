@@ -127,6 +127,7 @@ if(${BUILD_EXAMPLE})
 endif()
 
 configure_file(data/nao.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)
+configure_file(data/nao_xy.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)
 configure_file(data/analysis.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)
 configure_file(data/param_val_xy.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)
 configure_file(data/val.xml ${CMAKE_CURRENT_BINARY_DIR}/bin COPYONLY)

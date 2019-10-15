@@ -26,7 +26,7 @@ class CRPlot : public Gnuplot {
   // Capturability capturability;
 
 public:
-  CRPlot(Model model, Param param, Capturability *capturability);
+  CRPlot(Model model, Param param);
   ~CRPlot();
 
   void setOutput(std::string type);
@@ -34,6 +34,7 @@ public:
   // void setCaptureRegion(State state);
   void setCaptureRegion();
 
+  void setFoot(State state);
   void setZerostep(State state);
 
   void initCaptureMap();
@@ -47,13 +48,14 @@ private:
   std::string str(double val);
   std::string str(int val);
 
+  Grid grid;
+
   double x_min, x_max, x_step;
   double y_min, y_max, y_step;
   int    x_num;
   int    y_num;
 
   std::vector<std::vector<int> > capture_map;
-  Capturability                 *capturability;
 };
 }
 

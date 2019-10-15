@@ -15,18 +15,15 @@ int main(int argc, char const *argv[]) {
   Param param("nao_xy.xml");
   // param.print();
 
-  Grid          grid(param);
-  Capturability capturability(model, param);
-  capturability.load("Nstep.csv", DataType::ZERO_STEP);
+  Grid grid(param);
 
-  State state;
-  state.icp.setCartesian(0, 0);
-  state.swf.setCartesian(0, 0.1);
+  State state = grid.getState(0);
 
-  CRPlot cr_plot(model, param, &capturability);
+  CRPlot cr_plot(model, param);
   // cr_plot.setOutput("eps");
   // cr_plot.setCaptureRegion();
   cr_plot.setZerostep(state);
+  cr_plot.setFoot(state);
   cr_plot.plot();
 
   return 0;

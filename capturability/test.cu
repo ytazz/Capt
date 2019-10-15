@@ -114,8 +114,8 @@ int main(void) {
     HANDLE_ERROR(cudaMemcpy(basin, dev_basin, num_state * sizeof( int ),
                             cudaMemcpyDeviceToHost) );
 
-    if (N < 3)
-      flag = true;
+    if (N > 2)
+      flag = false;
     N++;
   }
 
@@ -135,8 +135,8 @@ int main(void) {
   /* ファイル書き出し */
   /* ---------------------------------------------------------------------- */
   printf("Output...\t");
-  Cuda::outputBasin("Basin.csv", false, cond, basin);
-  Cuda::outputNStep("Nstep.csv", false, cond, nstep, trans);
+  Cuda::outputBasin("Basin.csv", cond, basin, false);
+  Cuda::outputNStep("Nstep.csv", cond, nstep, trans, false);
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
 

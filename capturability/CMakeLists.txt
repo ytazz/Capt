@@ -88,6 +88,7 @@ set(CPU_SOURCES
 
 set(GPU_SOURCES
   ${PROJECT_SOURCE_DIR}/cuda/src/cuda_analysis.cu
+  ${PROJECT_SOURCE_DIR}/cuda/src/cuda_memory_manager.cu
   ${PROJECT_SOURCE_DIR}/cuda/src/cuda_vector.cu
 )
 

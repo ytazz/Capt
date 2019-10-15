@@ -17,6 +17,12 @@ namespace Cuda {
 
 /* struct */
 
+struct GridSize {
+  int num_state;
+  int num_input;
+  int num_grid;
+};
+
 struct GridCartesian {
   int num_state;
   int num_input;
@@ -127,7 +133,7 @@ public:
   __host__ void copyDevToHostGrid(Cuda::GridPolar *dev_grid, GridPolar *grid);
 
 private:
-  GridPolar grid;
+  GridSize grid;
 };
 
 __host__ void outputBasin(std::string file_name, bool header, Condition cond,

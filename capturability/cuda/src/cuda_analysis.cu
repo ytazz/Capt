@@ -63,12 +63,16 @@ __device__ void Input::operator=(const Input &input) {
 
 /* host function */
 
-// void MemoryManager::setGrid(GridCartesian* grid){
-//   this->grid = *grid;
-// }
+void MemoryManager::setGrid(GridCartesian* grid){
+  this->grid.num_state = grid->num_state;
+  this->grid.num_input = grid->num_input;
+  this->grid.num_grid  = grid->num_grid;
+}
 
 void MemoryManager::setGrid(GridPolar* grid){
-  this->grid = *grid;
+  this->grid.num_state = grid->num_state;
+  this->grid.num_input = grid->num_input;
+  this->grid.num_grid  = grid->num_grid;
 }
 
 __host__ void MemoryManager::initHostState(State *state, Condition cond) {

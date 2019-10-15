@@ -74,7 +74,7 @@ void MemoryManager::setGrid(GridPolar* grid){
 __host__ void MemoryManager::initHostState(State *state, Condition cond) {
   const int num_state = cond.grid->getNumState();
 
-  state = (Cuda::State*)malloc(sizeof( Cuda::State ) * num_state);
+  // state = (Cuda::State*)malloc(sizeof( Cuda::State ) * num_state);
 
   for (int state_id = 0; state_id < num_state; state_id++) {
     state[state_id].icp.x_  = cond.grid->getState(state_id).icp.x;
@@ -91,7 +91,7 @@ __host__ void MemoryManager::initHostState(State *state, Condition cond) {
 __host__ void MemoryManager::initHostInput(Input *input, Condition cond) {
   const int num_input = cond.grid->getNumInput();
 
-  input = (Cuda::Input*)malloc(sizeof( Cuda::Input ) * num_input );
+  // input = (Cuda::Input*)malloc(sizeof( Cuda::Input ) * num_input );
 
   for (int input_id = 0; input_id < num_input; input_id++) {
     input[input_id].swf.x_  = cond.grid->getInput(input_id).swf.x;
@@ -105,7 +105,7 @@ __host__ void MemoryManager::initHostTrans(int *trans, Condition cond) {
   const int num_state = cond.grid->getNumState();
   const int num_input = cond.grid->getNumInput();
 
-  trans = (int*)malloc(sizeof( int ) * num_state * num_input );
+  // trans = (int*)malloc(sizeof( int ) * num_state * num_input );
 
   for (int grid_id = 0; grid_id < num_state * num_input; grid_id++) {
     trans[grid_id] = -1;
@@ -115,7 +115,7 @@ __host__ void MemoryManager::initHostTrans(int *trans, Condition cond) {
 __host__ void MemoryManager::initHostBasin(int *basin, Condition cond) {
   const int num_state = cond.grid->getNumState();
 
-  basin = (int*)malloc(sizeof( int ) * num_state );
+  // basin = (int*)malloc(sizeof( int ) * num_state );
 
   for (int state_id = 0; state_id < num_state; state_id++) {
     basin[state_id] = -1;
@@ -127,7 +127,7 @@ __host__ void MemoryManager::initHostNstep(int *nstep, Condition cond) {
   const int num_input = cond.grid->getNumInput();
   const int num_grid  = num_state * num_input;
 
-  nstep = (int*)malloc(sizeof( int ) * num_grid );
+  // nstep = (int*)malloc(sizeof( int ) * num_grid );
 
   for (int grid_id = 0; grid_id < num_grid; grid_id++) {
     nstep[grid_id] = -1;
@@ -135,7 +135,7 @@ __host__ void MemoryManager::initHostNstep(int *nstep, Condition cond) {
 }
 
 __host__ void MemoryManager::initHostGrid(GridCartesian *grid, Condition cond) {
-  grid = new Cuda::GridCartesian;
+  // grid = new Cuda::GridCartesian;
 
   grid->num_state = cond.grid->getNumState();
   grid->num_input = cond.grid->getNumInput();
@@ -163,7 +163,7 @@ __host__ void MemoryManager::initHostGrid(GridCartesian *grid, Condition cond) {
 }
 
 __host__ void MemoryManager::initHostGrid(GridPolar *grid, Condition cond) {
-  grid = new Cuda::GridPolar;
+  // grid = new Cuda::GridPolar;
 
   grid->num_state = cond.grid->getNumState();
   grid->num_input = cond.grid->getNumInput();
@@ -191,7 +191,7 @@ __host__ void MemoryManager::initHostGrid(GridPolar *grid, Condition cond) {
 }
 
 __host__ void MemoryManager::initCop(Vector2 *cop, Condition cond){
-  cop = new Cuda::Vector2[grid.num_state];
+  // cop = new Cuda::Vector2[grid.num_state];
 
   Capt::State                state;
   Capt::Polygon              polygon;
@@ -210,7 +210,7 @@ __host__ void MemoryManager::initCop(Vector2 *cop, Condition cond){
 }
 
 __host__ void MemoryManager::initPhysics(Physics *physics, Condition cond){
-  physics = new Cuda::Physics;
+  // physics = new Cuda::Physics;
 
   physics->g     = cond.model->getVal("environment", "gravity");
   physics->h     = cond.model->getVal("physics", "com_height");
@@ -366,7 +366,7 @@ __host__ void outputNStep(std::string file_name, bool header, Condition cond,
       fprintf(fp, "%d,", trans[id]);
       fprintf(fp, "%d", nstep[id]);
       fprintf(fp, "\n");
-      if(max < nstep[id])
+      if (max < nstep[id])
         max = nstep[id];
     }
   }
@@ -500,10 +500,10 @@ __global__ void exeNStep(int N, int *basin,
     int state_id = tid / grid->num_input;
     int input_id = tid % grid->num_input;
 
-    if(trans[tid] >= 0) {
+    if (trans[tid] >= 0) {
       if (basin[trans[tid]] == ( N - 1 ) ) {
         nstep[tid] = N;
-        if(basin[state_id] < 0) {
+        if (basin[state_id] < 0) {
           basin[state_id] = N;
         }
       }

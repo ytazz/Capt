@@ -5,13 +5,13 @@
   <unit length="m" angle="deg"/>
 
   <icp>
-    <radius min="0" max="0.2" step="0.005"/>
-    <angle min="0" max="360" step="3"/>
+    <radius min="0" max="0.2" step="0.02"/>
+    <angle min="0" max="360" step="5"/>
   </icp>
 
   <swing>
-    <radius min="0.1" max="0.14" step="0.005"/>
-    <angle min="60" max="120" step="3"/>
+    <radius min="0.1" max="0.14" step="0.02"/>
+    <angle min="60" max="120" step="5"/>
   </swing>
 
 </coordinate>

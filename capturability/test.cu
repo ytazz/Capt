@@ -29,14 +29,14 @@ int main(void) {
 
   /* パラメータの用意 */
   // ホスト側
-  Cuda::State     *state;
-  Cuda::Input     *input;
-  int             *trans;
-  int             *basin;
-  int             *nstep;
-  Cuda::GridPolar *grid;
-  Cuda::Vector2   *cop;
-  Cuda::Physics   *physics;
+  Cuda::State     *state   = (Cuda::State*)malloc(sizeof( Cuda::State ) * num_state);
+  Cuda::Input     *input   = (Cuda::Input*)malloc(sizeof( Cuda::Input ) * num_input );
+  int             *trans   = (int*)malloc(sizeof( int ) * num_state * num_input );
+  int             *basin   = (int*)malloc(sizeof( int ) * num_state );
+  int             *nstep   = (int*)malloc(sizeof( int ) * num_grid );
+  Cuda::GridPolar *grid    = new Cuda::GridPolar;
+  Cuda::Vector2   *cop     = new Cuda::Vector2[num_state];
+  Cuda::Physics   *physics = new Cuda::Physics;
   mm.initHostState(state, cond);
   mm.initHostTrans(trans, cond);
   mm.initHostInput(input, cond);
@@ -55,14 +55,23 @@ int main(void) {
   Cuda::GridPolar *dev_grid;
   Cuda::Vector2   *dev_cop;
   Cuda::Physics   *dev_physics;
-  mm.initDevState(dev_state);
-  mm.initDevInput(dev_input);
-  mm.initDevTrans(dev_trans);
-  mm.initDevBasin(dev_basin);
-  mm.initDevNstep(dev_nstep);
-  mm.initDevGrid(dev_grid);
-  mm.initDevCop(dev_cop);
-  mm.initDevPhysics(dev_physics);
+  // mm.initDevState(dev_state);
+  // mm.initDevInput(dev_input);
+  // mm.initDevTrans(dev_trans);
+  // mm.initDevBasin(dev_basin);
+  // mm.initDevNstep(dev_nstep);
+  // mm.initDevGrid(dev_grid);
+  // mm.initDevCop(dev_cop);
+  // mm.initDevPhysics(dev_physics);
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_state, num_state * sizeof( Cuda::State ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_input, num_input * sizeof( Cuda::Input ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_trans, num_grid * sizeof( int ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_basin, num_state * sizeof( int ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_nstep, num_grid * sizeof( int ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_grid, sizeof( Cuda::GridPolar ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_cop, num_state * sizeof( Cuda::Vector2 ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_physics, sizeof( Cuda::Physics ) ) );
+
   // ホスト側からデバイス側にコピー
   mm.copyHostToDevState(state, dev_state);
   mm.copyHostToDevInput(input, dev_input);
@@ -105,12 +114,7 @@ int main(void) {
     HANDLE_ERROR(cudaMemcpy(basin, dev_basin, num_state * sizeof( int ),
                             cudaMemcpyDeviceToHost) );
 
-    flag = false;
-    // for (int i = 0; i < num_state; i++) {
-    //   if (basin[i] == -1) // basin[i] != prev_basin[i]とするべき
-    //     flag = true;
-    // }
-    if(N < 10)
+    if (N < 3)
       flag = true;
     N++;
   }

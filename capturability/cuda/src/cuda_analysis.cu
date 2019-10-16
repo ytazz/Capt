@@ -114,23 +114,23 @@ __device__ bool existState(State state, GridCartesian *grid) {
   bool flag_swf_x = false, flag_swf_y = false;
 
   // icp_x
-  if (state.icp.r_ >= grid->icp_x_min - grid->icp_x_step / 2.0 &&
-      state.icp.r_ < grid->icp_x_max + grid->icp_x_step / 2.0) {
+  if (state.icp.x_ >= grid->icp_x_min - grid->icp_x_step / 2.0 &&
+      state.icp.x_ < grid->icp_x_max + grid->icp_x_step / 2.0) {
     flag_icp_x = true;
   }
   // icp_y
-  if (state.icp.th_ >= grid->icp_y_min - grid->icp_y_step / 2.0 &&
-      state.icp.th_ < grid->icp_y_max + grid->icp_y_step / 2.0) {
+  if (state.icp.y_ >= grid->icp_y_min - grid->icp_y_step / 2.0 &&
+      state.icp.y_ < grid->icp_y_max + grid->icp_y_step / 2.0) {
     flag_icp_y = true;
   }
   // swf_x
-  if (state.swf.r_ >= grid->swf_x_min - grid->swf_x_step / 2.0 &&
-      state.swf.r_ < grid->swf_x_max + grid->swf_x_step / 2.0) {
+  if (state.swf.x_ >= grid->swf_x_min - grid->swf_x_step / 2.0 &&
+      state.swf.x_ < grid->swf_x_max + grid->swf_x_step / 2.0) {
     flag_swf_x = true;
   }
   // swf_y
-  if (state.swf.th_ >= grid->swf_y_min - grid->swf_y_step / 2.0 &&
-      state.swf.th_ < grid->swf_y_max + grid->swf_y_step / 2.0) {
+  if (state.swf.y_ >= grid->swf_y_min - grid->swf_y_step / 2.0 &&
+      state.swf.y_ < grid->swf_y_max + grid->swf_y_step / 2.0) {
     flag_swf_y = true;
   }
 

@@ -109,12 +109,12 @@ if(${BUILD_CPU})
 endif()
 
 if(${BUILD_GPU})
-  cuda_add_executable( test_gpu
-    test.cu
+  cuda_add_executable( main_gpu
+    main.cu
     ${SOURCES}
     ${GPU_SOURCES}
   )
-  target_link_libraries(test_gpu ${EXPAT_LIBRARIES})
+  target_link_libraries(main_gpu ${EXPAT_LIBRARIES})
 endif()
 
 if(${MAKE_LIBRARY})

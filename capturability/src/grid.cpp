@@ -375,7 +375,7 @@ void Grid::setInputCartesian(float swf_x, float swf_y) {
 
 bool Grid::existState(int state_id) {
   bool is_exist = false;
-  if (0 <= state_id && state_id <= num_state)
+  if (0 <= state_id && state_id < num_state)
     is_exist = true;
 
   return is_exist;

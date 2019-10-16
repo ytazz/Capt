@@ -12,9 +12,9 @@ Analysis::Analysis(Model model, Param param)
   initNstep();
   initCop();
 
-  setTrans();
   setBasin();
   setCop();
+  setTrans();
 }
 
 Analysis::~Analysis() {

@@ -41,8 +41,8 @@ __host__ void outputNStep(std::string file_name, Condition cond, int *nstep, int
   }
 
   // Data
-  int num_step[NUM_STEP_MAX];
-  for(int i = 0; i < 10; i++) {
+  int num_step[NUM_STEP_MAX + 1]; // 最大踏み出し歩数を10とする
+  for(int i = 0; i < NUM_STEP_MAX + 1; i++) {
     num_step[i] = 0;
   }
   for (int state_id = 0; state_id < num_state; state_id++) {

@@ -155,8 +155,8 @@ void Analysis::saveNstep(std::string file_name, bool header){
   }
 
   // Data
-  int num_step[NUM_STEP_MAX];
-  for(int i = 0; i < 10; i++) {
+  int num_step[NUM_STEP_MAX + 1];
+  for(int i = 0; i < NUM_STEP_MAX + 1; i++) {
     num_step[i] = 0;
   }
   for (int state_id = 0; state_id < num_state; state_id++) {

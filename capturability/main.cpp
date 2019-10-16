@@ -13,6 +13,8 @@ int main(int argc, char const *argv[]) {
   analysis.exe(1);
   analysis.exe(2);
   analysis.exe(3);
+  analysis.exe(4);
+  analysis.exe(5);
   analysis.saveBasin("BasinCpu.csv", false);
   analysis.saveNstep("NstepCpu.csv", false);
 

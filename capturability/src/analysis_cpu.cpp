@@ -122,8 +122,7 @@ void Analysis::exe(const int n){
 }
 
 void Analysis::saveBasin(std::string file_name, bool header){
-  FILE *fp  = fopen(file_name.c_str(), "w");
-  int   max = 0;
+  FILE *fp = fopen(file_name.c_str(), "w");
 
   // Header
   if (header) {
@@ -137,17 +136,14 @@ void Analysis::saveBasin(std::string file_name, bool header){
     fprintf(fp, "%d,", state_id);
     fprintf(fp, "%d", basin[state_id]);
     fprintf(fp, "\n");
-    if (max < basin[state_id])
-      max = basin[state_id];
   }
-
-  printf("max(nstep) = %d\n", max);
 
   fclose(fp);
 }
 
 void Analysis::saveNstep(std::string file_name, bool header){
-  FILE *fp = fopen(file_name.c_str(), "w");
+  FILE *fp  = fopen(file_name.c_str(), "w");
+  int   max = 0;
 
   // Header
   if (header) {
@@ -167,8 +163,13 @@ void Analysis::saveNstep(std::string file_name, bool header){
       fprintf(fp, "%d,", trans[id]);
       fprintf(fp, "%d", nstep[id]);
       fprintf(fp, "\n");
+
+      if (max < nstep[id])
+        max = nstep[id];
     }
   }
+
+  printf("max(nstep) = %d\n", max);
 
   fclose(fp);
 }

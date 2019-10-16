@@ -17,7 +17,7 @@ int main(int argc, char const *argv[]) {
 
   Grid grid(Param("analysis.xml") );
 
-  State state = grid.getState(0);
+  State state = grid.getState(10);
 
   CRPlot cr_plot(model, param);
   // cr_plot.setOutput("eps");

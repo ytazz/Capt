@@ -154,22 +154,6 @@ void CRPlot::setZerostep(State state){
     if(capturability.capturable(state_, 0) )
       setCaptureMap(state_.icp.x, state_.icp.y, 3);
   }
-
-  // for(int i = 0; i < grid_.getNumState(); i++) {
-  //   State state_ = grid_.getState(i);
-  //   state_.swf = state.swf;
-  //
-  //   Polygon polygon;
-  //   polygon.setVertex(model.getVec("foot", "foot_r_convex") );
-  //   polygon.setVertex(model.getVec("foot", "foot_l_convex", state.swf) );
-  //
-  //   bool flag = false;
-  //   flag = polygon.inPolygon(state_.icp, polygon.getConvexHull() );
-  //
-  //   if (flag) {
-  //     setCaptureMap(state_.icp.x, state_.icp.y, 3);
-  //   }
-  // }
 }
 
 void CRPlot::setCaptureRegion(){
@@ -216,9 +200,10 @@ void CRPlot::plot(){
   fclose(fp);
 
   // 描画
-  fprintf(p.gp, "plot \"data.dat\" matrix w image notitle\n");
-  fprintf(p.gp, "replot \"foot_r.dat\" with lines lw 5 lc 1 title \"foot\"\n");
-  fprintf(p.gp, "replot \"foot_l.dat\" with lines lw 5 lc 1 title \"foot\"\n");
+  fprintf(p.gp, "plot \"data.dat\" matrix w image notitle,\\\n");
+  fprintf(p.gp, "     \"foot_r.dat\" with lines lw 2 lc 1 title \"foot\",\\\n");
+  fprintf(p.gp, "     \"foot_l.dat\" with lines lw 2 lc 1 title \"foot\"\n");
+  fflush(p.gp);
 }
 
 }

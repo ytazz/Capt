@@ -155,6 +155,10 @@ void Analysis::saveNstep(std::string file_name, bool header){
   }
 
   // Data
+  int num_step[10];
+  for(int i = 0; i < 10; i++) {
+    num_step[i] = 0;
+  }
   for (int state_id = 0; state_id < num_state; state_id++) {
     for (int input_id = 0; input_id < num_input; input_id++) {
       int id = state_id * num_input + input_id;
@@ -166,10 +170,15 @@ void Analysis::saveNstep(std::string file_name, bool header){
 
       if (max < nstep[id])
         max = nstep[id];
+      if(nstep[id] > 0)
+        num_step[nstep[id]]++;
     }
   }
 
   printf("max(nstep) = %d\n", max);
+  for(int i = 1; i <= max; i++) {
+    printf("%d-step capture point: %d\n", i, num_step[i]);
+  }
 
   fclose(fp);
 }

@@ -155,7 +155,7 @@ void Analysis::saveNstep(std::string file_name, bool header){
   }
 
   // Data
-  int num_step[NUM_STEP_MAX]; // 最大踏み出し歩数を10とする
+  int num_step[NUM_STEP_MAX];
   for(int i = 0; i < 10; i++) {
     num_step[i] = 0;
   }

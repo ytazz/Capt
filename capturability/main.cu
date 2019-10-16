@@ -108,7 +108,7 @@ int main(void) {
   HANDLE_ERROR(cudaMemcpy(dev_basin, basin, num_state * sizeof( int ),
                           cudaMemcpyHostToDevice) );
 
-  for(int N = 0; N < NUM_STEP_MAX; N++) {
+  for(int N = 1; N <= NUM_STEP_MAX; N++) {
     printf("\t%d-step\n", N);
     Cuda::exeNStep << < BPG, TPB >> > ( N, dev_basin, dev_nstep,
                                         dev_trans, dev_grid );

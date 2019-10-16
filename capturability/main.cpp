@@ -10,7 +10,7 @@ int main(int argc, char const *argv[]) {
   Grid  grid(param);
 
   Analysis analysis(model, param);
-  for(int N = 0; N < NUM_STEP_MAX; N++) {
+  for(int N = 1; N <= NUM_STEP_MAX; N++) {
     analysis.exe(N);
   }
   analysis.saveBasin("BasinCpu.csv", false);

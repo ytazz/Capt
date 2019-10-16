@@ -1,6 +1,8 @@
 #ifndef __ANALYSIS_CPU_H__
 #define __ANALYSIS_CPU_H__
 
+#define NUM_STEP_MAX 10
+
 #include "grid.h"
 #include "input.h"
 #include "model.h"

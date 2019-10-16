@@ -10,11 +10,9 @@ int main(int argc, char const *argv[]) {
   Grid  grid(param);
 
   Analysis analysis(model, param);
-  analysis.exe(1);
-  analysis.exe(2);
-  analysis.exe(3);
-  analysis.exe(4);
-  analysis.exe(5);
+  for(int N = 0; N < NUM_STEP_MAX; N++) {
+    analysis.exe(N);
+  }
   analysis.saveBasin("BasinCpu.csv", false);
   analysis.saveNstep("NstepCpu.csv", false);
 

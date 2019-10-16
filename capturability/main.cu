@@ -108,18 +108,12 @@ int main(void) {
   HANDLE_ERROR(cudaMemcpy(dev_basin, basin, num_state * sizeof( int ),
                           cudaMemcpyHostToDevice) );
 
-  int  N    = 1;
-  bool flag = true;
-  while (flag) {
+  for(int N = 0; N < NUM_STEP_MAX; N++) {
     printf("\t%d-step\n", N);
     Cuda::exeNStep << < BPG, TPB >> > ( N, dev_basin, dev_nstep,
                                         dev_trans, dev_grid );
     HANDLE_ERROR(cudaMemcpy(basin, dev_basin, num_state * sizeof( int ),
                             cudaMemcpyDeviceToHost) );
-
-    if (N > 2)
-      flag = false;
-    N++;
   }
 
   printf("\t\tDone.\n");

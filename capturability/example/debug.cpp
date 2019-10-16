@@ -15,7 +15,7 @@ int main(int argc, char const *argv[]) {
   Param param("nao_xy.xml");
   // param.print();
 
-  Grid grid(param);
+  Grid grid(Param("analysis.xml") );
 
   State state = grid.getState(0);
 

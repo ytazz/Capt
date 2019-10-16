@@ -4,10 +4,11 @@
 #include <math.h>
 #include <stdio.h>
 #include <string>
+#include <vector>
 
 namespace Capt {
 
-typedef struct Vector2 {
+struct Vector2 {
 
   Vector2(); // constructor
   ~Vector2();
@@ -32,16 +33,19 @@ typedef struct Vector2 {
 
   Vector2 operator+(const Vector2 &v);
   Vector2 operator-(const Vector2 &v) const;
-  float operator%(const Vector2 &v);
+  float operator  %(const Vector2 &v);
   Vector2 operator*(const float &d);
-  float operator*(const Vector2 &v);
+  float operator  *(const Vector2 &v);
   Vector2 operator/(const float &d);
 
 private:
   void cartesianToPolar();
   void polarToCartesian();
 
-} vec2_t;
+};
+
+typedef Vector2 vec2_t;
+typedef std::vector<Vector2> arr2_t;
 
 Vector2 operator*(const float &d, const Vector2 &v);
 

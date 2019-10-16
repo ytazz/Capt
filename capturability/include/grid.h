@@ -51,6 +51,7 @@ public:
 
   int getNumState();
   int getNumInput();
+  int getNumGrid();
 
   GridState roundState(State state_);
 

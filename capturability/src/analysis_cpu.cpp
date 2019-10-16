@@ -3,138 +3,174 @@
 namespace Capt {
 
 Analysis::Analysis(Model model, Param param)
-    : grid(param), model(model), pendulum(model), swing_foot(model),
-      capturability(model, param) {
-  is_database.resize(grid.getNumState());
-  for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
-    is_database[state_id].resize(grid.getNumInput());
-    for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
-      is_database[state_id].push_back(false);
+  : model(model), param(param), grid(param),
+    num_state(grid.getNumState() ), num_input(grid.getNumInput() ), num_grid(grid.getNumGrid() ){
+  initState();
+  initInput();
+  initTrans();
+  initBasin();
+  initNstep();
+  initCop();
+
+  setTrans();
+  setBasin();
+  setCop();
+}
+
+Analysis::~Analysis() {
+}
+
+void Analysis::initState(){
+  state = new State[num_state];
+  for (int state_id = 0; state_id < num_state; state_id++)
+    state[state_id] = grid.getState(state_id);
+}
+
+void Analysis::initInput(){
+  input = new Input[num_input];
+  for (int input_id = 0; input_id < num_input; input_id++)
+    input[input_id] = grid.getInput(input_id);
+}
+
+void Analysis::initTrans(){
+  trans = new int[num_grid];
+  for (int id = 0; id < num_grid; id++)
+    trans[id] = -1;
+}
+
+void Analysis::initBasin(){
+  basin = new int[num_state];
+  for (int state_id = 0; state_id < num_state; state_id++)
+    basin[state_id] = -1;
+}
+
+void Analysis::initNstep(){
+  nstep = new int[num_grid];
+  for (int id = 0; id < num_grid; id++)
+    nstep[id] = -1;
+}
+
+void Analysis::initCop(){
+  cop = new Vector2[num_state];
+}
+
+void Analysis::setBasin(){
+  arr2_t foot_r;
+  arr2_t foot_l;
+  arr2_t region;
+  foot_r = model.getVec("foot", "foot_r_convex");
+  for(int state_id = 0; state_id < num_state; state_id++) {
+    foot_l = model.getVec("foot", "foot_l_convex", state[state_id].swf);
+    Polygon polygon;
+    polygon.setVertex(foot_r);
+    polygon.setVertex(foot_l);
+    region = polygon.getConvexHull();
+    if(polygon.inPolygon(state[state_id].icp, region) )
+      basin[state_id] = 0;
+  }
+}
+
+void Analysis::setCop(){
+  Polygon polygon;
+  arr2_t  region = model.getVec("foot", "foot_r_convex");
+  for(int state_id = 0; state_id < num_state; state_id++)
+    cop[state_id] = polygon.getClosestPoint(state[state_id].icp, region);
+}
+
+void Analysis::setTrans(){
+  Pendulum  pendulum(model);
+  SwingFoot swing_foot(model);
+  Vector2   icp;
+  double    step_time;
+
+  for(int state_id = 0; state_id < num_state; state_id++) {
+    for(int input_id = 0; input_id < num_input; input_id++) {
+      pendulum.setIcp(state[state_id].icp);
+      pendulum.setCop(cop[state_id]);
+
+      swing_foot.set(state[state_id].swf, input[input_id].swf);
+      step_time = swing_foot.getTime();
+
+      icp = pendulum.getIcp(step_time);
+
+      State state_;
+      state_.icp.setCartesian(-input[input_id].swf.x + icp.x, input[input_id].swf.y - icp.y);
+      state_.swf.setCartesian(-input[input_id].swf.x, input[input_id].swf.y);
+
+      int id = state_id * num_input + input_id;
+      trans[id] = grid.roundState(state_).id;
     }
   }
 }
 
-Analysis::~Analysis() {}
-
-void Analysis::exe(int n_step) {
-  if (n_step == 0)
-    exe0();
-  else
-    exeN(n_step);
-}
-
-void Analysis::exe0() {
-  int n_step = 0;
-  State state, state_;
-  Input input;
-
-  printf("-----------------------------------------\n");
-  printf("Start %d-step capturability analysis\n", n_step);
-  printf("state:%d, input:%d\n", grid.getNumState(), grid.getNumInput());
-
-  std::string file_name = "csv/analysis_0.csv";
-  FILE *fp = fopen(file_name.c_str(), "w");
-  fprintf(fp, "time[us]\n");
-
-  for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
-    state = grid.getState(state_id);
-    for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
-      auto start = std::chrono::system_clock::now(); // 計測スタート時刻を保存
-      input = grid.getInput(input_id);
-      if (capturability.capturable(state, 0)) {
-        capturability.setCaptureSet(state_id, input_id,
-                                    grid.getStateIndex(state_), n_step, cop,
-                                    step_time);
-        is_database[state_id][input_id] = true;
-      }
-      auto end = std::chrono::system_clock::now(); // 計測終了時刻を保存
-      auto dur = end - start;                      // 要した時間を計算
-      auto msec =
-          std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
-      fprintf(fp, "%d\n", (int)msec);
-    }
-    progress(state_id);
-  }
-
-  fclose(fp);
-}
-
-void Analysis::exeN(int n_step) {
-  State state, state_;
-  Input input;
-
-  printf("-----------------------------------------\n");
-  printf("Start %d-step capturability analysis\n", n_step);
-  printf("state:%d, input:%d\n", grid.getNumState(), grid.getNumInput());
-
-  std::string file_name = "csv/analysis_" + std::to_string(n_step) + ".csv";
-  FILE *fp = fopen(file_name.c_str(), "w");
-  fprintf(fp, "time[us]\n");
-
-  for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
-    state = grid.getState(state_id);
-    for (int input_id = 0; input_id < grid.getNumInput(); input_id++) {
-      auto start = std::chrono::system_clock::now(); // 計測スタート時刻を保存
-      input = grid.getInput(input_id);
-      state_ = step(state, input);
-      if (!is_database[state_id][input_id]) {
-        if (grid.existState(state_)) {
-          if (capturability.capturable(state_, n_step - 1)) {
-            capturability.setCaptureSet(state_id, input_id,
-                                        grid.getStateIndex(state_), n_step, cop,
-                                        step_time);
-            is_database[state_id][input_id] = true;
+void Analysis::exe(const int n){
+  if(n > 0) {
+    for(int state_id = 0; state_id < num_state; state_id++) {
+      for(int input_id = 0; input_id < num_input; input_id++) {
+        int id = state_id * num_input + input_id;
+        if (trans[id] >= 0) {
+          if (basin[trans[id]] == ( n - 1 ) ) {
+            nstep[id] = n;
+            if (basin[state_id] < 0) {
+              basin[state_id] = n;
+            }
           }
         }
       }
-      auto end = std::chrono::system_clock::now(); // 計測終了時刻を保存
-      auto dur = end - start;                      // 要した時間を計算
-      auto msec =
-          std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
-      fprintf(fp, "%d\n", (int)msec);
     }
-    progress(state_id);
   }
+}
+
+void Analysis::saveBasin(std::string file_name, bool header){
+  FILE *fp  = fopen(file_name.c_str(), "w");
+  int   max = 0;
+
+  // Header
+  if (header) {
+    fprintf(fp, "%s,", "state_id");
+    fprintf(fp, "%s", "nstep");
+    fprintf(fp, "\n");
+  }
+
+  // Data
+  for (int state_id = 0; state_id < num_state; state_id++) {
+    fprintf(fp, "%d,", state_id);
+    fprintf(fp, "%d", basin[state_id]);
+    fprintf(fp, "\n");
+    if (max < basin[state_id])
+      max = basin[state_id];
+  }
+
+  printf("max(nstep) = %d\n", max);
 
   fclose(fp);
 }
 
-void Analysis::progress(int state_id) {
-  if ((state_id % 1000) == 0) {
-    float percentage = (float)state_id / grid.getNumState() * 100;
-    printf("%d \t/ %d \t(%lf %%)\n", state_id, grid.getNumState(), percentage);
+void Analysis::saveNstep(std::string file_name, bool header){
+  FILE *fp = fopen(file_name.c_str(), "w");
+
+  // Header
+  if (header) {
+    fprintf(fp, "%s,", "state_id");
+    fprintf(fp, "%s,", "input_id");
+    fprintf(fp, "%s,", "trans");
+    fprintf(fp, "%s", "nstep");
+    fprintf(fp, "\n");
   }
-}
 
-State Analysis::step(const State state, const Input input) {
-  Vector2 icp;
+  // Data
+  for (int state_id = 0; state_id < num_state; state_id++) {
+    for (int input_id = 0; input_id < num_input; input_id++) {
+      int id = state_id * num_input + input_id;
+      fprintf(fp, "%d,", state_id);
+      fprintf(fp, "%d,", input_id);
+      fprintf(fp, "%d,", trans[id]);
+      fprintf(fp, "%d", nstep[id]);
+      fprintf(fp, "\n");
+    }
+  }
 
-  pendulum.setIcp(state.icp);
-  Polygon polygon;
-  std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
-  cop = polygon.getClosestPoint(state.icp, region);
-  Vector2 cop_;
-  cop_.setCartesian(cop.x, cop.y);
-  pendulum.setCop(cop);
-
-  swing_foot.set(state.swf, input.swf);
-  step_time = swing_foot.getTime();
-
-  icp = pendulum.getIcp(step_time);
-
-  Vector2 icp_, swf_;
-  icp_.setCartesian(-input.swf.x + icp.x, input.swf.y - icp.y);
-  swf_.setCartesian(-input.swf.x, input.swf.y);
-
-  State state_;
-  state_.icp = icp_;
-  state_.swf = swf_;
-
-  return state_;
-}
-
-void Analysis::save(const char *file_name, const int n_step_capturable) {
-  capturability.save(file_name, n_step_capturable);
+  fclose(fp);
 }
 
 } // namespace Capt

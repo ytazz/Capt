@@ -23,8 +23,7 @@ void Capturability::load(std::string file_name, DataType type) {
   int   num_data = 0;
 
   if (type == ZERO_STEP) {
-    int        buf[2];
-    CaptureSet set;
+    int buf[2];
 
     if ( ( fp = fopen(file_name.c_str(), "r") ) == NULL) {
       printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str() );
@@ -65,7 +64,7 @@ void Capturability::load(std::string file_name, DataType type) {
           State state = grid.getState(set.state_id);
           Input input = grid.getInput(set.input_id);
 
-          set.swf      = input.swf;
+          set.swf       = input.swf;
           set.cop       = cop[set.state_id];
           set.step_time = ( input.swf - state.swf ).norm() / foot_vel + step_time_min;
 
@@ -88,7 +87,7 @@ void Capturability::setCaptureSet(const int state_id, const int input_id,
   set.input_id      = input_id;
   set.next_state_id = next_state_id;
   set.n_step        = n_step;
-  set.swf          = grid.getInput(set.input_id).swf;
+  set.swf           = grid.getInput(set.input_id).swf;
   set.cop           = cop;
   set.step_time     = step_time;
 
@@ -105,7 +104,7 @@ void Capturability::setCaptureSet(const int state_id, const int input_id,
   set.input_id      = input_id;
   set.next_state_id = next_state_id;
   set.n_step        = n_step;
-  set.swf          = grid.getInput(set.input_id).swf;
+  set.swf           = grid.getInput(set.input_id).swf;
   set.cop           = v;
   set.step_time     = 0.0;
 
@@ -144,12 +143,14 @@ bool Capturability::capturable(State state, int n_step) {
 
   int state_id = grid.getStateIndex(state);
 
-  if (n_step == 0) {
-    if (zero_data[state_id] == 0)
-      flag = true;
-  } else {
-    if (!getCaptureRegion(state, n_step).empty() )
-      flag = true;
+  if(state_id > 0) {
+    if (n_step == 0) {
+      if (zero_data[state_id] == 0)
+        flag = true;
+    } else {
+      if (!getCaptureRegion(state, n_step).empty() )
+        flag = true;
+    }
   }
 
   return flag;

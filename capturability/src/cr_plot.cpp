@@ -144,32 +144,32 @@ void CRPlot::setZerostep(State state){
   Param param_("analysis.xml");
   Grid  grid_(param_);
 
-  // Capturability capturability(model, param_);
-  // capturability.load("Basin.csv", DataType::ZERO_STEP);
-  //
-  // initCaptureMap();
-  // for(int i = 0; i < grid_.getNumState(); i++) {
-  //   State state_ = grid_.getState(i);
-  //   state_.swf = state.swf;
-  //   if(capturability.capturable(state, 0) )
-  //     setCaptureMap(state_.icp.x, state_.icp.y, 3);
-  // }
+  Capturability capturability(model, param_);
+  capturability.load("BasinCpu.csv", DataType::ZERO_STEP);
 
+  initCaptureMap();
   for(int i = 0; i < grid_.getNumState(); i++) {
     State state_ = grid_.getState(i);
     state_.swf = state.swf;
-
-    Polygon polygon;
-    polygon.setVertex(model.getVec("foot", "foot_r_convex") );
-    polygon.setVertex(model.getVec("foot", "foot_l_convex", state.swf) );
-
-    bool flag = false;
-    flag = polygon.inPolygon(state_.icp, polygon.getConvexHull() );
-
-    if (flag) {
+    if(capturability.capturable(state_, 0) )
       setCaptureMap(state_.icp.x, state_.icp.y, 3);
-    }
   }
+
+  // for(int i = 0; i < grid_.getNumState(); i++) {
+  //   State state_ = grid_.getState(i);
+  //   state_.swf = state.swf;
+  //
+  //   Polygon polygon;
+  //   polygon.setVertex(model.getVec("foot", "foot_r_convex") );
+  //   polygon.setVertex(model.getVec("foot", "foot_l_convex", state.swf) );
+  //
+  //   bool flag = false;
+  //   flag = polygon.inPolygon(state_.icp, polygon.getConvexHull() );
+  //
+  //   if (flag) {
+  //     setCaptureMap(state_.icp.x, state_.icp.y, 3);
+  //   }
+  // }
 }
 
 void CRPlot::setCaptureRegion(){

@@ -292,6 +292,7 @@ GridState Grid::roundState(State state_) {
   using GridSpace::MIN;
   using GridSpace::STEP;
 
+  int       state_id = -1;
   GridState gs;
 
   if (strcmp(coord.c_str(), "cartesian") == 0) {
@@ -303,10 +304,7 @@ GridState Grid::roundState(State state_) {
     swf_x_id = round( ( state_.swf.x - swf_x[MIN] ) / swf_x[STEP]);
     swf_y_id = round( ( state_.swf.y - swf_y[MIN] ) / swf_y[STEP]);
 
-    int state_id = 0;
     state_id = getStateIndexCartesian(icp_x_id, icp_y_id, swf_x_id, swf_y_id);
-    gs.id    = state_id;
-    gs.state = getState(state_id);
   }else if (strcmp(coord.c_str(), "polar") == 0) {
     int icp_r_id = 0, icp_th_id = 0;
     int swf_r_id = 0, swf_th_id = 0;
@@ -316,11 +314,13 @@ GridState Grid::roundState(State state_) {
     swf_r_id  = round( ( state_.swf.r - swf_r[MIN] ) / swf_r[STEP]);
     swf_th_id = round( ( state_.swf.th - swf_th[MIN] ) / swf_th[STEP]);
 
-    int state_id = 0;
     state_id = getStateIndexPolar(icp_r_id, icp_th_id, swf_r_id, swf_th_id);
-    gs.id    = state_id;
-    gs.state = getState(state_id);
   }
+  if(existState(state_id) )
+    gs.id = state_id;
+  else
+    gs.id = -1;
+  gs.state = getState(state_id);
 
   return gs;
 }
@@ -497,6 +497,10 @@ int Grid::getNumState() {
 
 int Grid::getNumInput() {
   return num_input;
+}
+
+int Grid::getNumGrid() {
+  return num_state * num_input;
 }
 
 } // namespace Capt

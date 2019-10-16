@@ -1,7 +1,6 @@
 #ifndef __ANALYSIS_CPU_H__
 #define __ANALYSIS_CPU_H__
 
-#include "capturability.h"
 #include "grid.h"
 #include "input.h"
 #include "model.h"
@@ -17,44 +16,47 @@
 
 namespace Capt {
 
-struct CaptureState {
-  int n_capturable;
-  GridState grid_state;
-  GridInput grid_input;
-
-  void operator=(const CaptureState &capture_state) {
-    this->grid_state = capture_state.grid_state;
-    this->grid_input = capture_state.grid_input;
-  }
-};
-
 class Analysis {
 
 public:
   Analysis(Model model, Param param);
   ~Analysis();
 
-  void exe(int n_step);
-  void save(const char *file_name, const int n_step_capturable);
+  // 解析用変数を初期化し、初期値を代入する
+  void initState();
+  void initInput();
+  void initTrans();
+  void initBasin();
+  void initNstep();
+  void initCop();
 
-  State step(const State state, const Input input);
+  // 解析前の状態遷移や0-step、copを計算
+  void setBasin();
+  void setCop();
+  void setTrans();
+
+  // 解析実行
+  void exe(const int n);
+
+  // 解析結果をファイルに保存
+  void saveBasin(std::string file_name, bool header = true);
+  void saveNstep(std::string file_name, bool header = true);
 
 private:
-  void exe0();
-  void exeN(int n_step);
-
-  void progress(int state_id);
-
-  Grid grid;
   Model model;
-  Pendulum pendulum;
-  SwingFoot swing_foot;
-  Capturability capturability;
+  Param param;
+  Grid  grid;
 
-  vec2_t cop;
-  float step_time;
+  State   *state;
+  Input   *input;
+  int     *trans;
+  int     *basin;
+  int     *nstep;
+  Vector2 *cop;
 
-  std::vector<std::vector<bool>> is_database;
+  const int num_state;
+  const int num_input;
+  const int num_grid;
 };
 
 } // namespace Capt

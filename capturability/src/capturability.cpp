@@ -22,7 +22,7 @@ void Capturability::load(std::string file_name, DataType type) {
   FILE *fp;
   int   num_data = 0;
 
-  if (type == ZERO_STEP) {
+  if (type == BASIN) {
     int buf[2];
 
     if ( ( fp = fopen(file_name.c_str(), "r") ) == NULL) {
@@ -36,7 +36,7 @@ void Capturability::load(std::string file_name, DataType type) {
       }
       fclose(fp);
     }
-  } else if (type == N_STEP) {
+  } else if (type == NSTEP) {
     // make cop list
     vec2_t             *cop = (vec2_t*)malloc(sizeof( vec2_t ) * grid.getNumState() );
     Polygon             polygon;

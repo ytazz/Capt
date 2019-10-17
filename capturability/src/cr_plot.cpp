@@ -142,7 +142,7 @@ void CRPlot::setFoot(State state){
 
 void CRPlot::setZerostep(State state){
   Capturability capturability(model, param);
-  capturability.load("BasinGpu.csv", DataType::ZERO_STEP);
+  capturability.load("BasinCpu.csv", DataType::BASIN);
 
   initCaptureMap();
   for(int i = 0; i < grid.getNumState(); i++) {

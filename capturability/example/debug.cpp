@@ -11,11 +11,8 @@ using namespace Capt;
 
 int main(int argc, char const *argv[]) {
   Model model("data/nao.xml");
-  // model.print();
   Param param("data/nao_xy.xml");
-  // param.print();
-
-  Grid grid(param);
+  Grid  grid(param);
 
   State state = grid.getState(0);
 

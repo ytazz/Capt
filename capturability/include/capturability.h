@@ -14,7 +14,7 @@
 
 namespace Capt {
 
-enum DataType { ZERO_STEP, N_STEP };
+enum DataType { BASIN, NSTEP };
 
 struct CaptureSet {
   int state_id;

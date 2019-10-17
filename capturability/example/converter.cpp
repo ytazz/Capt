@@ -15,7 +15,7 @@ int main(int argc, char const *argv[]) {
   Model model("nao.xml");
   model.parse();
 
-  Param param("analysis.xml");
+  Param param("nao_rt.xml");
   param.parse();
 
   Grid grid(param);

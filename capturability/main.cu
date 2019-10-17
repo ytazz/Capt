@@ -13,7 +13,7 @@ int main(void) {
 
   /* パラメータの読み込み */
   Capt::Model cmodel("nao.xml");
-  Capt::Param cparam("analysis.xml");
+  Capt::Param cparam("nao_rt.xml");
 
   /* グリッド */
   Capt::Grid cgrid(cparam);

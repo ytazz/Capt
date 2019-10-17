@@ -11,7 +11,7 @@ using namespace std;
 using namespace Capt;
 
 int main() {
-  Param param("analysis.xml");
+  Param param("nao_rt.xml");
   Model model("nao.xml");
   Grid  grid(param);
 

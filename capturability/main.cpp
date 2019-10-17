@@ -6,7 +6,7 @@ using namespace Capt;
 
 int main(int argc, char const *argv[]) {
   Model model("nao.xml");
-  Param param("analysis.xml");
+  Param param("nao_rt.xml");
   Grid  grid(param);
 
   Analysis analysis(model, param);

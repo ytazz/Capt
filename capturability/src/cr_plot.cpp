@@ -141,7 +141,7 @@ void CRPlot::setFoot(State state){
 }
 
 void CRPlot::setZerostep(State state){
-  Param param_("analysis.xml");
+  Param param_("nao_rt.xml");
   Grid  grid_(param_);
 
   Capturability capturability(model, param_);

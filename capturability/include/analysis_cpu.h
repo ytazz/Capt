@@ -41,8 +41,9 @@ public:
   void exe(const int n);
 
   // 解析結果をファイルに保存
-  void saveBasin(std::string file_name, bool header = true);
-  void saveNstep(std::string file_name, bool header = true);
+  void saveCop(std::string file_name, bool header = false);
+  void saveBasin(std::string file_name, bool header = false);
+  void saveNstep(std::string file_name, bool header = false);
 
 private:
   Model model;

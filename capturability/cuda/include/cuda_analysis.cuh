@@ -11,9 +11,9 @@ namespace Cuda {
 /* host function */
 
 __host__ void outputBasin(std::string file_name, Condition cond, int *basin,
-                          bool header = true);
+                          bool header = false);
 __host__ void outputNStep(std::string file_name, Condition cond, int *nstep, int *trans,
-                          bool header = true);
+                          bool header = false);
 
 __host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *basin);
 

@@ -128,6 +128,28 @@ void Analysis::exe(const int n){
   printf("Done!\n");
 }
 
+void Analysis::saveCop(std::string file_name, bool header){
+  FILE *fp = fopen(file_name.c_str(), "w");
+
+  // Header
+  if (header) {
+    fprintf(fp, "%s,", "state_id");
+    fprintf(fp, "%s,", "cop_x");
+    fprintf(fp, "%s", "cop_y");
+    fprintf(fp, "\n");
+  }
+
+  // Data
+  for(int state_id = 0; state_id < num_state; state_id++) {
+    fprintf(fp, "%d,", state_id);
+    fprintf(fp, "%lf,", cop[state_id].x);
+    fprintf(fp, "%lf", cop[state_id].y);
+    fprintf(fp, "\n");
+  }
+
+  fclose(fp);
+}
+
 void Analysis::saveBasin(std::string file_name, bool header){
   FILE *fp = fopen(file_name.c_str(), "w");
 

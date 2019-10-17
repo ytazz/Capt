@@ -132,8 +132,8 @@ int main(void) {
   /* ファイル書き出し */
   /* ---------------------------------------------------------------------- */
   printf("Output...\t");
-  Cuda::outputBasin("BasinGpu.csv", cond, basin, false);
-  Cuda::outputNStep("NstepGpu.csv", cond, nstep, trans, false);
+  Cuda::outputBasin("BasinGpu.csv", cond, basin);
+  Cuda::outputNStep("NstepGpu.csv", cond, nstep, trans);
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
 

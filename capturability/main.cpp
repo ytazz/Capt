@@ -12,8 +12,9 @@ int main(int argc, char const *argv[]) {
   for(int N = 1; N <= NUM_STEP_MAX; N++) {
     analysis.exe(N);
   }
-  analysis.saveBasin("BasinCpu.csv", false);
-  analysis.saveNstep("NstepCpu.csv", false);
+  analysis.saveCop("CopList.csv");
+  analysis.saveBasin("BasinCpu.csv");
+  analysis.saveNstep("NstepCpu.csv");
 
   return 0;
 }

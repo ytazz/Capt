@@ -5,6 +5,9 @@ namespace Capt {
 Analysis::Analysis(Model model, Param param)
   : model(model), param(param), grid(param),
     num_state(grid.getNumState() ), num_input(grid.getNumInput() ), num_grid(grid.getNumGrid() ){
+  printf("*** Analysis ***\n");
+  printf("  Initializing ... ");
+  fflush(stdout);
   initState();
   initInput();
   initTrans();
@@ -15,6 +18,7 @@ Analysis::Analysis(Model model, Param param)
   setBasin();
   setCop();
   setTrans();
+  printf("Done!\n");
 }
 
 Analysis::~Analysis() {
@@ -104,6 +108,8 @@ void Analysis::setTrans(){
 }
 
 void Analysis::exe(const int n){
+  printf("  Start %d-step analysis ... ", n);
+  fflush(stdout);
   if(n > 0) {
     for(int state_id = 0; state_id < num_state; state_id++) {
       for(int input_id = 0; input_id < num_input; input_id++) {
@@ -119,6 +125,7 @@ void Analysis::exe(const int n){
       }
     }
   }
+  printf("Done!\n");
 }
 
 void Analysis::saveBasin(std::string file_name, bool header){
@@ -175,9 +182,10 @@ void Analysis::saveNstep(std::string file_name, bool header){
     }
   }
 
-  printf("max(nstep) = %d\n", max);
+  printf("*** Result ***\n");
+  printf("  max(nstep) = %d\n", max);
   for(int i = 1; i <= max; i++) {
-    printf("%d-step capture point: %d\n", i, num_step[i]);
+    printf("  %d-step capture point: %d\n", i, num_step[i]);
   }
 
   fclose(fp);

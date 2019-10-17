@@ -37,7 +37,7 @@ CRPlot::CRPlot(Model model, Param param)
     p("set mytics 2");
     p("set tics scale 0,0.001");
     // p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'white'");
-    p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'gray'");
+    p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'gray80'");
 
     // カラーバーの設定
     p("set palette gray negative");
@@ -141,18 +141,16 @@ void CRPlot::setFoot(State state){
 }
 
 void CRPlot::setZerostep(State state){
-  Param param_("data/nao_rt.xml");
-  Grid  grid_(param_);
-
-  Capturability capturability(model, param_);
+  Capturability capturability(model, param);
   capturability.load("BasinCpu.csv", DataType::ZERO_STEP);
 
   initCaptureMap();
-  for(int i = 0; i < grid_.getNumState(); i++) {
-    State state_ = grid_.getState(i);
+  for(int i = 0; i < grid.getNumState(); i++) {
+    State state_ = grid.getState(i);
     state_.swf = state.swf;
-    if(capturability.capturable(state_, 0) )
+    if(capturability.capturable(state_, 0) ) {
       setCaptureMap(state_.icp.x, state_.icp.y, 3);
+    }
   }
 }
 

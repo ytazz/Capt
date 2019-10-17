@@ -126,7 +126,7 @@ void Grid::create() {
       printf("Error: couldn't open input_table.csv\n");
       exit(EXIT_FAILURE);
     }
-    fprintf(fp_input, "index,swf_r,swf_y\n");
+    fprintf(fp_input, "index,swf_x,swf_y\n");
     for (int i = 0; i < max(num_swf_x, num_swf_y); i++) {
       fprintf(fp_input, "%d", i);
       if (i < num_swf_x) {
@@ -326,15 +326,7 @@ GridState Grid::roundState(State state_) {
 }
 
 int Grid::getStateIndex(State state_) {
-  int id = -1;
-
-  if (existState(state_) ) {
-    GridState gs;
-    gs = roundState(state_);
-    id = gs.id;
-  }
-
-  return id;
+  return roundState(state_).id;
 }
 
 void Grid::setStatePolar(float icp_r, float icp_th, float swf_r,
@@ -393,23 +385,23 @@ bool Grid::existState(State state_) {
     bool flag_swf_x = false, flag_swf_y = false;
 
     // icp_x
-    if (state_.icp.r >= icp_x[MIN] - icp_x[STEP] / 2.0 &&
-        state_.icp.r < icp_x[MAX] + icp_x[STEP] / 2.0) {
+    if (state_.icp.x >= icp_x[MIN] - icp_x[STEP] / 2.0 &&
+        state_.icp.x < icp_x[MAX] + icp_x[STEP] / 2.0) {
       flag_icp_x = true;
     }
     // icp_y
-    if (state_.icp.th >= icp_y[MIN] - icp_y[STEP] / 2.0 &&
-        state_.icp.th < icp_y[MAX] + icp_y[STEP] / 2.0) {
+    if (state_.icp.y >= icp_y[MIN] - icp_y[STEP] / 2.0 &&
+        state_.icp.y < icp_y[MAX] + icp_y[STEP] / 2.0) {
       flag_icp_y = true;
     }
     // swf_x
-    if (state_.swf.r >= swf_x[MIN] - swf_x[STEP] / 2.0 &&
-        state_.swf.r < swf_x[MAX] + swf_x[STEP] / 2.0) {
+    if (state_.swf.x >= swf_x[MIN] - swf_x[STEP] / 2.0 &&
+        state_.swf.x < swf_x[MAX] + swf_x[STEP] / 2.0) {
       flag_swf_x = true;
     }
     // swf_y
-    if (state_.swf.th >= swf_y[MIN] - swf_y[STEP] / 2.0 &&
-        state_.swf.th < swf_y[MAX] + swf_y[STEP] / 2.0) {
+    if (state_.swf.y >= swf_y[MIN] - swf_y[STEP] / 2.0 &&
+        state_.swf.y < swf_y[MAX] + swf_y[STEP] / 2.0) {
       flag_swf_y = true;
     }
     flag = flag_icp_x * flag_icp_y * flag_swf_x * flag_swf_y;

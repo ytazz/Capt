@@ -15,9 +15,9 @@ int main(int argc, char const *argv[]) {
   Param param("data/nao_xy.xml");
   // param.print();
 
-  Grid grid(Param("data/nao_rt.xml") );
+  Grid grid(param);
 
-  State state = grid.getState(10);
+  State state = grid.getState(0);
 
   CRPlot cr_plot(model, param);
   // cr_plot.setOutput("eps");

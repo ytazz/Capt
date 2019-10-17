@@ -3,6 +3,7 @@
 
 #include "gnuplot.h"
 
+#include "analysis_cpu.h"
 #include "capturability.h"
 #include "friction_filter.h"
 #include "grid.h"
@@ -31,8 +32,8 @@ public:
 
   void setOutput(std::string type);
 
-  // void setCaptureRegion(State state);
-  void setCaptureRegion();
+  void setCaptureRegion(State state);
+  // void setCaptureRegion();
 
   void setFoot(State state);
   void setZerostep(State state);

@@ -154,9 +154,20 @@ void CRPlot::setZerostep(State state){
   }
 }
 
-void CRPlot::setCaptureRegion(){
+void CRPlot::setCaptureRegion(State state){
+  Capturability capturability(model, param);
+  capturability.load("NstepCpu.csv", DataType::NSTEP);
+
   initCaptureMap();
-  setCaptureMap(0.1, 0.1, 3);
+  for(int N = 1; N <= NUM_STEP_MAX; N++) {
+    if(capturability.capturable(state, N) ) {
+      std::vector<CaptureSet> region = capturability.getCaptureRegion(state, N);
+      for(size_t i = 0; i < region.size(); i++) {
+        Input input = grid.getInput(region[i].input_id);
+        setCaptureMap(input.swf.x, input.swf.y, N);
+      }
+    }
+  }
 }
 
 void CRPlot::initCaptureMap(){

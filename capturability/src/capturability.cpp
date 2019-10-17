@@ -55,22 +55,20 @@ void Capturability::load(std::string file_name, DataType type) {
     } else {
       printf("Find N-step database.\n");
       while (fscanf(fp, "%d,%d,%d,%d", &buf[0], &buf[1], &buf[2], &buf[3]) != EOF) {
-        if(buf[0] == 367846) {
-          set.state_id      = buf[0];
-          set.input_id      = buf[1];
-          set.next_state_id = buf[2];
-          set.n_step        = buf[3];
+        set.state_id      = buf[0];
+        set.input_id      = buf[1];
+        set.next_state_id = buf[2];
+        set.n_step        = buf[3];
 
-          State state = grid.getState(set.state_id);
-          Input input = grid.getInput(set.input_id);
+        // State state = grid.getState(set.state_id);
+        // Input input = grid.getInput(set.input_id);
 
-          set.swf       = input.swf;
-          set.cop       = cop[set.state_id];
-          set.step_time = ( input.swf - state.swf ).norm() / foot_vel + step_time_min;
+        // set.swf       = input.swf;
+        // set.cop       = cop[set.state_id];
+        // set.step_time = ( input.swf - state.swf ).norm() / foot_vel + step_time_min;
 
-          n_data[set.state_id][set.input_id] = set;
-          num_data++;
-        }
+        n_data[set.state_id][set.input_id] = set;
+        num_data++;
       }
       fclose(fp);
     }

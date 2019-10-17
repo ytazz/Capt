@@ -10,12 +10,12 @@ using namespace std;
 using namespace Capt;
 
 int main(int argc, char const *argv[]) {
-  Model model("nao.xml");
+  Model model("data/nao.xml");
   // model.print();
-  Param param("nao_xy.xml");
+  Param param("data/nao_xy.xml");
   // param.print();
 
-  Grid grid(Param("nao_rt.xml") );
+  Grid grid(Param("data/nao_rt.xml") );
 
   State state = grid.getState(10);
 

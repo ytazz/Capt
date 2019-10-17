@@ -12,20 +12,20 @@ using namespace std;
 using namespace Capt;
 
 int main(int argc, char const *argv[]) {
-  Model model("nao.xml");
+  Model model("data/nao.xml");
   model.parse();
 
-  Param param("nao_rt.xml");
+  Param param("data/nao_rt.xml");
   param.parse();
 
   Grid grid(param);
 
-  int mode = 0;
-  int coord = 0;
-  int state_id = 0, input_id = 0;
-  State state, state_;
-  Input input;
-  float tmp1, tmp2;
+  int       mode     = 0;
+  int       coord    = 0;
+  int       state_id = 0, input_id = 0;
+  State     state, state_;
+  Input     input;
+  float     tmp1, tmp2;
   GridState gstate;
 
   while (true) {

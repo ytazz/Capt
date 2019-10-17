@@ -12,8 +12,8 @@ int main(void) {
   printf("Prepare...\t");
 
   /* パラメータの読み込み */
-  Capt::Model cmodel("nao.xml");
-  Capt::Param cparam("nao_rt.xml");
+  Capt::Model cmodel("data/nao.xml");
+  Capt::Param cparam("data/nao_rt.xml");
 
   /* グリッド */
   Capt::Grid cgrid(cparam);

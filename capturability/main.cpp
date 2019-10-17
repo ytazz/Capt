@@ -5,8 +5,8 @@ using namespace std;
 using namespace Capt;
 
 int main(int argc, char const *argv[]) {
-  Model model("nao.xml");
-  Param param("nao_rt.xml");
+  Model model("data/nao.xml");
+  Param param("data/nao_rt.xml");
   Grid  grid(param);
 
   Analysis analysis(model, param);

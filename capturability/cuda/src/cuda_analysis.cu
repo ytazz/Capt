@@ -108,14 +108,20 @@ __device__ State step(State state, Input input, Vector2 cop, Physics *physics) {
 }
 
 __device__ int roundValue(double value) {
-  int result = (int)value;
+  int integer = (int)value;
 
-  double decimal = value - (int)value;
-  if (decimal >= 0.5) {
-    result += 1;
+  double decimal = value - integer;
+  if(decimal > 0) {
+    if (decimal >= 0.5) {
+      integer += 1;
+    }
+  }else{
+    if (decimal <= -0.5) {
+      integer -= 1;
+    }
   }
 
-  return result;
+  return integer;
 }
 
 __device__ bool existState(State state, GridCartesian *grid) {
@@ -180,10 +186,10 @@ __device__ int getStateIndex(State state, GridCartesian *grid) {
   int icp_x_id = 0, icp_y_id = 0;
   int swf_x_id = 0, swf_y_id = 0;
 
-  icp_x_id = roundValue( ( state.icp.r() - grid->icp_x_min ) / grid->icp_x_step);
-  icp_y_id = roundValue( ( state.icp.th() - grid->icp_y_min ) / grid->icp_y_step);
-  swf_x_id = roundValue( ( state.swf.r() - grid->swf_x_min ) / grid->swf_x_step);
-  swf_y_id = roundValue( ( state.swf.th() - grid->swf_y_min ) / grid->swf_y_step);
+  icp_x_id = roundValue( ( state.icp.x() - grid->icp_x_min ) / grid->icp_x_step);
+  icp_y_id = roundValue( ( state.icp.y() - grid->icp_y_min ) / grid->icp_y_step);
+  swf_x_id = roundValue( ( state.swf.x() - grid->swf_x_min ) / grid->swf_x_step);
+  swf_y_id = roundValue( ( state.swf.y() - grid->swf_y_min ) / grid->swf_y_step);
 
   int state_id = 0;
   state_id = grid->swf_y_num * grid->swf_x_num * grid->icp_y_num * icp_x_id +

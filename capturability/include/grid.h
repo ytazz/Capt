@@ -66,7 +66,7 @@ private:
   int getStateIndexCartesian(int icp_x_id, int icp_y_id, int swf_x_id, int swf_y_id);
   int getStateIndexPolar(int icp_r_id, int icp_th_id, int swf_r_id, int swf_th_id);
 
-  int round(float value);
+  int round(double value);
   int max(int val1, int val2);
   int max(int val1, int val2, int val3, int val4);
 

@@ -3,8 +3,8 @@
 const int BPG = 65535; // Blocks  Per Grid  (max: 65535)
 const int TPB = 1024;  // Threads Per Block (max: 1024)
 
-// typedef Cuda::GridCartesian grid_t;
-typedef Cuda::GridPolar grid_t;
+typedef Cuda::GridCartesian grid_t;
+// typedef Cuda::GridPolar grid_t;
 
 int main(void) {
   /* 前処理 */
@@ -13,7 +13,7 @@ int main(void) {
 
   /* パラメータの読み込み */
   Capt::Model cmodel("data/nao.xml");
-  Capt::Param cparam("data/nao_rt.xml");
+  Capt::Param cparam("data/nao_xy.xml");
 
   /* グリッド */
   Capt::Grid cgrid(cparam);

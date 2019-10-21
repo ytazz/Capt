@@ -14,13 +14,13 @@ using namespace std;
 using namespace Capt;
 
 int main(int argc, char const *argv[]) {
-  Model model("data/nao.xml");
-  Param param("data/nao_xy.xml");
+  Model model("data/valkyrie.xml");
+  Param param("data/valkyrie_xy.xml");
   Grid  grid(param);
 
   Capturability capturability(model, param);
-  capturability.load("BasinCpu.csv", DataType::BASIN);
-  capturability.load("NstepCpu.csv", DataType::NSTEP);
+  capturability.load("BasinGpu.csv", DataType::BASIN);
+  capturability.load("NstepGpu.csv", DataType::NSTEP);
 
   CRPlot cr_plot(model, param);
 
@@ -44,12 +44,12 @@ int main(int argc, char const *argv[]) {
   }else if(PLOT_NSTEP_CAPTURE_REGION) {
     // cr_plot.setOutput("gif");
     double omega  = 2 * 3.141 / PLOT_RESOLUTION;
-    double icp_r  = 0.06;
+    double icp_r  = 0.14;
     double icp_th = 0.0;
     double icp_x  = 0.0;
     double icp_y  = 0.0;
-    double swf_x  = -0.08;
-    double swf_y  = 0.1;
+    double swf_x  = -0.1;
+    double swf_y  = 0.3;
     State  state;
     for(int i = 0; i < PLOT_RESOLUTION; i++) {
       icp_th = omega * i;

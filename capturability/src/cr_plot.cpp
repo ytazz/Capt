@@ -7,7 +7,7 @@ namespace Capt {
 CRPlot::CRPlot(Model model, Param param)
   : model(model), param(param), grid(param) {
   p("set title \"Capture Region\"");
-  // p("unset key");
+  p("unset key");
   p("set encoding utf8");
 
   x_min  = param.getVal("icp_x", "min");
@@ -18,9 +18,9 @@ CRPlot::CRPlot(Model model, Param param)
   y_max  = param.getVal("icp_y", "max");
   y_step = param.getVal("icp_y", "step");
   y_num  = param.getVal("icp_y", "num");
-  initCaptureMap();
+  c_num  = 5;
 
-  if (strcmp(param.getStr("coordinate", "type").c_str(), "cartesian") == 0) {
+  if (param.getStr("coordinate", "type") == "cartesian") {
     // グラフサイズ設定
     p("set size square");
     p("set autoscale xfix");
@@ -35,16 +35,12 @@ CRPlot::CRPlot(Model model, Param param)
     p("set ytics 1");
     p("set mxtics 2");
     p("set mytics 2");
-    p("set tics scale 0,0.001");
+    p("set xtics scale 0,0.001");
+    p("set ytics scale 0,0.001");
     // p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'white'");
     p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'gray80'");
 
-    // カラーバーの設定
-    p("set palette gray negative");
-    p("set cbrange[0:4]");
-    p("set cbtics 1");
-
-    // 目盛りの値を再設定
+    // xy軸の目盛りの値を再設定
     std::string x_tics, y_tics;
     for (int i = 0; i < x_num; i++) {
       x_tics += "\"\" " + str(i);
@@ -61,7 +57,7 @@ CRPlot::CRPlot(Model model, Param param)
     fprintf(p.gp, "set xtics add (\"0.2\" 0, \"0\" %d, \"-0.2\" %d)\n", ( x_num - 1 ) / 2, ( x_num - 1 ) );
     fprintf(p.gp, "set ytics add (\"-0.2\" 0, \"0\" %d, \"0.2\" %d)\n", ( y_num - 1 ) / 2, ( y_num - 1 ) );
 
-  }else if (strcmp(param.getStr("coordinate", "type").c_str(), "cartesian") == 0) {
+  }else if (param.getStr("coordinate", "type") == "polar") {
     p("set xtics 0.05");
     p("set ytics 0.05");
 
@@ -79,6 +75,35 @@ CRPlot::CRPlot(Model model, Param param)
     p("set rtics format \"\"");
     p("unset raxis");
   }
+
+  // カラーバーの設定
+  // p("set palette gray negative");
+  fprintf(p.gp, "set palette defined ( 0 '#ffffff', 1 '#cbfeff', 2 '#68fefe', 3 '#0097ff', 4 '#3666fe')\n");
+  fprintf(p.gp, "set cbrange[0:%d]\n", c_num);
+  fprintf(p.gp, "set cbtics 0.5\n");
+  fprintf(p.gp, "set palette maxcolors %d\n", c_num);
+  fprintf(p.gp, "set cbtics scale 0,0.001\n");
+
+  // カラーバーの目盛りの値を再設定
+  std::string c_tics;
+  for (int i = 0; i <= c_num; i++) {
+    if (i != c_num) {
+      c_tics += "\"\" " + str(i);
+      c_tics += ", ";
+      if(i == 0) {
+        c_tics += "\"NONE\" " + str(i + 0.5);
+      }else{
+        c_tics += "\"" + str(i) + "\" " + str(i + 0.5);
+      }
+      c_tics += ", ";
+    }else{
+      c_tics += "\"\" " + str(i);
+    }
+  }
+  fprintf(p.gp, "set cbtics add (%s)\n", c_tics.c_str() );
+
+  initCaptureMap();
+  setFootRegion();
 
   double g = model.getVal("environment", "gravity");
   double h = model.getVal("physics", "com_height");
@@ -111,8 +136,33 @@ void CRPlot::setOutput(std::string type) {
   }
 }
 
+void CRPlot::setFootRegion(){
+  double swf_x_min = param.getVal("swf_x", "min") - x_step / 2.0;
+  double swf_x_max = param.getVal("swf_x", "max") + x_step / 2.0;
+  double swf_y_min = param.getVal("swf_y", "min") - y_step / 2.0;
+  double swf_y_max = param.getVal("swf_y", "max") + y_step / 2.0;
+
+  vec2_t vertex[5];
+  vertex[0].setCartesian(swf_x_min, swf_y_min);
+  vertex[1].setCartesian(swf_x_max, swf_y_min);
+  vertex[2].setCartesian(swf_x_max, swf_y_max);
+  vertex[3].setCartesian(swf_x_min, swf_y_max);
+  vertex[4].setCartesian(swf_x_min, swf_y_min);
+  vertex[0] = cartesianToGraph(vertex[0]);
+  vertex[1] = cartesianToGraph(vertex[1]);
+  vertex[2] = cartesianToGraph(vertex[2]);
+  vertex[3] = cartesianToGraph(vertex[3]);
+  vertex[4] = cartesianToGraph(vertex[4]);
+
+  FILE *fp = fopen("foot_region.dat", "w");
+  for(int i = 0; i < 5; i++) {
+    fprintf(fp, "%lf %lf\n", vertex[i].x, vertex[i].y);
+  }
+  fclose(fp);
+}
+
 void CRPlot::setFoot(State state){
-  std::vector<Vector2> foot_r, foot_l;
+  arr2_t foot_r, foot_l;
   foot_r = model.getVec("foot", "foot_r");
   foot_l = model.getVec("foot", "foot_l", state.swf);
 
@@ -141,6 +191,8 @@ void CRPlot::setFoot(State state){
 }
 
 void CRPlot::setZerostep(State state){
+  setFoot(state);
+
   Capturability capturability(model, param);
   capturability.load("BasinCpu.csv", DataType::BASIN);
 
@@ -155,6 +207,8 @@ void CRPlot::setZerostep(State state){
 }
 
 void CRPlot::setCaptureRegion(State state){
+  setFoot(state);
+
   Capturability capturability(model, param);
   capturability.load("NstepCpu.csv", DataType::NSTEP);
 
@@ -210,9 +264,18 @@ void CRPlot::plot(){
 
   // 描画
   fprintf(p.gp, "plot \"data.dat\" matrix w image notitle,\\\n");
-  fprintf(p.gp, "     \"foot_r.dat\" with lines lw 2 lc 1 title \"foot\",\\\n");
-  fprintf(p.gp, "     \"foot_l.dat\" with lines lw 2 lc 1 title \"foot\"\n");
+  fprintf(p.gp, "     \"foot_region.dat\" with lines lw 2 lc \"dark-blue\" title \"foot\",\\\n");
+  fprintf(p.gp, "     \"foot_r.dat\"      with lines lw 2 lc 1         title \"foot\",\\\n");
+  fprintf(p.gp, "     \"foot_l.dat\"      with lines lw 2 lc 1         title \"foot\"\n");
   fflush(p.gp);
+}
+
+vec2_t CRPlot::cartesianToGraph(vec2_t point){
+  vec2_t p;
+  double x = -point.y / x_step + ( x_num - 1 ) / 2;
+  double y = +point.x / x_step + ( x_num - 1 ) / 2;
+  p.setCartesian(x, y);
+  return p;
 }
 
 }

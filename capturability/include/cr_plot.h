@@ -32,10 +32,11 @@ public:
 
   void setOutput(std::string type);
 
-  void setCaptureRegion(State state);
-  // void setCaptureRegion();
+  // 踏み出し可能領域を設定
+  void setFootRegion();
 
   void setFoot(State state);
+  void setCaptureRegion(State state);
   void setZerostep(State state);
 
   void initCaptureMap();
@@ -49,12 +50,16 @@ private:
   std::string str(double val);
   std::string str(int val);
 
+  vec2_t cartesianToGraph(vec2_t point);
+  vec2_t polarToGraph(vec2_t point);
+
   Grid grid;
 
   double x_min, x_max, x_step;
   double y_min, y_max, y_step;
   int    x_num;
   int    y_num;
+  int    c_num; // number of color
 
   std::vector<std::vector<int> > capture_map;
 };

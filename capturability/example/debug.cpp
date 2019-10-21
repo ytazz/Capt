@@ -20,7 +20,6 @@ int main(int argc, char const *argv[]) {
   // cr_plot.setOutput("eps");
   // cr_plot.setZerostep(state);
   cr_plot.setCaptureRegion(state);
-  cr_plot.setFoot(state);
   cr_plot.plot();
 
   return 0;

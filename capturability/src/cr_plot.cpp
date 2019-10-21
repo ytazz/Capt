@@ -23,8 +23,10 @@ CRPlot::CRPlot(Model model, Param param)
   if (param.getStr("coordinate", "type") == "cartesian") {
     // グラフサイズ設定
     p("set size square");
-    p("set autoscale xfix");
-    p("set autoscale yfix");
+    // p("set autoscale xfix");
+    // p("set autoscale yfix");
+    fprintf(p.gp, "set xrange [0:%d]\n", x_num - 1);
+    fprintf(p.gp, "set yrange [0:%d]\n", y_num - 1);
 
     // 軸ラベル設定
     p("set xlabel 'y [m]'");
@@ -37,8 +39,8 @@ CRPlot::CRPlot(Model model, Param param)
     p("set mytics 2");
     p("set xtics scale 0,0.001");
     p("set ytics scale 0,0.001");
-    // p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'white'");
-    p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'gray80'");
+    p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'white'");
+    // p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'gray80'");
 
     // xy軸の目盛りの値を再設定
     std::string x_tics, y_tics;
@@ -123,7 +125,7 @@ std::string CRPlot::str(int val){
 
 void CRPlot::setOutput(std::string type) {
   if (type == "gif") {
-    p("set terminal gif animate optimize delay 30 size 600,900");
+    p("set terminal gif animate optimize delay 100 size 600,900");
     p("set output 'plot.gif'");
   }
   if (type == "svg") {
@@ -161,67 +163,35 @@ void CRPlot::setFootRegion(){
   fclose(fp);
 }
 
-void CRPlot::setFoot(State state){
+void CRPlot::setFoot(vec2_t swf){
   arr2_t foot_r, foot_l;
   foot_r = model.getVec("foot", "foot_r");
-  foot_l = model.getVec("foot", "foot_l", state.swf);
-
-  int    icp_x_num  = param.getVal("icp_x", "num");
-  double icp_x_step = param.getVal("icp_x", "step");
-  int    icp_y_num  = param.getVal("icp_y", "num");
-  double icp_y_step = param.getVal("icp_y", "step");
+  foot_l = model.getVec("foot", "foot_l", swf);
 
   FILE *fp;
   fp = fopen("foot_r.dat", "w");
+  vec2_t point;
   for (size_t i = 0; i < foot_r.size(); i++) {
     // グラフ座標に合わせる
-    double x = -foot_r[i].y / icp_x_step + ( icp_x_num - 1 ) / 2;
-    double y = +foot_r[i].x / icp_x_step + ( icp_x_num - 1 ) / 2;
-    fprintf(fp, "%lf %lf\n", x, y);
+    point = cartesianToGraph(foot_r[i]);
+    fprintf(fp, "%lf %lf\n", point.x, point.y);
   }
   fclose(fp);
   fp = fopen("foot_l.dat", "w");
   for (size_t i = 0; i < foot_l.size(); i++) {
     // グラフ座標に合わせる
-    double x = -foot_l[i].y / icp_y_step + ( icp_y_num - 1 ) / 2;
-    double y = +foot_l[i].x / icp_y_step + ( icp_y_num - 1 ) / 2;
-    fprintf(fp, "%lf %lf\n", x, y);
+    point = cartesianToGraph(foot_l[i]);
+    fprintf(fp, "%lf %lf\n", point.x, point.y);
   }
   fclose(fp);
 }
 
-void CRPlot::setZerostep(State state){
-  setFoot(state);
-
-  Capturability capturability(model, param);
-  capturability.load("BasinCpu.csv", DataType::BASIN);
-
-  initCaptureMap();
-  for(int i = 0; i < grid.getNumState(); i++) {
-    State state_ = grid.getState(i);
-    state_.swf = state.swf;
-    if(capturability.capturable(state_, 0) ) {
-      setCaptureMap(state_.icp.x, state_.icp.y, 3);
-    }
-  }
-}
-
-void CRPlot::setCaptureRegion(State state){
-  setFoot(state);
-
-  Capturability capturability(model, param);
-  capturability.load("NstepCpu.csv", DataType::NSTEP);
-
-  initCaptureMap();
-  for(int N = 1; N <= NUM_STEP_MAX; N++) {
-    if(capturability.capturable(state, N) ) {
-      std::vector<CaptureSet> region = capturability.getCaptureRegion(state, N);
-      for(size_t i = 0; i < region.size(); i++) {
-        Input input = grid.getInput(region[i].input_id);
-        setCaptureMap(input.swf.x, input.swf.y, N);
-      }
-    }
-  }
+void CRPlot::setIcp(vec2_t icp){
+  icp.printCartesian();
+  vec2_t point = cartesianToGraph(icp);
+  FILE  *fp    = fopen("icp.dat", "w");
+  fprintf(fp, "%lf %lf\n", point.x, point.y);
+  fclose(fp);
 }
 
 void CRPlot::initCaptureMap(){
@@ -264,18 +234,25 @@ void CRPlot::plot(){
 
   // 描画
   fprintf(p.gp, "plot \"data.dat\" matrix w image notitle,\\\n");
-  fprintf(p.gp, "     \"foot_region.dat\" with lines lw 2 lc \"dark-blue\" title \"foot\",\\\n");
-  fprintf(p.gp, "     \"foot_r.dat\"      with lines lw 2 lc 1         title \"foot\",\\\n");
-  fprintf(p.gp, "     \"foot_l.dat\"      with lines lw 2 lc 1         title \"foot\"\n");
+  fprintf(p.gp, "     \"foot_region.dat\" with lines  lw 2 lc \"dark-blue\" title \"foot\",\\\n");
+  fprintf(p.gp, "     \"foot_r.dat\"      with lines  lw 2 lc 1         title \"foot\",\\\n");
+  fprintf(p.gp, "     \"foot_l.dat\"      with lines  lw 2 lc 1         title \"foot\",\\\n");
+  fprintf(p.gp, "     \"icp.dat\"         with points pt 2 lc 1         title \"icp\"\n");
   fflush(p.gp);
 }
 
 vec2_t CRPlot::cartesianToGraph(vec2_t point){
   vec2_t p;
-  double x = -point.y / x_step + ( x_num - 1 ) / 2;
+  double x = -point.y / y_step + ( y_num - 1 ) / 2;
   double y = +point.x / x_step + ( x_num - 1 ) / 2;
   p.setCartesian(x, y);
   return p;
+}
+
+vec2_t CRPlot::cartesianToGraph(double x, double y){
+  vec2_t p;
+  p.setCartesian(x, y);
+  return cartesianToGraph(p);
 }
 
 }

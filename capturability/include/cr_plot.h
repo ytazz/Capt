@@ -35,10 +35,13 @@ public:
   // 踏み出し可能領域を設定
   void setFootRegion();
 
-  void setFoot(State state);
-  void setCaptureRegion(State state);
-  void setZerostep(State state);
+  // 現在の足配置を設定
+  void setFoot(vec2_t swf);
 
+  // 現在のICP位置を設定
+  void setIcp(vec2_t icp);
+
+  // Capture Regionのデータを格納するCapture Map
   void initCaptureMap();
   void setCaptureMap(double x, double y, int n_step);
 
@@ -51,6 +54,7 @@ private:
   std::string str(int val);
 
   vec2_t cartesianToGraph(vec2_t point);
+  vec2_t cartesianToGraph(double x, double y);
   vec2_t polarToGraph(vec2_t point);
 
   Grid grid;

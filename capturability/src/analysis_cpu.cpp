@@ -86,9 +86,9 @@ void Analysis::setBasin(){
 
 void Analysis::setCop(){
   Polygon polygon;
-  arr2_t  region = model.getVec("foot", "foot_r_convex");
+  arr2_t  foot_r = model.getVec("foot", "foot_r_convex");
   for(int state_id = 0; state_id < num_state; state_id++)
-    cop[state_id] = polygon.getClosestPoint(state[state_id].icp, region);
+    cop[state_id] = polygon.getClosestPoint(state[state_id].icp, foot_r);
 }
 
 void Analysis::setStepTime(){

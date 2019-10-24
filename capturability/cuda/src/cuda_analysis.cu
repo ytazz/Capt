@@ -68,6 +68,30 @@ __host__ void outputNStep(std::string file_name, Condition cond, int *nstep, int
   fclose(fp);
 }
 
+__host__ void outputCop(std::string file_name, Condition cond, Vector2 *cop,
+                        bool header){
+  FILE     *fp        = fopen(file_name.c_str(), "w");
+  const int num_state = cond.grid->getNumState();
+
+  // Header
+  if (header) {
+    fprintf(fp, "%s,", "state_id");
+    fprintf(fp, "%s,", "cop_x");
+    fprintf(fp, "%s", "cop_y");
+    fprintf(fp, "\n");
+  }
+
+  // Data
+  for(int state_id = 0; state_id < num_state; state_id++) {
+    fprintf(fp, "%d,", state_id);
+    fprintf(fp, "%lf,", cop[state_id].x_);
+    fprintf(fp, "%lf", cop[state_id].y_);
+    fprintf(fp, "\n");
+  }
+
+  fclose(fp);
+}
+
 __host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *basin) {
   for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
     Capt::State state = grid.getState(state_id);
@@ -86,6 +110,68 @@ __host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *basin) {
 }
 
 /* device function */
+
+__device__ bool inPolygon(Vector2 point, Vector2 *vertex, int num_vertex){
+  bool        flag    = false;
+  double      product = 0.0;
+  int         sign    = 0, on_line = 0;
+  const float epsilon = 0.00001;
+
+  for (size_t i = 0; i < num_vertex - 1; i++) {
+    product = ( point - vertex[i] ) % ( vertex[i + 1] - vertex[i] );
+    if (-epsilon <= product && product <= epsilon) {
+      on_line += 1;
+    } else if (product > 0) {
+      sign += 1;
+    } else if (product < 0) {
+      sign -= 1;
+    }
+  }
+
+  if (sign == int(num_vertex - 1 - on_line) ||
+      sign == -int(num_vertex - 1 - on_line) ) {
+    flag = true;
+  }
+
+  return flag;
+}
+
+__device__ Vector2 getClosestPoint(Vector2 point, Vector2* vertex, int num_vertex) {
+  Vector2 closest;
+  Vector2 v1, v2, v3, v4; // vector
+  Vector2 n1, n2;         // normal vector
+
+  if (inPolygon(point, vertex, num_vertex) ) {
+    closest = point;
+  } else {
+    for (int i = 0; i < num_vertex - 1; i++) {
+      //最近点が角にあるとき
+      if (i == 0) {
+        n1 = ( vertex[1] - vertex[i] ).normal();
+        n2 = ( vertex[i] - vertex[num_vertex - 2] ).normal();
+      } else {
+        n1 = ( vertex[i + 1] - vertex[i] ).normal();
+        n2 = ( vertex[i] - vertex[i - 1] ).normal();
+      }
+      v1 = point - vertex[i];
+      if ( ( n1 % v1 ) < 0 && ( n2 % v1 ) > 0) {
+        closest = vertex[i];
+      }
+      // 最近点が辺にあるとき
+      n1 = ( vertex[i + 1] - vertex[i] ).normal();
+      v1 = point - vertex[i];
+      v2 = vertex[i + 1] - vertex[i];
+      v3 = point - vertex[i + 1];
+      v4 = vertex[i] - vertex[i + 1];
+      if ( ( n1 % v1 ) > 0 && ( v2 % v1 ) < 0 && ( n1 % v3 ) < 0 && ( v4 % v3 ) > 0) {
+        float k = v1 * v2 / ( v2.norm() * v2.norm() );
+        closest = vertex[i] + k * v2;
+      }
+    }
+  }
+
+  return closest;
+}
 
 __device__ State step(State state, Input input, Vector2 cop, Physics *physics) {
   State state_;
@@ -218,8 +304,18 @@ __device__ int getStateIndex(State state, GridPolar *grid) {
 
 /* global function */
 
-__global__ void calcStateTrans(State *state, Input *input, int *trans, GridCartesian *grid,
-                               Vector2 *cop, Physics *physics){
+__global__ void calcCop(State *state, GridCartesian *grid, Vector2 *foot, Vector2 *cop){
+  int tid = threadIdx.x + blockIdx.x * blockDim.x;
+
+  while (tid < grid->num_state) {
+    cop[tid] = getClosestPoint(state[tid].icp, foot, grid->num_foot_vertex );
+
+    tid += blockDim.x * gridDim.x;
+  }
+}
+
+__global__ void calcTrans(State *state, Input *input, int *trans, GridCartesian *grid,
+                          Vector2 *cop, Physics *physics){
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
   while (tid < grid->num_state * grid->num_input) {
@@ -236,8 +332,8 @@ __global__ void calcStateTrans(State *state, Input *input, int *trans, GridCarte
   }
 }
 
-__global__ void calcStateTrans(State *state, Input *input, int *trans, GridPolar *grid,
-                               Vector2 *cop, Physics *physics){
+__global__ void calcTrans(State *state, Input *input, int *trans, GridPolar *grid,
+                          Vector2 *cop, Physics *physics){
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
   while (tid < grid->num_state * grid->num_input) {

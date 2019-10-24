@@ -21,12 +21,14 @@ struct GridSize {
   int num_state;
   int num_input;
   int num_grid;
+  int num_foot_vertex;
 };
 
 struct GridCartesian {
   int num_state;
   int num_input;
   int num_grid;
+  int num_foot_vertex;
 
   int icp_x_num;
   int icp_y_num;
@@ -45,6 +47,7 @@ struct GridPolar {
   int num_state;
   int num_input;
   int num_grid;
+  int num_foot_vertex;
 
   int icp_r_num;
   int icp_th_num;
@@ -101,8 +104,9 @@ public:
   __host__ void initHostNstep(int   *nstep, Condition cond);
   __host__ void initHostGrid(GridCartesian *grid, Condition cond);
   __host__ void initHostGrid(GridPolar *grid, Condition cond);
-  __host__ void initCop(Vector2 *cop, Condition cond);
-  __host__ void initPhysics(Physics *physics, Condition cond);
+  __host__ void initHostCop(Vector2 *cop, Condition cond);
+  __host__ void initHostFoot(Vector2 *foot, Condition cond);
+  __host__ void initHostPhysics(Physics *physics, Condition cond);
 
   __host__ void initDevState(Cuda::State *dev_state);
   __host__ void initDevInput(Cuda::Input *dev_input);
@@ -111,6 +115,7 @@ public:
   __host__ void initDevNstep(int   *dev_nstep);
   __host__ void initDevGrid(Cuda::GridCartesian *dev_grid);
   __host__ void initDevGrid(Cuda::GridPolar *dev_grid);
+  __host__ void initDevFoot(Vector2 *dev_foot);
   __host__ void initDevCop(Vector2 *dev_cop);
   __host__ void initDevPhysics(Physics *dev_physics);
 
@@ -121,6 +126,7 @@ public:
   __host__ void copyHostToDevNstep(int   *nstep, int *dev_nstep);
   __host__ void copyHostToDevGrid(GridCartesian *grid, Cuda::GridCartesian *dev_grid);
   __host__ void copyHostToDevGrid(GridPolar *grid, Cuda::GridPolar *dev_grid);
+  __host__ void copyHostToDevFoot(Vector2 *foot, Vector2 *dev_foot);
   __host__ void copyHostToDevCop(Vector2 *cop, Vector2 *dev_cop);
   __host__ void copyHostToDevPhysics(Physics *physics, Physics *dev_physics);
 
@@ -131,6 +137,9 @@ public:
   __host__ void copyDevToHostNstep(int *dev_nstep, int *nstep);
   __host__ void copyDevToHostGrid(Cuda::GridCartesian *dev_grid, GridCartesian *grid);
   __host__ void copyDevToHostGrid(Cuda::GridPolar *dev_grid, GridPolar *grid);
+  __host__ void copyDevToHostFoot(Vector2 *dev_foot, Vector2 *foot);
+  __host__ void copyDevToHostCop(Vector2 *dev_cop, Vector2 *cop);
+
 
 private:
   GridSize grid;

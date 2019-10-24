@@ -17,9 +17,10 @@ int main(void) {
 
   /* グリッド */
   Capt::Grid cgrid(cparam);
-  const int  num_state = cgrid.getNumState();
-  const int  num_input = cgrid.getNumInput();
-  const int  num_grid  = num_state * num_input;
+  const int  num_state       = cgrid.getNumState();
+  const int  num_input       = cgrid.getNumInput();
+  const int  num_grid        = num_state * num_input;
+  const int  num_foot_vertex = cmodel.getVec("foot", "foot_r_convex").size();
 
   /* 解析条件 */
   Cuda::Condition cond;
@@ -38,6 +39,7 @@ int main(void) {
   int           *basin   = (int*)malloc(sizeof( int ) * num_state );
   int           *nstep   = (int*)malloc(sizeof( int ) * num_grid );
   grid_t        *grid    = new grid_t;
+  Cuda::Vector2 *foot    = new Cuda::Vector2[num_foot_vertex];
   Cuda::Vector2 *cop     = new Cuda::Vector2[num_state];
   Cuda::Physics *physics = new Cuda::Physics;
   mm.initHostState(state, cond);
@@ -46,8 +48,9 @@ int main(void) {
   mm.initHostBasin(basin, cond);
   mm.initHostNstep(nstep, cond);
   mm.initHostGrid(grid, cond);
-  mm.initCop(cop, cond);
-  mm.initPhysics(physics, cond);
+  mm.initHostFoot(foot, cond);
+  mm.initHostCop(cop, cond);
+  mm.initHostPhysics(physics, cond);
   mm.setGrid(grid);
   // デバイス側
   Cuda::State   *dev_state;
@@ -56,6 +59,7 @@ int main(void) {
   int           *dev_nstep;
   int           *dev_trans;
   grid_t        *dev_grid;
+  Cuda::Vector2 *dev_foot;
   Cuda::Vector2 *dev_cop;
   Cuda::Physics *dev_physics;
   // mm.initDevState(dev_state);
@@ -72,6 +76,7 @@ int main(void) {
   HANDLE_ERROR(cudaMalloc( (void **)&dev_basin, num_state * sizeof( int ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_nstep, num_grid * sizeof( int ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_grid, sizeof( grid_t ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_foot, num_foot_vertex * sizeof( Cuda::Vector2 ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_cop, num_state * sizeof( Cuda::Vector2 ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_physics, sizeof( Cuda::Physics ) ) );
 
@@ -82,6 +87,7 @@ int main(void) {
   mm.copyHostToDevBasin(basin, dev_basin);
   mm.copyHostToDevNstep(nstep, dev_nstep);
   mm.copyHostToDevGrid(grid, dev_grid);
+  mm.copyHostToDevFoot(foot, dev_foot);
   mm.copyHostToDevCop(cop, dev_cop);
   mm.copyHostToDevPhysics(physics, dev_physics);
 
@@ -91,7 +97,7 @@ int main(void) {
   /* 状態遷移計算 */
   /* ---------------------------------------------------------------------- */
   printf("Calculate...\t");
-
+  Cuda::calcCop << < BPG, TPB >> > ( dev_state, dev_grid, dev_foot, dev_cop );
   Cuda::calcStateTrans << < BPG, TPB >> > ( dev_state, dev_input, dev_trans, dev_grid, dev_cop, dev_physics );
   HANDLE_ERROR(cudaMemcpy(trans, dev_trans, num_grid * sizeof( int ),
                           cudaMemcpyDeviceToHost) );
@@ -127,11 +133,14 @@ int main(void) {
                           cudaMemcpyDeviceToHost) );
   HANDLE_ERROR(cudaMemcpy(trans, dev_trans, num_grid * sizeof( int ),
                           cudaMemcpyDeviceToHost) );
+  HANDLE_ERROR(cudaMemcpy(cop, dev_cop, num_state * sizeof( Cuda::Vector2 ),
+                          cudaMemcpyDeviceToHost) );
   /* ---------------------------------------------------------------------- */
 
   /* ファイル書き出し */
   /* ---------------------------------------------------------------------- */
   printf("Output...\t");
+  Cuda::outputCop("csv/Cop.csv", cond, cop);
   Cuda::outputBasin("csv/BasinGpu.csv", cond, basin);
   Cuda::outputNStep("csv/NstepGpu.csv", cond, nstep, trans);
   printf("Done.\n");
@@ -149,6 +158,7 @@ int main(void) {
   delete nstep;
   delete trans;
   delete grid;
+  delete foot;
   delete cop;
   delete physics;
   // デバイス側
@@ -158,6 +168,7 @@ int main(void) {
   cudaFree(dev_basin);
   cudaFree(dev_nstep);
   cudaFree(dev_grid);
+  cudaFree(dev_foot);
   cudaFree(dev_cop);
   cudaFree(dev_physics);
 

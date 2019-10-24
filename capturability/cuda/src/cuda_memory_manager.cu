@@ -64,15 +64,17 @@ __device__ void Input::operator=(const Input &input) {
 /* host function */
 
 void MemoryManager::setGrid(GridCartesian* grid){
-  this->grid.num_state = grid->num_state;
-  this->grid.num_input = grid->num_input;
-  this->grid.num_grid  = grid->num_grid;
+  this->grid.num_state       = grid->num_state;
+  this->grid.num_input       = grid->num_input;
+  this->grid.num_grid        = grid->num_grid;
+  this->grid.num_foot_vertex = grid->num_foot_vertex;
 }
 
 void MemoryManager::setGrid(GridPolar* grid){
-  this->grid.num_state = grid->num_state;
-  this->grid.num_input = grid->num_input;
-  this->grid.num_grid  = grid->num_grid;
+  this->grid.num_state       = grid->num_state;
+  this->grid.num_input       = grid->num_input;
+  this->grid.num_grid        = grid->num_grid;
+  this->grid.num_foot_vertex = grid->num_foot_vertex;
 }
 
 __host__ void MemoryManager::initHostState(State *state, Condition cond) {
@@ -141,9 +143,10 @@ __host__ void MemoryManager::initHostNstep(int *nstep, Condition cond) {
 __host__ void MemoryManager::initHostGrid(GridCartesian *grid, Condition cond) {
   // grid = new Cuda::GridCartesian;
 
-  grid->num_state = cond.grid->getNumState();
-  grid->num_input = cond.grid->getNumInput();
-  grid->num_grid  = cond.grid->getNumState() * cond.grid->getNumInput();
+  grid->num_state       = cond.grid->getNumState();
+  grid->num_input       = cond.grid->getNumInput();
+  grid->num_grid        = cond.grid->getNumState() * cond.grid->getNumInput();
+  grid->num_foot_vertex = cond.model->getVec("foot", "foot_r_convex").size();
 
   grid->icp_x_min  = cond.param->getVal("icp_x", "min");
   grid->icp_x_max  = cond.param->getVal("icp_x", "max");
@@ -169,9 +172,10 @@ __host__ void MemoryManager::initHostGrid(GridCartesian *grid, Condition cond) {
 __host__ void MemoryManager::initHostGrid(GridPolar *grid, Condition cond) {
   // grid = new Cuda::GridPolar;
 
-  grid->num_state = cond.grid->getNumState();
-  grid->num_input = cond.grid->getNumInput();
-  grid->num_grid  = cond.grid->getNumState() * cond.grid->getNumInput();
+  grid->num_state       = cond.grid->getNumState();
+  grid->num_input       = cond.grid->getNumInput();
+  grid->num_grid        = cond.grid->getNumState() * cond.grid->getNumInput();
+  grid->num_foot_vertex = cond.model->getVec("foot", "foot_r_convex").size();
 
   grid->icp_r_min  = cond.param->getVal("icp_r", "min");
   grid->icp_r_max  = cond.param->getVal("icp_r", "max");
@@ -194,26 +198,31 @@ __host__ void MemoryManager::initHostGrid(GridPolar *grid, Condition cond) {
   grid->swf_th_num  = cond.param->getVal("swf_th", "num");
 }
 
-__host__ void MemoryManager::initCop(Vector2 *cop, Condition cond){
+__host__ void MemoryManager::initHostCop(Vector2 *cop, Condition cond){
   // cop = new Cuda::Vector2[grid.num_state];
 
-  Capt::State                state;
-  Capt::Polygon              polygon;
-  std::vector<Capt::Vector2> region = cond.model->getVec("foot", "foot_r_convex");
-  Capt::Vector2              cop_;
-
   for (int state_id = 0; state_id < cond.grid->getNumState(); state_id++) {
-    state = cond.grid->getState(state_id);
-    cop_  = polygon.getClosestPoint(state.icp, region);
-
-    cop[state_id].x_  = cop_.x;
-    cop[state_id].y_  = cop_.y;
-    cop[state_id].r_  = cop_.r;
-    cop[state_id].th_ = cop_.th;
+    cop[state_id].x_  = 0.0;
+    cop[state_id].y_  = 0.0;
+    cop[state_id].r_  = 0.0;
+    cop[state_id].th_ = 0.0;
   }
 }
 
-__host__ void MemoryManager::initPhysics(Physics *physics, Condition cond){
+__host__ void MemoryManager::initHostFoot(Vector2 *foot, Condition cond){
+  // cop = new Cuda::Vector2[grid.num_state];
+
+  Capt::arr2_t foot_r          = cond.model->getVec("foot", "foot_r_convex");
+  const int    num_foot_vertex = foot_r.size();
+  for (int vertex_id = 0; vertex_id < num_foot_vertex; vertex_id++) {
+    foot[vertex_id].x_  = foot_r[vertex_id].x;
+    foot[vertex_id].y_  = foot_r[vertex_id].y;
+    foot[vertex_id].r_  = foot_r[vertex_id].r;
+    foot[vertex_id].th_ = foot_r[vertex_id].th;
+  }
+}
+
+__host__ void MemoryManager::initHostPhysics(Physics *physics, Condition cond){
   // physics = new Cuda::Physics;
 
   physics->g     = cond.model->getVal("environment", "gravity");
@@ -249,6 +258,10 @@ __host__ void MemoryManager::initDevGrid(Cuda::GridCartesian *dev_grid){
 
 __host__ void MemoryManager::initDevGrid(Cuda::GridPolar *dev_grid){
   HANDLE_ERROR(cudaMalloc( (void **)&dev_grid, sizeof( Cuda::GridPolar ) ) );
+}
+
+__host__ void initDevFoot(Vector2 *dev_foot){
+  // HANDLE_ERROR(cudaMalloc( (void **)&dev_foot, num_foot_vertex * sizeof( Cuda::Vector2 ) ) );
 }
 
 __host__ void MemoryManager::initDevCop(Vector2 *dev_cop){
@@ -287,6 +300,10 @@ __host__ void MemoryManager::copyHostToDevGrid(GridPolar *grid, Cuda::GridPolar 
   HANDLE_ERROR(cudaMemcpy(dev_grid, grid, sizeof( Cuda::GridPolar ), cudaMemcpyHostToDevice) );
 }
 
+__host__ void MemoryManager::copyHostToDevFoot(Vector2 *foot, Vector2 *dev_foot){
+  HANDLE_ERROR(cudaMemcpy(dev_foot, foot, grid.num_foot_vertex * sizeof( Cuda::Vector2 ), cudaMemcpyHostToDevice ) );
+}
+
 __host__ void MemoryManager::copyHostToDevCop(Vector2 *cop, Vector2 *dev_cop){
   HANDLE_ERROR(cudaMemcpy(dev_cop, cop, grid.num_state * sizeof( Cuda::Vector2 ), cudaMemcpyHostToDevice ) );
 }
@@ -321,6 +338,14 @@ __host__ void MemoryManager::copyDevToHostGrid(Cuda::GridCartesian *dev_grid, Gr
 
 __host__ void MemoryManager::copyDevToHostGrid(Cuda::GridPolar *dev_grid, GridPolar *grid){
   HANDLE_ERROR(cudaMemcpy(grid, dev_grid, sizeof( Cuda::GridPolar ), cudaMemcpyDeviceToHost) );
+}
+
+__host__ void MemoryManager::copyDevToHostFoot(Vector2 *dev_foot, Vector2 *foot){
+  HANDLE_ERROR(cudaMemcpy(foot, dev_foot, grid.num_foot_vertex * sizeof( Cuda::Vector2 ), cudaMemcpyDeviceToHost) );
+}
+
+__host__ void MemoryManager::copyDevToHostCop(Vector2 *dev_cop, Vector2 *cop){
+  HANDLE_ERROR(cudaMemcpy(cop, dev_cop, grid.num_state * sizeof( Cuda::Vector2 ), cudaMemcpyDeviceToHost) );
 }
 
 } // namespace Cuda

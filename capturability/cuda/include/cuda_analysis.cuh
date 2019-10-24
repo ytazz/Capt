@@ -14,10 +14,15 @@ __host__ void outputBasin(std::string file_name, Condition cond, int *basin,
                           bool header = false);
 __host__ void outputNStep(std::string file_name, Condition cond, int *nstep, int *trans,
                           bool header = false);
+__host__ void outputCop(std::string file_name, Condition cond, Vector2 *cop,
+                        bool header = false);
 
 __host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *basin);
 
 /* device function */
+
+__device__ bool    inPolygon(Vector2 point, Vector2 *vertex, int num_vertex);
+__device__ Vector2 getClosestPoint(Vector2 point, Vector2 *vertex, int num_vertex);
 
 __device__ State step(State state, Input input, Vector2 cop, Physics *physics);
 __device__ bool  existState(State state, GridCartesian *grid);
@@ -28,10 +33,12 @@ __device__ int   roundValue(double value);
 
 /* global function */
 
-__global__ void calcStateTrans(State *state, Input *input, int *trans, GridCartesian *grid,
-                               Vector2 *cop, Physics *physics);
-__global__ void calcStateTrans(State *state, Input *input, int *trans, GridPolar *grid,
-                               Vector2 *cop, Physics *physics);
+__global__ void calcCop(State *state, GridCartesian *grid, Vector2 *foot, Vector2 *cop);
+
+__global__ void calcTrans(State *state, Input *input, int *trans, GridCartesian *grid,
+                          Vector2 *cop, Physics *physics);
+__global__ void calcTrans(State *state, Input *input, int *trans, GridPolar *grid,
+                          Vector2 *cop, Physics *physics);
 
 __global__ void exeNStep(int N, int *basin, int *nstep, int *trans, GridCartesian *grid);
 __global__ void exeNStep(int N, int *basin, int *nstep, int *trans, GridPolar *grid);

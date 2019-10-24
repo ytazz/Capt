@@ -12,8 +12,8 @@ int main(void) {
   printf("Prepare...\t");
 
   /* パラメータの読み込み */
-  Capt::Model cmodel("data/valkyrie.xml");
-  Capt::Param cparam("data/valkyrie_xy.xml");
+  Capt::Model cmodel("data/nao.xml");
+  Capt::Param cparam("data/nao_xy.xml");
 
   /* グリッド */
   Capt::Grid cgrid(cparam);
@@ -132,8 +132,8 @@ int main(void) {
   /* ファイル書き出し */
   /* ---------------------------------------------------------------------- */
   printf("Output...\t");
-  Cuda::outputBasin("BasinGpu.csv", cond, basin);
-  Cuda::outputNStep("NstepGpu.csv", cond, nstep, trans);
+  Cuda::outputBasin("csv/BasinGpu.csv", cond, basin);
+  Cuda::outputNStep("csv/NstepGpu.csv", cond, nstep, trans);
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
 

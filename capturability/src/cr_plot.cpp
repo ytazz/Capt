@@ -156,7 +156,7 @@ void CRPlot::setFootRegion(){
   vertex[3] = cartesianToGraph(vertex[3]);
   vertex[4] = cartesianToGraph(vertex[4]);
 
-  FILE *fp = fopen("foot_region.dat", "w");
+  FILE *fp = fopen("dat/foot_region.dat", "w");
   for(int i = 0; i < 5; i++) {
     fprintf(fp, "%lf %lf\n", vertex[i].x, vertex[i].y);
   }
@@ -169,7 +169,7 @@ void CRPlot::setFoot(vec2_t swf){
   foot_l = model.getVec("foot", "foot_l", swf);
 
   FILE *fp;
-  fp = fopen("foot_r.dat", "w");
+  fp = fopen("dat/foot_r.dat", "w");
   vec2_t point;
   for (size_t i = 0; i < foot_r.size(); i++) {
     // グラフ座標に合わせる
@@ -177,7 +177,7 @@ void CRPlot::setFoot(vec2_t swf){
     fprintf(fp, "%lf %lf\n", point.x, point.y);
   }
   fclose(fp);
-  fp = fopen("foot_l.dat", "w");
+  fp = fopen("dat/foot_l.dat", "w");
   for (size_t i = 0; i < foot_l.size(); i++) {
     // グラフ座標に合わせる
     point = cartesianToGraph(foot_l[i]);
@@ -189,7 +189,7 @@ void CRPlot::setFoot(vec2_t swf){
 void CRPlot::setIcp(vec2_t icp){
   icp.printCartesian();
   vec2_t point = cartesianToGraph(icp);
-  FILE  *fp    = fopen("icp.dat", "w");
+  FILE  *fp    = fopen("dat/icp.dat", "w");
   fprintf(fp, "%lf %lf\n", point.x, point.y);
   fclose(fp);
 }
@@ -223,7 +223,7 @@ void CRPlot::setCaptureMap(double x, double y, int n_step){
 
 void CRPlot::plot(){
   // mapをグラフ上の対応する点に変換
-  FILE *fp = fopen("data.dat", "w");
+  FILE *fp = fopen("dat/data.dat", "w");
   for (int i = 0; i < x_num; i++) {
     for (int j = 0; j < y_num; j++) {
       fprintf(fp, "%d ", capture_map[i][y_num - j - 1]);
@@ -233,11 +233,11 @@ void CRPlot::plot(){
   fclose(fp);
 
   // 描画
-  fprintf(p.gp, "plot \"data.dat\" matrix w image notitle,\\\n");
-  fprintf(p.gp, "     \"foot_region.dat\" with lines  lw 2 lc \"dark-blue\" title \"foot\",\\\n");
-  fprintf(p.gp, "     \"foot_r.dat\"      with lines  lw 2 lc 1         title \"foot\",\\\n");
-  fprintf(p.gp, "     \"foot_l.dat\"      with lines  lw 2 lc 1         title \"foot\",\\\n");
-  fprintf(p.gp, "     \"icp.dat\"         with points pt 2 lc 1         title \"icp\"\n");
+  fprintf(p.gp, "plot \"dat/data.dat\" matrix w image notitle,\\\n");
+  fprintf(p.gp, "     \"dat/foot_region.dat\" with lines  lw 2 lc \"dark-blue\" title \"foot\",\\\n");
+  fprintf(p.gp, "     \"dat/foot_r.dat\"      with lines  lw 2 lc 1         title \"foot\",\\\n");
+  fprintf(p.gp, "     \"dat/foot_l.dat\"      with lines  lw 2 lc 1         title \"foot\",\\\n");
+  fprintf(p.gp, "     \"dat/icp.dat\"         with points pt 2 lc 1         title \"icp\"\n");
   fflush(p.gp);
 }
 

@@ -75,7 +75,7 @@ void Grid::create() {
     }
 
     FILE *fp_state = NULL;
-    if ( ( fp_state = fopen("state_table.csv", "w") ) == NULL) {
+    if ( ( fp_state = fopen("csv/state_table.csv", "w") ) == NULL) {
       printf("Error: couldn't open state_table.csv\n");
       exit(EXIT_FAILURE);
     }
@@ -122,7 +122,7 @@ void Grid::create() {
     }
 
     FILE *fp_input = NULL;
-    if ( ( fp_input = fopen("input_table.csv", "w") ) == NULL) {
+    if ( ( fp_input = fopen("csv/input_table.csv", "w") ) == NULL) {
       printf("Error: couldn't open input_table.csv\n");
       exit(EXIT_FAILURE);
     }
@@ -185,7 +185,7 @@ void Grid::create() {
     }
 
     FILE *fp_state = NULL;
-    if ( ( fp_state = fopen("state_table.csv", "w") ) == NULL) {
+    if ( ( fp_state = fopen("csv/state_table.csv", "w") ) == NULL) {
       printf("Error: couldn't open state_table.csv\n");
       exit(EXIT_FAILURE);
     }
@@ -232,7 +232,7 @@ void Grid::create() {
     }
 
     FILE *fp_input = NULL;
-    if ( ( fp_input = fopen("input_table.csv", "w") ) == NULL) {
+    if ( ( fp_input = fopen("csv/input_table.csv", "w") ) == NULL) {
       printf("Error: couldn't open input_table.csv\n");
       exit(EXIT_FAILURE);
     }

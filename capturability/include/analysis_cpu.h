@@ -31,19 +31,23 @@ public:
   void initBasin();
   void initNstep();
   void initCop();
+  void initStepTime();
 
   // 解析前の状態遷移や0-step、copを計算
   void setBasin();
-  void setCop();
   void setTrans();
+  void setCop();
+  void setStepTime();
 
   // 解析実行
   void exe(const int n);
 
   // 解析結果をファイルに保存
-  void saveCop(std::string file_name, bool header = false);
+  void saveTrans(std::string file_name, bool header = false);
   void saveBasin(std::string file_name, bool header = false);
   void saveNstep(std::string file_name, bool header = false);
+  void saveCop(std::string file_name, bool header = false);
+  void saveStepTime(std::string file_name, bool header = false);
 
 private:
   Model model;
@@ -56,6 +60,7 @@ private:
   int     *basin;
   int     *nstep;
   Vector2 *cop;
+  double  *step_time;
 
   const int num_state;
   const int num_input;

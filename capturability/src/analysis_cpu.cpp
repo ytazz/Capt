@@ -14,9 +14,11 @@ Analysis::Analysis(Model model, Param param)
   initBasin();
   initNstep();
   initCop();
+  initStepTime();
 
   setBasin();
   setCop();
+  setStepTime();
   setTrans();
   printf("Done!\n");
 }
@@ -56,6 +58,14 @@ void Analysis::initNstep(){
 
 void Analysis::initCop(){
   cop = new Vector2[num_state];
+  for (int state_id = 0; state_id < num_state; state_id++)
+    cop[state_id].setCartesian(0.0, 0.0);
+}
+
+void Analysis::initStepTime(){
+  step_time = new double[num_grid];
+  for (int id = 0; id < num_grid; id++)
+    step_time[id] = 0.0;
 }
 
 void Analysis::setBasin(){
@@ -81,27 +91,34 @@ void Analysis::setCop(){
     cop[state_id] = polygon.getClosestPoint(state[state_id].icp, region);
 }
 
-void Analysis::setTrans(){
-  Pendulum  pendulum(model);
+void Analysis::setStepTime(){
   SwingFoot swing_foot(model);
-  Vector2   icp;
-  double    step_time;
 
   for(int state_id = 0; state_id < num_state; state_id++) {
     for(int input_id = 0; input_id < num_input; input_id++) {
+      int id = state_id * num_input + input_id;
+      swing_foot.set(state[state_id].swf, input[input_id].swf);
+      step_time[id] = swing_foot.getTime();
+    }
+  }
+}
+
+void Analysis::setTrans(){
+  Pendulum pendulum(model);
+  Vector2  icp;
+
+  for(int state_id = 0; state_id < num_state; state_id++) {
+    for(int input_id = 0; input_id < num_input; input_id++) {
+      int id = state_id * num_input + input_id;
+
       pendulum.setIcp(state[state_id].icp);
       pendulum.setCop(cop[state_id]);
-
-      swing_foot.set(state[state_id].swf, input[input_id].swf);
-      step_time = swing_foot.getTime();
-
-      icp = pendulum.getIcp(step_time);
+      icp = pendulum.getIcp(step_time[id]);
 
       State state_;
       state_.icp.setCartesian(-input[input_id].swf.x + icp.x, input[input_id].swf.y - icp.y);
       state_.swf.setCartesian(-input[input_id].swf.x, input[input_id].swf.y);
 
-      int id = state_id * num_input + input_id;
       trans[id] = grid.roundState(state_).id;
     }
   }
@@ -145,6 +162,31 @@ void Analysis::saveCop(std::string file_name, bool header){
     fprintf(fp, "%lf,", cop[state_id].x);
     fprintf(fp, "%lf", cop[state_id].y);
     fprintf(fp, "\n");
+  }
+
+  fclose(fp);
+}
+
+void Analysis::saveStepTime(std::string file_name, bool header){
+  FILE *fp = fopen(file_name.c_str(), "w");
+
+  // Header
+  if (header) {
+    fprintf(fp, "%s,", "state_id");
+    fprintf(fp, "%s,", "input_id");
+    fprintf(fp, "%s", "step_time");
+    fprintf(fp, "\n");
+  }
+
+  // Data
+  for (int state_id = 0; state_id < num_state; state_id++) {
+    for (int input_id = 0; input_id < num_input; input_id++) {
+      int id = state_id * num_input + input_id;
+      fprintf(fp, "%d,", state_id);
+      fprintf(fp, "%d,", input_id);
+      fprintf(fp, "%lf", step_time[id]);
+      fprintf(fp, "\n");
+    }
   }
 
   fclose(fp);

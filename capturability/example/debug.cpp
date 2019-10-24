@@ -19,8 +19,8 @@ int main(int argc, char const *argv[]) {
   Grid  grid(param);
 
   Capturability capturability(model, param);
-  capturability.load("BasinGpu.csv", DataType::BASIN);
-  capturability.load("NstepGpu.csv", DataType::NSTEP);
+  capturability.load("csv/BasinGpu.csv", DataType::BASIN);
+  capturability.load("csv/NstepGpu.csv", DataType::NSTEP);
 
   CRPlot cr_plot(model, param);
 

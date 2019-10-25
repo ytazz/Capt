@@ -122,89 +122,18 @@ __host__ void outputStepTime(std::string file_name, Condition cond, double *step
 
 /* device function */
 
-__device__ int getConvexHull(Vector2 *foot_r, Vector2 *foot_l, int size, Vector2 swf, Vector2 *convex){
-  const int num_vertex = 2 * size;
-  for(int i = 0; i < num_vertex; i++) {
-    convex[i].x_  = 0.0;
-    convex[i].y_  = 0.0;
-    convex[i].r_  = 0.0;
-    convex[i].th_ = 0.0;
-  }
-
-  Vector2 *vertex = new Vector2[num_vertex];
-  for(int i = 0; i < size; i++) {
-    vertex[i].x_  = foot_r[i].x_;
-    vertex[i].y_  = foot_r[i].y_;
-    vertex[i].r_  = foot_r[i].r_;
-    vertex[i].th_ = foot_r[i].th_;
-  }
-  for(int i = 0; i < size; i++) {
-    vertex[i + size].x_  = foot_l[i].x_ + swf.x_;
-    vertex[i + size].y_  = foot_l[i].y_ + swf.y_;
-    vertex[i + size].r_  = foot_l[i].r_ + swf.r_;
-    vertex[i + size].th_ = foot_l[i].th_ + swf.th_;
-  }
-
-  Vector2 tmp;
-  bool    flag_continue = true;
-  while (flag_continue) {
-    flag_continue = false;
-    for (int i = 0; i < num_vertex - 1; i++) {
-      if (vertex[i + 1].y_ < vertex[i].y_) {
-        tmp           = vertex[i];
-        vertex[i]     = vertex[i + 1];
-        vertex[i + 1] = tmp;
-        flag_continue = true;
-      }
+__device__ bool inPolygon(Vector2 point, Vector2 *convex, const int max_size, int swf_id){
+  int num_vertex = 0;
+  for(int i = 0; i < max_size; i++) {
+    int convex_id = swf_id * max_size + i;
+    if(convex[convex_id].x_ > -1) {
+      num_vertex++;
     }
   }
 
-  bool *in_convex = new bool[num_vertex];
-  for(int i = 0; i < num_vertex; i++) {
-    in_convex[i] = false;
-  }
+  bool flag = inConvex(point, convex, swf_id * max_size, num_vertex);
 
-  int num_convex_vertex = 0;
-  convex[0] = vertex[0];
-  num_convex_vertex++;
-
-  in_convex[0]  = true;
-  flag_continue = true;
-  int back = 0;
-  while (flag_continue) {
-    flag_continue = false;
-    for (int i = 0; i < num_vertex; i++) {
-      int product = 0;
-      if (!in_convex[i]) {
-        product = 1;
-        for (int j = 0; j < num_vertex; j++) {
-          if (i != j && !in_convex[i]) {
-            if ( ( vertex[i] - vertex[back] ) % ( vertex[j] - vertex[i] ) < 0.0) {
-              product *= 0;
-            }
-          }
-        }
-      }
-      if (product) {
-        if (!in_convex[i]) {
-          convex[num_convex_vertex] = vertex[i];
-          num_convex_vertex++;
-
-          in_convex[i]  = true;
-          flag_continue = true;
-          back          = i;
-        }
-        break;
-      }
-    }
-  }
-  convex[num_convex_vertex] = vertex[0];
-  num_convex_vertex++;
-
-  delete vertex;
-  delete in_convex;
-
-  return num_convex_vertex;
+  return flag;
 }
 
 __device__ bool inPolygon(Vector2 point, Vector2 *vertex, int num_vertex){
@@ -223,6 +152,32 @@ __device__ bool inPolygon(Vector2 point, Vector2 *vertex, int num_vertex){
       sign -= 1;
     }
   }
+
+  if (sign == int(num_vertex - 1 - on_line) ||
+      sign == -int(num_vertex - 1 - on_line) ) {
+    flag = true;
+  }
+
+  return flag;
+}
+
+__device__ bool inConvex(Vector2 point, Vector2 *convex, int vertex_id_from, int num_vertex){
+  bool        flag    = false;
+  double      product = 0.0;
+  int         sign    = 0, on_line = 0;
+  const float epsilon = 0.00001;
+
+  for (int i = vertex_id_from; i < num_vertex - 1; i++) {
+    product = ( point - convex[i] ) % ( convex[i + 1] - convex[i] );
+    if (-epsilon <= product && product <= epsilon) {
+      on_line += 1;
+    } else if (product > 0) {
+      sign += 1;
+    } else if (product < 0) {
+      sign -= 1;
+    }
+  }
+
 
   if (sign == int(num_vertex - 1 - on_line) ||
       sign == -int(num_vertex - 1 - on_line) ) {
@@ -397,7 +352,7 @@ __global__ void calcCop(State *state, GridCartesian *grid, Vector2 *foot_r, Vect
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
   while (tid < grid->num_state) {
-    cop[tid] = getClosestPoint(state[tid].icp, foot_r, grid->num_foot_vertex );
+    cop[tid] = getClosestPoint(state[tid].icp, foot_r, grid->num_foot_r );
 
     tid += blockDim.x * gridDim.x;
   }
@@ -419,18 +374,20 @@ __global__ void calcStepTime(State *state, Input *input, GridCartesian *grid, do
 }
 
 __global__ void calcBasin(State *state, int *basin, GridCartesian *grid, Vector2 *foot_r, Vector2 *foot_l, Vector2 *convex){
-  int tid = threadIdx.x + blockIdx.x * blockDim.x;
+  int       tid      = threadIdx.x + blockIdx.x * blockDim.x;
+  const int max_size = grid->num_foot_r + grid->num_foot_l;
 
   if(enableDoubleSupport) {
     while (tid < grid->num_state) {
-      int num_convex_vertex = getConvexHull(foot_r, foot_l, grid->num_foot_vertex, state[tid].swf, convex);
-      basin[tid] = num_convex_vertex;
-      // if(inPolygon(state[tid].icp, convex, num_convex_vertex) )
+      int swf_id = tid % grid->num_input;
+
+      if(inPolygon(state[tid].icp, convex, max_size, swf_id) )
+        basin[tid] = 0;
       tid += blockDim.x * gridDim.x;
     }
   }else{
     while (tid < grid->num_state) {
-      if(inPolygon(state[tid].icp, foot_r, grid->num_foot_vertex) )
+      if(inPolygon(state[tid].icp, foot_r, grid->num_foot_r) )
         basin[tid] = 0;
       tid += blockDim.x * gridDim.x;
     }

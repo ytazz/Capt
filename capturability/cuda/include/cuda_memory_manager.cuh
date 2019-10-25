@@ -22,14 +22,16 @@ struct GridSize {
   int num_state;
   int num_input;
   int num_grid;
-  int num_foot_vertex;
+  int num_foot_r;
+  int num_foot_l;
 };
 
 struct GridCartesian {
   int num_state;
   int num_input;
   int num_grid;
-  int num_foot_vertex;
+  int num_foot_r;
+  int num_foot_l;
 
   int icp_x_num;
   int icp_y_num;
@@ -48,7 +50,8 @@ struct GridPolar {
   int num_state;
   int num_input;
   int num_grid;
-  int num_foot_vertex;
+  int num_foot_r;
+  int num_foot_l;
 
   int icp_r_num;
   int icp_th_num;

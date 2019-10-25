@@ -21,8 +21,9 @@ __host__ void outputStepTime(std::string file_name, Condition cond, double *step
 
 /* device function */
 
-__device__ int     getConvexHull(Vector2 *foot_r, Vector2 *foot_l, int size, Vector2 swf, Vector2 *convex);
+__device__ bool    inPolygon(Vector2 point, Vector2 *convex, const int max_size, int swf_id);
 __device__ bool    inPolygon(Vector2 point, Vector2 *vertex, int num_vertex);
+__device__ bool    inConvex(Vector2 point, Vector2 *convex, int vertex_id_from, int num_vertex);
 __device__ Vector2 getClosestPoint(Vector2 point, Vector2 *vertex, int num_vertex);
 
 __device__ State step(State state, Input input, Vector2 cop, double step_time, Physics *physics);

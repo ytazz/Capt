@@ -9,9 +9,9 @@ int main(int argc, char const *argv[]) {
   Param param("data/nao_xy.xml");
 
   Analysis analysis(model, param);
-  for(int N = 1; N <= NUM_STEP_MAX; N++) {
-    analysis.exe(N);
-  }
+  // for(int N = 1; N <= NUM_STEP_MAX; N++) {
+  //   analysis.exe(N);
+  // }
   analysis.saveCop("_csv/Cop.csv");
   analysis.saveStepTime("_csv/StepTime.csv");
   analysis.saveBasin("_csv/BasinCpu.csv");

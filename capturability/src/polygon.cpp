@@ -68,7 +68,7 @@ std::vector<Vector2> Polygon::getConvexHull() {
           }
         }
       }
-      if (product) {
+      if (product > 0) {
         if (!in_convex[i]) {
           vertex_convex.push_back(vertex[i]);
           in_convex[i]  = true;

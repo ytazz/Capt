@@ -159,8 +159,8 @@ void Analysis::saveCop(std::string file_name, bool header){
   // Data
   for(int state_id = 0; state_id < num_state; state_id++) {
     fprintf(fp, "%d,", state_id);
-    fprintf(fp, "%lf,", cop[state_id].x);
-    fprintf(fp, "%lf", cop[state_id].y);
+    fprintf(fp, "%1.4lf,", cop[state_id].x);
+    fprintf(fp, "%1.4lf", cop[state_id].y);
     fprintf(fp, "\n");
   }
 
@@ -184,7 +184,7 @@ void Analysis::saveStepTime(std::string file_name, bool header){
       int id = state_id * num_input + input_id;
       fprintf(fp, "%d,", state_id);
       fprintf(fp, "%d,", input_id);
-      fprintf(fp, "%lf", step_time[id]);
+      fprintf(fp, "%1.4lf", step_time[id]);
       fprintf(fp, "\n");
     }
   }

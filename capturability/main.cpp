@@ -12,10 +12,10 @@ int main(int argc, char const *argv[]) {
   for(int N = 1; N <= NUM_STEP_MAX; N++) {
     analysis.exe(N);
   }
-  analysis.saveCop("csv/Cop.csv");
-  analysis.saveStepTime("csv/StepTime.csv");
-  analysis.saveBasin("csv/BasinCpu.csv");
-  analysis.saveNstep("csv/NstepCpu.csv");
+  analysis.saveCop("_csv/Cop.csv");
+  analysis.saveStepTime("_csv/StepTime.csv");
+  analysis.saveBasin("_csv/BasinCpu.csv");
+  analysis.saveNstep("_csv/NstepCpu.csv");
 
   return 0;
 }

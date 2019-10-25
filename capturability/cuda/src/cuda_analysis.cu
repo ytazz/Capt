@@ -84,32 +84,128 @@ __host__ void outputCop(std::string file_name, Condition cond, Vector2 *cop,
   // Data
   for(int state_id = 0; state_id < num_state; state_id++) {
     fprintf(fp, "%d,", state_id);
-    fprintf(fp, "%lf,", cop[state_id].x_);
-    fprintf(fp, "%lf", cop[state_id].y_);
+    fprintf(fp, "%1.4lf,", cop[state_id].x_);
+    fprintf(fp, "%1.4lf", cop[state_id].y_);
     fprintf(fp, "\n");
   }
 
   fclose(fp);
 }
 
-__host__ void exeZeroStep(Capt::Grid grid, Capt::Model model, int *basin) {
-  for (int state_id = 0; state_id < grid.getNumState(); state_id++) {
-    Capt::State state = grid.getState(state_id);
+__host__ void outputStepTime(std::string file_name, Condition cond, double *step_time,
+                             bool header){
+  FILE     *fp        = fopen(file_name.c_str(), "w");
+  const int num_state = cond.grid->getNumState();
+  const int num_input = cond.grid->getNumInput();
 
-    Capt::Polygon polygon;
-    polygon.setVertex(model.getVec("foot", "foot_r_convex") );
-    polygon.setVertex(model.getVec("foot", "foot_l_convex", state.swf) );
+  // Header
+  if (header) {
+    fprintf(fp, "%s,", "state_id");
+    fprintf(fp, "%s,", "input_id");
+    fprintf(fp, "%s", "step_time");
+    fprintf(fp, "\n");
+  }
 
-    bool flag = false;
-    flag = polygon.inPolygon(state.icp, polygon.getConvexHull() );
-
-    if (flag) {
-      basin[state_id] = 0;
+  // Data
+  for (int state_id = 0; state_id < num_state; state_id++) {
+    for (int input_id = 0; input_id < num_input; input_id++) {
+      int id = state_id * num_input + input_id;
+      fprintf(fp, "%d,", state_id);
+      fprintf(fp, "%d,", input_id);
+      fprintf(fp, "%1.4lf", step_time[id]);
+      fprintf(fp, "\n");
     }
   }
+
+  fclose(fp);
 }
 
 /* device function */
+
+__device__ int getConvexHull(Vector2 *foot_r, Vector2 *foot_l, int size, Vector2 swf, Vector2 *convex){
+  const int num_vertex = 2 * size;
+  for(int i = 0; i < num_vertex; i++) {
+    convex[i].x_  = 0.0;
+    convex[i].y_  = 0.0;
+    convex[i].r_  = 0.0;
+    convex[i].th_ = 0.0;
+  }
+
+  Vector2 *vertex = new Vector2[num_vertex];
+  for(int i = 0; i < size; i++) {
+    vertex[i].x_  = foot_r[i].x_;
+    vertex[i].y_  = foot_r[i].y_;
+    vertex[i].r_  = foot_r[i].r_;
+    vertex[i].th_ = foot_r[i].th_;
+  }
+  for(int i = 0; i < size; i++) {
+    vertex[i + size].x_  = foot_l[i].x_ + swf.x_;
+    vertex[i + size].y_  = foot_l[i].y_ + swf.y_;
+    vertex[i + size].r_  = foot_l[i].r_ + swf.r_;
+    vertex[i + size].th_ = foot_l[i].th_ + swf.th_;
+  }
+
+  Vector2 tmp;
+  bool    flag_continue = true;
+  while (flag_continue) {
+    flag_continue = false;
+    for (int i = 0; i < num_vertex - 1; i++) {
+      if (vertex[i + 1].y_ < vertex[i].y_) {
+        tmp           = vertex[i];
+        vertex[i]     = vertex[i + 1];
+        vertex[i + 1] = tmp;
+        flag_continue = true;
+      }
+    }
+  }
+
+  bool *in_convex = new bool[num_vertex];
+  for(int i = 0; i < num_vertex; i++) {
+    in_convex[i] = false;
+  }
+
+  int num_convex_vertex = 0;
+  convex[0] = vertex[0];
+  num_convex_vertex++;
+
+  in_convex[0]  = true;
+  flag_continue = true;
+  int back = 0;
+  while (flag_continue) {
+    flag_continue = false;
+    for (int i = 0; i < num_vertex; i++) {
+      int product = 0;
+      if (!in_convex[i]) {
+        product = 1;
+        for (int j = 0; j < num_vertex; j++) {
+          if (i != j && !in_convex[i]) {
+            if ( ( vertex[i] - vertex[back] ) % ( vertex[j] - vertex[i] ) < 0.0) {
+              product *= 0;
+            }
+          }
+        }
+      }
+      if (product) {
+        if (!in_convex[i]) {
+          convex[num_convex_vertex] = vertex[i];
+          num_convex_vertex++;
+
+          in_convex[i]  = true;
+          flag_continue = true;
+          back          = i;
+        }
+        break;
+      }
+    }
+  }
+  convex[num_convex_vertex] = vertex[0];
+  num_convex_vertex++;
+
+  delete vertex;
+  delete in_convex;
+
+  return num_convex_vertex;
+}
 
 __device__ bool inPolygon(Vector2 point, Vector2 *vertex, int num_vertex){
   bool        flag    = false;
@@ -173,20 +269,13 @@ __device__ Vector2 getClosestPoint(Vector2 point, Vector2* vertex, int num_verte
   return closest;
 }
 
-__device__ State step(State state, Input input, Vector2 cop, Physics *physics) {
-  State state_;
-
-  // 踏み出し時間
-  Vector2 foot_dist = state.swf - input.swf;
-  double  dist
-    = sqrt(foot_dist.x() * foot_dist.x() + foot_dist.y() * foot_dist.y() );
-  double t = dist / physics->v + physics->dt;
-
+__device__ State step(State state, Input input, Vector2 cop, double step_time, Physics *physics) {
   // LIPM
-  Vector2 icp = state.icp;
-  icp = ( icp - cop ) * exp(physics->omega * t) + cop;
+  Vector2 icp;
+  icp = ( state.icp - cop ) * exp(physics->omega * step_time) + cop;
 
   // 状態変換
+  State state_;
   state_.icp.setCartesian(-input.swf.x() + icp.x(), input.swf.y() - icp.y() );
   state_.swf.setCartesian(-input.swf.x(), input.swf.y() );
 
@@ -304,25 +393,59 @@ __device__ int getStateIndex(State state, GridPolar *grid) {
 
 /* global function */
 
-__global__ void calcCop(State *state, GridCartesian *grid, Vector2 *foot, Vector2 *cop){
+__global__ void calcCop(State *state, GridCartesian *grid, Vector2 *foot_r, Vector2 *cop){
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
   while (tid < grid->num_state) {
-    cop[tid] = getClosestPoint(state[tid].icp, foot, grid->num_foot_vertex );
+    cop[tid] = getClosestPoint(state[tid].icp, foot_r, grid->num_foot_vertex );
 
     tid += blockDim.x * gridDim.x;
   }
 }
 
+__global__ void calcStepTime(State *state, Input *input, GridCartesian *grid, double *step_time, Physics *physics){
+  int tid = threadIdx.x + blockIdx.x * blockDim.x;
+
+  Vector2 foot_dist;
+  while (tid < grid->num_state * grid->num_input) {
+    int state_id = tid / grid->num_input;
+    int input_id = tid % grid->num_input;
+
+    foot_dist      = state[state_id].swf - input[input_id].swf;
+    step_time[tid] = foot_dist.norm() / physics->v + physics->dt;
+
+    tid += blockDim.x * gridDim.x;
+  }
+}
+
+__global__ void calcBasin(State *state, int *basin, GridCartesian *grid, Vector2 *foot_r, Vector2 *foot_l, Vector2 *convex){
+  int tid = threadIdx.x + blockIdx.x * blockDim.x;
+
+  if(enableDoubleSupport) {
+    while (tid < grid->num_state) {
+      int num_convex_vertex = getConvexHull(foot_r, foot_l, grid->num_foot_vertex, state[tid].swf, convex);
+      basin[tid] = num_convex_vertex;
+      // if(inPolygon(state[tid].icp, convex, num_convex_vertex) )
+      tid += blockDim.x * gridDim.x;
+    }
+  }else{
+    while (tid < grid->num_state) {
+      if(inPolygon(state[tid].icp, foot_r, grid->num_foot_vertex) )
+        basin[tid] = 0;
+      tid += blockDim.x * gridDim.x;
+    }
+  }
+}
+
 __global__ void calcTrans(State *state, Input *input, int *trans, GridCartesian *grid,
-                          Vector2 *cop, Physics *physics){
+                          Vector2 *cop, double *step_time, Physics *physics){
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
   while (tid < grid->num_state * grid->num_input) {
     int state_id = tid / grid->num_input;
     int input_id = tid % grid->num_input;
 
-    State state_ = step(state[state_id], input[input_id], cop[state_id], physics);
+    State state_ = step(state[state_id], input[input_id], cop[state_id], step_time[tid], physics);
     if (existState(state_, grid) )
       trans[tid] = getStateIndex(state_, grid);
     else
@@ -333,14 +456,14 @@ __global__ void calcTrans(State *state, Input *input, int *trans, GridCartesian 
 }
 
 __global__ void calcTrans(State *state, Input *input, int *trans, GridPolar *grid,
-                          Vector2 *cop, Physics *physics){
+                          Vector2 *cop, double *step_time, Physics *physics){
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
   while (tid < grid->num_state * grid->num_input) {
     int state_id = tid / grid->num_input;
     int input_id = tid % grid->num_input;
 
-    State state_ = step(state[state_id], input[input_id], cop[state_id], physics);
+    State state_ = step(state[state_id], input[input_id], cop[state_id], step_time[tid], physics);
     if (existState(state_, grid) )
       trans[tid] = getStateIndex(state_, grid);
     else

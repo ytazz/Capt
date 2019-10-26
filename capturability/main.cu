@@ -1,7 +1,7 @@
 #include "cuda_analysis.cuh"
 
-const int BPG = 1; // Blocks  Per Grid  (max: 65535)
-const int TPB = 1; // Threads Per Block (max: 1024)
+const int BPG = 65535; // Blocks  Per Grid  (max: 65535)
+const int TPB = 1024;  // Threads Per Block (max: 1024)
 
 typedef Cuda::GridCartesian grid_t;
 // typedef Cuda::GridPolar grid_t;

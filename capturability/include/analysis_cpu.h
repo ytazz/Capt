@@ -34,10 +34,10 @@ public:
   void initStepTime();
 
   // 解析前の状態遷移や0-step、copを計算
-  void setBasin();
-  void setTrans();
-  void setCop();
-  void setStepTime();
+  void calcBasin();
+  void calcTrans();
+  void calcCop();
+  void calcStepTime();
 
   // 解析実行
   void exe(const int n);

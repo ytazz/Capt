@@ -1,8 +1,6 @@
 #include "cuda_analysis.cuh"
 
-const int BPG = 65535; // Blocks  Per Grid  (max: 65535)
-const int TPB = 1024;  // Threads Per Block (max: 1024)
-
+// Setting for Coordinate
 typedef Cuda::GridCartesian grid_t;
 // typedef Cuda::GridPolar grid_t;
 
@@ -14,16 +12,16 @@ int main(void) {
   /* パラメータの読み込み */
   Capt::Model cmodel("data/nao.xml");
   Capt::Param cparam("data/nao_xy.xml");
+  Capt::Grid  cgrid(cparam);
 
-  /* グリッド */
-  Capt::Grid cgrid(cparam);
-  const int  num_state  = cgrid.getNumState();
-  const int  num_input  = cgrid.getNumInput();
-  const int  num_grid   = num_state * num_input;
-  const int  num_foot_r = cmodel.getVec("foot", "foot_r_convex").size();
-  const int  num_foot_l = cmodel.getVec("foot", "foot_l_convex").size();
-  const int  num_vertex = num_foot_r + num_foot_l;
-  const int  num_swf    = cgrid.getNumInput();
+  /* 各変数のsize */
+  const int num_state  = cgrid.getNumState();
+  const int num_input  = cgrid.getNumInput();
+  const int num_grid   = num_state * num_input;
+  const int num_foot_r = cmodel.getVec("foot", "foot_r_convex").size();
+  const int num_foot_l = cmodel.getVec("foot", "foot_l_convex").size();
+  const int num_vertex = num_foot_r + num_foot_l;
+  const int num_swf    = cgrid.getNumInput();
 
   /* 解析条件 */
   Cuda::Condition cond;
@@ -118,44 +116,33 @@ int main(void) {
   printf("Execute...\n");
   for(int N = 1; N <= NUM_STEP_MAX; N++) {
     printf("\t%d-step\n", N);
-    Cuda::exeNStep << < BPG, TPB >> > ( N, dev_basin, dev_nstep, dev_trans, dev_grid );
+    Cuda::exeNstep << < BPG, TPB >> > ( N, dev_basin, dev_nstep, dev_trans, dev_grid );
   }
   printf("\t\tDone.\n");
   /* ---------------------------------------------------------------------- */
 
   /* 解析結果をデバイス側からホスト側にコピー */
   /* ---------------------------------------------------------------------- */
-  HANDLE_ERROR(cudaMemcpy(basin, dev_basin, num_state * sizeof( int ),
-                          cudaMemcpyDeviceToHost) );
-  HANDLE_ERROR(cudaMemcpy(nstep, dev_nstep, num_grid * sizeof( int ),
-                          cudaMemcpyDeviceToHost) );
-  HANDLE_ERROR(cudaMemcpy(trans, dev_trans, num_grid * sizeof( int ),
-                          cudaMemcpyDeviceToHost) );
-  HANDLE_ERROR(cudaMemcpy(cop, dev_cop, num_state * sizeof( Cuda::Vector2 ),
-                          cudaMemcpyDeviceToHost) );
+  mm.copyDevToHostBasin(dev_basin, basin);
+  mm.copyDevToHostNstep(dev_nstep, nstep);
+  mm.copyDevToHostTrans(dev_trans, trans);
+  mm.copyDevToHostCop(dev_cop, cop);
   mm.copyDevToHostStepTime(dev_step_time, step_time);
   /* ---------------------------------------------------------------------- */
 
   /* ファイル書き出し */
   /* ---------------------------------------------------------------------- */
   printf("Output...\t");
-  Cuda::outputBasin("csv/BasinGpu.csv", cond, basin);
-  Cuda::outputNStep("csv/NstepGpu.csv", cond, nstep, trans);
-  Cuda::outputCop("csv/Cop.csv", cond, cop);
-  Cuda::outputStepTime("csv/StepTime.csv", cond, step_time);
+  Cuda::saveBasin("csv/BasinGpu.csv", cond, basin);
+  Cuda::saveNStep("csv/NstepGpu.csv", cond, nstep, trans);
+  Cuda::saveCop("csv/Cop.csv", cond, cop);
+  Cuda::saveStepTime("csv/StepTime.csv", cond, step_time);
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
 
   /* 終了処理 */
   /* ---------------------------------------------------------------------- */
   printf("Finish...\t");
-
-  FILE *fp = fopen("debug.csv", "w");
-  fprintf(fp, "id, x, y\n");
-  for(int i = 0; i < num_swf * num_vertex; i++) {
-    fprintf(fp, "%d, %lf, %lf\n", i, convex[i].x_, convex[i].y_);
-  }
-  fclose(fp);
 
   /* メモリの開放 */
   // ホスト側

@@ -16,10 +16,10 @@ Analysis::Analysis(Model model, Param param)
   initCop();
   initStepTime();
 
-  setBasin();
-  setCop();
-  setStepTime();
-  setTrans();
+  calcBasin();
+  calcCop();
+  calcStepTime();
+  calcTrans();
   printf("Done!\n");
 }
 
@@ -68,7 +68,7 @@ void Analysis::initStepTime(){
     step_time[id] = 0.0;
 }
 
-void Analysis::setBasin(){
+void Analysis::calcBasin(){
   arr2_t foot_r;
   arr2_t foot_l;
   arr2_t region;
@@ -84,14 +84,14 @@ void Analysis::setBasin(){
   }
 }
 
-void Analysis::setCop(){
+void Analysis::calcCop(){
   Polygon polygon;
   arr2_t  foot_r = model.getVec("foot", "foot_r_convex");
   for(int state_id = 0; state_id < num_state; state_id++)
     cop[state_id] = polygon.getClosestPoint(state[state_id].icp, foot_r);
 }
 
-void Analysis::setStepTime(){
+void Analysis::calcStepTime(){
   SwingFoot swing_foot(model);
 
   for(int state_id = 0; state_id < num_state; state_id++) {
@@ -103,7 +103,7 @@ void Analysis::setStepTime(){
   }
 }
 
-void Analysis::setTrans(){
+void Analysis::calcTrans(){
   Pendulum pendulum(model);
   Vector2  icp;
 

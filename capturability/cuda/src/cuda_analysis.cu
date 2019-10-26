@@ -2,8 +2,8 @@
 
 namespace Cuda {
 
-__host__ void outputBasin(std::string file_name, Condition cond, int *basin,
-                          bool header) {
+__host__ void saveBasin(std::string file_name, Condition cond, int *basin,
+                        bool header) {
   FILE     *fp        = fopen(file_name.c_str(), "w");
   const int num_state = cond.grid->getNumState();
 
@@ -24,8 +24,8 @@ __host__ void outputBasin(std::string file_name, Condition cond, int *basin,
   fclose(fp);
 }
 
-__host__ void outputNStep(std::string file_name, Condition cond, int *nstep, int *trans,
-                          bool header) {
+__host__ void saveNStep(std::string file_name, Condition cond, int *nstep, int *trans,
+                        bool header) {
   FILE     *fp        = fopen(file_name.c_str(), "w");
   const int num_state = cond.grid->getNumState();
   const int num_input = cond.grid->getNumInput();
@@ -68,8 +68,8 @@ __host__ void outputNStep(std::string file_name, Condition cond, int *nstep, int
   fclose(fp);
 }
 
-__host__ void outputCop(std::string file_name, Condition cond, Vector2 *cop,
-                        bool header){
+__host__ void saveCop(std::string file_name, Condition cond, Vector2 *cop,
+                      bool header){
   FILE     *fp        = fopen(file_name.c_str(), "w");
   const int num_state = cond.grid->getNumState();
 
@@ -92,8 +92,8 @@ __host__ void outputCop(std::string file_name, Condition cond, Vector2 *cop,
   fclose(fp);
 }
 
-__host__ void outputStepTime(std::string file_name, Condition cond, double *step_time,
-                             bool header){
+__host__ void saveStepTime(std::string file_name, Condition cond, double *step_time,
+                           bool header){
   FILE     *fp        = fopen(file_name.c_str(), "w");
   const int num_state = cond.grid->getNumState();
   const int num_input = cond.grid->getNumInput();
@@ -160,32 +160,6 @@ __device__ bool inPolygon(Vector2 point, Vector2 *vertex, int num_vertex){
       sign -= 1;
     }
   }
-
-  if (sign == int(num_vertex - 1 - on_line) ||
-      sign == -int(num_vertex - 1 - on_line) ) {
-    flag = true;
-  }
-
-  return flag;
-}
-
-__device__ bool inConvex(Vector2 point, Vector2 *convex, int vertex_id_from, int num_vertex){
-  bool        flag    = false;
-  double      product = 0.0;
-  int         sign    = 0, on_line = 0;
-  const float epsilon = 0.00001;
-
-  for (int i = vertex_id_from; i < num_vertex - 1; i++) {
-    product = ( point - convex[i] ) % ( convex[i + 1] - convex[i] );
-    if (-epsilon <= product && product <= epsilon) {
-      on_line += 1;
-    } else if (product > 0) {
-      sign += 1;
-    } else if (product < 0) {
-      sign -= 1;
-    }
-  }
-
 
   if (sign == int(num_vertex - 1 - on_line) ||
       sign == -int(num_vertex - 1 - on_line) ) {
@@ -438,7 +412,7 @@ __global__ void calcTrans(State *state, Input *input, int *trans, GridPolar *gri
   }
 }
 
-__global__ void exeNStep(int N, int *basin,
+__global__ void exeNstep(int N, int *basin,
                          int *nstep, int *trans, GridCartesian *grid) {
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
@@ -459,7 +433,7 @@ __global__ void exeNStep(int N, int *basin,
   }
 }
 
-__global__ void exeNStep(int N, int *basin,
+__global__ void exeNstep(int N, int *basin,
                          int *nstep, int *trans, GridPolar *grid) {
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 

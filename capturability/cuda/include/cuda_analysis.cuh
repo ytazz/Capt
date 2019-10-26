@@ -10,20 +10,19 @@ namespace Cuda {
 
 /* host function */
 
-__host__ void outputBasin(std::string file_name, Condition cond, int *basin,
-                          bool header = false);
-__host__ void outputNStep(std::string file_name, Condition cond, int *nstep, int *trans,
-                          bool header = false);
-__host__ void outputCop(std::string file_name, Condition cond, Vector2 *cop,
+__host__ void saveBasin(std::string file_name, Condition cond, int *basin,
                         bool header = false);
-__host__ void outputStepTime(std::string file_name, Condition cond, double *step_time,
-                             bool header = false);
+__host__ void saveNStep(std::string file_name, Condition cond, int *nstep, int *trans,
+                        bool header = false);
+__host__ void saveCop(std::string file_name, Condition cond, Vector2 *cop,
+                      bool header = false);
+__host__ void saveStepTime(std::string file_name, Condition cond, double *step_time,
+                           bool header = false);
 
 /* device function */
 
 __device__ bool    inPolygon(Vector2 point, Vector2 *convex, const int max_size, int swf_id);
 __device__ bool    inPolygon(Vector2 point, Vector2 *vertex, int num_vertex);
-__device__ bool    inConvex(Vector2 point, Vector2 *convex, int vertex_id_from, int num_vertex);
 __device__ Vector2 getClosestPoint(Vector2 point, Vector2 *vertex, int num_vertex);
 
 __device__ State step(State state, Input input, Vector2 cop, double step_time, Physics *physics);
@@ -44,8 +43,8 @@ __global__ void calcTrans(State *state, Input *input, int *trans, GridPolar *gri
                           Vector2 *cop, double *step_time, Physics *physics);
 
 
-__global__ void exeNStep(int N, int *basin, int *nstep, int *trans, GridCartesian *grid);
-__global__ void exeNStep(int N, int *basin, int *nstep, int *trans, GridPolar *grid);
+__global__ void exeNstep(int N, int *basin, int *nstep, int *trans, GridCartesian *grid);
+__global__ void exeNstep(int N, int *basin, int *nstep, int *trans, GridPolar *grid);
 
 } // namespace Cuda
 

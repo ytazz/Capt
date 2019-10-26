@@ -131,7 +131,15 @@ __device__ bool inPolygon(Vector2 point, Vector2 *convex, const int max_size, in
     }
   }
 
-  bool flag = inConvex(point, convex, swf_id * max_size, num_vertex);
+  Vector2 *vertex = new Vector2[num_vertex];
+  for(int i = 0; i < num_vertex; i++) {
+    int convex_id = swf_id * max_size + i;
+    vertex[i] = convex[convex_id];
+  }
+
+  bool flag = inPolygon(point, vertex, num_vertex);
+
+  delete vertex;
 
   return flag;
 }

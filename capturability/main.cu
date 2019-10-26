@@ -1,7 +1,7 @@
 #include "cuda_analysis.cuh"
 
-const int BPG = 65535; // Blocks  Per Grid  (max: 65535)
-const int TPB = 1024;  // Threads Per Block (max: 1024)
+const int BPG = 1; // Blocks  Per Grid  (max: 65535)
+const int TPB = 1; // Threads Per Block (max: 1024)
 
 typedef Cuda::GridCartesian grid_t;
 // typedef Cuda::GridPolar grid_t;
@@ -106,21 +106,21 @@ int main(void) {
   /* 状態遷移計算 */
   /* ---------------------------------------------------------------------- */
   printf("Calculate...\t");
-  // Cuda::calcCop << < BPG, TPB >> > ( dev_state, dev_grid, dev_foot_r, dev_cop );
-  // Cuda::calcStepTime << < BPG, TPB >> > ( dev_state, dev_input, dev_grid, dev_step_time, dev_physics );
+  Cuda::calcCop << < BPG, TPB >> > ( dev_state, dev_grid, dev_foot_r, dev_cop );
+  Cuda::calcStepTime << < BPG, TPB >> > ( dev_state, dev_input, dev_grid, dev_step_time, dev_physics );
   Cuda::calcBasin << < BPG, TPB >> > ( dev_state, dev_basin, dev_grid, dev_foot_r, dev_foot_l, dev_convex );
-  // Cuda::calcTrans << < BPG, TPB >> > ( dev_state, dev_input, dev_trans, dev_grid, dev_cop, dev_step_time, dev_physics );
+  Cuda::calcTrans << < BPG, TPB >> > ( dev_state, dev_input, dev_trans, dev_grid, dev_cop, dev_step_time, dev_physics );
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
 
   /* 解析実行 */
   /* ---------------------------------------------------------------------- */
-  // printf("Execute...\n");
-  // for(int N = 1; N <= NUM_STEP_MAX; N++) {
-  //   printf("\t%d-step\n", N);
-  //   Cuda::exeNStep << < BPG, TPB >> > ( N, dev_basin, dev_nstep, dev_trans, dev_grid );
-  // }
-  // printf("\t\tDone.\n");
+  printf("Execute...\n");
+  for(int N = 1; N <= NUM_STEP_MAX; N++) {
+    printf("\t%d-step\n", N);
+    Cuda::exeNStep << < BPG, TPB >> > ( N, dev_basin, dev_nstep, dev_trans, dev_grid );
+  }
+  printf("\t\tDone.\n");
   /* ---------------------------------------------------------------------- */
 
   /* 解析結果をデバイス側からホスト側にコピー */

@@ -17,9 +17,9 @@ Analysis::Analysis(Model model, Param param)
   initStepTime();
 
   setBasin();
-  // setCop();
-  // setStepTime();
-  // setTrans();
+  setCop();
+  setStepTime();
+  setTrans();
   printf("Done!\n");
 }
 

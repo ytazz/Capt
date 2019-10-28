@@ -1,8 +1,6 @@
 #ifndef __CUDA_ANALYSIS_CUH__
 #define __CUDA_ANALYSIS_CUH__
 
-#define NUM_STEP_MAX 5
-
 #include "cuda_vector.cuh"
 #include "cuda_memory_manager.cuh"
 #include <vector>

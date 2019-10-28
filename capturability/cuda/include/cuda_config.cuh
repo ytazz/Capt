@@ -2,7 +2,7 @@
 #define __CUDA_CONFIG_CUH__
 
 // Setting for Analysis
-const bool enableDoubleSupport = true;
+const bool enableDoubleSupport = false;
 
 // Setting for Parallel Computing
 const int BPG = 65535; // Blocks  Per Grid  (max: 65535)

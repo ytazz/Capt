@@ -76,15 +76,25 @@ void Analysis::calcBasin(){
   arr2_t foot_l;
   arr2_t region;
   foot_r = model.getVec("foot", "foot_r_convex");
-  for(int state_id = 0; state_id < num_state; state_id++) {
-    foot_l = model.getVec("foot", "foot_l_convex", state[state_id].swf);
-    Polygon polygon;
-    polygon.setVertex(foot_r);
-    polygon.setVertex(foot_l);
-    region = polygon.getConvexHull();
-    if(polygon.inPolygon(state[state_id].icp, region) )
-      basin[state_id] = 0;
+
+  if(enableDoubleSupport) {
+    for(int state_id = 0; state_id < num_state; state_id++) {
+      foot_l = model.getVec("foot", "foot_l_convex", state[state_id].swf);
+      Polygon polygon;
+      polygon.setVertex(foot_r);
+      polygon.setVertex(foot_l);
+      region = polygon.getConvexHull();
+      if(polygon.inPolygon(state[state_id].icp, region) )
+        basin[state_id] = 0;
+    }
+  }else{
+    for(int state_id = 0; state_id < num_state; state_id++) {
+      Polygon polygon;
+      if(polygon.inPolygon(state[state_id].icp, foot_r) )
+        basin[state_id] = 0;
+    }
   }
+
 }
 
 void Analysis::calcCop(){

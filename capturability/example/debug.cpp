@@ -61,7 +61,7 @@ int main(int argc, char const *argv[]) {
       cr_plot.initCaptureMap();
       cr_plot.setFoot(state_.swf);
       cr_plot.setIcp(state_.icp);
-      for(int N = 1; N <= NUM_STEP_MAX; N++) {
+      for(int N = 1; N <= 10; N++) {
         if(capturability.capturable(state_, N) ) {
           std::vector<CaptureSet> region = capturability.getCaptureRegion(state_, N);
           for(size_t i = 0; i < region.size(); i++) {

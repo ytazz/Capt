@@ -49,6 +49,7 @@ set(HEADERS
   ${PROJECT_SOURCE_DIR}/include/polygon.h
   ${PROJECT_SOURCE_DIR}/include/state.h
   ${PROJECT_SOURCE_DIR}/include/swing_foot.h
+  ${PROJECT_SOURCE_DIR}/include/timer.h
   ${PROJECT_SOURCE_DIR}/include/trajectory.h
   ${PROJECT_SOURCE_DIR}/include/vector.h
 )
@@ -78,6 +79,7 @@ set(SOURCES
   ${PROJECT_SOURCE_DIR}/src/planning.cpp
   ${PROJECT_SOURCE_DIR}/src/polygon.cpp
   ${PROJECT_SOURCE_DIR}/src/swing_foot.cpp
+  ${PROJECT_SOURCE_DIR}/src/timer.cpp
   ${PROJECT_SOURCE_DIR}/src/trajectory.cpp
   ${PROJECT_SOURCE_DIR}/src/vector.cpp
 )
@@ -127,3 +129,8 @@ if(${BUILD_EXAMPLE})
 endif()
 
 install(DIRECTORY data DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/csv)
+file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cpu)
+file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gpu)
+file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dat)

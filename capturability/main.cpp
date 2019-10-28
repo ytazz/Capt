@@ -1,21 +1,35 @@
 #include "analysis_cpu.h"
 #include <iostream>
+#include <chrono>
 
 using namespace std;
 using namespace Capt;
 
 int main(int argc, char const *argv[]) {
+  // 時間計測用変数
+  std::chrono::system_clock::time_point start, end_exe, end_save;
+  start = std::chrono::system_clock::now();
+
   Model model("data/nao.xml");
   Param param("data/nao_xy.xml");
 
   Analysis analysis(model, param);
-  for(int N = 1; N <= NUM_STEP_MAX; N++) {
-    analysis.exe(N);
-  }
-  analysis.saveCop("_csv/Cop.csv");
-  analysis.saveStepTime("_csv/StepTime.csv");
-  analysis.saveBasin("_csv/BasinCpu.csv");
-  analysis.saveNstep("_csv/NstepCpu.csv");
+  analysis.exe();
+  end_exe = std::chrono::system_clock::now();
+
+  analysis.saveCop("cpu/Cop.csv");
+  analysis.saveStepTime("cpu/StepTime.csv");
+  analysis.saveBasin("cpu/Basin.csv");
+  analysis.saveNstep("cpu/Nstep.csv");
+  end_save = std::chrono::system_clock::now();
+
+  int time_exe  = std::chrono::duration_cast<std::chrono::milliseconds>(end_exe - start).count();
+  int time_save = std::chrono::duration_cast<std::chrono::milliseconds>(end_save - end_exe).count();
+  int time_sum  = std::chrono::duration_cast<std::chrono::milliseconds>(end_save - start).count();
+  printf("*** Time ***\n");
+  printf("  exe : %7d [ms]\n", time_exe);
+  printf("  save: %7d [ms]\n", time_save);
+  printf("  sum : %7d [ms]\n", time_sum);
 
   return 0;
 }

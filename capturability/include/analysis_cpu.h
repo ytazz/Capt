@@ -40,7 +40,7 @@ public:
   void calcStepTime();
 
   // 解析実行
-  void exe(const int n);
+  void exe();
 
   // 解析結果をファイルに保存
   void saveTrans(std::string file_name, bool header = false);
@@ -50,6 +50,8 @@ public:
   void saveStepTime(std::string file_name, bool header = false);
 
 private:
+  bool exe(const int n);
+
   Model model;
   Param param;
   Grid  grid;
@@ -65,6 +67,9 @@ private:
   const int num_state;
   const int num_input;
   const int num_grid;
+
+  // 解析結果の最大踏み出し歩数
+  int max_step;
 };
 
 } // namespace Capt

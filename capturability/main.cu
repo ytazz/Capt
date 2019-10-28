@@ -133,10 +133,10 @@ int main(void) {
   /* ファイル書き出し */
   /* ---------------------------------------------------------------------- */
   printf("Output...\t");
-  Cuda::saveBasin("csv/BasinGpu.csv", cond, basin);
-  Cuda::saveNStep("csv/NstepGpu.csv", cond, nstep, trans);
-  Cuda::saveCop("csv/Cop.csv", cond, cop);
-  Cuda::saveStepTime("csv/StepTime.csv", cond, step_time);
+  Cuda::saveBasin("gpu/Basin.csv", cond, basin);
+  Cuda::saveNStep("gpu/Nstep.csv", cond, nstep, trans);
+  Cuda::saveCop("gpu/Cop.csv", cond, cop);
+  Cuda::saveStepTime("gpu/StepTime.csv", cond, step_time);
   printf("Done.\n");
   /* ---------------------------------------------------------------------- */
 

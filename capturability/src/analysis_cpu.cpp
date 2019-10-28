@@ -124,9 +124,11 @@ void Analysis::calcTrans(){
   }
 }
 
-void Analysis::exe(const int n){
+bool Analysis::exe(const int n){
   printf("  Start %d-step analysis ... ", n);
   fflush(stdout);
+
+  bool found = false;
   if(n > 0) {
     for(int state_id = 0; state_id < num_state; state_id++) {
       for(int input_id = 0; input_id < num_input; input_id++) {
@@ -134,6 +136,7 @@ void Analysis::exe(const int n){
         if (trans[id] >= 0) {
           if (basin[trans[id]] == ( n - 1 ) ) {
             nstep[id] = n;
+            found     = true;
             if (basin[state_id] < 0) {
               basin[state_id] = n;
             }
@@ -142,7 +145,18 @@ void Analysis::exe(const int n){
       }
     }
   }
+
   printf("Done!\n");
+
+  return found;
+}
+
+void Analysis::exe(){
+  max_step = 1;
+  while(exe(max_step) ) {
+    max_step++;
+  }
+  max_step--;
 }
 
 void Analysis::saveCop(std::string file_name, bool header){
@@ -213,8 +227,7 @@ void Analysis::saveBasin(std::string file_name, bool header){
 }
 
 void Analysis::saveNstep(std::string file_name, bool header){
-  FILE *fp  = fopen(file_name.c_str(), "w");
-  int   max = 0;
+  FILE *fp = fopen(file_name.c_str(), "w");
 
   // Header
   if (header) {
@@ -226,8 +239,8 @@ void Analysis::saveNstep(std::string file_name, bool header){
   }
 
   // Data
-  int num_step[NUM_STEP_MAX + 1];
-  for(int i = 0; i < NUM_STEP_MAX + 1; i++) {
+  int num_step[max_step + 1];
+  for(int i = 0; i < max_step + 1; i++) {
     num_step[i] = 0;
   }
   for (int state_id = 0; state_id < num_state; state_id++) {
@@ -239,17 +252,15 @@ void Analysis::saveNstep(std::string file_name, bool header){
       fprintf(fp, "%d", nstep[id]);
       fprintf(fp, "\n");
 
-      if (max < nstep[id])
-        max = nstep[id];
       if(nstep[id] > 0)
         num_step[nstep[id]]++;
     }
   }
 
   printf("*** Result ***\n");
-  printf("  max(nstep) = %d\n", max);
-  for(int i = 1; i <= max; i++) {
-    printf("  %d-step capture point: %d\n", i, num_step[i]);
+  printf("  Feasible maximum steps: %d\n", max_step);
+  for(int i = 1; i <= max_step; i++) {
+    printf("  %d-step capture point  : %d\n", i, num_step[i]);
   }
 
   fclose(fp);

@@ -1,13 +1,18 @@
 #include "cuda_analysis.cuh"
+#include <chrono>
 
 // Setting for Coordinate
 typedef Cuda::GridCartesian grid_t;
 // typedef Cuda::GridPolar grid_t;
 
 int main(void) {
+  std::chrono::system_clock::time_point start, end_exe, end_save;
+  start = std::chrono::system_clock::now();
+
   /* 前処理 */
-  /* ---------------------------------------------------------------------- */
-  printf("Prepare...\t");
+  printf("*** Analysis ***\n");
+  printf("  Initializing ... ");
+  fflush(stdout);
 
   /* パラメータの読み込み */
   Capt::Model cmodel("data/nao.xml");
@@ -98,51 +103,59 @@ int main(void) {
   mm.copyHostToDevStepTime(step_time, dev_step_time);
   mm.copyHostToDevPhysics(physics, dev_physics);
 
-  printf("Done.\n");
-  /* ------------------------------------------------------------------------ */
+  printf("Done!\n");
 
   /* 状態遷移計算 */
-  /* ---------------------------------------------------------------------- */
-  printf("Calculate...\t");
+  printf("  Calculating .... ");
+  fflush(stdout);
   Cuda::calcCop << < BPG, TPB >> > ( dev_state, dev_grid, dev_foot_r, dev_cop );
   Cuda::calcStepTime << < BPG, TPB >> > ( dev_state, dev_input, dev_grid, dev_step_time, dev_physics );
   Cuda::calcBasin << < BPG, TPB >> > ( dev_state, dev_basin, dev_grid, dev_foot_r, dev_foot_l, dev_convex );
   Cuda::calcTrans << < BPG, TPB >> > ( dev_state, dev_input, dev_trans, dev_grid, dev_cop, dev_step_time, dev_physics );
-  printf("Done.\n");
-  /* ---------------------------------------------------------------------- */
+  printf("Done!\n");
 
   /* 解析実行 */
-  /* ---------------------------------------------------------------------- */
-  printf("Execute...\n");
-  for(int N = 1; N <= NUM_STEP_MAX; N++) {
-    printf("\t%d-step\n", N);
-    Cuda::exeNstep << < BPG, TPB >> > ( N, dev_basin, dev_nstep, dev_trans, dev_grid );
+  printf("  Analysing ...... ");
+  fflush(stdout);
+
+  int  step = 0;
+  bool flag = true;
+  while( flag ) {
+    step++;
+    Cuda::exeNstep << < BPG, TPB >> > ( step, dev_basin, dev_nstep, dev_trans, dev_grid );
+
+    mm.copyDevToHostNstep(dev_nstep, nstep);
+    flag = false;
+    for(int id = 0; id < num_grid; id++) {
+      if(nstep[id] == step)
+        flag = true;
+    }
   }
-  printf("\t\tDone.\n");
-  /* ---------------------------------------------------------------------- */
+  end_exe = std::chrono::system_clock::now();
+  printf("Done!\n");
 
   /* 解析結果をデバイス側からホスト側にコピー */
-  /* ---------------------------------------------------------------------- */
   mm.copyDevToHostBasin(dev_basin, basin);
   mm.copyDevToHostNstep(dev_nstep, nstep);
   mm.copyDevToHostTrans(dev_trans, trans);
   mm.copyDevToHostCop(dev_cop, cop);
   mm.copyDevToHostStepTime(dev_step_time, step_time);
-  /* ---------------------------------------------------------------------- */
 
   /* ファイル書き出し */
-  /* ---------------------------------------------------------------------- */
-  printf("Output...\t");
   Cuda::saveBasin("gpu/Basin.csv", cond, basin);
   Cuda::saveNStep("gpu/Nstep.csv", cond, nstep, trans);
   Cuda::saveCop("gpu/Cop.csv", cond, cop);
   Cuda::saveStepTime("gpu/StepTime.csv", cond, step_time);
-  printf("Done.\n");
-  /* ---------------------------------------------------------------------- */
+  end_save = std::chrono::system_clock::now();
 
-  /* 終了処理 */
-  /* ---------------------------------------------------------------------- */
-  printf("Finish...\t");
+  /* 処理時間 */
+  int time_exe  = std::chrono::duration_cast<std::chrono::milliseconds>(end_exe - start).count();
+  int time_save = std::chrono::duration_cast<std::chrono::milliseconds>(end_save - end_exe).count();
+  int time_sum  = std::chrono::duration_cast<std::chrono::milliseconds>(end_save - start).count();
+  printf("*** Time ***\n");
+  printf("  exe : %7d [ms]\n", time_exe);
+  printf("  save: %7d [ms]\n", time_save);
+  printf("  sum : %7d [ms]\n", time_sum);
 
   /* メモリの開放 */
   // ホスト側
@@ -171,9 +184,6 @@ int main(void) {
   cudaFree(dev_cop);
   cudaFree(dev_step_time);
   cudaFree(dev_physics);
-
-  printf("Done.\n");
-  /* ---------------------------------------------------------------------- */
 
   return 0;
 }

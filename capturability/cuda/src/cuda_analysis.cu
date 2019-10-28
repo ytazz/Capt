@@ -29,7 +29,7 @@ __host__ void saveNStep(std::string file_name, Condition cond, int *nstep, int *
   FILE     *fp        = fopen(file_name.c_str(), "w");
   const int num_state = cond.grid->getNumState();
   const int num_input = cond.grid->getNumInput();
-  int       max       = 0;
+  int       max_step  = 0;
 
   // Header
   if (header) {
@@ -41,8 +41,16 @@ __host__ void saveNStep(std::string file_name, Condition cond, int *nstep, int *
   }
 
   // Data
-  int num_step[NUM_STEP_MAX + 1]; // 最大踏み出し歩数を10とする
-  for(int i = 0; i < NUM_STEP_MAX + 1; i++) {
+  for (int state_id = 0; state_id < num_state; state_id++) {
+    for (int input_id = 0; input_id < num_input; input_id++) {
+      int id = state_id * num_input + input_id;
+      if (max_step < nstep[id])
+        max_step = nstep[id];
+    }
+  }
+
+  int num_step[max_step + 1]; // 最大踏み出し歩数を10とする
+  for(int i = 0; i < max_step + 1; i++) {
     num_step[i] = 0;
   }
   for (int state_id = 0; state_id < num_state; state_id++) {
@@ -53,16 +61,15 @@ __host__ void saveNStep(std::string file_name, Condition cond, int *nstep, int *
       fprintf(fp, "%d,", trans[id]);
       fprintf(fp, "%d", nstep[id]);
       fprintf(fp, "\n");
-      if (max < nstep[id])
-        max = nstep[id];
       if(nstep[id] > 0)
         num_step[nstep[id]]++;
     }
   }
 
-  printf("max(nstep) = %d\n", max);
-  for(int i = 1; i <= max; i++) {
-    printf("%d-step capture point: %d\n", i, num_step[i]);
+  printf("*** Result ***\n");
+  printf("  Feasible maximum steps: %d\n", max_step);
+  for(int i = 1; i <= max_step; i++) {
+    printf("  %d-step capture point: %d\n", i, num_step[i]);
   }
 
   fclose(fp);
@@ -418,7 +425,7 @@ __global__ void exeNstep(int N, int *basin,
 
   while (tid < grid->num_state * grid->num_input) {
     int state_id = tid / grid->num_input;
-    int input_id = tid % grid->num_input;
+    // int input_id = tid % grid->num_input;
 
     if (trans[tid] >= 0) {
       if (basin[trans[tid]] == ( N - 1 ) ) {
@@ -439,7 +446,7 @@ __global__ void exeNstep(int N, int *basin,
 
   while (tid < grid->num_state * grid->num_input) {
     int state_id = tid / grid->num_input;
-    int input_id = tid % grid->num_input;
+    // int input_id = tid % grid->num_input;
 
     if (trans[tid] >= 0) {
       if (basin[trans[tid]] == ( N - 1 ) ) {

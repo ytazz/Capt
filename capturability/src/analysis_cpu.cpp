@@ -15,7 +15,10 @@ Analysis::Analysis(Model model, Param param)
   initNstep();
   initCop();
   initStepTime();
+  printf("Done!\n");
 
+  printf("  Calculating .... ");
+  fflush(stdout);
   calcBasin();
   calcCop();
   calcStepTime();
@@ -125,9 +128,6 @@ void Analysis::calcTrans(){
 }
 
 bool Analysis::exe(const int n){
-  printf("  Start %d-step analysis ... ", n);
-  fflush(stdout);
-
   bool found = false;
   if(n > 0) {
     for(int state_id = 0; state_id < num_state; state_id++) {
@@ -146,17 +146,20 @@ bool Analysis::exe(const int n){
     }
   }
 
-  printf("Done!\n");
-
   return found;
 }
 
 void Analysis::exe(){
+  printf("  Analysing ...... ");
+  fflush(stdout);
+
   max_step = 1;
   while(exe(max_step) ) {
     max_step++;
   }
   max_step--;
+
+  printf("Done!\n");
 }
 
 void Analysis::saveCop(std::string file_name, bool header){

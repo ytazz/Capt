@@ -5,6 +5,7 @@
 
 #include "cuda_vector.cuh"
 #include "cuda_memory_manager.cuh"
+#include <vector>
 
 namespace Cuda {
 

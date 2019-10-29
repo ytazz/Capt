@@ -6,7 +6,7 @@ namespace Capt {
 
 CRPlot::CRPlot(Model model, Param param)
   : model(model), param(param), grid(param) {
-  p("set title \"Capture Region\"");
+  // p("set title \"Capture Region\"");
   p("unset key");
   p("set encoding utf8");
 
@@ -31,6 +31,9 @@ CRPlot::CRPlot(Model model, Param param)
     // 軸ラベル設定
     p("set xlabel 'y [m]'");
     p("set ylabel 'x [m]'");
+    p("set xlabel font \"Arial,12\"");
+    p("set ylabel font \"Arial,12\"");
+    p("set tics   font \"Arial,12\"");
 
     // 座標軸の目盛り設定
     p("set xtics 1");
@@ -235,8 +238,8 @@ void CRPlot::plot(){
   // 描画
   fprintf(p.gp, "plot \"dat/data.dat\" matrix w image notitle,\\\n");
   fprintf(p.gp, "     \"dat/foot_region.dat\" with lines  lw 2 lc \"dark-blue\" title \"foot\",\\\n");
-  fprintf(p.gp, "     \"dat/foot_r.dat\"      with lines  lw 2 lc 1         title \"foot\",\\\n");
-  fprintf(p.gp, "     \"dat/foot_l.dat\"      with lines  lw 2 lc 1         title \"foot\",\\\n");
+  fprintf(p.gp, "     \"dat/foot_r.dat\"      with lines  lw 2 lc \"black\" title \"foot\",\\\n");
+  fprintf(p.gp, "     \"dat/foot_l.dat\"      with lines  lw 2 lc \"black\" title \"foot\",\\\n");
   fprintf(p.gp, "     \"dat/icp.dat\"         with points pt 2 lc 1         title \"icp\"\n");
   fflush(p.gp);
 }

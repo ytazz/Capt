@@ -14,20 +14,26 @@ using namespace std;
 using namespace Capt;
 
 int main(int argc, char const *argv[]) {
-  Model model("data/nao.xml");
-  Param param("data/nao_xy.xml");
+  Model model("data/valkyrie.xml");
+  Param param("data/valkyrie_xy.xml");
   Grid  grid(param);
 
   Capturability capturability(model, param);
-  capturability.load("cpu/Basin.csv", DataType::BASIN);
-  capturability.load("cpu/Nstep.csv", DataType::NSTEP);
+  capturability.load("gpu/Basin.csv", DataType::BASIN);
+  capturability.load("gpu/Nstep.csv", DataType::NSTEP);
 
   CRPlot cr_plot(model, param);
 
-  double icp_x = 0.04;
-  double icp_y = 0.05;
-  double swf_x = -0.08;
-  double swf_y = 0.10;
+  // nao
+  // double icp_x = 0.04;
+  // double icp_y = 0.05;
+  // double swf_x = -0.08;
+  // double swf_y = 0.10;
+  // val
+  double icp_x = 0.1;
+  double icp_y = 0.1;
+  double swf_x = -0.25;
+  double swf_y = 0.4;
   State  state;
   state.icp.setCartesian(icp_x, icp_y);
   state.swf.setCartesian(swf_x, swf_y);

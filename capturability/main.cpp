@@ -10,8 +10,8 @@ int main(int argc, char const *argv[]) {
   std::chrono::system_clock::time_point start, end_exe, end_save;
   start = std::chrono::system_clock::now();
 
-  Model model("data/nao.xml");
-  Param param("data/nao_xy.xml");
+  Model model("data/valkyrie.xml");
+  Param param("data/valkyrie_xy.xml");
 
   Analysis analysis(model, param);
   analysis.exe();

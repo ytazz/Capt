@@ -59,8 +59,8 @@ CRPlot::CRPlot(Model model, Param param)
     }
     fprintf(p.gp, "set xtics add (%s)\n", x_tics.c_str() );
     fprintf(p.gp, "set ytics add (%s)\n", y_tics.c_str() );
-    fprintf(p.gp, "set xtics add (\"0.2\" 0, \"0\" %d, \"-0.2\" %d)\n", ( x_num - 1 ) / 2, ( x_num - 1 ) );
-    fprintf(p.gp, "set ytics add (\"-0.2\" 0, \"0\" %d, \"0.2\" %d)\n", ( y_num - 1 ) / 2, ( y_num - 1 ) );
+    fprintf(p.gp, "set xtics add (\"%1.1lf\" 0, \"%1.1lf\" %d)\n", y_max, y_min, ( y_num - 1 ) );
+    fprintf(p.gp, "set ytics add (\"%1.1lf\" 0, \"%1.1lf\" %d)\n", x_min, x_max, ( x_num - 1 ) );
 
   }else if (param.getStr("coordinate", "type") == "polar") {
     p("set xtics 0.05");

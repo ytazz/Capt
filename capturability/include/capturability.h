@@ -14,26 +14,24 @@
 
 namespace Capt {
 
-enum DataType { BASIN, NSTEP };
+enum DataType { BASIN, NSTEP, COP, STEPTIME };
 
 struct CaptureSet {
   int state_id;
   int input_id;
-  int next_state_id;
-  int n_step; // N-step capturable
+  int next_id;
+  int nstep;
 
-  vec2_t swf; // next landing position
   vec2_t cop;
-  float  step_time;
+  double step_time;
 
   void operator=(const CaptureSet &capture_set) {
-    this->state_id      = capture_set.state_id;
-    this->input_id      = capture_set.input_id;
-    this->next_state_id = capture_set.next_state_id;
-    this->n_step        = capture_set.n_step;
-    this->swf          = capture_set.swf;
-    this->cop           = capture_set.cop;
-    this->step_time     = capture_set.step_time;
+    this->state_id  = capture_set.state_id;
+    this->input_id  = capture_set.input_id;
+    this->next_id   = capture_set.next_id;
+    this->nstep     = capture_set.nstep;
+    this->cop       = capture_set.cop;
+    this->step_time = capture_set.step_time;
   }
 };
 
@@ -43,29 +41,26 @@ public:
   ~Capturability();
 
   void load(std::string file_name, DataType type);
-  void save(const char *file_name, int n_step);
 
-  void setCaptureSet(const int state_id, const int input_id,
-                     const int next_state_id, const int n_step,
-                     const vec2_t cop, const float step_time);
-  void setCaptureSet(const int state_id, const int input_id,
-                     const int next_state_id, const int n_step);
+  CaptureSet* getCaptureSet(int state_id, int input_id);
 
   std::vector<CaptureSet> getCaptureRegion(const int state_id,
-                                           const int n_step);
-  std::vector<CaptureSet> getCaptureRegion(const State state, const int n_step);
+                                           const int nstep);
+  std::vector<CaptureSet> getCaptureRegion(const State state, const int nstep);
 
-  bool capturable(State state, int n_step);
-  bool capturable(int state_id, int n_step);
+  bool capturable(State state, int nstep);
+  bool capturable(int state_id, int nstep);
+
+  int getMaxStep();
 
 private:
   Grid         grid;
   Model        model;
-  int         *zero_data;            // size = number of state
-  CaptureSet **n_data;
+  int         *data_basin;            // size = number of state
+  CaptureSet **data_nstep;
 
-  double foot_vel;
-  double step_time_min;
+  int num_state, num_input;
+  int max_step;
 };
 
 } // namespace Capt

@@ -4,149 +4,130 @@ namespace Capt {
 
 Capturability::Capturability(Model model, Param param)
   : grid(param), model(model) {
-  // this->model = model;
-  zero_data = new int [grid.getNumState()];
-  n_data    = new CaptureSet*[grid.getNumState()];
-  for (int i = 0; i < grid.getNumState(); i++) {
-    n_data[i] = new CaptureSet[grid.getNumInput()];
+  num_state = grid.getNumState();
+  num_input = grid.getNumInput();
+
+  data_basin = new int [num_state];
+  data_nstep = new CaptureSet*[num_state];
+  for (int i = 0; i < num_state; i++) {
+    data_nstep[i] = new CaptureSet[num_input];
   }
 
-  foot_vel      = model.getVal("physics", "foot_vel_max");
-  step_time_min = model.getVal("physics", "step_time_min");
+  max_step = 0;
 }
 
 Capturability::~Capturability() {
 }
 
 void Capturability::load(std::string file_name, DataType type) {
-  FILE *fp;
-  int   num_data = 0;
+  FILE *fp = fopen(file_name.c_str(), "r");
+  if ( fp == NULL) {
+    printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str() );
+    exit(EXIT_FAILURE);
+  }
+  int id = 0;
 
   if (type == BASIN) {
-    int buf[2];
+    printf("Find Basin database.\n");
 
-    if ( ( fp = fopen(file_name.c_str(), "r") ) == NULL) {
-      printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str() );
-      exit(EXIT_FAILURE);
-    } else {
-      printf("Find 0-step database.\n");
-      while (fscanf(fp, "%d, %d", &buf[0], &buf[1]) != EOF) {
-        zero_data[buf[0]] = buf[1];
-        num_data++;
-      }
-      fclose(fp);
+    int buf;
+    while (fscanf(fp, "%d", &buf) != EOF) {
+      data_basin[id] = buf;
+      id++;
     }
   } else if (type == NSTEP) {
-    // make cop list
-    vec2_t             *cop = (vec2_t*)malloc(sizeof( vec2_t ) * grid.getNumState() );
-    Polygon             polygon;
-    std::vector<vec2_t> region = model.getVec("foot", "foot_r_convex");
-    for(int state_id = 0; state_id < grid.getNumState(); state_id++) {
-      State state = grid.getState(state_id);
-      cop[state_id] = polygon.getClosestPoint(state.icp, region);
+    printf("Find N-step database.\n");
+
+    int buf[2];
+    while (fscanf(fp, "%d,%d", &buf[0], &buf[1]) != EOF) {
+      int state_id = id / num_input;
+      int input_id = id % num_input;
+
+      CaptureSet* set = getCaptureSet(state_id, input_id);
+      set->state_id = state_id;
+      set->input_id = input_id;
+      set->next_id  = buf[0];
+      set->nstep    = buf[1];
+
+      if(max_step < set->nstep)
+        max_step = set->nstep;
+
+      id++;
     }
+  } else if (type == COP) {
+    printf("Find CoP database.\n");
 
-    int        buf[4];
-    CaptureSet set;
-
-    if ( ( fp = fopen(file_name.c_str(), "r") ) == NULL) {
-      printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str() );
-      exit(EXIT_FAILURE);
-    } else {
-      printf("Find N-step database.\n");
-      while (fscanf(fp, "%d,%d,%d,%d", &buf[0], &buf[1], &buf[2], &buf[3]) != EOF) {
-        set.state_id      = buf[0];
-        set.input_id      = buf[1];
-        set.next_state_id = buf[2];
-        set.n_step        = buf[3];
-
-        // State state = grid.getState(set.state_id);
-        // Input input = grid.getInput(set.input_id);
-
-        // set.swf       = input.swf;
-        // set.cop       = cop[set.state_id];
-        // set.step_time = ( input.swf - state.swf ).norm() / foot_vel + step_time_min;
-
-        n_data[set.state_id][set.input_id] = set;
-        num_data++;
+    double buf[2];
+    while (fscanf(fp, "%lf,%lf", &buf[0], &buf[1]) != EOF) {
+      int state_id = id;
+      for(int input_id = 0; input_id < num_input; input_id++) {
+        CaptureSet* set = getCaptureSet(state_id, input_id);
+        set->cop.setCartesian(buf[0], buf[1]);
       }
-      fclose(fp);
+
+      id++;
+    }
+  } else if (type == STEPTIME) {
+    printf("Find Step-Time database.\n");
+
+    double buf;
+    while (fscanf(fp, "%lf", &buf) != EOF) {
+      int state_id = id / num_input;
+      int input_id = id % num_input;
+
+      CaptureSet* set = getCaptureSet(state_id, input_id);
+      set->step_time = buf;
+
+      id++;
     }
   }
 
-  printf("Read success! (%d datas)\n", num_data);
+  printf("Read success! (%d datas)\n", id);
+  fclose(fp);
 }
 
-void Capturability::setCaptureSet(const int state_id, const int input_id,
-                                  const int next_state_id, const int n_step,
-                                  const vec2_t cop, const float step_time) {
-  CaptureSet set;
-  set.state_id      = state_id;
-  set.input_id      = input_id;
-  set.next_state_id = next_state_id;
-  set.n_step        = n_step;
-  set.swf           = grid.getInput(set.input_id).swf;
-  set.cop           = cop;
-  set.step_time     = step_time;
-
-  // n_data.push_back(set);
+CaptureSet* Capturability::getCaptureSet(int state_id, int input_id){
+  return &data_nstep[state_id][input_id];
 }
 
-void Capturability::setCaptureSet(const int state_id, const int input_id,
-                                  const int next_state_id, const int n_step) {
-  vec2_t v;
-  v.clear();
-
-  CaptureSet set;
-  set.state_id      = state_id;
-  set.input_id      = input_id;
-  set.next_state_id = next_state_id;
-  set.n_step        = n_step;
-  set.swf           = grid.getInput(set.input_id).swf;
-  set.cop           = v;
-  set.step_time     = 0.0;
-
-  // n_data.push_back(set);
-}
-
-std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id,
-                                                        const int n_step) {
-
+std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id, const int nstep) {
   std::vector<CaptureSet> sets;
 
   sets.clear();
   for (int i = 0; i < grid.getNumInput(); i++) {
-    if (n_data[state_id][i].n_step == n_step) {
-      sets.push_back(n_data[state_id][i]);
+    if (data_nstep[state_id][i].nstep == nstep) {
+      sets.push_back(data_nstep[state_id][i]);
     }
   }
 
   return sets;
 }
 
-std::vector<CaptureSet> Capturability::getCaptureRegion(const State state,
-                                                        const int n_step) {
-
+std::vector<CaptureSet> Capturability::getCaptureRegion(const State state, const int nstep) {
   std::vector<CaptureSet> sets;
 
   if (grid.existState(state) ) {
-    sets = getCaptureRegion(grid.getStateIndex(state), n_step);
+    sets = getCaptureRegion(grid.getStateIndex(state), nstep);
   }
 
   return sets;
 }
 
-bool Capturability::capturable(State state, int n_step) {
-  bool flag = false;
-
+bool Capturability::capturable(State state, int nstep) {
   int state_id = grid.getStateIndex(state);
 
+  return capturable(state_id, nstep);
+}
+
+bool Capturability::capturable(int state_id, int nstep) {
+  bool flag = false;
+
   if(state_id > 0) {
-    if (n_step == 0) {
-      if (zero_data[state_id] == 0)
+    if (nstep == 0) {
+      if (data_basin[state_id] == 0)
         flag = true;
     } else {
-      if (!getCaptureRegion(state, n_step).empty() )
+      if (!getCaptureRegion(state_id, nstep).empty() )
         flag = true;
     }
   }
@@ -154,30 +135,8 @@ bool Capturability::capturable(State state, int n_step) {
   return flag;
 }
 
-bool Capturability::capturable(int state_id, int n_step) {
-  bool flag = false;
-
-  State state_ = grid.getState(state_id);
-  flag = capturable(state_, n_step);
-
-  return flag;
-}
-
-void Capturability::save(const char *file_name, const int n_step) {
-  FILE *fp = fopen(file_name, "w");
-  // fprintf(fp, "state_id,input_id,next_state_id,n_step,cop_x,cop_y,time\n");
-  // for (size_t i = 0; i < n_data.size(); i++) {
-  //   if (n_data[i].n_step == n_step) {
-  //     fprintf(fp, "%d,", n_data[i].state_id);
-  //     fprintf(fp, "%d,", n_data[i].input_id);
-  //     fprintf(fp, "%d,", n_data[i].next_state_id);
-  //     fprintf(fp, "%d,", n_data[i].n_step);
-  //     fprintf(fp, "%f,%f,", n_data[i].cop.x, n_data[i].cop.y);
-  //     fprintf(fp, "%f,", n_data[i].step_time);
-  //     fprintf(fp, "\n");
-  //   }
-  // }
-  fclose(fp);
+int Capturability::getMaxStep(){
+  return max_step;
 }
 
 } // namespace Capt

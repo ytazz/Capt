@@ -5,7 +5,6 @@
 
 #include "analysis_cpu.h"
 #include "capturability.h"
-#include "friction_filter.h"
 #include "grid.h"
 #include "input.h"
 #include "param.h"
@@ -24,7 +23,6 @@ class CRPlot : public Gnuplot {
   Gnuplot p;
   Model   model;
   Param   param;
-  // Capturability capturability;
 
 public:
   CRPlot(Model model, Param param);

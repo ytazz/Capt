@@ -6,7 +6,11 @@ namespace Capt {
 
 CRPlot::CRPlot(Model model, Param param)
   : model(model), param(param), grid(param) {
-  // p("set title \"Capture Region\"");
+  // ファイル形式の確認
+  if (param.getStr("coordinate", "type") == "polar") {
+    printf("Error: coordinate type \"polar\" is not supported.\n");
+  }
+
   p("unset key");
   p("set encoding utf8");
 
@@ -20,66 +24,44 @@ CRPlot::CRPlot(Model model, Param param)
   y_num  = param.getVal("icp_y", "num");
   c_num  = 5;
 
-  if (param.getStr("coordinate", "type") == "cartesian") {
-    // グラフサイズ設定
-    p("set size square");
-    // p("set autoscale xfix");
-    // p("set autoscale yfix");
-    fprintf(p.gp, "set xrange [0:%d]\n", x_num - 1);
-    fprintf(p.gp, "set yrange [0:%d]\n", y_num - 1);
+  // グラフサイズ設定
+  p("set size square");
+  fprintf(p.gp, "set xrange [0:%d]\n", x_num - 1);
+  fprintf(p.gp, "set yrange [0:%d]\n", y_num - 1);
 
-    // 軸ラベル設定
-    p("set xlabel 'y [m]'");
-    p("set ylabel 'x [m]'");
-    p("set xlabel font \"Arial,12\"");
-    p("set ylabel font \"Arial,12\"");
-    p("set tics   font \"Arial,12\"");
+  // 軸ラベル設定
+  p("set xlabel 'y [m]'");
+  p("set ylabel 'x [m]'");
+  p("set xlabel font \"Arial,15\"");
+  p("set ylabel font \"Arial,15\"");
+  p("set tics   font \"Arial,15\"");
 
-    // 座標軸の目盛り設定
-    p("set xtics 1");
-    p("set ytics 1");
-    p("set mxtics 2");
-    p("set mytics 2");
-    p("set xtics scale 0,0.001");
-    p("set ytics scale 0,0.001");
-    p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'white'");
-    // p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'gray80'");
+  // 座標軸の目盛り設定
+  p("set xtics 1");
+  p("set ytics 1");
+  p("set mxtics 2");
+  p("set mytics 2");
+  p("set xtics scale 0,0.001");
+  p("set ytics scale 0,0.001");
+  p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'white'");
+  // p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'gray80'");
 
-    // xy軸の目盛りの値を再設定
-    std::string x_tics, y_tics;
-    for (int i = 0; i < x_num; i++) {
-      x_tics += "\"\" " + str(i);
-      if (i != x_num - 1)
-        x_tics += ", ";
-    }
-    for (int i = 0; i < y_num; i++) {
-      y_tics += "\"\" " + str(i);
-      if (i != y_num - 1)
-        y_tics += ", ";
-    }
-    fprintf(p.gp, "set xtics add (%s)\n", x_tics.c_str() );
-    fprintf(p.gp, "set ytics add (%s)\n", y_tics.c_str() );
-    fprintf(p.gp, "set xtics add (\"%1.1lf\" 0, \"%1.1lf\" %d)\n", y_max, y_min, ( y_num - 1 ) );
-    fprintf(p.gp, "set ytics add (\"%1.1lf\" 0, \"%1.1lf\" %d)\n", x_min, x_max, ( x_num - 1 ) );
-
-  }else if (param.getStr("coordinate", "type") == "polar") {
-    p("set xtics 0.05");
-    p("set ytics 0.05");
-
-    std::string step_r  = str(param.getVal("swf_r", "step") );
-    std::string step_th = str(param.getVal("swf_th", "step") );
-
-    p("set polar");
-    p("set theta top");
-    p("set theta counterclockwise");
-    p("set grid polar " + step_th + "lt 1 lc \"gray\"");
-    p("set rrange [0:0.20]");
-    p("set trange [0:6.28]");
-    p("set rtics scale 0");
-    p("set rtics " + step_r);
-    p("set rtics format \"\"");
-    p("unset raxis");
+  // xy軸の目盛りの値を再設定
+  std::string x_tics, y_tics;
+  for (int i = 0; i < x_num; i++) {
+    x_tics += "\"\" " + str(i);
+    if (i != x_num - 1)
+      x_tics += ", ";
   }
+  for (int i = 0; i < y_num; i++) {
+    y_tics += "\"\" " + str(i);
+    if (i != y_num - 1)
+      y_tics += ", ";
+  }
+  fprintf(p.gp, "set xtics add (%s)\n", x_tics.c_str() );
+  fprintf(p.gp, "set ytics add (%s)\n", y_tics.c_str() );
+  fprintf(p.gp, "set xtics add (\"%1.1lf\" 0, \"%1.1lf\" %d)\n", y_max, y_min, ( y_num - 1 ) );
+  fprintf(p.gp, "set ytics add (\"%1.1lf\" 0, \"%1.1lf\" %d)\n", x_min, x_max, ( x_num - 1 ) );
 
   // カラーバーの設定
   // p("set palette gray negative");
@@ -237,10 +219,10 @@ void CRPlot::plot(){
 
   // 描画
   fprintf(p.gp, "plot \"dat/data.dat\" matrix w image notitle,\\\n");
-  fprintf(p.gp, "     \"dat/foot_region.dat\" with lines  lw 2 lc \"dark-blue\" title \"foot\",\\\n");
-  fprintf(p.gp, "     \"dat/foot_r.dat\"      with lines  lw 2 lc \"black\" title \"foot\",\\\n");
-  fprintf(p.gp, "     \"dat/foot_l.dat\"      with lines  lw 2 lc \"black\" title \"foot\",\\\n");
-  fprintf(p.gp, "     \"dat/icp.dat\"         with points pt 2 lc 1         title \"icp\"\n");
+  fprintf(p.gp, "     \"dat/foot_region.dat\" with lines  lw 2 lc \"dark-blue\" title \"foot_region\",\\\n");
+  fprintf(p.gp, "     \"dat/foot_r.dat\"      with lines  lw 2 lc \"black\"     title \"foot_su\",\\\n");
+  fprintf(p.gp, "     \"dat/foot_l.dat\"      with lines  lw 2 lc \"black\"     title \"foot_sw\",\\\n");
+  fprintf(p.gp, "     \"dat/icp.dat\"         with points pt 2 lc 1             title \"icp\"\n");
   fflush(p.gp);
 }
 

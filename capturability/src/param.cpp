@@ -3,6 +3,8 @@
 namespace Capt {
 
 Param::Param(const std::string &name) : Loader(name), pi(M_PI) {
+  printf("\x1b[36mParam File: %s\x1b[39m\n", name.c_str() );
+
   element    = Pa::NOELEMENT;
   coordinate = Pa::NOCOORD;
   axis       = Pa::NOAXIS;

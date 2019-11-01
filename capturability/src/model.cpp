@@ -3,6 +3,8 @@
 namespace Capt {
 
 Model::Model(const std::string &name) : Loader(name), pi(M_PI) {
+  printf("\x1b[36mModel File: %s\x1b[39m\n", name.c_str() );
+
   element = MODEL_ELE_NONE;
   foot    = FOOT_NONE;
   shape   = SHAPE_NONE;

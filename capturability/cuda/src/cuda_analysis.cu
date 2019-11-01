@@ -9,14 +9,14 @@ __host__ void saveBasin(std::string file_name, Condition cond, int *basin,
 
   // Header
   if (header) {
-    fprintf(fp, "%s,", "state_id");
+    // fprintf(fp, "%s,", "state_id");
     fprintf(fp, "%s", "nstep");
     fprintf(fp, "\n");
   }
 
   // Data
   for (int state_id = 0; state_id < num_state; state_id++) {
-    fprintf(fp, "%d,", state_id);
+    // fprintf(fp, "%d,", state_id);
     fprintf(fp, "%d", basin[state_id]);
     fprintf(fp, "\n");
   }
@@ -33,8 +33,8 @@ __host__ void saveNStep(std::string file_name, Condition cond, int *nstep, int *
 
   // Header
   if (header) {
-    fprintf(fp, "%s,", "state_id");
-    fprintf(fp, "%s,", "input_id");
+    // fprintf(fp, "%s,", "state_id");
+    // fprintf(fp, "%s,", "input_id");
     fprintf(fp, "%s,", "trans");
     fprintf(fp, "%s", "nstep");
     fprintf(fp, "\n");
@@ -56,8 +56,8 @@ __host__ void saveNStep(std::string file_name, Condition cond, int *nstep, int *
   for (int state_id = 0; state_id < num_state; state_id++) {
     for (int input_id = 0; input_id < num_input; input_id++) {
       int id = state_id * num_input + input_id;
-      fprintf(fp, "%d,", state_id);
-      fprintf(fp, "%d,", input_id);
+      // fprintf(fp, "%d,", state_id);
+      // fprintf(fp, "%d,", input_id);
       fprintf(fp, "%d,", trans[id]);
       fprintf(fp, "%d", nstep[id]);
       fprintf(fp, "\n");
@@ -82,7 +82,7 @@ __host__ void saveCop(std::string file_name, Condition cond, Vector2 *cop,
 
   // Header
   if (header) {
-    fprintf(fp, "%s,", "state_id");
+    // fprintf(fp, "%s,", "state_id");
     fprintf(fp, "%s,", "cop_x");
     fprintf(fp, "%s", "cop_y");
     fprintf(fp, "\n");
@@ -90,7 +90,7 @@ __host__ void saveCop(std::string file_name, Condition cond, Vector2 *cop,
 
   // Data
   for(int state_id = 0; state_id < num_state; state_id++) {
-    fprintf(fp, "%d,", state_id);
+    // fprintf(fp, "%d,", state_id);
     fprintf(fp, "%1.4lf,", cop[state_id].x_);
     fprintf(fp, "%1.4lf", cop[state_id].y_);
     fprintf(fp, "\n");
@@ -107,8 +107,8 @@ __host__ void saveStepTime(std::string file_name, Condition cond, double *step_t
 
   // Header
   if (header) {
-    fprintf(fp, "%s,", "state_id");
-    fprintf(fp, "%s,", "input_id");
+    // fprintf(fp, "%s,", "state_id");
+    // fprintf(fp, "%s,", "input_id");
     fprintf(fp, "%s", "step_time");
     fprintf(fp, "\n");
   }
@@ -117,8 +117,8 @@ __host__ void saveStepTime(std::string file_name, Condition cond, double *step_t
   for (int state_id = 0; state_id < num_state; state_id++) {
     for (int input_id = 0; input_id < num_input; input_id++) {
       int id = state_id * num_input + input_id;
-      fprintf(fp, "%d,", state_id);
-      fprintf(fp, "%d,", input_id);
+      // fprintf(fp, "%d,", state_id);
+      // fprintf(fp, "%d,", input_id);
       fprintf(fp, "%1.4lf", step_time[id]);
       fprintf(fp, "\n");
     }

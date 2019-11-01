@@ -177,7 +177,7 @@ void Analysis::saveCop(std::string file_name, bool header){
 
   // Header
   if (header) {
-    fprintf(fp, "%s,", "state_id");
+    // fprintf(fp, "%s,", "state_id");
     fprintf(fp, "%s,", "cop_x");
     fprintf(fp, "%s", "cop_y");
     fprintf(fp, "\n");
@@ -185,7 +185,7 @@ void Analysis::saveCop(std::string file_name, bool header){
 
   // Data
   for(int state_id = 0; state_id < num_state; state_id++) {
-    fprintf(fp, "%d,", state_id);
+    // fprintf(fp, "%d,", state_id);
     fprintf(fp, "%1.4lf,", cop[state_id].x);
     fprintf(fp, "%1.4lf", cop[state_id].y);
     fprintf(fp, "\n");
@@ -199,8 +199,8 @@ void Analysis::saveStepTime(std::string file_name, bool header){
 
   // Header
   if (header) {
-    fprintf(fp, "%s,", "state_id");
-    fprintf(fp, "%s,", "input_id");
+    // fprintf(fp, "%s,", "state_id");
+    // fprintf(fp, "%s,", "input_id");
     fprintf(fp, "%s", "step_time");
     fprintf(fp, "\n");
   }
@@ -209,8 +209,8 @@ void Analysis::saveStepTime(std::string file_name, bool header){
   for (int state_id = 0; state_id < num_state; state_id++) {
     for (int input_id = 0; input_id < num_input; input_id++) {
       int id = state_id * num_input + input_id;
-      fprintf(fp, "%d,", state_id);
-      fprintf(fp, "%d,", input_id);
+      // fprintf(fp, "%d,", state_id);
+      // fprintf(fp, "%d,", input_id);
       fprintf(fp, "%1.4lf", step_time[id]);
       fprintf(fp, "\n");
     }
@@ -224,14 +224,14 @@ void Analysis::saveBasin(std::string file_name, bool header){
 
   // Header
   if (header) {
-    fprintf(fp, "%s,", "state_id");
+    // fprintf(fp, "%s,", "state_id");
     fprintf(fp, "%s", "nstep");
     fprintf(fp, "\n");
   }
 
   // Data
   for (int state_id = 0; state_id < num_state; state_id++) {
-    fprintf(fp, "%d,", state_id);
+    // fprintf(fp, "%d,", state_id);
     fprintf(fp, "%d", basin[state_id]);
     fprintf(fp, "\n");
   }
@@ -244,8 +244,8 @@ void Analysis::saveNstep(std::string file_name, bool header){
 
   // Header
   if (header) {
-    fprintf(fp, "%s,", "state_id");
-    fprintf(fp, "%s,", "input_id");
+    // fprintf(fp, "%s,", "state_id");
+    // fprintf(fp, "%s,", "input_id");
     fprintf(fp, "%s,", "trans");
     fprintf(fp, "%s", "nstep");
     fprintf(fp, "\n");
@@ -259,8 +259,8 @@ void Analysis::saveNstep(std::string file_name, bool header){
   for (int state_id = 0; state_id < num_state; state_id++) {
     for (int input_id = 0; input_id < num_input; input_id++) {
       int id = state_id * num_input + input_id;
-      fprintf(fp, "%d,", state_id);
-      fprintf(fp, "%d,", input_id);
+      // fprintf(fp, "%d,", state_id);
+      // fprintf(fp, "%d,", input_id);
       fprintf(fp, "%d,", trans[id]);
       fprintf(fp, "%d", nstep[id]);
       fprintf(fp, "\n");

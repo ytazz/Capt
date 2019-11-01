@@ -21,8 +21,6 @@ namespace Capt {
 
 class CRPlot : public Gnuplot {
   Gnuplot p;
-  Model   model;
-  Param   param;
 
 public:
   CRPlot(Model model, Param param);
@@ -48,14 +46,15 @@ public:
   double omega;
 
 private:
+  Model model;
+  Param param;
+  Grid  grid;
+
   std::string str(double val);
   std::string str(int val);
 
   vec2_t cartesianToGraph(vec2_t point);
   vec2_t cartesianToGraph(double x, double y);
-  vec2_t polarToGraph(vec2_t point);
-
-  Grid grid;
 
   double x_min, x_max, x_step;
   double y_min, y_max, y_step;

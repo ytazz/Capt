@@ -5,8 +5,8 @@ set(PLOT_SOURCES
 
 # add_executable(animation animation.cpp ${CAPT_SOURCES} ${HEADERS} ${PLOT_SOURCES} ${PLOT_HEADERS})
 add_executable(converter converter.cpp ${CAPT_SOURCES})
-add_executable(debug debug.cpp ${CAPT_SOURCES} ${PLOT_SOURCES})
+add_executable(cr_graph cr_graph.cpp ${CAPT_SOURCES} ${PLOT_SOURCES})
 
 # target_link_libraries(animation ${EXPAT_LIBRARIES})
 target_link_libraries(converter ${EXPAT_LIBRARIES})
-target_link_libraries(debug ${EXPAT_LIBRARIES})
+target_link_libraries(cr_graph ${EXPAT_LIBRARIES})

@@ -2,23 +2,25 @@
 #define __SEARCH_H__
 
 #include "param.h"
+#include "vector.h"
+#include "grid.h"
+#include "capturability.h"
 #include <vector>
 
 namespace Capt {
 
-enum Foot { RIGHT, LEFT };
+enum Foot { RFOOT = 0, LFOOT = 1 };
 
 struct Node {
   Node * parent;
   int    state_id;
-  double dist;
-  double cost;
   int    step;
+  vec2_t pos; // 後で計算
 };
 
 class Search {
 public:
-  Search();
+  Search(Grid *grid, Capturability *capturability);
   ~Search();
 
   void clear();
@@ -28,21 +30,29 @@ public:
   void setGoal(vec2_t rfoot, vec2_t lfoot);
 
   void addNode(Node node);
-  void addOpen(Node* node);
+  void addOpen(int node_id);
 
-  void openNode(Node* node);
+  void openNode(int node_id);
 
   bool existNode();
   bool existOpen();
 
-  Node* findMinCostNode();
+  void exe();
+
+  void step();
 
 private:
-  Grid          grid;
-  Capturability capturability;
+  Grid          *grid;
+  Capturability *capturability;
 
-  std::vector<Node>  nodes;
-  std::vector<Node*> opens;
+  int max_step;
+
+  std::vector<Node> nodes;
+  std::vector<int>  opens;
+
+  Foot   s_suf;
+  vec2_t s_rfoot, s_lfoot, s_icp; // start
+  vec2_t g_rfoot, g_lfoot;        // goal
 };
 
 } // namespace Capt

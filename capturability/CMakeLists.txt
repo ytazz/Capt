@@ -39,6 +39,7 @@ set(CAPT_SOURCES
   ${PROJECT_SOURCE_DIR}/src/param.cpp
   ${PROJECT_SOURCE_DIR}/src/pendulum.cpp
   ${PROJECT_SOURCE_DIR}/src/polygon.cpp
+  ${PROJECT_SOURCE_DIR}/src/search.cpp
   ${PROJECT_SOURCE_DIR}/src/swing_foot.cpp
   ${PROJECT_SOURCE_DIR}/src/timer.cpp
   ${PROJECT_SOURCE_DIR}/src/vector.cpp

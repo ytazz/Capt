@@ -19,8 +19,8 @@ int main(int argc, char const *argv[]) {
   Grid  grid(param);
 
   Capturability capturability(model, param);
-  capturability.load("gpu/Basin.csv", DataType::BASIN);
-  capturability.load("gpu/Nstep.csv", DataType::NSTEP);
+  capturability.load("cpu/Basin.csv", DataType::BASIN);
+  capturability.load("cpu/Nstep.csv", DataType::NSTEP);
 
   CRPlot cr_plot(model, param);
 
@@ -30,9 +30,9 @@ int main(int argc, char const *argv[]) {
   // double swf_x = -0.08;
   // double swf_y = 0.10;
   // val
-  double icp_x = 0.1;
-  double icp_y = 0.1;
-  double swf_x = -0.25;
+  double icp_x = 0.0;
+  double icp_y = 0.15;
+  double swf_x = 0;
   double swf_y = 0.4;
   State  state;
   state.icp.setCartesian(icp_x, icp_y);

@@ -43,7 +43,7 @@ StepPlot::StepPlot(Model model, Param param)
   p("set xtics scale 0,0.001");
   p("set ytics scale 0,0.001");
   // p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'white'");
-  p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'gray90'");
+  // p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'gray90'");
 
   // xy軸の目盛りの値を再設定
   std::string x_tics, y_tics;

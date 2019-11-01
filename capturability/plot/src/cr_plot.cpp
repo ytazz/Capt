@@ -91,10 +91,6 @@ CRPlot::CRPlot(Model model, Param param)
 
   initCaptureMap();
   setFootRegion();
-
-  double g = model.getVal("environment", "gravity");
-  double h = model.getVal("physics", "com_height");
-  omega = sqrt(g / h);
 }
 
 CRPlot::~CRPlot() {

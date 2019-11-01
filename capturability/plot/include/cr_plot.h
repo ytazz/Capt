@@ -26,6 +26,7 @@ public:
   CRPlot(Model model, Param param);
   ~CRPlot();
 
+  // 出力ファイル形式を選択(.gif .eps .svg)
   void setOutput(std::string type);
 
   // 踏み出し可能領域を設定
@@ -42,8 +43,6 @@ public:
   void setCaptureMap(double x, double y, int n_step);
 
   void plot();
-
-  double omega;
 
 private:
   Model model;

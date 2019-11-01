@@ -33,10 +33,13 @@ public:
 
   // 足配置を設定
   void setFootR(vec2_t foot_r);
+  void setFootR(arr2_t foot_r);
   void setFootL(vec2_t foot_l);
+  void setFootL(arr2_t foot_l);
 
   // 現在のICP位置を設定
   void setIcp(vec2_t icp);
+  void setIcp(arr2_t icp);
 
   void plot();
 

@@ -1,10 +1,10 @@
-#include "cr_plot.h"
+#include "step_plot.h"
 
 using namespace std;
 
 namespace Capt {
 
-CRPlot::CRPlot(Model model, Param param)
+StepPlot::StepPlot(Model model, Param param)
   : model(model), param(param), grid(param) {
   // ファイル形式の確認
   if (param.getStr("coordinate", "type") == "polar") {
@@ -22,7 +22,6 @@ CRPlot::CRPlot(Model model, Param param)
   y_max  = param.getVal("swf_y", "max");
   y_step = param.getVal("swf_y", "step");
   y_num  = param.getVal("swf_y", "num");
-  c_num  = 5;
 
   // グラフサイズ設定
   p("set size square");
@@ -32,9 +31,9 @@ CRPlot::CRPlot(Model model, Param param)
   // 軸ラベル設定
   p("set xlabel 'y [m]'");
   p("set ylabel 'x [m]'");
-  p("set xlabel font \"Arial,15\"");
-  p("set ylabel font \"Arial,15\"");
-  p("set tics   font \"Arial,15\"");
+  p("set xlabel font \"Arial,10\"");
+  p("set ylabel font \"Arial,10\"");
+  p("set tics   font \"Arial,10\"");
 
   // 座標軸の目盛り設定
   p("set xtics 1");
@@ -69,18 +68,18 @@ CRPlot::CRPlot(Model model, Param param)
   icp.clear();
 }
 
-CRPlot::~CRPlot() {
+StepPlot::~StepPlot() {
 }
 
-std::string CRPlot::str(double val){
+std::string StepPlot::str(double val){
   return std::to_string(val);
 }
 
-std::string CRPlot::str(int val){
+std::string StepPlot::str(int val){
   return std::to_string(val);
 }
 
-void CRPlot::setOutput(std::string type) {
+void StepPlot::setOutput(std::string type) {
   if (type == "gif") {
     p("set terminal gif animate optimize delay 100 size 600,900");
     p("set output 'plot.gif'");
@@ -95,41 +94,86 @@ void CRPlot::setOutput(std::string type) {
   }
 }
 
-void CRPlot::setFootR(vec2_t foot_r){
-  vec2_t foot_r_ = cartesianToGraph(foot_r);
-  footstep_r.push_back(foot_r_);
+void StepPlot::setFootR(vec2_t foot_r){
+  this->footstep_r.push_back(foot_r);
 }
 
-void CRPlot::setFootL(vec2_t foot_l){
-  vec2_t foot_l_ = cartesianToGraph(foot_l);
-  footstep_l.push_back(foot_l_);
+void StepPlot::setFootR(arr2_t foot_r){
+  for(size_t i = 0; i < foot_r.size(); i++) {
+    setFootR(foot_r[i]);
+  }
 }
 
-void CRPlot::setIcp(vec2_t icp){
-  vec2_t icp_ = cartesianToGraph(icp);
-  icp.push_back(icp_);
+void StepPlot::setFootL(vec2_t foot_l){
+  this->footstep_l.push_back(foot_l);
 }
 
-void CRPlot::plot(){
+void StepPlot::setFootL(arr2_t foot_l){
+  for(size_t i = 0; i < foot_l.size(); i++) {
+    setFootL(foot_l[i]);
+  }
+}
+
+void StepPlot::setIcp(vec2_t icp){
+  this->icp.push_back(icp);
+}
+
+void StepPlot::setIcp(arr2_t icp){
+  for(size_t i = 0; i < icp.size(); i++) {
+    setIcp(icp[i]);
+  }
+}
+
+void StepPlot::plot(){
+  arr2_t foot_r = model.getVec("foot", "foot_r");
+  arr2_t foot_l = model.getVec("foot", "foot_l");
+
   // 描画対象の追加
-  fprintf(p.gp, "plot \"dat/icp.dat\" with lines  lw 2 lc \"dark-blue\" title \"icp\",\\\n");
-  fprintf(p.gp, "     \"dat/foot_r.dat\"      with lines  lw 2 lc \"black\"     title \"foot_su\",\\\n");
-  fprintf(p.gp, "     \"dat/foot_l.dat\"      with lines  lw 2 lc \"black\"     title \"foot_sw\",\\\n");
-  fprintf(p.gp, "     \"dat/icp.dat\"         with points pt 2 lc 1             title \"icp\"\n");
+  fprintf(p.gp, "plot ");
+  for(size_t i = 0; i < footstep_r.size(); i++) {
+    fprintf(p.gp, "'-' with lines linewidth 2 lc \"green\",");
+  }
+  for(size_t i = 0; i < footstep_l.size(); i++) {
+    fprintf(p.gp, "'-' with lines linewidth 2 lc \"red\",");
+  }
+  fprintf(p.gp, "'-' with lines linewidth 2 lc \"dark-blue\"\n");
 
   // 描画
+  // footstep_r
+  for(size_t i = 0; i < footstep_r.size(); i++) {
+    for(size_t j = 0; j < foot_r.size(); j++) {
+      vec2_t point = cartesianToGraph(footstep_r[i] + foot_r[j]);
+      fprintf(p.gp, "%f %f\n", point.x, point.y);
+    }
+    fprintf(p.gp, "e\n");
+  }
+  // footstep_l
+  for(size_t i = 0; i < footstep_l.size(); i++) {
+    for(size_t j = 0; j < foot_l.size(); j++) {
+      vec2_t point = cartesianToGraph(footstep_l[i] + foot_l[j]);
+      fprintf(p.gp, "%f %f\n", point.x, point.y);
+    }
+    fprintf(p.gp, "e\n");
+  }
+  // icp
+  for(size_t i = 0; i < icp.size(); i++) {
+    vec2_t point = cartesianToGraph(icp[i]);
+    fprintf(p.gp, "%f %f\n", point.x, point.y);
+  }
+  fprintf(p.gp, "e\n");
+
   fflush(p.gp);
 }
 
-vec2_t CRPlot::cartesianToGraph(vec2_t point){
+vec2_t StepPlot::cartesianToGraph(vec2_t point){
   vec2_t p;
-  double x = -point.y / y_step + ( y_num - 1 ) / 2;
-  double y = +point.x / x_step + ( x_num - 1 ) / 2;
+  double x = ( y_max - point.y ) / y_step;
+  double y = ( point.x - x_min ) / x_step;
   p.setCartesian(x, y);
   return p;
 }
 
-vec2_t CRPlot::cartesianToGraph(double x, double y){
+vec2_t StepPlot::cartesianToGraph(double x, double y){
   vec2_t p;
   p.setCartesian(x, y);
   return cartesianToGraph(p);

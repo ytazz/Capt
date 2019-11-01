@@ -1,15 +1,13 @@
 #ifndef __XML_LOADER__
 #define __XML_LOADER__
 
-#include "vector.h"
+#include "base.h"
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Geometry>
 #include <expat.h>
 #include <string.h>
 
 namespace Capt {
-
-typedef Eigen::Vector3f vec3_t;
 
 class Loader {
 public:
@@ -30,12 +28,12 @@ public:
   virtual void callbackAttribute(const std::string &name,
                                  const std::string &value) = 0;
 
-  bool    equalStr(const char *chr1, const char *chr2);
-  bool    equalStr(const std::string &str1, const char *chr2);
-  bool    equalStr(const char *chr1, const std::string &str2);
-  bool    equalStr(const std::string &str1, const std::string &str2);
-  Vector2 convertStrToVec(const std::string &str);
-  vec3_t  convertStrToVec3(const std::string &str);
+  bool   equalStr(const char *chr1, const char *chr2);
+  bool   equalStr(const std::string &str1, const char *chr2);
+  bool   equalStr(const char *chr1, const std::string &str2);
+  bool   equalStr(const std::string &str1, const std::string &str2);
+  vec2_t convertStrToVec2(const std::string &str);
+  vec3_t convertStrToVec3(const std::string &str);
 
 protected:
   std::string name;

@@ -18,7 +18,7 @@
 #include "state.h"
 #include "swing_foot.h"
 #include "trajectory.h"
-#include "vector.h"
+#include "base.h"
 
 namespace Capt {
 

@@ -2,7 +2,7 @@
 #define __SEARCH_H__
 
 #include "param.h"
-#include "vector.h"
+#include "base.h"
 #include "grid.h"
 #include "capturability.h"
 #include <vector>

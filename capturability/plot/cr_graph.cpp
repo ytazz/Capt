@@ -2,7 +2,7 @@
 #include "loader.h"
 #include "model.h"
 #include "param.h"
-#include "vector.h"
+#include "base.h"
 #include "cr_plot.h"
 #include <iostream>
 

@@ -5,7 +5,7 @@
 #include "param.h"
 #include "pendulum.h"
 #include "polygon.h"
-#include "vector.h"
+#include "base.h"
 #include <iostream>
 
 using namespace std;

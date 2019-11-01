@@ -1,7 +1,7 @@
 #ifndef __POLYGON_H__
 #define __POLYGON_H__
 
-#include "vector.h"
+#include "base.h"
 #include <string>
 #include <vector>
 
@@ -13,25 +13,25 @@ public:
   ~Polygon();
 
   // Set vertices (x, y)
-  void setVertex(Vector2 vertex);
-  void setVertex(std::vector<Vector2> vertex);
+  void setVertex(vec2_t vertex);
+  void setVertex(arr2_t vertex);
 
   // Get setted vertices (x, y)
-  std::vector<Vector2> getVertex();
+  arr2_t getVertex();
 
   // Find the vertices that make up the convex hull
   // by using gift wrapping algorithm
-  std::vector<Vector2> getConvexHull();
+  arr2_t getConvexHull();
 
   // Find closest point from a point to polygon
-  Vector2 getClosestPoint(Vector2 point, std::vector<Vector2> vertex);
+  vec2_t getClosestPoint(vec2_t point, arr2_t vertex);
 
   // Determine whether a point (x,y) is within a polygon
   // by using the sign of cross product
   // Especially, ICP and supporting polygon
   // in  -> true
   // out -> false
-  bool inPolygon(Vector2 point, std::vector<Vector2> vertex_);
+  bool inPolygon(vec2_t point, arr2_t vertex_);
 
   // Output to the console
   // all vertices
@@ -44,8 +44,8 @@ public:
   void clear();
 
 private:
-  std::vector<Vector2> vertex;
-  std::vector<Vector2> vertex_convex;
+  arr2_t vertex;
+  arr2_t vertex_convex;
 };
 
 } // namespace Capt

@@ -29,20 +29,21 @@ include_directories(${PROJECT_SOURCE_DIR}/cuda/include)
 include_directories(${PROJECT_SOURCE_DIR}/plot/include)
 
 set(CAPT_SOURCES
-  ${PROJECT_SOURCE_DIR}/src/capturability.cpp
-  ${PROJECT_SOURCE_DIR}/src/cycloid.cpp
-  ${PROJECT_SOURCE_DIR}/src/interpolation.cpp
-  ${PROJECT_SOURCE_DIR}/src/grid.cpp
-  ${PROJECT_SOURCE_DIR}/src/kinematics.cpp
+  ${PROJECT_SOURCE_DIR}/src/base.cpp
+  # ${PROJECT_SOURCE_DIR}/src/capturability.cpp
+  # ${PROJECT_SOURCE_DIR}/src/cycloid.cpp
+  # ${PROJECT_SOURCE_DIR}/src/interpolation.cpp
+  # ${PROJECT_SOURCE_DIR}/src/grid.cpp
+  # ${PROJECT_SOURCE_DIR}/src/kinematics.cpp
   ${PROJECT_SOURCE_DIR}/src/loader.cpp
   ${PROJECT_SOURCE_DIR}/src/model.cpp
-  ${PROJECT_SOURCE_DIR}/src/param.cpp
-  ${PROJECT_SOURCE_DIR}/src/pendulum.cpp
+  # ${PROJECT_SOURCE_DIR}/src/param.cpp
+  # ${PROJECT_SOURCE_DIR}/src/pendulum.cpp
   ${PROJECT_SOURCE_DIR}/src/polygon.cpp
-  ${PROJECT_SOURCE_DIR}/src/search.cpp
-  ${PROJECT_SOURCE_DIR}/src/swing_foot.cpp
-  ${PROJECT_SOURCE_DIR}/src/timer.cpp
-  ${PROJECT_SOURCE_DIR}/src/vector.cpp
+  # ${PROJECT_SOURCE_DIR}/src/search.cpp
+  # ${PROJECT_SOURCE_DIR}/src/swing_foot.cpp
+  # ${PROJECT_SOURCE_DIR}/src/timer.cpp
+  # ${PROJECT_SOURCE_DIR}/src/vector.cpp
 )
 
 set(CPU_SOURCES
@@ -54,6 +55,9 @@ set(GPU_SOURCES
   ${PROJECT_SOURCE_DIR}/cuda/src/cuda_memory_manager.cu
   ${PROJECT_SOURCE_DIR}/cuda/src/cuda_vector.cu
 )
+
+add_executable(debug debug.cpp ${CAPT_SOURCES})
+target_link_libraries(debug ${EXPAT_LIBRARIES})
 
 if(${BUILD_CPU})
   add_executable( main_cpu

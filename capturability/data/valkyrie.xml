@@ -22,7 +22,4 @@
     <shape type="reverse"/>
   </foot>
 
-  <!-- link is not setted. -->
-  <!-- Becasuse this model use choreonoid's IK. NOT Capt's IK. -->
-
 </robot>

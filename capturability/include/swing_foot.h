@@ -4,7 +4,7 @@
 // #include "interpolation.h"
 #include "cycloid.h"
 #include "model.h"
-#include "vector.h"
+#include "base.h"
 
 namespace Capt {
 

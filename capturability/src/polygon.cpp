@@ -10,33 +10,33 @@ Polygon::Polygon() {
 Polygon::~Polygon() {
 }
 
-void Polygon::setVertex(Vector2 vertex) {
+void Polygon::setVertex(vec2_t vertex) {
   this->vertex.push_back(vertex);
 }
 
-void Polygon::setVertex(std::vector<Vector2> vertex) {
+void Polygon::setVertex(arr2_t vertex) {
   for (size_t i = 0; i < vertex.size() - 1; i++) {
     this->vertex.push_back(vertex[i]);
   }
 }
 
-std::vector<Vector2> Polygon::getVertex() {
+arr2_t Polygon::getVertex() {
   return vertex;
 }
 
-std::vector<Vector2> Polygon::getConvexHull() {
+arr2_t Polygon::getConvexHull() {
   if (vertex.size() < 3) {
     printf("Error: setted vertices(%d) are too small (< 3)\n",
            (int)vertex.size() );
     exit(EXIT_FAILURE);
   }
 
-  Vector2 tmp;
-  bool    flag_continue = true;
+  vec2_t tmp;
+  bool   flag_continue = true;
   while (flag_continue) {
     flag_continue = false;
     for (size_t i = 0; i < vertex.size() - 1; i++) {
-      if (vertex[i + 1].y < vertex[i].y) {
+      if (vertex[i + 1].y() < vertex[i].y() ) {
         tmp           = vertex[i];
         vertex[i]     = vertex[i + 1];
         vertex[i + 1] = tmp;
@@ -62,7 +62,7 @@ std::vector<Vector2> Polygon::getConvexHull() {
         product = 1;
         for (size_t j = 0; j < vertex.size(); j++) {
           if (i != j && !in_convex[i]) {
-            if ( ( vertex[i] - vertex[back] ) % ( vertex[j] - vertex[i] ) < 0.0) {
+            if ( cross( ( vertex[i] - vertex[back] ), ( vertex[j] - vertex[i] ) ) < 0.0) {
               product *= 0;
             }
           }
@@ -84,10 +84,10 @@ std::vector<Vector2> Polygon::getConvexHull() {
   return vertex_convex;
 }
 
-Vector2 Polygon::getClosestPoint(Vector2 point, std::vector<Vector2> vertex) {
-  Vector2 closest;
-  Vector2 v1, v2, v3, v4; // vector
-  Vector2 n1, n2;         // normal vector
+vec2_t Polygon::getClosestPoint(vec2_t point, arr2_t vertex) {
+  vec2_t closest;
+  vec2_t v1, v2, v3, v4; // vector
+  vec2_t n1, n2;         // normal vector
 
   if (inPolygon(point, vertex) ) {
     closest = point;
@@ -95,24 +95,24 @@ Vector2 Polygon::getClosestPoint(Vector2 point, std::vector<Vector2> vertex) {
     for (size_t i = 0; i < vertex.size() - 1; i++) {
       //最近点が角にあるとき
       if (i == 0) {
-        n1 = ( vertex[1] - vertex[i] ).normal();
-        n2 = ( vertex[i] - vertex[vertex.size() - 2] ).normal();
+        n1 = normal( vertex[1] - vertex[i] );
+        n2 = normal( vertex[i] - vertex[vertex.size() - 2] );
       } else {
-        n1 = ( vertex[i + 1] - vertex[i] ).normal();
-        n2 = ( vertex[i] - vertex[i - 1] ).normal();
+        n1 = normal( vertex[i + 1] - vertex[i] );
+        n2 = normal( vertex[i] - vertex[i - 1] );
       }
       v1 = point - vertex[i];
-      if ( ( n1 % v1 ) < 0 && ( n2 % v1 ) > 0) {
+      if ( cross( n1, v1 ) < 0 && cross( n2, v1 ) > 0) {
         closest = vertex[i];
       }
       // 最近点が辺にあるとき
-      n1 = ( vertex[i + 1] - vertex[i] ).normal();
+      n1 = normal( vertex[i + 1] - vertex[i] );
       v1 = point - vertex[i];
       v2 = vertex[i + 1] - vertex[i];
       v3 = point - vertex[i + 1];
       v4 = vertex[i] - vertex[i + 1];
-      if ( ( n1 % v1 ) > 0 && ( v2 % v1 ) < 0 && ( n1 % v3 ) < 0 && ( v4 % v3 ) > 0) {
-        float k = v1 * v2 / ( v2.norm() * v2.norm() );
+      if ( cross(n1, v1) > 0 && cross(v2, v1) < 0 && cross(n1, v3 ) < 0 && cross(v4, v3 ) > 0) {
+        float k = dot(v1, v2) / ( v2.norm() * v2.norm() );
         closest = vertex[i] + k * v2;
       }
     }
@@ -121,14 +121,14 @@ Vector2 Polygon::getClosestPoint(Vector2 point, std::vector<Vector2> vertex) {
   return closest;
 }
 
-bool Polygon::inPolygon(Vector2 point, std::vector<Vector2> vertex_) {
+bool Polygon::inPolygon(vec2_t point, arr2_t vertex_) {
   bool        flag    = false;
   double      product = 0.0;
   int         sign    = 0, on_line = 0;
   const float epsilon = 0.00001;
 
   for (size_t i = 0; i < vertex_.size() - 1; i++) {
-    product = ( point - vertex_[i] ) % ( vertex_[i + 1] - vertex_[i] );
+    product = cross( ( point - vertex_[i] ), ( vertex_[i + 1] - vertex_[i] ) );
     if (-epsilon <= product && product <= epsilon) {
       on_line += 1;
     } else if (product > 0) {
@@ -148,7 +148,7 @@ bool Polygon::inPolygon(Vector2 point, std::vector<Vector2> vertex_) {
 
 void Polygon::printVertex(std::string str) {
   for (size_t i = 0; i < vertex.size(); i++) {
-    printf("%s %lf, %lf\n", str.c_str(), vertex[i].x, vertex[i].y);
+    printf("%s %lf, %lf\n", str.c_str(), vertex[i].x(), vertex[i].y() );
   }
 }
 
@@ -158,8 +158,8 @@ void Polygon::printVertex() {
 
 void Polygon::printConvex(std::string str) {
   for (size_t i = 0; i < vertex_convex.size(); i++) {
-    printf("%s %lf, %lf\n", str.c_str(), vertex_convex[i].x,
-           vertex_convex[i].y);
+    printf("%s %lf, %lf\n", str.c_str(), vertex_convex[i].x(),
+           vertex_convex[i].y() );
   }
 }
 

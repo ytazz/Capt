@@ -4,7 +4,7 @@
 #include "input.h"
 #include "param.h"
 #include "state.h"
-#include "vector.h"
+#include "base.h"
 #include <iostream>
 #include <string>
 #include <vector>

@@ -10,7 +10,7 @@
 #include "pendulum.h"
 #include "state.h"
 #include "swing_foot.h"
-#include "vector.h"
+#include "base.h"
 #include <chrono>
 #include <iostream>
 #include <stdio.h>

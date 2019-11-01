@@ -9,15 +9,15 @@ int main(void) {
   std::chrono::system_clock::time_point start, end_exe, end_save;
   start = std::chrono::system_clock::now();
 
-  /* 前処理 */
-  printf("*** Analysis ***\n");
-  printf("  Initializing ... ");
-  fflush(stdout);
-
   /* パラメータの読み込み */
   Capt::Model cmodel("data/valkyrie.xml");
   Capt::Param cparam("data/valkyrie_xy.xml");
   Capt::Grid  cgrid(cparam);
+
+  /* 前処理 */
+  printf("*** Analysis ***\n");
+  printf("  Initializing ... ");
+  fflush(stdout);
 
   /* 各変数のsize */
   const int num_state  = cgrid.getNumState();

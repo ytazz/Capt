@@ -2,7 +2,7 @@
 #include "loader.h"
 #include "model.h"
 #include "param.h"
-#include "vector.h"
+#include "base.h"
 #include "search.h"
 #include "step_plot.h"
 #include <iostream>

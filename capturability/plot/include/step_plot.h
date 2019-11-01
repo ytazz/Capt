@@ -15,6 +15,7 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
+#include <map>
 
 namespace Capt {
 
@@ -28,18 +29,14 @@ public:
   // 出力ファイル形式を選択(.gif .eps .svg)
   void setOutput(std::string type);
 
-  // 踏み出し可能領域を設定
-  void setFootRegion();
-
   // 現在の足配置を設定
-  void setFoot(vec2_t swf);
+
+  // 足配置を設定
+  void setFootR(vec2_t foot_r);
+  void setFootL(vec2_t foot_l);
 
   // 現在のICP位置を設定
   void setIcp(vec2_t icp);
-
-  // Capture Regionのデータを格納するCapture Map
-  void initCaptureMap();
-  void setCaptureMap(double x, double y, int n_step);
 
   void plot();
 
@@ -58,9 +55,10 @@ private:
   double y_min, y_max, y_step;
   int    x_num;
   int    y_num;
-  int    c_num; // number of color
 
-  std::vector<std::vector<int> > capture_map;
+  std::vector<vec2_t> footstep_r;
+  std::vector<vec2_t> footstep_l;
+  std::vector<vec2_t> icp;
 };
 }
 

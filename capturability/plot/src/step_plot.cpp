@@ -14,14 +14,14 @@ CRPlot::CRPlot(Model model, Param param)
   p("unset key");
   p("set encoding utf8");
 
-  x_min  = param.getVal("icp_x", "min");
-  x_max  = param.getVal("icp_x", "max");
-  x_step = param.getVal("icp_x", "step");
-  x_num  = param.getVal("icp_x", "num");
-  y_min  = param.getVal("icp_y", "min");
-  y_max  = param.getVal("icp_y", "max");
-  y_step = param.getVal("icp_y", "step");
-  y_num  = param.getVal("icp_y", "num");
+  x_min  = param.getVal("swf_x", "min");
+  x_max  = param.getVal("swf_x", "max");
+  x_step = param.getVal("swf_x", "step");
+  x_num  = param.getVal("swf_x", "num");
+  y_min  = param.getVal("swf_y", "min");
+  y_max  = param.getVal("swf_y", "max");
+  y_step = param.getVal("swf_y", "step");
+  y_num  = param.getVal("swf_y", "num");
   c_num  = 5;
 
   // グラフサイズ設定
@@ -43,8 +43,8 @@ CRPlot::CRPlot(Model model, Param param)
   p("set mytics 2");
   p("set xtics scale 0,0.001");
   p("set ytics scale 0,0.001");
-  p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'white'");
-  // p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'gray80'");
+  // p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'white'");
+  p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'gray90'");
 
   // xy軸の目盛りの値を再設定
   std::string x_tics, y_tics;
@@ -63,34 +63,10 @@ CRPlot::CRPlot(Model model, Param param)
   fprintf(p.gp, "set xtics add (\"%1.1lf\" 0, \"%1.1lf\" %d)\n", y_max, y_min, ( y_num - 1 ) );
   fprintf(p.gp, "set ytics add (\"%1.1lf\" 0, \"%1.1lf\" %d)\n", x_min, x_max, ( x_num - 1 ) );
 
-  // カラーバーの設定
-  // p("set palette gray negative");
-  fprintf(p.gp, "set palette defined ( 0 '#ffffff', 1 '#cbfeff', 2 '#68fefe', 3 '#0097ff', 4 '#3666fe')\n");
-  fprintf(p.gp, "set cbrange[0:%d]\n", c_num);
-  fprintf(p.gp, "set cbtics 0.5\n");
-  fprintf(p.gp, "set palette maxcolors %d\n", c_num);
-  fprintf(p.gp, "set cbtics scale 0,0.001\n");
-
-  // カラーバーの目盛りの値を再設定
-  std::string c_tics;
-  for (int i = 0; i <= c_num; i++) {
-    if (i != c_num) {
-      c_tics += "\"\" " + str(i);
-      c_tics += ", ";
-      if(i == 0) {
-        c_tics += "\"NONE\" " + str(i + 0.5);
-      }else{
-        c_tics += "\"" + str(i) + "\" " + str(i + 0.5);
-      }
-      c_tics += ", ";
-    }else{
-      c_tics += "\"\" " + str(i);
-    }
-  }
-  fprintf(p.gp, "set cbtics add (%s)\n", c_tics.c_str() );
-
-  initCaptureMap();
-  setFootRegion();
+  // 変数の初期化
+  footstep_r.clear();
+  footstep_l.clear();
+  icp.clear();
 }
 
 CRPlot::~CRPlot() {
@@ -119,106 +95,29 @@ void CRPlot::setOutput(std::string type) {
   }
 }
 
-void CRPlot::setFootRegion(){
-  double swf_x_min = param.getVal("swf_x", "min") - x_step / 2.0;
-  double swf_x_max = param.getVal("swf_x", "max") + x_step / 2.0;
-  double swf_y_min = param.getVal("swf_y", "min") - y_step / 2.0;
-  double swf_y_max = param.getVal("swf_y", "max") + y_step / 2.0;
-
-  vec2_t vertex[5];
-  vertex[0].setCartesian(swf_x_min, swf_y_min);
-  vertex[1].setCartesian(swf_x_max, swf_y_min);
-  vertex[2].setCartesian(swf_x_max, swf_y_max);
-  vertex[3].setCartesian(swf_x_min, swf_y_max);
-  vertex[4].setCartesian(swf_x_min, swf_y_min);
-  vertex[0] = cartesianToGraph(vertex[0]);
-  vertex[1] = cartesianToGraph(vertex[1]);
-  vertex[2] = cartesianToGraph(vertex[2]);
-  vertex[3] = cartesianToGraph(vertex[3]);
-  vertex[4] = cartesianToGraph(vertex[4]);
-
-  FILE *fp = fopen("dat/foot_region.dat", "w");
-  for(int i = 0; i < 5; i++) {
-    fprintf(fp, "%lf %lf\n", vertex[i].x, vertex[i].y);
-  }
-  fclose(fp);
+void CRPlot::setFootR(vec2_t foot_r){
+  vec2_t foot_r_ = cartesianToGraph(foot_r);
+  footstep_r.push_back(foot_r_);
 }
 
-void CRPlot::setFoot(vec2_t swf){
-  arr2_t foot_r, foot_l;
-  foot_r = model.getVec("foot", "foot_r");
-  foot_l = model.getVec("foot", "foot_l", swf);
-
-  FILE *fp;
-  fp = fopen("dat/foot_r.dat", "w");
-  vec2_t point;
-  for (size_t i = 0; i < foot_r.size(); i++) {
-    // グラフ座標に合わせる
-    point = cartesianToGraph(foot_r[i]);
-    fprintf(fp, "%lf %lf\n", point.x, point.y);
-  }
-  fclose(fp);
-  fp = fopen("dat/foot_l.dat", "w");
-  for (size_t i = 0; i < foot_l.size(); i++) {
-    // グラフ座標に合わせる
-    point = cartesianToGraph(foot_l[i]);
-    fprintf(fp, "%lf %lf\n", point.x, point.y);
-  }
-  fclose(fp);
+void CRPlot::setFootL(vec2_t foot_l){
+  vec2_t foot_l_ = cartesianToGraph(foot_l);
+  footstep_l.push_back(foot_l_);
 }
 
 void CRPlot::setIcp(vec2_t icp){
-  icp.printCartesian();
-  vec2_t point = cartesianToGraph(icp);
-  FILE  *fp    = fopen("dat/icp.dat", "w");
-  fprintf(fp, "%lf %lf\n", point.x, point.y);
-  fclose(fp);
-}
-
-void CRPlot::initCaptureMap(){
-  capture_map.clear();
-  capture_map.resize(x_num);
-  for (int i = 0; i < x_num; i++) {
-    capture_map[i].resize(y_num);
-    for (int j = 0; j < y_num; j++) {
-      capture_map[i][j] = 0;
-    }
-  }
-}
-
-void CRPlot::setCaptureMap(double x, double y, int n_step){
-  // IDの算出
-  int i = ( x - x_min ) / x_step;
-  int j = ( y - y_min ) / y_step;
-
-  // doubleからintに丸める時の四捨五入
-  if ( ( x - x_min ) / x_step - i >= 0.5)
-    i++;
-  if ( ( y - y_min ) / y_step - j >= 0.5)
-    j++;
-
-  // map上の対応するIDに値を代入
-  if (0 <= i && i < x_num && 0 <= j && j < y_num)
-    capture_map[i][j] = n_step;
+  vec2_t icp_ = cartesianToGraph(icp);
+  icp.push_back(icp_);
 }
 
 void CRPlot::plot(){
-  // mapをグラフ上の対応する点に変換
-  FILE *fp = fopen("dat/data.dat", "w");
-  for (int i = 0; i < x_num; i++) {
-    for (int j = 0; j < y_num; j++) {
-      fprintf(fp, "%d ", capture_map[i][y_num - j - 1]);
-    }
-    fprintf(fp, "\n");
-  }
-  fclose(fp);
-
-  // 描画
-  fprintf(p.gp, "plot \"dat/data.dat\" matrix w image notitle,\\\n");
-  fprintf(p.gp, "     \"dat/foot_region.dat\" with lines  lw 2 lc \"dark-blue\" title \"foot_region\",\\\n");
+  // 描画対象の追加
+  fprintf(p.gp, "plot \"dat/icp.dat\" with lines  lw 2 lc \"dark-blue\" title \"icp\",\\\n");
   fprintf(p.gp, "     \"dat/foot_r.dat\"      with lines  lw 2 lc \"black\"     title \"foot_su\",\\\n");
   fprintf(p.gp, "     \"dat/foot_l.dat\"      with lines  lw 2 lc \"black\"     title \"foot_sw\",\\\n");
   fprintf(p.gp, "     \"dat/icp.dat\"         with points pt 2 lc 1             title \"icp\"\n");
+
+  // 描画
   fflush(p.gp);
 }
 

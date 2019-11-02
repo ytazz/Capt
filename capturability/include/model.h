@@ -36,8 +36,7 @@ public:
   ~Model();
 
   void callbackElement(const std::string &name, const bool is_start) override;
-  void callbackAttribute(const std::string &name,
-                         const std::string &value) override;
+  void callbackAttribute(const std::string &name, const std::string &value) override;
 
   void read(std::string *val, const std::string &name);
   void read(double *val, const std::string &name);

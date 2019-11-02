@@ -16,4 +16,15 @@ vec2_t normal(vec2_t v) {
   return normal_vector;
 }
 
+int round(double value) {
+  int result = (int)value;
+
+  double decimal = value - (int)value;
+  if (decimal >= 0.5) {
+    result += 1;
+  }
+
+  return result;
+}
+
 } // namespace Capt

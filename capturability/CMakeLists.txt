@@ -37,7 +37,7 @@ set(CAPT_SOURCES
   # ${PROJECT_SOURCE_DIR}/src/kinematics.cpp
   ${PROJECT_SOURCE_DIR}/src/loader.cpp
   ${PROJECT_SOURCE_DIR}/src/model.cpp
-  # ${PROJECT_SOURCE_DIR}/src/param.cpp
+  ${PROJECT_SOURCE_DIR}/src/param.cpp
   # ${PROJECT_SOURCE_DIR}/src/pendulum.cpp
   ${PROJECT_SOURCE_DIR}/src/polygon.cpp
   # ${PROJECT_SOURCE_DIR}/src/search.cpp

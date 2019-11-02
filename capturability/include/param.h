@@ -4,21 +4,24 @@
 #include "loader.h"
 #include <math.h>
 
-namespace Capt {
+namespace CaptEnum {
 
-namespace Pa {
 enum ParamElement {
-  NOELEMENT,
+  PARAM_ELE_NONE,
   COORDINATE,
   UNIT,
   ICP,
   SWING,
+  MAP
 };
 
-enum Coordinate { NOCOORD, POLAR, CARTESIAN };
+enum Coordinate { COORD_NONE, COORD_CARTESIAN };
 
-enum Axis { NOAXIS, RADIUS, ANGLE, X, Y };
-} // namespace Pa
+enum Axis { AXIS_NONE, AXIS_X, AXIS_Y };
+
+} // namespace CaptEnum
+
+namespace Capt {
 
 class Param : public Loader {
 
@@ -27,44 +30,37 @@ public:
   ~Param();
 
   void callbackElement(const std::string &name, const bool is_start) override;
-  void callbackAttribute(const std::string &name,
-                         const std::string &value) override;
+  void callbackAttribute(const std::string &name, const std::string &value) override;
 
-  double      getVal(const char *element_name, const char *attribute_name);
-  std::string getStr(const char *element_name, const char *attribute_name);
-  void        print();
+  void read(std::string *val, const std::string &name);
+  void read(int *val, const std::string &name);
+  void read(double *val, const std::string &name);
+
+  void print();
 
 private:
-  int  round(double value);
   void calcNum();
 
-  Pa::ParamElement element;
-  Pa::Coordinate   coordinate;
-  Pa::Axis         axis;
+  CaptEnum::ParamElement element;
+  CaptEnum::Coordinate   coordinate;
+  CaptEnum::Axis         axis;
 
   // unit
-  double unit_length, unit_angle;
+  double unit_length;
   // number
   int icp_x_num;
   int icp_y_num;
   int swf_x_num;
   int swf_y_num;
-  int icp_r_num;
-  int icp_th_num;
-  int swf_r_num;
-  int swf_th_num;
-  // polar
-  double icp_r_min, icp_r_max, icp_r_step;
-  double icp_th_min, icp_th_max, icp_th_step;
-  double swf_r_min, swf_r_max, swf_r_step;
-  double swf_th_min, swf_th_max, swf_th_step;
+  int map_x_num;
+  int map_y_num;
   // cartesian
-  double icp_x_min, icp_x_max, icp_x_step;
-  double icp_y_min, icp_y_max, icp_y_step;
-  double swf_x_min, swf_x_max, swf_x_step;
-  double swf_y_min, swf_y_max, swf_y_step;
-
-  double pi;
+  double icp_x_min, icp_x_max, icp_x_stp;
+  double icp_y_min, icp_y_max, icp_y_stp;
+  double swf_x_min, swf_x_max, swf_x_stp;
+  double swf_y_min, swf_y_max, swf_y_stp;
+  double map_x_min, map_x_max, map_x_stp;
+  double map_y_min, map_y_max, map_y_stp;
 };
 
 } // namespace Capt

@@ -19,16 +19,16 @@ namespace Cuda {
 /* struct */
 
 struct GridSize {
-  int num_state;
-  int num_input;
+  int state_num;
+  int input_num;
   int num_grid;
   int num_foot_r;
   int num_foot_l;
 };
 
 struct GridCartesian {
-  int num_state;
-  int num_input;
+  int state_num;
+  int input_num;
   int num_grid;
   int num_foot_r;
   int num_foot_l;
@@ -47,8 +47,8 @@ struct GridCartesian {
 };
 
 struct GridPolar {
-  int num_state;
-  int num_input;
+  int state_num;
+  int input_num;
   int num_grid;
   int num_foot_r;
   int num_foot_l;

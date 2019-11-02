@@ -4,13 +4,13 @@ namespace Capt {
 
 Capturability::Capturability(Model model, Param param)
   : grid(param), model(model) {
-  num_state = grid.getNumState();
-  num_input = grid.getNumInput();
+  state_num = grid.getNumState();
+  input_num = grid.getNumInput();
 
-  data_basin = new int [num_state];
-  data_nstep = new CaptureSet*[num_state];
-  for (int i = 0; i < num_state; i++) {
-    data_nstep[i] = new CaptureSet[num_input];
+  data_basin = new int [state_num];
+  data_nstep = new CaptureSet*[state_num];
+  for (int i = 0; i < state_num; i++) {
+    data_nstep[i] = new CaptureSet[input_num];
   }
 
   max_step = 0;
@@ -40,8 +40,8 @@ void Capturability::load(std::string file_name, DataType type) {
 
     int buf[2];
     while (fscanf(fp, "%d,%d", &buf[0], &buf[1]) != EOF) {
-      int state_id = id / num_input;
-      int input_id = id % num_input;
+      int state_id = id / input_num;
+      int input_id = id % input_num;
 
       CaptureSet* set = getCaptureSet(state_id, input_id);
       set->state_id = state_id;
@@ -60,7 +60,7 @@ void Capturability::load(std::string file_name, DataType type) {
     double buf[2];
     while (fscanf(fp, "%lf,%lf", &buf[0], &buf[1]) != EOF) {
       int state_id = id;
-      for(int input_id = 0; input_id < num_input; input_id++) {
+      for(int input_id = 0; input_id < input_num; input_id++) {
         CaptureSet* set = getCaptureSet(state_id, input_id);
         set->cop.setCartesian(buf[0], buf[1]);
       }
@@ -72,8 +72,8 @@ void Capturability::load(std::string file_name, DataType type) {
 
     double buf;
     while (fscanf(fp, "%lf", &buf) != EOF) {
-      int state_id = id / num_input;
-      int input_id = id % num_input;
+      int state_id = id / input_num;
+      int input_id = id % input_num;
 
       CaptureSet* set = getCaptureSet(state_id, input_id);
       set->step_time = buf;

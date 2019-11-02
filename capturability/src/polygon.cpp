@@ -112,7 +112,7 @@ vec2_t Polygon::getClosestPoint(vec2_t point, arr2_t vertex) {
       v3 = point - vertex[i + 1];
       v4 = vertex[i] - vertex[i + 1];
       if ( cross(n1, v1) > 0 && cross(v2, v1) < 0 && cross(n1, v3 ) < 0 && cross(v4, v3 ) > 0) {
-        float k = dot(v1, v2) / ( v2.norm() * v2.norm() );
+        double k = dot(v1, v2) / ( v2.norm() * v2.norm() );
         closest = vertex[i] + k * v2;
       }
     }
@@ -125,7 +125,7 @@ bool Polygon::inPolygon(vec2_t point, arr2_t vertex_) {
   bool        flag    = false;
   double      product = 0.0;
   int         sign    = 0, on_line = 0;
-  const float epsilon = 0.00001;
+  const double epsilon = 0.00001;
 
   for (size_t i = 0; i < vertex_.size() - 1; i++) {
     product = cross( ( point - vertex_[i] ), ( vertex_[i + 1] - vertex_[i] ) );

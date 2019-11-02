@@ -42,11 +42,11 @@ void SwingFoot::set(vec3_t foot, vec3_t foot_des) {
   cycloid.set(foot, foot_des, step_time);
 }
 
-float SwingFoot::getTime() {
+double SwingFoot::getTime() {
   return step_time;
 }
 
-vec3_t SwingFoot::getTraj(float dt) {
+vec3_t SwingFoot::getTraj(double dt) {
   return cycloid.get(dt);
 }
 

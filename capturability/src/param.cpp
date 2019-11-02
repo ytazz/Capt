@@ -194,7 +194,27 @@ void Param::read(std::string *val, const std::string &name){
   }
 }
 
-void Param::read(int *val, const std::string &name){
+void Param::read(int *val, const std::string &name) {
+  if (equalStr(name, "icp_x_num") )
+    *val = icp_x_num;
+
+  if (equalStr(name, "icp_y_num") )
+    *val = icp_y_num;
+
+  if (equalStr(name, "swf_x_num") )
+    *val = swf_x_num;
+
+  if (equalStr(name, "swf_y_num") )
+    *val = swf_y_num;
+
+  if (equalStr(name, "map_x_num") )
+    *val = map_x_num;
+
+  if (equalStr(name, "map_y_num") )
+    *val = map_y_num;
+}
+
+void Param::read(double *val, const std::string &name){
   if (equalStr(name, "icp_x_min") )
     *val = icp_x_min;
   if (equalStr(name, "icp_x_max") )
@@ -238,35 +258,36 @@ void Param::read(int *val, const std::string &name){
     *val = map_y_stp;
 }
 
-void Param::read(double *val, const std::string &name) {
-  if (equalStr(name, "icp_x_num") )
-    *val = icp_x_num;
-
-  if (equalStr(name, "icp_y_num") )
-    *val = icp_y_num;
-
-  if (equalStr(name, "swf_x_num") )
-    *val = swf_x_num;
-
-  if (equalStr(name, "swf_y_num") )
-    *val = swf_y_num;
-
-  if (equalStr(name, "map_x_num") )
-    *val = map_x_num;
-
-  if (equalStr(name, "map_y_num") )
-    *val = map_y_num;
-}
-
 void Param::calcNum() {
   using namespace CaptEnum;
+  double epsilon = 0.00001;
   if (coordinate == COORD_CARTESIAN) {
-  icp_x_num = round( ( icp_x_max - icp_x_min ) / icp_x_stp) + 1;
-  icp_y_num = round( ( icp_y_max - icp_y_min ) / icp_y_stp) + 1;
-  swf_x_num = round( ( swf_x_max - swf_x_min ) / swf_x_stp) + 1;
-  swf_y_num = round( ( swf_y_max - swf_y_min ) / swf_y_stp) + 1;
-  map_x_num = round( ( map_x_max - map_x_min ) / map_x_stp) + 1;
-  map_y_num = round( ( map_y_max - map_y_min ) / map_y_stp) + 1;
+  if(icp_x_stp > epsilon)
+    icp_x_num = round( ( icp_x_max - icp_x_min ) / icp_x_stp) + 1;
+  else
+    icp_x_num = 0;
+  if(icp_y_stp > epsilon)
+    icp_y_num = round( ( icp_y_max - icp_y_min ) / icp_y_stp) + 1;
+  else
+    icp_y_num = 0;
+  if(swf_x_stp > epsilon)
+    swf_x_num = round( ( swf_x_max - swf_x_min ) / swf_x_stp) + 1;
+  else
+    swf_x_num = 0;
+  if(swf_y_stp > epsilon)
+    swf_y_num = round( ( swf_y_max - swf_y_min ) / swf_y_stp) + 1;
+  else
+    swf_y_num = 0;
+  if(map_x_stp > epsilon)
+    map_x_num = round( ( map_x_max - map_x_min ) / map_x_stp) + 1;
+  else
+    map_x_num = 0;
+  if(map_y_stp > epsilon)
+    map_y_num = round( ( map_y_max - map_y_min ) / map_y_stp) + 1;
+  else
+    map_y_num = 0;
+
+
   }
 }
 

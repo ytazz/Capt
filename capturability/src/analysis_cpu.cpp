@@ -4,7 +4,7 @@ namespace Capt {
 
 Analysis::Analysis(Model model, Param param)
   : model(model), param(param), grid(param),
-    num_state(grid.getNumState() ), num_input(grid.getNumInput() ), num_grid(grid.getNumGrid() ){
+    state_num(grid.getNumState() ), input_num(grid.getNumInput() ), num_grid(grid.getNumGrid() ){
   printf("*** Analysis ***\n");
   printf("  Initializing ... ");
   fflush(stdout);
@@ -30,14 +30,14 @@ Analysis::~Analysis() {
 }
 
 void Analysis::initState(){
-  state = new State[num_state];
-  for (int state_id = 0; state_id < num_state; state_id++)
+  state = new State[state_num];
+  for (int state_id = 0; state_id < state_num; state_id++)
     state[state_id] = grid.getState(state_id);
 }
 
 void Analysis::initInput(){
-  input = new Input[num_input];
-  for (int input_id = 0; input_id < num_input; input_id++)
+  input = new Input[input_num];
+  for (int input_id = 0; input_id < input_num; input_id++)
     input[input_id] = grid.getInput(input_id);
 }
 
@@ -48,8 +48,8 @@ void Analysis::initTrans(){
 }
 
 void Analysis::initBasin(){
-  basin = new int[num_state];
-  for (int state_id = 0; state_id < num_state; state_id++)
+  basin = new int[state_num];
+  for (int state_id = 0; state_id < state_num; state_id++)
     basin[state_id] = -1;
 }
 
@@ -60,8 +60,8 @@ void Analysis::initNstep(){
 }
 
 void Analysis::initCop(){
-  cop = new Vector2[num_state];
-  for (int state_id = 0; state_id < num_state; state_id++)
+  cop = new vec2_t[state_num];
+  for (int state_id = 0; state_id < state_num; state_id++)
     cop[state_id].setCartesian(0.0, 0.0);
 }
 
@@ -78,7 +78,7 @@ void Analysis::calcBasin(){
   foot_r = model.getVec("foot", "foot_r_convex");
 
   if(enableDoubleSupport) {
-    for(int state_id = 0; state_id < num_state; state_id++) {
+    for(int state_id = 0; state_id < state_num; state_id++) {
       foot_l = model.getVec("foot", "foot_l_convex", state[state_id].swf);
       Polygon polygon;
       polygon.setVertex(foot_r);
@@ -88,7 +88,7 @@ void Analysis::calcBasin(){
         basin[state_id] = 0;
     }
   }else{
-    for(int state_id = 0; state_id < num_state; state_id++) {
+    for(int state_id = 0; state_id < state_num; state_id++) {
       Polygon polygon;
       if(polygon.inPolygon(state[state_id].icp, foot_r) )
         basin[state_id] = 0;
@@ -100,16 +100,16 @@ void Analysis::calcBasin(){
 void Analysis::calcCop(){
   Polygon polygon;
   arr2_t  foot_r = model.getVec("foot", "foot_r_convex");
-  for(int state_id = 0; state_id < num_state; state_id++)
+  for(int state_id = 0; state_id < state_num; state_id++)
     cop[state_id] = polygon.getClosestPoint(state[state_id].icp, foot_r);
 }
 
 void Analysis::calcStepTime(){
   SwingFoot swing_foot(model);
 
-  for(int state_id = 0; state_id < num_state; state_id++) {
-    for(int input_id = 0; input_id < num_input; input_id++) {
-      int id = state_id * num_input + input_id;
+  for(int state_id = 0; state_id < state_num; state_id++) {
+    for(int input_id = 0; input_id < input_num; input_id++) {
+      int id = state_id * input_num + input_id;
       swing_foot.set(state[state_id].swf, input[input_id].swf);
       step_time[id] = swing_foot.getTime();
     }
@@ -118,11 +118,11 @@ void Analysis::calcStepTime(){
 
 void Analysis::calcTrans(){
   Pendulum pendulum(model);
-  Vector2  icp;
+  vec2_t  icp;
 
-  for(int state_id = 0; state_id < num_state; state_id++) {
-    for(int input_id = 0; input_id < num_input; input_id++) {
-      int id = state_id * num_input + input_id;
+  for(int state_id = 0; state_id < state_num; state_id++) {
+    for(int input_id = 0; input_id < input_num; input_id++) {
+      int id = state_id * input_num + input_id;
 
       pendulum.setIcp(state[state_id].icp);
       pendulum.setCop(cop[state_id]);
@@ -140,9 +140,9 @@ void Analysis::calcTrans(){
 bool Analysis::exe(const int n){
   bool found = false;
   if(n > 0) {
-    for(int state_id = 0; state_id < num_state; state_id++) {
-      for(int input_id = 0; input_id < num_input; input_id++) {
-        int id = state_id * num_input + input_id;
+    for(int state_id = 0; state_id < state_num; state_id++) {
+      for(int input_id = 0; input_id < input_num; input_id++) {
+        int id = state_id * input_num + input_id;
         if (trans[id] >= 0) {
           if (basin[trans[id]] == ( n - 1 ) ) {
             nstep[id] = n;
@@ -184,7 +184,7 @@ void Analysis::saveCop(std::string file_name, bool header){
   }
 
   // Data
-  for(int state_id = 0; state_id < num_state; state_id++) {
+  for(int state_id = 0; state_id < state_num; state_id++) {
     // fprintf(fp, "%d,", state_id);
     fprintf(fp, "%1.4lf,", cop[state_id].x);
     fprintf(fp, "%1.4lf", cop[state_id].y);
@@ -206,9 +206,9 @@ void Analysis::saveStepTime(std::string file_name, bool header){
   }
 
   // Data
-  for (int state_id = 0; state_id < num_state; state_id++) {
-    for (int input_id = 0; input_id < num_input; input_id++) {
-      int id = state_id * num_input + input_id;
+  for (int state_id = 0; state_id < state_num; state_id++) {
+    for (int input_id = 0; input_id < input_num; input_id++) {
+      int id = state_id * input_num + input_id;
       // fprintf(fp, "%d,", state_id);
       // fprintf(fp, "%d,", input_id);
       fprintf(fp, "%1.4lf", step_time[id]);
@@ -230,7 +230,7 @@ void Analysis::saveBasin(std::string file_name, bool header){
   }
 
   // Data
-  for (int state_id = 0; state_id < num_state; state_id++) {
+  for (int state_id = 0; state_id < state_num; state_id++) {
     // fprintf(fp, "%d,", state_id);
     fprintf(fp, "%d", basin[state_id]);
     fprintf(fp, "\n");
@@ -256,9 +256,9 @@ void Analysis::saveNstep(std::string file_name, bool header){
   for(int i = 0; i < max_step + 1; i++) {
     num_step[i] = 0;
   }
-  for (int state_id = 0; state_id < num_state; state_id++) {
-    for (int input_id = 0; input_id < num_input; input_id++) {
-      int id = state_id * num_input + input_id;
+  for (int state_id = 0; state_id < state_num; state_id++) {
+    for (int input_id = 0; input_id < input_num; input_id++) {
+      int id = state_id * input_num + input_id;
       // fprintf(fp, "%d,", state_id);
       // fprintf(fp, "%d,", input_id);
       fprintf(fp, "%d,", trans[id]);

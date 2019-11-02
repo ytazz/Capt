@@ -59,7 +59,7 @@ private:
   int         *data_basin;            // size = number of state
   CaptureSet **data_nstep;
 
-  int num_state, num_input;
+  int state_num, input_num;
   int max_step;
 };
 

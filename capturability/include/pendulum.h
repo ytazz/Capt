@@ -13,27 +13,27 @@ public:
   Pendulum(Model model);
   ~Pendulum();
 
-  void setCom(const Vector2 com);
+  void setCom(const vec2_t com);
   void setCom(vec3_t com);
-  void setComVel(const Vector2 com_vel);
+  void setComVel(const vec2_t com_vel);
   void setComVel(vec3_t com_vel);
-  void setIcp(const Vector2 icp);
+  void setIcp(const vec2_t icp);
   void setIcp(vec3_t icp);
-  void setCop(const Vector2 cop);
+  void setCop(const vec2_t cop);
   void setCop(vec3_t cop);
 
-  Vector2 getCom(float dt);
-  Vector2 getComVel(float dt);
-  Vector2 getIcp(float dt);
-  Vector2 getIcpVel(float dt);
+  vec2_t getCom(double dt);
+  vec2_t getComVel(double dt);
+  vec2_t getIcp(double dt);
+  vec2_t getIcpVel(double dt);
 
 private:
-  Vector2 com, com_vel;
-  Vector2 icp;
-  Vector2 cop;
-  float g;
-  float h;
-  float omega;
+  vec2_t com, com_vel;
+  vec2_t icp;
+  vec2_t cop;
+  double g;
+  double h;
+  double omega;
 };
 
 } // namespace Capt

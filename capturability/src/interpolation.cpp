@@ -6,8 +6,8 @@ Interpolation::Interpolation() {}
 
 Interpolation::~Interpolation() {}
 
-void Interpolation::set(const float xi_0, const float xi_f, const float d_xi_0,
-                        const float d_xi_f, const float t_f) {
+void Interpolation::set(const double xi_0, const double xi_f, const double d_xi_0,
+                        const double d_xi_f, const double t_f) {
   coef[0] = xi_0;
   coef[1] = d_xi_0;
   coef[2] =
@@ -16,7 +16,7 @@ void Interpolation::set(const float xi_0, const float xi_f, const float d_xi_0,
       (1 / (t_f * t_f * t_f)) * (-2 * (xi_f - xi_0) + (d_xi_0 + d_xi_f) * t_f);
 }
 
-float Interpolation::get(const float t) {
+double Interpolation::get(const double t) {
   return coef[0] + coef[1] * t + coef[2] * t * t + coef[3] * t * t * t;
 }
 }

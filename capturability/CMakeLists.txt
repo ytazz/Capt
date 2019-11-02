@@ -33,8 +33,7 @@ set(CAPT_SOURCES
   # ${PROJECT_SOURCE_DIR}/src/capturability.cpp
   # ${PROJECT_SOURCE_DIR}/src/cycloid.cpp
   # ${PROJECT_SOURCE_DIR}/src/interpolation.cpp
-  # ${PROJECT_SOURCE_DIR}/src/grid.cpp
-  # ${PROJECT_SOURCE_DIR}/src/kinematics.cpp
+  ${PROJECT_SOURCE_DIR}/src/grid.cpp
   ${PROJECT_SOURCE_DIR}/src/loader.cpp
   ${PROJECT_SOURCE_DIR}/src/model.cpp
   ${PROJECT_SOURCE_DIR}/src/param.cpp

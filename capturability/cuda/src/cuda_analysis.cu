@@ -5,7 +5,7 @@ namespace Cuda {
 __host__ void saveBasin(std::string file_name, Condition cond, int *basin,
                         bool header) {
   FILE     *fp        = fopen(file_name.c_str(), "w");
-  const int num_state = cond.grid->getNumState();
+  const int state_num = cond.grid->getNumState();
 
   // Header
   if (header) {
@@ -15,7 +15,7 @@ __host__ void saveBasin(std::string file_name, Condition cond, int *basin,
   }
 
   // Data
-  for (int state_id = 0; state_id < num_state; state_id++) {
+  for (int state_id = 0; state_id < state_num; state_id++) {
     // fprintf(fp, "%d,", state_id);
     fprintf(fp, "%d", basin[state_id]);
     fprintf(fp, "\n");
@@ -27,8 +27,8 @@ __host__ void saveBasin(std::string file_name, Condition cond, int *basin,
 __host__ void saveNStep(std::string file_name, Condition cond, int *nstep, int *trans,
                         bool header) {
   FILE     *fp        = fopen(file_name.c_str(), "w");
-  const int num_state = cond.grid->getNumState();
-  const int num_input = cond.grid->getNumInput();
+  const int state_num = cond.grid->getNumState();
+  const int input_num = cond.grid->getNumInput();
   int       max_step  = 0;
 
   // Header
@@ -41,9 +41,9 @@ __host__ void saveNStep(std::string file_name, Condition cond, int *nstep, int *
   }
 
   // Data
-  for (int state_id = 0; state_id < num_state; state_id++) {
-    for (int input_id = 0; input_id < num_input; input_id++) {
-      int id = state_id * num_input + input_id;
+  for (int state_id = 0; state_id < state_num; state_id++) {
+    for (int input_id = 0; input_id < input_num; input_id++) {
+      int id = state_id * input_num + input_id;
       if (max_step < nstep[id])
         max_step = nstep[id];
     }
@@ -53,9 +53,9 @@ __host__ void saveNStep(std::string file_name, Condition cond, int *nstep, int *
   for(int i = 0; i < max_step + 1; i++) {
     num_step[i] = 0;
   }
-  for (int state_id = 0; state_id < num_state; state_id++) {
-    for (int input_id = 0; input_id < num_input; input_id++) {
-      int id = state_id * num_input + input_id;
+  for (int state_id = 0; state_id < state_num; state_id++) {
+    for (int input_id = 0; input_id < input_num; input_id++) {
+      int id = state_id * input_num + input_id;
       // fprintf(fp, "%d,", state_id);
       // fprintf(fp, "%d,", input_id);
       fprintf(fp, "%d,", trans[id]);
@@ -78,7 +78,7 @@ __host__ void saveNStep(std::string file_name, Condition cond, int *nstep, int *
 __host__ void saveCop(std::string file_name, Condition cond, Vector2 *cop,
                       bool header){
   FILE     *fp        = fopen(file_name.c_str(), "w");
-  const int num_state = cond.grid->getNumState();
+  const int state_num = cond.grid->getNumState();
 
   // Header
   if (header) {
@@ -89,7 +89,7 @@ __host__ void saveCop(std::string file_name, Condition cond, Vector2 *cop,
   }
 
   // Data
-  for(int state_id = 0; state_id < num_state; state_id++) {
+  for(int state_id = 0; state_id < state_num; state_id++) {
     // fprintf(fp, "%d,", state_id);
     fprintf(fp, "%1.4lf,", cop[state_id].x_);
     fprintf(fp, "%1.4lf", cop[state_id].y_);
@@ -102,8 +102,8 @@ __host__ void saveCop(std::string file_name, Condition cond, Vector2 *cop,
 __host__ void saveStepTime(std::string file_name, Condition cond, double *step_time,
                            bool header){
   FILE     *fp        = fopen(file_name.c_str(), "w");
-  const int num_state = cond.grid->getNumState();
-  const int num_input = cond.grid->getNumInput();
+  const int state_num = cond.grid->getNumState();
+  const int input_num = cond.grid->getNumInput();
 
   // Header
   if (header) {
@@ -114,9 +114,9 @@ __host__ void saveStepTime(std::string file_name, Condition cond, double *step_t
   }
 
   // Data
-  for (int state_id = 0; state_id < num_state; state_id++) {
-    for (int input_id = 0; input_id < num_input; input_id++) {
-      int id = state_id * num_input + input_id;
+  for (int state_id = 0; state_id < state_num; state_id++) {
+    for (int input_id = 0; input_id < input_num; input_id++) {
+      int id = state_id * input_num + input_id;
       // fprintf(fp, "%d,", state_id);
       // fprintf(fp, "%d,", input_id);
       fprintf(fp, "%1.4lf", step_time[id]);
@@ -340,7 +340,7 @@ __device__ int getStateIndex(State state, GridPolar *grid) {
 __global__ void calcCop(State *state, GridCartesian *grid, Vector2 *foot_r, Vector2 *cop){
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
-  while (tid < grid->num_state) {
+  while (tid < grid->state_num) {
     cop[tid] = getClosestPoint(state[tid].icp, foot_r, grid->num_foot_r );
 
     tid += blockDim.x * gridDim.x;
@@ -351,9 +351,9 @@ __global__ void calcStepTime(State *state, Input *input, GridCartesian *grid, do
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
   Vector2 foot_dist;
-  while (tid < grid->num_state * grid->num_input) {
-    int state_id = tid / grid->num_input;
-    int input_id = tid % grid->num_input;
+  while (tid < grid->state_num * grid->input_num) {
+    int state_id = tid / grid->input_num;
+    int input_id = tid % grid->input_num;
 
     foot_dist      = state[state_id].swf - input[input_id].swf;
     step_time[tid] = foot_dist.norm() / physics->v + physics->dt;
@@ -367,15 +367,15 @@ __global__ void calcBasin(State *state, int *basin, GridCartesian *grid, Vector2
   const int max_size = grid->num_foot_r + grid->num_foot_l;
 
   if(enableDoubleSupport) {
-    while (tid < grid->num_state) {
-      int swf_id = tid % grid->num_input;
+    while (tid < grid->state_num) {
+      int swf_id = tid % grid->input_num;
 
       if(inPolygon(state[tid].icp, convex, max_size, swf_id) )
         basin[tid] = 0;
       tid += blockDim.x * gridDim.x;
     }
   }else{
-    while (tid < grid->num_state) {
+    while (tid < grid->state_num) {
       if(inPolygon(state[tid].icp, foot_r, grid->num_foot_r) )
         basin[tid] = 0;
       tid += blockDim.x * gridDim.x;
@@ -387,9 +387,9 @@ __global__ void calcTrans(State *state, Input *input, int *trans, GridCartesian 
                           Vector2 *cop, double *step_time, Physics *physics){
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
-  while (tid < grid->num_state * grid->num_input) {
-    int state_id = tid / grid->num_input;
-    int input_id = tid % grid->num_input;
+  while (tid < grid->state_num * grid->input_num) {
+    int state_id = tid / grid->input_num;
+    int input_id = tid % grid->input_num;
 
     State state_ = step(state[state_id], input[input_id], cop[state_id], step_time[tid], physics);
     if (existState(state_, grid) )
@@ -405,9 +405,9 @@ __global__ void calcTrans(State *state, Input *input, int *trans, GridPolar *gri
                           Vector2 *cop, double *step_time, Physics *physics){
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
-  while (tid < grid->num_state * grid->num_input) {
-    int state_id = tid / grid->num_input;
-    int input_id = tid % grid->num_input;
+  while (tid < grid->state_num * grid->input_num) {
+    int state_id = tid / grid->input_num;
+    int input_id = tid % grid->input_num;
 
     State state_ = step(state[state_id], input[input_id], cop[state_id], step_time[tid], physics);
     if (existState(state_, grid) )
@@ -423,9 +423,9 @@ __global__ void exeNstep(int N, int *basin,
                          int *nstep, int *trans, GridCartesian *grid) {
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
-  while (tid < grid->num_state * grid->num_input) {
-    int state_id = tid / grid->num_input;
-    // int input_id = tid % grid->num_input;
+  while (tid < grid->state_num * grid->input_num) {
+    int state_id = tid / grid->input_num;
+    // int input_id = tid % grid->input_num;
 
     if (trans[tid] >= 0) {
       if (basin[trans[tid]] == ( N - 1 ) ) {
@@ -444,9 +444,9 @@ __global__ void exeNstep(int N, int *basin,
                          int *nstep, int *trans, GridPolar *grid) {
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
-  while (tid < grid->num_state * grid->num_input) {
-    int state_id = tid / grid->num_input;
-    // int input_id = tid % grid->num_input;
+  while (tid < grid->state_num * grid->input_num) {
+    int state_id = tid / grid->input_num;
+    // int input_id = tid % grid->input_num;
 
     if (trans[tid] >= 0) {
       if (basin[trans[tid]] == ( N - 1 ) ) {

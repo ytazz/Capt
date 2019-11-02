@@ -61,11 +61,11 @@ private:
   int     *trans;
   int     *basin;
   int     *nstep;
-  Vector2 *cop;
+  vec2_t *cop;
   double  *step_time;
 
-  const int num_state;
-  const int num_input;
+  const int state_num;
+  const int input_num;
   const int num_grid;
 
   // 解析結果の最大踏み出し歩数

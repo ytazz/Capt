@@ -8,12 +8,12 @@ public:
   Interpolation();
   ~Interpolation();
 
-  void set(const float xi_0, const float xi_f, const float d_xi_0,
-           const float d_xi_f, const float t_f);
-  float get(const float t);
+  void set(const double xi_0, const double xi_f, const double d_xi_0,
+           const double d_xi_f, const double t_f);
+  double get(const double t);
 
 private:
-  float coef[4];
+  double coef[4];
 };
 }
 #endif

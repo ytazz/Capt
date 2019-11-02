@@ -2,11 +2,11 @@
 
 namespace Capt {
 
-float dot(vec2_t v1, vec2_t v2){
+double dot(vec2_t v1, vec2_t v2){
   return v1.x() * v2.x() + v1.y() * v2.y();
 }
 
-float cross(vec2_t v1, vec2_t v2){
+double cross(vec2_t v1, vec2_t v2){
   return v1.x() * v2.y() - v1.y() * v2.x();
 }
 
@@ -17,14 +17,20 @@ vec2_t normal(vec2_t v) {
 }
 
 int round(double value) {
-  int result = (int)value;
+  int integer = (int)value;
 
-  double decimal = value - (int)value;
-  if (decimal >= 0.5) {
-    result += 1;
+  double decimal = value - integer;
+  if(decimal > 0) {
+    if (decimal >= 0.5) {
+      integer += 1;
+    }
+  }else{
+    if (decimal <= -0.5) {
+      integer -= 1;
+    }
   }
 
-  return result;
+  return integer;
 }
 
 } // namespace Capt

@@ -11,8 +11,8 @@
 
 namespace Capt {
 
-namespace GridSpace {
-enum Element { MIN, MAX, STEP, NUMELEMENT };
+namespace CaptEnum {
+enum Element { MIN, MAX, STP, NUMELEMENT };
 }
 
 struct GridState {
@@ -37,13 +37,11 @@ struct GridInput {
 
 class Grid {
 public:
-  Grid(Param param);
+  Grid(Param *param);
   ~Grid();
 
   State getState(int index);
   Input getInput(int index);
-
-  int getStateIndex(State state_);
 
   bool existState(int state_id);
   bool existState(State state_);
@@ -53,47 +51,38 @@ public:
   int getNumInput();
   int getNumGrid();
 
+  int getStateIndex(State state_);
+
   GridState roundState(State state_);
+
+  void print();
 
 private:
   void create();
 
-  void setStatePolar(float icp_r, float icp_th, float swf_r, float swf_th);
-  void setStateCartesian(float icp_x, float icp_y, float swf_x, float swf_y);
-  void setInputPolar(float swf_r, float swf_th);
-  void setInputCartesian(float swf_x, float swf_y);
+  void setState(double icp_x, double icp_y, double swf_x, double swf_y);
+  void setInput(double swf_x, double swf_y);
 
-  int getStateIndexCartesian(int icp_x_id, int icp_y_id, int swf_x_id, int swf_y_id);
-  int getStateIndexPolar(int icp_r_id, int icp_th_id, int swf_r_id, int swf_th_id);
+  int getStateIndex(int icp_x_id, int icp_y_id, int swf_x_id, int swf_y_id);
 
-  int round(double value);
   int max(int val1, int val2);
   int max(int val1, int val2, int val3, int val4);
 
-  Param             param;
-  const std::string coord;
+  Param *param;
 
   std::vector<State> state;
   std::vector<Input> input;
 
-  int num_state;
-  int num_input;
+  int state_num;
+  int input_num;
 
-  int num_icp_r, num_icp_th;
-  int num_swf_r, num_swf_th;
+  int icp_x_num, icp_y_num;
+  int swf_x_num, swf_y_num;
 
-  int num_icp_x, num_icp_y;
-  int num_swf_x, num_swf_y;
-
-  float icp_r[GridSpace::NUMELEMENT];
-  float icp_th[GridSpace::NUMELEMENT];
-  float swf_r[GridSpace::NUMELEMENT];
-  float swf_th[GridSpace::NUMELEMENT];
-
-  float icp_x[GridSpace::NUMELEMENT];
-  float icp_y[GridSpace::NUMELEMENT];
-  float swf_x[GridSpace::NUMELEMENT];
-  float swf_y[GridSpace::NUMELEMENT];
+  double icp_x[CaptEnum::NUMELEMENT];
+  double icp_y[CaptEnum::NUMELEMENT];
+  double swf_x[CaptEnum::NUMELEMENT];
+  double swf_y[CaptEnum::NUMELEMENT];
 };
 
 } // namespace Capt

@@ -5,8 +5,8 @@ namespace Cuda {
 /* struct */
 
 void GridCartesian::operator=(const GridCartesian &grid){
-  this->num_state  = grid.num_state;
-  this->num_input  = grid.num_input;
+  this->state_num  = grid.state_num;
+  this->input_num  = grid.input_num;
   this->num_grid   = grid.num_grid;
   this->num_foot_r = grid.num_foot_r;
   this->num_foot_l = grid.num_foot_l;
@@ -31,8 +31,8 @@ void GridCartesian::operator=(const GridCartesian &grid){
 }
 
 void GridPolar::operator=(const GridPolar &grid){
-  this->num_state  = grid.num_state;
-  this->num_input  = grid.num_input;
+  this->state_num  = grid.state_num;
+  this->input_num  = grid.input_num;
   this->num_grid   = grid.num_grid;
   this->num_foot_r = grid.num_foot_r;
   this->num_foot_l = grid.num_foot_l;
@@ -68,27 +68,27 @@ __device__ void Input::operator=(const Input &input) {
 /* host function */
 
 void MemoryManager::setGrid(GridCartesian* grid){
-  this->grid.num_state  = grid->num_state;
-  this->grid.num_input  = grid->num_input;
+  this->grid.state_num  = grid->state_num;
+  this->grid.input_num  = grid->input_num;
   this->grid.num_grid   = grid->num_grid;
   this->grid.num_foot_r = grid->num_foot_r;
   this->grid.num_foot_l = grid->num_foot_l;
 }
 
 void MemoryManager::setGrid(GridPolar* grid){
-  this->grid.num_state  = grid->num_state;
-  this->grid.num_input  = grid->num_input;
+  this->grid.state_num  = grid->state_num;
+  this->grid.input_num  = grid->input_num;
   this->grid.num_grid   = grid->num_grid;
   this->grid.num_foot_r = grid->num_foot_r;
   this->grid.num_foot_l = grid->num_foot_l;
 }
 
 __host__ void MemoryManager::initHostState(State *state, Condition cond) {
-  const int num_state = cond.grid->getNumState();
+  const int state_num = cond.grid->getNumState();
 
-  // state = (Cuda::State*)malloc(sizeof( Cuda::State ) * num_state);
+  // state = (Cuda::State*)malloc(sizeof( Cuda::State ) * state_num);
 
-  for (int state_id = 0; state_id < num_state; state_id++) {
+  for (int state_id = 0; state_id < state_num; state_id++) {
     state[state_id].icp.x_  = cond.grid->getState(state_id).icp.x;
     state[state_id].icp.y_  = cond.grid->getState(state_id).icp.y;
     state[state_id].icp.r_  = cond.grid->getState(state_id).icp.r;
@@ -101,11 +101,11 @@ __host__ void MemoryManager::initHostState(State *state, Condition cond) {
 }
 
 __host__ void MemoryManager::initHostInput(Input *input, Condition cond) {
-  const int num_input = cond.grid->getNumInput();
+  const int input_num = cond.grid->getNumInput();
 
-  // input = (Cuda::Input*)malloc(sizeof( Cuda::Input ) * num_input );
+  // input = (Cuda::Input*)malloc(sizeof( Cuda::Input ) * input_num );
 
-  for (int input_id = 0; input_id < num_input; input_id++) {
+  for (int input_id = 0; input_id < input_num; input_id++) {
     input[input_id].swf.x_  = cond.grid->getInput(input_id).swf.x;
     input[input_id].swf.y_  = cond.grid->getInput(input_id).swf.y;
     input[input_id].swf.r_  = cond.grid->getInput(input_id).swf.r;
@@ -114,30 +114,30 @@ __host__ void MemoryManager::initHostInput(Input *input, Condition cond) {
 }
 
 __host__ void MemoryManager::initHostTrans(int *trans, Condition cond) {
-  const int num_state = cond.grid->getNumState();
-  const int num_input = cond.grid->getNumInput();
+  const int state_num = cond.grid->getNumState();
+  const int input_num = cond.grid->getNumInput();
 
-  // trans = (int*)malloc(sizeof( int ) * num_state * num_input );
+  // trans = (int*)malloc(sizeof( int ) * state_num * input_num );
 
-  for (int grid_id = 0; grid_id < num_state * num_input; grid_id++) {
+  for (int grid_id = 0; grid_id < state_num * input_num; grid_id++) {
     trans[grid_id] = -1;
   }
 }
 
 __host__ void MemoryManager::initHostBasin(int *basin, Condition cond) {
-  const int num_state = cond.grid->getNumState();
+  const int state_num = cond.grid->getNumState();
 
-  // basin = (int*)malloc(sizeof( int ) * num_state );
+  // basin = (int*)malloc(sizeof( int ) * state_num );
 
-  for (int state_id = 0; state_id < num_state; state_id++) {
+  for (int state_id = 0; state_id < state_num; state_id++) {
     basin[state_id] = -1;
   }
 }
 
 __host__ void MemoryManager::initHostNstep(int *nstep, Condition cond) {
-  const int num_state = cond.grid->getNumState();
-  const int num_input = cond.grid->getNumInput();
-  const int num_grid  = num_state * num_input;
+  const int state_num = cond.grid->getNumState();
+  const int input_num = cond.grid->getNumInput();
+  const int num_grid  = state_num * input_num;
 
   // nstep = (int*)malloc(sizeof( int ) * num_grid );
 
@@ -149,8 +149,8 @@ __host__ void MemoryManager::initHostNstep(int *nstep, Condition cond) {
 __host__ void MemoryManager::initHostGrid(GridCartesian *grid, Condition cond) {
   // grid = new Cuda::GridCartesian;
 
-  grid->num_state  = cond.grid->getNumState();
-  grid->num_input  = cond.grid->getNumInput();
+  grid->state_num  = cond.grid->getNumState();
+  grid->input_num  = cond.grid->getNumInput();
   grid->num_grid   = cond.grid->getNumState() * cond.grid->getNumInput();
   grid->num_foot_r = (int)cond.model->getVec("foot", "foot_r_convex").size();
   grid->num_foot_l = (int)cond.model->getVec("foot", "foot_l_convex").size();
@@ -179,8 +179,8 @@ __host__ void MemoryManager::initHostGrid(GridCartesian *grid, Condition cond) {
 __host__ void MemoryManager::initHostGrid(GridPolar *grid, Condition cond) {
   // grid = new Cuda::GridPolar;
 
-  grid->num_state  = cond.grid->getNumState();
-  grid->num_input  = cond.grid->getNumInput();
+  grid->state_num  = cond.grid->getNumState();
+  grid->input_num  = cond.grid->getNumInput();
   grid->num_grid   = cond.grid->getNumState() * cond.grid->getNumInput();
   grid->num_foot_r = (int)cond.model->getVec("foot", "foot_r_convex").size();
   grid->num_foot_l = (int)cond.model->getVec("foot", "foot_l_convex").size();
@@ -242,8 +242,8 @@ __host__ void MemoryManager::initHostConvex(Vector2 *convex, Condition cond){
     // equal to following index:
     //  icp_x_id (icp_r_id)  = 0
     //  icp_y_id (icp_th_id) = 0
-    //  swf_x_id (swf_r_id)  = * (< num_swf_x)
-    //  swf_y_id (swf_th_id) = * (< num_swf_y)
+    //  swf_x_id (swf_r_id)  = * (< swf_x_num)
+    //  swf_y_id (swf_th_id) = * (< swf_y_num)
     cfoot_l = cond.model->getVec("foot", "foot_l_convex", cond.grid->getState(swf_id).swf);
 
     Capt::Polygon polygon;
@@ -270,9 +270,9 @@ __host__ void MemoryManager::initHostConvex(Vector2 *convex, Condition cond){
 }
 
 __host__ void MemoryManager::initHostCop(Vector2 *cop, Condition cond){
-  // cop = new Cuda::Vector2[grid.num_state];
+  // cop = new Cuda::Vector2[grid.state_num];
 
-  for (int state_id = 0; state_id < grid.num_state; state_id++) {
+  for (int state_id = 0; state_id < grid.state_num; state_id++) {
     cop[state_id].x_  = 0.0;
     cop[state_id].y_  = 0.0;
     cop[state_id].r_  = 0.0;
@@ -297,11 +297,11 @@ __host__ void MemoryManager::initHostPhysics(Physics *physics, Condition cond){
 }
 
 __host__ void MemoryManager::initDevState(Cuda::State *dev_state){
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_state, grid.num_state * sizeof( Cuda::State ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_state, grid.state_num * sizeof( Cuda::State ) ) );
 }
 
 __host__ void MemoryManager::initDevInput(Cuda::Input *dev_input){
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_input, grid.num_input * sizeof( Cuda::Input ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_input, grid.input_num * sizeof( Cuda::Input ) ) );
 }
 
 __host__ void MemoryManager::initDevTrans(int *dev_trans){
@@ -309,7 +309,7 @@ __host__ void MemoryManager::initDevTrans(int *dev_trans){
 }
 
 __host__ void MemoryManager::initDevBasin(int *dev_basin){
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_basin, grid.num_state * sizeof( int ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_basin, grid.state_num * sizeof( int ) ) );
 }
 
 __host__ void MemoryManager::initDevNstep(int *dev_nstep){
@@ -333,11 +333,11 @@ __host__ void MemoryManager::initDevFootL(Vector2 *dev_foot_l){
 }
 
 __host__ void MemoryManager::initDevConvex(Vector2 *dev_convex){
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_convex, grid.num_input * ( grid.num_foot_r + grid.num_foot_l ) * sizeof( Cuda::Vector2 ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_convex, grid.input_num * ( grid.num_foot_r + grid.num_foot_l ) * sizeof( Cuda::Vector2 ) ) );
 }
 
 __host__ void MemoryManager::initDevCop(Vector2 *dev_cop){
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_cop, grid.num_state * sizeof( Cuda::Vector2 ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_cop, grid.state_num * sizeof( Cuda::Vector2 ) ) );
 }
 
 __host__ void MemoryManager::initDevStepTime(double *dev_step_time){
@@ -349,11 +349,11 @@ __host__ void MemoryManager::initDevPhysics(Physics *dev_physics){
 }
 
 __host__ void MemoryManager::copyHostToDevState(State *state, Cuda::State *dev_state){
-  HANDLE_ERROR(cudaMemcpy(dev_state, state, grid.num_state * sizeof( Cuda::State ), cudaMemcpyHostToDevice) );
+  HANDLE_ERROR(cudaMemcpy(dev_state, state, grid.state_num * sizeof( Cuda::State ), cudaMemcpyHostToDevice) );
 }
 
 __host__ void MemoryManager::copyHostToDevInput(Input *input, Cuda::Input *dev_input){
-  HANDLE_ERROR(cudaMemcpy(dev_input, input, grid.num_input * sizeof( Cuda::Input ), cudaMemcpyHostToDevice) );
+  HANDLE_ERROR(cudaMemcpy(dev_input, input, grid.input_num * sizeof( Cuda::Input ), cudaMemcpyHostToDevice) );
 }
 
 __host__ void MemoryManager::copyHostToDevTrans(int *trans, int *dev_trans){
@@ -361,7 +361,7 @@ __host__ void MemoryManager::copyHostToDevTrans(int *trans, int *dev_trans){
 }
 
 __host__ void MemoryManager::copyHostToDevBasin(int *basin, int *dev_basin){
-  HANDLE_ERROR(cudaMemcpy(dev_basin, basin, grid.num_state * sizeof( int ), cudaMemcpyHostToDevice) );
+  HANDLE_ERROR(cudaMemcpy(dev_basin, basin, grid.state_num * sizeof( int ), cudaMemcpyHostToDevice) );
 }
 
 __host__ void MemoryManager::copyHostToDevNstep(int *nstep, int *dev_nstep){
@@ -385,11 +385,11 @@ __host__ void MemoryManager::copyHostToDevFootL(Vector2 *foot_l, Vector2 *dev_fo
 }
 
 __host__ void MemoryManager::copyHostToDevConvex(Vector2 *convex, Vector2 *dev_convex){
-  HANDLE_ERROR(cudaMemcpy(dev_convex, convex, grid.num_input * ( grid.num_foot_r + grid.num_foot_l ) * sizeof( Cuda::Vector2 ), cudaMemcpyHostToDevice ) );
+  HANDLE_ERROR(cudaMemcpy(dev_convex, convex, grid.input_num * ( grid.num_foot_r + grid.num_foot_l ) * sizeof( Cuda::Vector2 ), cudaMemcpyHostToDevice ) );
 }
 
 __host__ void MemoryManager::copyHostToDevCop(Vector2 *cop, Vector2 *dev_cop){
-  HANDLE_ERROR(cudaMemcpy(dev_cop, cop, grid.num_state * sizeof( Cuda::Vector2 ), cudaMemcpyHostToDevice ) );
+  HANDLE_ERROR(cudaMemcpy(dev_cop, cop, grid.state_num * sizeof( Cuda::Vector2 ), cudaMemcpyHostToDevice ) );
 }
 
 __host__ void MemoryManager::copyHostToDevStepTime(double *step_time, double *dev_step_time){
@@ -401,11 +401,11 @@ __host__ void MemoryManager::copyHostToDevPhysics(Physics *physics, Physics *dev
 }
 
 __host__ void MemoryManager::copyDevToHostState(Cuda::State *dev_state, State *state){
-  HANDLE_ERROR(cudaMemcpy(state, dev_state, grid.num_state * sizeof( Cuda::State ), cudaMemcpyDeviceToHost) );
+  HANDLE_ERROR(cudaMemcpy(state, dev_state, grid.state_num * sizeof( Cuda::State ), cudaMemcpyDeviceToHost) );
 }
 
 __host__ void MemoryManager::copyDevToHostInput(Cuda::Input *dev_input, Input *input){
-  HANDLE_ERROR(cudaMemcpy(input, dev_input, grid.num_input * sizeof( Cuda::Input ), cudaMemcpyDeviceToHost) );
+  HANDLE_ERROR(cudaMemcpy(input, dev_input, grid.input_num * sizeof( Cuda::Input ), cudaMemcpyDeviceToHost) );
 }
 
 __host__ void MemoryManager::copyDevToHostTrans(int *dev_trans, int *trans){
@@ -413,7 +413,7 @@ __host__ void MemoryManager::copyDevToHostTrans(int *dev_trans, int *trans){
 }
 
 __host__ void MemoryManager::copyDevToHostBasin(int *dev_basin, int *basin){
-  HANDLE_ERROR(cudaMemcpy(basin, dev_basin, grid.num_state * sizeof( int ), cudaMemcpyDeviceToHost) );
+  HANDLE_ERROR(cudaMemcpy(basin, dev_basin, grid.state_num * sizeof( int ), cudaMemcpyDeviceToHost) );
 }
 
 __host__ void MemoryManager::copyDevToHostNstep(int *dev_nstep, int *nstep){
@@ -437,11 +437,11 @@ __host__ void MemoryManager::copyDevToHostFootL(Vector2 *dev_foot_l, Vector2 *fo
 }
 
 __host__ void MemoryManager::copyDevToHostConvex(Vector2 *dev_convex, Vector2 *convex){
-  HANDLE_ERROR(cudaMemcpy(convex, dev_convex, grid.num_input * ( grid.num_foot_r + grid.num_foot_l ) * sizeof( Cuda::Vector2 ), cudaMemcpyDeviceToHost) );
+  HANDLE_ERROR(cudaMemcpy(convex, dev_convex, grid.input_num * ( grid.num_foot_r + grid.num_foot_l ) * sizeof( Cuda::Vector2 ), cudaMemcpyDeviceToHost) );
 }
 
 __host__ void MemoryManager::copyDevToHostCop(Vector2 *dev_cop, Vector2 *cop){
-  HANDLE_ERROR(cudaMemcpy(cop, dev_cop, grid.num_state * sizeof( Cuda::Vector2 ), cudaMemcpyDeviceToHost) );
+  HANDLE_ERROR(cudaMemcpy(cop, dev_cop, grid.state_num * sizeof( Cuda::Vector2 ), cudaMemcpyDeviceToHost) );
 }
 
 __host__ void MemoryManager::copyDevToHostStepTime(double *dev_step_time, double *step_time){

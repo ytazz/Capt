@@ -2,9 +2,9 @@
 
 namespace Capt {
 
-Analysis::Analysis(Model model, Param param)
-  : model(model), param(param), grid(param),
-    state_num(grid.getNumState() ), input_num(grid.getNumInput() ), num_grid(grid.getNumGrid() ){
+Analysis::Analysis(Model *model, Grid *grid)
+  : model(model), grid(grid),
+    state_num(grid->getNumState() ), input_num(grid->getNumInput() ), grid_num(grid->getNumGrid() ){
   printf("*** Analysis ***\n");
   printf("  Initializing ... ");
   fflush(stdout);
@@ -32,18 +32,18 @@ Analysis::~Analysis() {
 void Analysis::initState(){
   state = new State[state_num];
   for (int state_id = 0; state_id < state_num; state_id++)
-    state[state_id] = grid.getState(state_id);
+    state[state_id] = grid->getState(state_id);
 }
 
 void Analysis::initInput(){
   input = new Input[input_num];
   for (int input_id = 0; input_id < input_num; input_id++)
-    input[input_id] = grid.getInput(input_id);
+    input[input_id] = grid->getInput(input_id);
 }
 
 void Analysis::initTrans(){
-  trans = new int[num_grid];
-  for (int id = 0; id < num_grid; id++)
+  trans = new int[grid_num];
+  for (int id = 0; id < grid_num; id++)
     trans[id] = -1;
 }
 
@@ -54,20 +54,20 @@ void Analysis::initBasin(){
 }
 
 void Analysis::initNstep(){
-  nstep = new int[num_grid];
-  for (int id = 0; id < num_grid; id++)
+  nstep = new int[grid_num];
+  for (int id = 0; id < grid_num; id++)
     nstep[id] = -1;
 }
 
 void Analysis::initCop(){
   cop = new vec2_t[state_num];
   for (int state_id = 0; state_id < state_num; state_id++)
-    cop[state_id].setCartesian(0.0, 0.0);
+    cop[state_id] << 0.0, 0.0;
 }
 
 void Analysis::initStepTime(){
-  step_time = new double[num_grid];
-  for (int id = 0; id < num_grid; id++)
+  step_time = new double[grid_num];
+  for (int id = 0; id < grid_num; id++)
     step_time[id] = 0.0;
 }
 
@@ -75,11 +75,11 @@ void Analysis::calcBasin(){
   arr2_t foot_r;
   arr2_t foot_l;
   arr2_t region;
-  foot_r = model.getVec("foot", "foot_r_convex");
+  model->read(&foot_r, "foot_r_convex");
 
   if(enableDoubleSupport) {
     for(int state_id = 0; state_id < state_num; state_id++) {
-      foot_l = model.getVec("foot", "foot_l_convex", state[state_id].swf);
+      model->read(&foot_l, "foot_l_convex", state[state_id].swf);
       Polygon polygon;
       polygon.setVertex(foot_r);
       polygon.setVertex(foot_l);
@@ -98,8 +98,9 @@ void Analysis::calcBasin(){
 }
 
 void Analysis::calcCop(){
+  arr2_t foot_r;
+  model->read(&foot_r, "foot_r_convex");
   Polygon polygon;
-  arr2_t  foot_r = model.getVec("foot", "foot_r_convex");
   for(int state_id = 0; state_id < state_num; state_id++)
     cop[state_id] = polygon.getClosestPoint(state[state_id].icp, foot_r);
 }
@@ -118,7 +119,7 @@ void Analysis::calcStepTime(){
 
 void Analysis::calcTrans(){
   Pendulum pendulum(model);
-  vec2_t  icp;
+  vec2_t   icp;
 
   for(int state_id = 0; state_id < state_num; state_id++) {
     for(int input_id = 0; input_id < input_num; input_id++) {
@@ -129,10 +130,10 @@ void Analysis::calcTrans(){
       icp = pendulum.getIcp(step_time[id]);
 
       State state_;
-      state_.icp.setCartesian(-input[input_id].swf.x + icp.x, input[input_id].swf.y - icp.y);
-      state_.swf.setCartesian(-input[input_id].swf.x, input[input_id].swf.y);
+      state_.icp << -input[input_id].swf.x() + icp.x(), input[input_id].swf.y() - icp.y();
+      state_.swf << -input[input_id].swf.x(), input[input_id].swf.y();
 
-      trans[id] = grid.roundState(state_).id;
+      trans[id] = grid->roundState(state_).id;
     }
   }
 }
@@ -186,8 +187,8 @@ void Analysis::saveCop(std::string file_name, bool header){
   // Data
   for(int state_id = 0; state_id < state_num; state_id++) {
     // fprintf(fp, "%d,", state_id);
-    fprintf(fp, "%1.4lf,", cop[state_id].x);
-    fprintf(fp, "%1.4lf", cop[state_id].y);
+    fprintf(fp, "%1.4lf,", cop[state_id].x() );
+    fprintf(fp, "%1.4lf", cop[state_id].y() );
     fprintf(fp, "\n");
   }
 

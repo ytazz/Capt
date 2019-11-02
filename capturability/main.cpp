@@ -10,10 +10,11 @@ int main(int argc, char const *argv[]) {
   std::chrono::system_clock::time_point start, end_exe, end_save;
   start = std::chrono::system_clock::now();
 
-  Model model("data/valkyrie.xml");
-  Param param("data/valkyrie_xy.xml");
+  Model *model = new Model("data/valkyrie.xml");
+  Param *param = new Param("data/valkyrie_xy.xml");
+  Grid  *grid  = new Grid(param);
 
-  Analysis analysis(model, param);
+  Analysis analysis(model, grid);
   analysis.exe();
   end_exe = std::chrono::system_clock::now();
 

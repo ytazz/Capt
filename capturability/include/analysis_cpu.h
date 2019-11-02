@@ -21,7 +21,7 @@ namespace Capt {
 class Analysis {
 
 public:
-  Analysis(Model model, Param param);
+  Analysis(Model *model, Grid *grid);
   ~Analysis();
 
   // 解析用変数を初期化し、初期値を代入する
@@ -52,21 +52,20 @@ public:
 private:
   bool exe(const int n);
 
-  Model model;
-  Param param;
-  Grid  grid;
+  Model *model;
+  Grid  *grid;
 
-  State   *state;
-  Input   *input;
-  int     *trans;
-  int     *basin;
-  int     *nstep;
+  State  *state;
+  Input  *input;
+  int    *trans;
+  int    *basin;
+  int    *nstep;
   vec2_t *cop;
-  double  *step_time;
+  double *step_time;
 
   const int state_num;
   const int input_num;
-  const int num_grid;
+  const int grid_num;
 
   // 解析結果の最大踏み出し歩数
   int max_step;

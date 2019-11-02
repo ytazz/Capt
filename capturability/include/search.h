@@ -9,8 +9,6 @@
 
 namespace Capt {
 
-enum Foot { RFOOT = 0, LFOOT = 1 };
-
 struct Node {
   Node * parent;
   int    state_id;

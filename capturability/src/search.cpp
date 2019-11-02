@@ -69,13 +69,14 @@ bool Search::existOpen(){
 void Search::exe(){
   // Calculate initial state
   State state;
-  if(s_suf == RFOOT) {
+  if(s_suf == FOOT_R) {
     state.swf = s_lfoot - s_rfoot;
     state.icp = s_icp - s_rfoot;
   }else{
     state.swf = s_rfoot - s_lfoot;
     state.icp = s_icp - s_lfoot;
   }
+  state.print();
 
   // Calculate initial node
   Node node;
@@ -94,15 +95,16 @@ void Search::exe(){
 }
 
 void Search::step(){
-  if(existOpen() ) {
-    openNode(opens[0]);
-  }
-
   printf("-----------------------------\n");
+  printf("opens: %d\n", (int)opens.size() );
   printf("nodes: %d\n", (int)nodes.size() );
   printf("\t| state_id | step |\n");
   for(size_t i = 0; i < nodes.size(); i++)
     printf("\t| %8d | %4d |\n", nodes[i].state_id, nodes[i].step);
+
+  if(existOpen() ) {
+    openNode(opens[0]);
+  }
 }
 
 } // namespace Capt

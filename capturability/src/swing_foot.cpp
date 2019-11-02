@@ -2,26 +2,26 @@
 
 namespace Capt {
 
-SwingFoot::SwingFoot(Model model) {
+SwingFoot::SwingFoot(Model *model) {
   foot     = Eigen::Vector3f::Zero();
   foot_des = Eigen::Vector3f::Zero();
 
   step_time = 0.0;
 
-  foot_vel      = model.getVal("physics", "foot_vel_max");
-  step_time_min = model.getVal("physics", "step_time_min");
-  step_height   = model.getVal("physics", "step_height");
+  model->read(&foot_vel, "foot_vel_max");
+  model->read(&step_time_min, "step_time_min");
+  model->read(&step_height, "step_height");
 }
 
 SwingFoot::~SwingFoot() {
 }
 
 void SwingFoot::set(vec2_t foot, vec2_t foot_des) {
-  this->foot.x()     = foot.x;
-  this->foot.y()     = foot.y;
+  this->foot.x()     = foot.x();
+  this->foot.y()     = foot.y();
   this->foot.z()     = 0.0;
-  this->foot_des.x() = foot_des.x;
-  this->foot_des.y() = foot_des.y;
+  this->foot_des.x() = foot_des.x();
+  this->foot_des.y() = foot_des.y();
   this->foot_des.z() = 0.0;
 
   set(this->foot, this->foot_des);

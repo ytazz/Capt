@@ -10,17 +10,17 @@ namespace Capt {
 class Pendulum {
 
 public:
-  Pendulum(Model model);
+  Pendulum(Model *model);
   ~Pendulum();
 
   void setCom(const vec2_t com);
-  void setCom(vec3_t com);
+  void setCom(const vec3_t com);
   void setComVel(const vec2_t com_vel);
-  void setComVel(vec3_t com_vel);
+  void setComVel(const vec3_t com_vel);
   void setIcp(const vec2_t icp);
-  void setIcp(vec3_t icp);
+  void setIcp(const vec3_t icp);
   void setCop(const vec2_t cop);
-  void setCop(vec3_t cop);
+  void setCop(const vec3_t cop);
 
   vec2_t getCom(double dt);
   vec2_t getComVel(double dt);

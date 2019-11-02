@@ -2,10 +2,10 @@
 
 namespace Capt {
 
-Capturability::Capturability(Model model, Param param)
-  : grid(param), model(model) {
-  state_num = grid.getNumState();
-  input_num = grid.getNumInput();
+Capturability::Capturability(Grid *grid)
+  : grid(grid) {
+  state_num = grid->getNumState();
+  input_num = grid->getNumInput();
 
   data_basin = new int [state_num];
   data_nstep = new CaptureSet*[state_num];
@@ -15,6 +15,14 @@ Capturability::Capturability(Model model, Param param)
 
   max_step = 0;
 }
+
+// Capturability::Capturability(const Capturability &obj){
+//   data_basin = new int [state_num];
+//   data_nstep = new CaptureSet*[state_num];
+//   for (int i = 0; i < state_num; i++) {
+//     data_nstep[i] = new CaptureSet[input_num];
+//   }
+// }
 
 Capturability::~Capturability() {
 }
@@ -62,7 +70,7 @@ void Capturability::load(std::string file_name, DataType type) {
       int state_id = id;
       for(int input_id = 0; input_id < input_num; input_id++) {
         CaptureSet* set = getCaptureSet(state_id, input_id);
-        set->cop.setCartesian(buf[0], buf[1]);
+        set->cop(buf[0], buf[1]);
       }
 
       id++;
@@ -94,7 +102,7 @@ std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id, cons
   std::vector<CaptureSet> sets;
 
   sets.clear();
-  for (int i = 0; i < grid.getNumInput(); i++) {
+  for (int i = 0; i < grid->getNumInput(); i++) {
     if (data_nstep[state_id][i].nstep == nstep) {
       sets.push_back(data_nstep[state_id][i]);
     }
@@ -106,15 +114,15 @@ std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id, cons
 std::vector<CaptureSet> Capturability::getCaptureRegion(const State state, const int nstep) {
   std::vector<CaptureSet> sets;
 
-  if (grid.existState(state) ) {
-    sets = getCaptureRegion(grid.getStateIndex(state), nstep);
+  if (grid->existState(state) ) {
+    sets = getCaptureRegion(grid->getStateIndex(state), nstep);
   }
 
   return sets;
 }
 
 bool Capturability::capturable(State state, int nstep) {
-  int state_id = grid.getStateIndex(state);
+  int state_id = grid->getStateIndex(state);
 
   return capturable(state_id, nstep);
 }

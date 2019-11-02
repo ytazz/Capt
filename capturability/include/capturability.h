@@ -37,7 +37,8 @@ struct CaptureSet {
 
 class Capturability {
 public:
-  Capturability(Model model, Param param);
+  Capturability(Grid *grid);
+  // Capturability(const Capturability &obj);
   ~Capturability();
 
   void load(std::string file_name, DataType type);
@@ -54,8 +55,7 @@ public:
   int getMaxStep();
 
 private:
-  Grid         grid;
-  Model        model;
+  Grid        *grid;
   int         *data_basin;            // size = number of state
   CaptureSet **data_nstep;
 

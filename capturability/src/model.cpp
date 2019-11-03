@@ -202,6 +202,17 @@ void Model::read(std::string *val, const std::string &name){
     *val = robot_name;
 }
 
+void Model::read(int *val, const std::string &name){
+  if (equalStr(name, "foot_r_num") )
+    *val = (int)foot_r.size();
+  if (equalStr(name, "foot_r_convex_num") )
+    *val = (int)foot_r_convex.size();
+  if (equalStr(name, "foot_l_num") )
+    *val = (int)foot_l.size();
+  if (equalStr(name, "foot_l_convex_num") )
+    *val = (int)foot_l_convex.size();
+}
+
 void Model::read(double *val, const std::string &name){
   if (equalStr(name, "mass") )
     *val = mass;

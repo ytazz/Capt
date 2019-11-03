@@ -10,34 +10,26 @@ namespace Cuda {
 typedef struct Vector2 {
   __device__ void clear();
 
-  __device__ void setPolar(float radius, float theta);
-  __device__ void setCartesian(float x, float y);
+  __device__ void set(double x, double y);
 
-  __device__ float x();
-  __device__ float y();
-  __device__ float r();
-  __device__ float th();
-  __device__ float norm();
+  __device__ double norm();
 
   __device__ Vector2 normal();
 
   __host__ __device__ Vector2 &operator=(const Vector2 &v);
   __device__ Vector2 operator          +(const Vector2 &v);
   __device__ Vector2 operator          -(const Vector2 &v);
-  __device__ float operator            %(const Vector2 &v);
-  __device__ Vector2 operator          *(const float &d);
-  __device__ float operator            *(const Vector2 &v);
-  __device__ Vector2 operator          /(const float &d);
+  __device__ double operator           %(const Vector2 &v);
+  __device__ Vector2 operator          *(const double &d);
+  __device__ double operator           *(const Vector2 &v);
+  __device__ Vector2 operator          /(const double &d);
 
-  __device__ void cartesianToPolar();
-  __device__ void polarToCartesian();
-
-  float r_, th_;
-  float x_, y_;
+  double r, th;
+  double x, y;
 
 } vec2_t;
 
-__device__ Vector2 operator*(const float &d, const Vector2 &v);
+__device__ Vector2 operator*(const double &d, const Vector2 &v);
 
 } // namespace Cuda
 

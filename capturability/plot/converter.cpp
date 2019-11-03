@@ -21,7 +21,7 @@ int main(int argc, char const *argv[]) {
   int       state_id = 0, input_id = 0;
   State     state, state_;
   Input     input;
-  float     tmp1, tmp2;
+  double     tmp1, tmp2;
   GridState gstate;
 
   while (true) {

@@ -1,18 +1,14 @@
 #include "cuda_analysis.cuh"
 #include <chrono>
 
-// Setting for Coordinate
-typedef Cuda::GridCartesian grid_t;
-// typedef Cuda::GridPolar grid_t;
-
 int main(void) {
   std::chrono::system_clock::time_point start, end_exe, end_save;
   start = std::chrono::system_clock::now();
 
   /* パラメータの読み込み */
-  Capt::Model cmodel("data/valkyrie.xml");
-  Capt::Param cparam("data/valkyrie_xy.xml");
-  Capt::Grid  cgrid(cparam);
+  Capt::Model *cmodel = new Capt::Model("data/valkyrie.xml");
+  Capt::Param *cparam = new Capt::Param("data/valkyrie_xy.xml");
+  Capt::Grid  *cgrid  = new Capt::Grid(cparam);
 
   /* 前処理 */
   printf("*** Analysis ***\n");
@@ -20,22 +16,20 @@ int main(void) {
   fflush(stdout);
 
   /* 各変数のsize */
-  const int state_num  = cgrid.getNumState();
-  const int input_num  = cgrid.getNumInput();
-  const int num_grid   = state_num * input_num;
-  const int num_foot_r = cmodel.getVec("foot", "foot_r_convex").size();
-  const int num_foot_l = cmodel.getVec("foot", "foot_l_convex").size();
-  const int num_vertex = num_foot_r + num_foot_l;
-  const int num_swf    = cgrid.getNumInput();
+  const int state_num = cgrid->getNumState();
+  const int input_num = cgrid->getNumInput();
+  const int grid_num  = state_num * input_num;
 
-  /* 解析条件 */
-  Cuda::Condition cond;
-  cond.model = &cmodel;
-  cond.param = &cparam;
-  cond.grid  = &cgrid;
+  int foot_r_num, foot_l_num;
+  cmodel->read(&foot_r_num, "foot_r_convex_num");
+  cmodel->read(&foot_l_num, "foot_l_convex_num");
+
+  const int num_vertex = foot_r_num + foot_l_num;
+  const int num_swf    = cgrid->getNumInput();
 
   /* メモリ管理 */
   Cuda::MemoryManager mm;
+  mm.set(cmodel, cparam, cgrid);
 
   /* パラメータの用意 */
   // ホスト側
@@ -43,51 +37,50 @@ int main(void) {
   Cuda::Input   *input     = (Cuda::Input*)malloc(sizeof( Cuda::Input ) * input_num );
   int           *trans     = (int*)malloc(sizeof( int ) * state_num * input_num );
   int           *basin     = (int*)malloc(sizeof( int ) * state_num );
-  int           *nstep     = (int*)malloc(sizeof( int ) * num_grid );
-  grid_t        *grid      = (grid_t*)malloc(sizeof( grid_t ) );
-  Cuda::Vector2 *foot_r    = (Cuda::Vector2*)malloc(sizeof( Cuda::Vector2 ) * num_foot_r );
-  Cuda::Vector2 *foot_l    = (Cuda::Vector2*)malloc(sizeof( Cuda::Vector2 ) * num_foot_l );
-  Cuda::Vector2 *convex    = (Cuda::Vector2*)malloc(sizeof( Cuda::Vector2 ) * num_swf * num_vertex );
-  Cuda::Vector2 *cop       = (Cuda::Vector2*)malloc(sizeof( Cuda::Vector2 ) * state_num );
-  double        *step_time = (double*)malloc(sizeof( double ) * num_grid );
+  int           *nstep     = (int*)malloc(sizeof( int ) * grid_num );
+  Cuda::Grid    *grid      = (Cuda::Grid*)malloc(sizeof( Cuda::Grid ) );
+  Cuda::vec2_t  *foot_r    = (Cuda::vec2_t*)malloc(sizeof( Cuda::vec2_t ) * foot_r_num );
+  Cuda::vec2_t  *foot_l    = (Cuda::vec2_t*)malloc(sizeof( Cuda::vec2_t ) * foot_l_num );
+  Cuda::vec2_t  *convex    = (Cuda::vec2_t*)malloc(sizeof( Cuda::vec2_t ) * num_swf * num_vertex );
+  Cuda::vec2_t  *cop       = (Cuda::vec2_t*)malloc(sizeof( Cuda::vec2_t ) * state_num );
+  double        *step_time = (double*)malloc(sizeof( double ) * grid_num );
   Cuda::Physics *physics   = (Cuda::Physics*)malloc(sizeof( Cuda::Physics ) );
-  mm.initHostState(state, cond);
-  mm.initHostTrans(trans, cond);
-  mm.initHostInput(input, cond);
-  mm.initHostBasin(basin, cond);
-  mm.initHostNstep(nstep, cond);
-  mm.initHostGrid(grid, cond);
-  mm.initHostFootR(foot_r, cond);
-  mm.initHostFootL(foot_l, cond);
-  mm.initHostConvex(convex, cond);
-  mm.initHostCop(cop, cond);
-  mm.initHostStepTime(step_time, cond);
-  mm.initHostPhysics(physics, cond);
-  mm.setGrid(grid);
+  mm.initHostState(state);
+  mm.initHostTrans(trans);
+  mm.initHostInput(input);
+  mm.initHostBasin(basin);
+  mm.initHostNstep(nstep);
+  mm.initHostGrid(grid);
+  mm.initHostFootR(foot_r);
+  mm.initHostFootL(foot_l);
+  mm.initHostConvex(convex);
+  mm.initHostCop(cop);
+  mm.initHostStepTime(step_time);
+  mm.initHostPhysics(physics);
   // デバイス側
   Cuda::State   *dev_state;
   Cuda::Input   *dev_input;
   int           *dev_basin;
   int           *dev_nstep;
   int           *dev_trans;
-  grid_t        *dev_grid;
-  Cuda::Vector2 *dev_foot_r;
-  Cuda::Vector2 *dev_foot_l;
-  Cuda::Vector2 *dev_convex;
-  Cuda::Vector2 *dev_cop;
+  Cuda::Grid    *dev_grid;
+  Cuda::vec2_t  *dev_foot_r;
+  Cuda::vec2_t  *dev_foot_l;
+  Cuda::vec2_t  *dev_convex;
+  Cuda::vec2_t  *dev_cop;
   double        *dev_step_time;
   Cuda::Physics *dev_physics;
   HANDLE_ERROR(cudaMalloc( (void **)&dev_state, state_num * sizeof( Cuda::State ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_input, input_num * sizeof( Cuda::Input ) ) );
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_trans, num_grid * sizeof( int ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_trans, grid_num * sizeof( int ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_basin, state_num * sizeof( int ) ) );
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_nstep, num_grid * sizeof( int ) ) );
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_grid, sizeof( grid_t ) ) );
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_foot_r, num_foot_r * sizeof( Cuda::Vector2 ) ) );
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_foot_l, num_foot_l * sizeof( Cuda::Vector2 ) ) );
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_convex, num_swf * num_vertex * sizeof( Cuda::Vector2 ) ) );
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_cop, state_num * sizeof( Cuda::Vector2 ) ) );
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_step_time, num_grid * sizeof( double ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_nstep, grid_num * sizeof( int ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_grid, sizeof( Cuda::Grid ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_foot_r, foot_r_num * sizeof( Cuda::vec2_t ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_foot_l, foot_l_num * sizeof( Cuda::vec2_t ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_convex, num_swf * num_vertex * sizeof( Cuda::vec2_t ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_cop, state_num * sizeof( Cuda::vec2_t ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_step_time, grid_num * sizeof( double ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_physics, sizeof( Cuda::Physics ) ) );
   // ホスト側からデバイス側にコピー
   mm.copyHostToDevState(state, dev_state);
@@ -126,11 +119,12 @@ int main(void) {
 
     mm.copyDevToHostNstep(dev_nstep, nstep);
     flag = false;
-    for(int id = 0; id < num_grid; id++) {
+    for(int id = 0; id < grid_num; id++) {
       if(nstep[id] == step)
         flag = true;
     }
   }
+  step--;
   end_exe = std::chrono::system_clock::now();
   printf("Done!\n");
 
@@ -142,10 +136,10 @@ int main(void) {
   mm.copyDevToHostStepTime(dev_step_time, step_time);
 
   /* ファイル書き出し */
-  Cuda::saveBasin("gpu/Basin.csv", cond, basin);
-  Cuda::saveNStep("gpu/Nstep.csv", cond, nstep, trans);
-  Cuda::saveCop("gpu/Cop.csv", cond, cop);
-  Cuda::saveStepTime("gpu/StepTime.csv", cond, step_time);
+  mm.saveBasin("gpu/Basin.csv", basin);
+  mm.saveNstep("gpu/Nstep.csv", nstep, trans, step);
+  mm.saveCop("gpu/Cop.csv", cop);
+  mm.saveStepTime("gpu/StepTime.csv", step_time);
   end_save = std::chrono::system_clock::now();
 
   /* 処理時間 */

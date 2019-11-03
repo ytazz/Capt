@@ -39,6 +39,7 @@ public:
   void callbackAttribute(const std::string &name, const std::string &value) override;
 
   void read(std::string *val, const std::string &name);
+  void read(int *val, const std::string &name);
   void read(double *val, const std::string &name);
   void read(arr2_t *val, const std::string &name);
   void read(arr2_t *val, const std::string &name, vec2_t offset);

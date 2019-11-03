@@ -125,7 +125,6 @@ int main(void) {
     }
   }
   step--;
-  end_exe = std::chrono::system_clock::now();
   printf("Done!\n");
 
   /* 解析結果をデバイス側からホスト側にコピー */
@@ -134,6 +133,7 @@ int main(void) {
   mm.copyDevToHostTrans(dev_trans, trans);
   mm.copyDevToHostCop(dev_cop, cop);
   mm.copyDevToHostStepTime(dev_step_time, step_time);
+  end_exe = std::chrono::system_clock::now();
 
   /* ファイル書き出し */
   mm.saveBasin("gpu/Basin.csv", basin);

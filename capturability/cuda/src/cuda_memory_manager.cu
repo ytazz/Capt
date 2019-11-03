@@ -5,33 +5,33 @@ namespace Cuda {
 /* struct */
 
 void Grid::operator=(const Grid &grid){
-  this->state_num = state_num;
-  this->input_num = input_num;
-  this->grid_num  = grid_num;
+  this->state_num = grid.state_num;
+  this->input_num = grid.input_num;
+  this->grid_num  = grid.grid_num;
 
-  this->foot_r_num = foot_r_num;
-  this->foot_l_num = foot_l_num;
+  this->foot_r_num = grid.foot_r_num;
+  this->foot_l_num = grid.foot_l_num;
 
-  this->icp_x_num = icp_x_num;
-  this->icp_y_num = icp_y_num;
-  this->swf_x_num = swf_x_num;
-  this->swf_y_num = swf_y_num;
+  this->icp_x_num = grid.icp_x_num;
+  this->icp_y_num = grid.icp_y_num;
+  this->swf_x_num = grid.swf_x_num;
+  this->swf_y_num = grid.swf_y_num;
 
-  this->icp_x_min = icp_x_min;
-  this->icp_x_max = icp_x_max;
-  this->icp_x_stp = icp_x_stp;
+  this->icp_x_min = grid.icp_x_min;
+  this->icp_x_max = grid.icp_x_max;
+  this->icp_x_stp = grid.icp_x_stp;
 
-  this->icp_y_min = icp_y_min;
-  this->icp_y_max = icp_y_max;
-  this->icp_y_stp = icp_y_stp;
+  this->icp_y_min = grid.icp_y_min;
+  this->icp_y_max = grid.icp_y_max;
+  this->icp_y_stp = grid.icp_y_stp;
 
-  this->swf_x_min = swf_x_min;
-  this->swf_x_max = swf_x_max;
-  this->swf_x_stp = swf_x_stp;
+  this->swf_x_min = grid.swf_x_min;
+  this->swf_x_max = grid.swf_x_max;
+  this->swf_x_stp = grid.swf_x_stp;
 
-  this->swf_y_min = swf_y_min;
-  this->swf_y_max = swf_y_max;
-  this->swf_y_stp = swf_y_stp;
+  this->swf_y_min = grid.swf_y_min;
+  this->swf_y_max = grid.swf_y_max;
+  this->swf_y_stp = grid.swf_y_stp;
 }
 
 __device__ void State::operator=(const State &state) {
@@ -48,6 +48,7 @@ __device__ void Input::operator=(const Input &input) {
 __host__ void MemoryManager::set(Capt::Model* model, Capt::Param* param, Capt::Grid* grid){
   this->model = model;
   this->param = param;
+  this->cgrid = grid;
 
   this->grid.state_num = grid->getNumState();
   this->grid.input_num = grid->getNumInput();
@@ -399,7 +400,7 @@ __host__ void MemoryManager::saveNstep(std::string file_name, int *nstep, int *t
   fclose(fp);
 }
 
-__host__ void MemoryManager::saveCop(std::string file_name, Vector2 *cop, bool header){
+__host__ void MemoryManager::saveCop(std::string file_name, vec2_t *cop, bool header){
   FILE *fp = fopen(file_name.c_str(), "w");
 
   // Header

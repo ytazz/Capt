@@ -127,7 +127,7 @@ public:
 
   __host__ void saveBasin(std::string file_name, int *basin, bool header = false);
   __host__ void saveNstep(std::string file_name, int *nstep, int *trans, int max_step, bool header = false);
-  __host__ void saveCop(std::string file_name, Vector2 *cop, bool header = false);
+  __host__ void saveCop(std::string file_name, vec2_t *cop, bool header = false);
   __host__ void saveStepTime(std::string file_name, double *step_time, bool header = false);
 
 private:

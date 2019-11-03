@@ -23,7 +23,7 @@ __device__ Vector2 Vector2::normal() {
   return normal_vector;
 }
 
-__host__ __device__ Vector2 &Vector2::operator=(const Vector2 &v) {
+__device__ Vector2 &Vector2::operator=(const Vector2 &v) {
   this->x = v.x;
   this->y = v.y;
   return *this;

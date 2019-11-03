@@ -16,15 +16,14 @@ typedef struct Vector2 {
 
   __device__ Vector2 normal();
 
-  __host__ __device__ Vector2 &operator=(const Vector2 &v);
-  __device__ Vector2 operator          +(const Vector2 &v);
-  __device__ Vector2 operator          -(const Vector2 &v);
-  __device__ double operator           %(const Vector2 &v);
-  __device__ Vector2 operator          *(const double &d);
-  __device__ double operator           *(const Vector2 &v);
-  __device__ Vector2 operator          /(const double &d);
+  __device__ Vector2 &operator=(const Vector2 &v);
+  __device__ Vector2 operator +(const Vector2 &v);
+  __device__ Vector2 operator -(const Vector2 &v);
+  __device__ double operator  %(const Vector2 &v);
+  __device__ Vector2 operator *(const double &d);
+  __device__ double operator  *(const Vector2 &v);
+  __device__ Vector2 operator /(const double &d);
 
-  double r, th;
   double x, y;
 
 } vec2_t;

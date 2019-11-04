@@ -4,25 +4,22 @@ using namespace std;
 
 namespace Capt {
 
-CRPlot::CRPlot(Model model, Param param)
-  : model(model), param(param), grid(param) {
+CRPlot::CRPlot(Model *model, Param *param, Grid *grid)
+  : model(model), param(param), grid(grid) {
   // ファイル形式の確認
-  if (param.getStr("coordinate", "type") == "polar") {
-    printf("Error: coordinate type \"polar\" is not supported.\n");
-  }
-
   p("unset key");
   p("set encoding utf8");
 
-  x_min  = param.getVal("icp_x", "min");
-  x_max  = param.getVal("icp_x", "max");
-  x_step = param.getVal("icp_x", "step");
-  x_num  = param.getVal("icp_x", "num");
-  y_min  = param.getVal("icp_y", "min");
-  y_max  = param.getVal("icp_y", "max");
-  y_step = param.getVal("icp_y", "step");
-  y_num  = param.getVal("icp_y", "num");
-  c_num  = 5;
+  param->read(&x_min, "icp_x_min");
+  param->read(&x_max, "icp_x_max");
+  param->read(&x_stp, "icp_x_stp");
+  param->read(&x_num, "icp_x_num");
+  param->read(&y_min, "icp_y_min");
+  param->read(&y_max, "icp_y_max");
+  param->read(&y_stp, "icp_y_stp");
+  param->read(&y_num, "icp_y_num");
+
+  c_num = 5;
 
   // グラフサイズ設定
   p("set size square");
@@ -106,7 +103,7 @@ std::string CRPlot::str(int val){
 
 void CRPlot::setOutput(std::string type) {
   if (type == "gif") {
-    p("set terminal gif animate optimize delay 100 size 600,900");
+    p("set terminal gif animate optimize delay 300 size 600,900");
     p("set output 'plot.gif'");
   }
   if (type == "svg") {
@@ -120,17 +117,25 @@ void CRPlot::setOutput(std::string type) {
 }
 
 void CRPlot::setFootRegion(){
-  double swf_x_min = param.getVal("swf_x", "min") - x_step / 2.0;
-  double swf_x_max = param.getVal("swf_x", "max") + x_step / 2.0;
-  double swf_y_min = param.getVal("swf_y", "min") - y_step / 2.0;
-  double swf_y_max = param.getVal("swf_y", "max") + y_step / 2.0;
+  double swf_x_min;
+  double swf_x_max;
+  double swf_y_min;
+  double swf_y_max;
+  param->read(&swf_x_min, "swf_x_min");
+  param->read(&swf_x_max, "swf_x_max");
+  param->read(&swf_y_min, "swf_y_min");
+  param->read(&swf_y_max, "swf_y_max");
+  swf_x_min -= x_stp / 2.0;
+  swf_x_max += x_stp / 2.0;
+  swf_y_min -= y_stp / 2.0;
+  swf_y_max += y_stp / 2.0;
 
   vec2_t vertex[5];
-  vertex[0].setCartesian(swf_x_min, swf_y_min);
-  vertex[1].setCartesian(swf_x_max, swf_y_min);
-  vertex[2].setCartesian(swf_x_max, swf_y_max);
-  vertex[3].setCartesian(swf_x_min, swf_y_max);
-  vertex[4].setCartesian(swf_x_min, swf_y_min);
+  vertex[0] << swf_x_min, swf_y_min;
+  vertex[1] << swf_x_max, swf_y_min;
+  vertex[2] << swf_x_max, swf_y_max;
+  vertex[3] << swf_x_min, swf_y_max;
+  vertex[4] << swf_x_min, swf_y_min;
   vertex[0] = cartesianToGraph(vertex[0]);
   vertex[1] = cartesianToGraph(vertex[1]);
   vertex[2] = cartesianToGraph(vertex[2]);
@@ -139,15 +144,15 @@ void CRPlot::setFootRegion(){
 
   FILE *fp = fopen("dat/foot_region.dat", "w");
   for(int i = 0; i < 5; i++) {
-    fprintf(fp, "%lf %lf\n", vertex[i].x, vertex[i].y);
+    fprintf(fp, "%lf %lf\n", vertex[i].x(), vertex[i].y() );
   }
   fclose(fp);
 }
 
 void CRPlot::setFoot(vec2_t swf){
   arr2_t foot_r, foot_l;
-  foot_r = model.getVec("foot", "foot_r");
-  foot_l = model.getVec("foot", "foot_l", swf);
+  model->read(&foot_r, "foot_r");
+  model->read(&foot_l, "foot_l", swf);
 
   FILE *fp;
   fp = fopen("dat/foot_r.dat", "w");
@@ -155,23 +160,22 @@ void CRPlot::setFoot(vec2_t swf){
   for (size_t i = 0; i < foot_r.size(); i++) {
     // グラフ座標に合わせる
     point = cartesianToGraph(foot_r[i]);
-    fprintf(fp, "%lf %lf\n", point.x, point.y);
+    fprintf(fp, "%lf %lf\n", point.x(), point.y() );
   }
   fclose(fp);
   fp = fopen("dat/foot_l.dat", "w");
   for (size_t i = 0; i < foot_l.size(); i++) {
     // グラフ座標に合わせる
     point = cartesianToGraph(foot_l[i]);
-    fprintf(fp, "%lf %lf\n", point.x, point.y);
+    fprintf(fp, "%lf %lf\n", point.x(), point.y() );
   }
   fclose(fp);
 }
 
 void CRPlot::setIcp(vec2_t icp){
-  icp.printCartesian();
   vec2_t point = cartesianToGraph(icp);
   FILE  *fp    = fopen("dat/icp.dat", "w");
-  fprintf(fp, "%lf %lf\n", point.x, point.y);
+  fprintf(fp, "%lf %lf\n", point.x(), point.y() );
   fclose(fp);
 }
 
@@ -188,13 +192,13 @@ void CRPlot::initCaptureMap(){
 
 void CRPlot::setCaptureMap(double x, double y, int n_step){
   // IDの算出
-  int i = ( x - x_min ) / x_step;
-  int j = ( y - y_min ) / y_step;
+  int i = ( x - x_min ) / x_stp;
+  int j = ( y - y_min ) / y_stp;
 
   // doubleからintに丸める時の四捨五入
-  if ( ( x - x_min ) / x_step - i >= 0.5)
+  if ( ( x - x_min ) / x_stp - i >= 0.5)
     i++;
-  if ( ( y - y_min ) / y_step - j >= 0.5)
+  if ( ( y - y_min ) / y_stp - j >= 0.5)
     j++;
 
   // map上の対応するIDに値を代入
@@ -224,15 +228,15 @@ void CRPlot::plot(){
 
 vec2_t CRPlot::cartesianToGraph(vec2_t point){
   vec2_t p;
-  double x = -point.y / y_step + ( y_num - 1 ) / 2;
-  double y = +point.x / x_step + ( x_num - 1 ) / 2;
-  p.setCartesian(x, y);
+  double x = -point.y() / y_stp + ( y_num - 1 ) / 2;
+  double y = +point.x() / x_stp + ( x_num - 1 ) / 2;
+  p << x, y;
   return p;
 }
 
 vec2_t CRPlot::cartesianToGraph(double x, double y){
   vec2_t p;
-  p.setCartesian(x, y);
+  p << x, y;
   return cartesianToGraph(p);
 }
 

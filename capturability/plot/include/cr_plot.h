@@ -23,7 +23,7 @@ class CRPlot : public Gnuplot {
   Gnuplot p;
 
 public:
-  CRPlot(Model model, Param param);
+  CRPlot(Model *model, Param *param, Grid *grid);
   ~CRPlot();
 
   // 出力ファイル形式を選択(.gif .eps .svg)
@@ -45,9 +45,9 @@ public:
   void plot();
 
 private:
-  Model model;
-  Param param;
-  Grid  grid;
+  Model *model;
+  Param *param;
+  Grid  *grid;
 
   std::string str(double val);
   std::string str(int val);
@@ -55,8 +55,8 @@ private:
   vec2_t cartesianToGraph(vec2_t point);
   vec2_t cartesianToGraph(double x, double y);
 
-  double x_min, x_max, x_step;
-  double y_min, y_max, y_step;
+  double x_min, x_max, x_stp;
+  double y_min, y_max, y_stp;
   int    x_num;
   int    y_num;
   int    c_num; // number of color

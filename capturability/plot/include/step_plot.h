@@ -23,13 +23,11 @@ class StepPlot : public Gnuplot {
   Gnuplot p;
 
 public:
-  StepPlot(Model model, Param param);
+  StepPlot(Model *model, Param *param, Grid *grid);
   ~StepPlot();
 
   // 出力ファイル形式を選択(.gif .eps .svg)
   void setOutput(std::string type);
-
-  // 現在の足配置を設定
 
   // 足配置を設定
   void setFootR(vec2_t foot_r);
@@ -44,9 +42,9 @@ public:
   void plot();
 
 private:
-  Model model;
-  Param param;
-  Grid  grid;
+  Model *model;
+  Param *param;
+  Grid  *grid;
 
   std::string str(double val);
   std::string str(int val);
@@ -54,8 +52,8 @@ private:
   vec2_t cartesianToGraph(vec2_t point);
   vec2_t cartesianToGraph(double x, double y);
 
-  double x_min, x_max, x_step;
-  double y_min, y_max, y_step;
+  double x_min, x_max, x_stp;
+  double y_min, y_max, y_stp;
   int    x_num;
   int    y_num;
 

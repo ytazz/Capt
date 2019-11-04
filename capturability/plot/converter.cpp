@@ -12,16 +12,14 @@ using namespace std;
 using namespace Capt;
 
 int main(int argc, char const *argv[]) {
-  Model model("data/nao.xml");
-  Param param("data/nao_xy.xml");
-  Grid  grid(param);
+  Param *param = new Param("data/nao_xy.xml");
+  Grid  *grid  = new Grid(param);
 
   int       mode     = 0;
-  int       coord    = 0;
   int       state_id = 0, input_id = 0;
-  State     state, state_;
+  State     state;
   Input     input;
-  double     tmp1, tmp2;
+  double    tmp1, tmp2;
   GridState gstate;
 
   while (true) {
@@ -32,65 +30,33 @@ int main(int argc, char const *argv[]) {
 
     switch (mode) {
     case 1:
-      std::cout << "座標系を入力してください ";
-      std::cout << "1: polar, 2: cartesian " << '\n';
-      std::cin >> coord;
-      if (coord == 1) {
-        std::cout << "icp_rを入力してください ";
-        std::cin >> tmp1;
-        std::cout << "icp_thを入力してください ";
-        std::cin >> tmp2;
-        state.icp.setPolar(tmp1, tmp2);
-      } else if (coord == 2) {
-        std::cout << "icp_xを入力してください ";
-        std::cin >> tmp1;
-        std::cout << "icp_yを入力してください ";
-        std::cin >> tmp2;
-        state.icp.setCartesian(tmp1, tmp2);
-      } else {
-        std::cout << "error" << '\n';
-        break;
-      }
-      std::cout << "座標系を入力してください ";
-      std::cout << "1: polar, 2: cartesian " << '\n';
-      std::cin >> coord;
-      if (coord == 1) {
-        std::cout << "swf_rを入力してください ";
-        std::cin >> tmp1;
-        std::cout << "swf_thを入力してください ";
-        std::cin >> tmp2;
-        state.swf.setPolar(tmp1, tmp2);
-      } else if (coord == 2) {
-        std::cout << "swf_xを入力してください ";
-        std::cin >> tmp1;
-        std::cout << "swf_yを入力してください ";
-        std::cin >> tmp2;
-        state.swf.setCartesian(tmp1, tmp2);
-      } else {
-        std::cout << "error" << '\n';
-        break;
-      }
-      gstate = grid.roundState(state);
-      gstate.state.printCartesian();
+      std::cout << "icp_xを入力してください ";
+      std::cin >> tmp1;
+      std::cout << "icp_yを入力してください ";
+      std::cin >> tmp2;
+      state.icp(tmp1, tmp2);
+
+      std::cout << "swf_xを入力してください ";
+      std::cin >> tmp1;
+      std::cout << "swf_yを入力してください ";
+      std::cin >> tmp2;
+      state.swf(tmp1, tmp2);
+
+      gstate = grid->roundState(state);
+      gstate.state.print();
       std::cout << "state_id: " << gstate.id << '\n';
       break;
     case 2:
       std::cout << "state_idを入力してください ";
       std::cin >> state_id;
-      state = grid.getState(state_id);
-      printf("cartesian:\n");
-      state.printCartesian();
-      printf("polar:\n");
-      state.printPolar();
+      state = grid->getState(state_id);
+      state.print();
       break;
     case 4:
       std::cout << "input_idを入力してください ";
       std::cin >> input_id;
-      input = grid.getInput(input_id);
-      printf("cartesian:\n");
-      input.printCartesian();
-      printf("polar:\n");
-      input.printPolar();
+      input = grid->getInput(input_id);
+      input.print();
       break;
     default:
       break;

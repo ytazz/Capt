@@ -76,7 +76,6 @@ void Search::exe(){
     state.swf = s_rfoot - s_lfoot;
     state.icp = s_icp - s_lfoot;
   }
-  state.print();
 
   // Calculate initial node
   Node node;

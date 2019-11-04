@@ -4,24 +4,19 @@ using namespace std;
 
 namespace Capt {
 
-StepPlot::StepPlot(Model model, Param param)
-  : model(model), param(param), grid(param) {
-  // ファイル形式の確認
-  if (param.getStr("coordinate", "type") == "polar") {
-    printf("Error: coordinate type \"polar\" is not supported.\n");
-  }
-
+StepPlot::StepPlot(Model *model, Param *param, Grid *grid)
+  : model(model), param(param), grid(grid) {
   p("unset key");
   p("set encoding utf8");
 
-  x_min  = param.getVal("swf_x", "min");
-  x_max  = param.getVal("swf_x", "max");
-  x_step = param.getVal("swf_x", "step");
-  x_num  = param.getVal("swf_x", "num");
-  y_min  = param.getVal("swf_y", "min");
-  y_max  = param.getVal("swf_y", "max");
-  y_step = param.getVal("swf_y", "step");
-  y_num  = param.getVal("swf_y", "num");
+  param->read(&x_min, "map_x_min");
+  param->read(&x_max, "map_x_max");
+  param->read(&x_stp, "map_x_stp");
+  param->read(&x_num, "map_x_num");
+  param->read(&y_min, "map_y_min");
+  param->read(&y_max, "map_y_max");
+  param->read(&y_stp, "map_y_stp");
+  param->read(&y_num, "map_y_num");
 
   // グラフサイズ設定
   p("set size square");
@@ -125,8 +120,10 @@ void StepPlot::setIcp(arr2_t icp){
 }
 
 void StepPlot::plot(){
-  arr2_t foot_r = model.getVec("foot", "foot_r");
-  arr2_t foot_l = model.getVec("foot", "foot_l");
+  arr2_t foot_r;
+  arr2_t foot_l;
+  model->read(&foot_r, "foot_r");
+  model->read(&foot_l, "foot_l");
 
   // 描画対象の追加
   fprintf(p.gp, "plot ");
@@ -143,7 +140,7 @@ void StepPlot::plot(){
   for(size_t i = 0; i < footstep_r.size(); i++) {
     for(size_t j = 0; j < foot_r.size(); j++) {
       vec2_t point = cartesianToGraph(footstep_r[i] + foot_r[j]);
-      fprintf(p.gp, "%f %f\n", point.x, point.y);
+      fprintf(p.gp, "%f %f\n", point.x(), point.y() );
     }
     fprintf(p.gp, "e\n");
   }
@@ -151,14 +148,14 @@ void StepPlot::plot(){
   for(size_t i = 0; i < footstep_l.size(); i++) {
     for(size_t j = 0; j < foot_l.size(); j++) {
       vec2_t point = cartesianToGraph(footstep_l[i] + foot_l[j]);
-      fprintf(p.gp, "%f %f\n", point.x, point.y);
+      fprintf(p.gp, "%f %f\n", point.x(), point.y() );
     }
     fprintf(p.gp, "e\n");
   }
   // icp
   for(size_t i = 0; i < icp.size(); i++) {
     vec2_t point = cartesianToGraph(icp[i]);
-    fprintf(p.gp, "%f %f\n", point.x, point.y);
+    fprintf(p.gp, "%f %f\n", point.x(), point.y() );
   }
   fprintf(p.gp, "e\n");
 
@@ -167,15 +164,15 @@ void StepPlot::plot(){
 
 vec2_t StepPlot::cartesianToGraph(vec2_t point){
   vec2_t p;
-  double x = ( y_max - point.y ) / y_step;
-  double y = ( point.x - x_min ) / x_step;
-  p.setCartesian(x, y);
+  double x = ( y_max - point.y() ) / y_stp;
+  double y = ( point.x() - x_min ) / x_stp;
+  p << x, y;
   return p;
 }
 
 vec2_t StepPlot::cartesianToGraph(double x, double y){
   vec2_t p;
-  p.setCartesian(x, y);
+  p << x, y;
   return cartesianToGraph(p);
 }
 

@@ -27,7 +27,7 @@ class Param : public Loader {
 
 public:
   explicit Param(const std::string &name = "");
-  ~Param();
+  virtual ~Param();
 
   void callbackElement(const std::string &name, const bool is_start) override;
   void callbackAttribute(const std::string &name, const std::string &value) override;

@@ -6,8 +6,8 @@ int main(void) {
   start = std::chrono::system_clock::now();
 
   /* パラメータの読み込み */
-  Capt::Model *cmodel = new Capt::Model("data/valkyrie.xml");
-  Capt::Param *cparam = new Capt::Param("data/valkyrie_xy.xml");
+  Capt::Model *cmodel = new Capt::Model("data/nao.xml");
+  Capt::Param *cparam = new Capt::Param("data/nao_xy.xml");
   Capt::Grid  *cgrid  = new Capt::Grid(cparam);
 
   /* 前処理 */

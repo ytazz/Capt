@@ -274,7 +274,7 @@ void Analysis::saveNstep(std::string file_name, bool header){
   printf("*** Result ***\n");
   printf("  Feasible maximum steps: %d\n", max_step);
   for(int i = 1; i <= max_step; i++) {
-    printf("  %d-step capture point  : %d\n", i, num_step[i]);
+    printf("  %d-step capture point  : %8d\n", i, num_step[i]);
   }
 
   fclose(fp);

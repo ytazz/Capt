@@ -7,7 +7,7 @@ namespace Capt {
 CRPlot::CRPlot(Model *model, Param *param, Grid *grid)
   : model(model), param(param), grid(grid) {
   // ファイル形式の確認
-  p("unset key");
+  // p("unset key");
   p("set encoding utf8");
 
   param->read(&x_min, "icp_x_min");
@@ -32,6 +32,8 @@ CRPlot::CRPlot(Model *model, Param *param, Grid *grid)
   p("set xlabel font \"Arial,15\"");
   p("set ylabel font \"Arial,15\"");
   p("set tics   font \"Arial,15\"");
+  p("set cblabel font \"Arial,15\"");
+  p("set key    font \"Arial,15\"");
 
   // 座標軸の目盛り設定
   p("set xtics 1");
@@ -62,11 +64,12 @@ CRPlot::CRPlot(Model *model, Param *param, Grid *grid)
 
   // カラーバーの設定
   // p("set palette gray negative");
-  fprintf(p.gp, "set palette defined ( 0 '#ffffff', 1 '#cbfeff', 2 '#68fefe', 3 '#0097ff', 4 '#3666fe')\n");
+  fprintf(p.gp, "set palette defined ( 0 '#ffffff', 1 '#cbfeff', 2 '#68fefe', 3 '#0097ff', 4 '#0000ff')\n");
   fprintf(p.gp, "set cbrange[0:%d]\n", c_num);
   fprintf(p.gp, "set cbtics 0.5\n");
   fprintf(p.gp, "set palette maxcolors %d\n", c_num);
   fprintf(p.gp, "set cbtics scale 0,0.001\n");
+  fprintf(p.gp, "set cblabel \"N-step capture point\"\n");
 
   // カラーバーの目盛りの値を再設定
   std::string c_tics;
@@ -219,10 +222,10 @@ void CRPlot::plot(){
 
   // 描画
   fprintf(p.gp, "plot \"dat/data.dat\" matrix w image notitle,\\\n");
-  fprintf(p.gp, "     \"dat/foot_region.dat\" with lines  lw 2 lc \"dark-blue\" title \"foot_region\",\\\n");
-  fprintf(p.gp, "     \"dat/foot_r.dat\"      with lines  lw 2 lc \"black\"     title \"foot_su\",\\\n");
-  fprintf(p.gp, "     \"dat/foot_l.dat\"      with lines  lw 2 lc \"black\"     title \"foot_sw\",\\\n");
-  fprintf(p.gp, "     \"dat/icp.dat\"         with points pt 2 lc 1             title \"icp\"\n");
+  fprintf(p.gp, "     \"dat/foot_region.dat\" with lines  lw 2 lc \"dark-blue\" title \"valid stepping region\",\\\n");
+  fprintf(p.gp, "     \"dat/foot_r.dat\"      with lines  lw 2 lc \"black\"     title \"support foot\",\\\n");
+  fprintf(p.gp, "     \"dat/foot_l.dat\"      with lines  lt 0 dt 1 lw 2 lc \"black\"     title \"swing foot\",\\\n");
+  fprintf(p.gp, "     \"dat/icp.dat\"         with points pt 2 lc 1 ps 2        title \"ICP\"\n");
   fflush(p.gp);
 }
 

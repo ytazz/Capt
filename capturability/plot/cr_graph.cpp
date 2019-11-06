@@ -10,28 +10,28 @@ using namespace std;
 using namespace Capt;
 
 int main(int argc, char const *argv[]) {
-  Model *model = new Model("data/nao.xml");
-  Param *param = new Param("data/nao_xy.xml");
+  Model *model = new Model("data/valkyrie.xml");
+  Param *param = new Param("data/valkyrie_xy.xml");
   Grid  *grid  = new Grid(param);
 
   Capturability *capturability = new Capturability(grid);
-  capturability->load("cpu/Basin.csv", DataType::BASIN);
-  capturability->load("cpu/Nstep.csv", DataType::NSTEP);
+  capturability->load("gpu/Basin.csv", DataType::BASIN);
+  capturability->load("gpu/Nstep.csv", DataType::NSTEP);
 
   // paper plot for nao
-  double icp_x        = 0.00;
-  double icp_y        = 0.05;
-  double swf_x        = -0.08;
-  double swf_y        = 0.10;
-  double icp_x_offset = 0.05;
-  double icp_y_offset = 0.02;
-  // paper plot for val
   // double icp_x        = 0.00;
-  // double icp_y        = 0.10;
-  // double swf_x        = -0.25;
-  // double swf_y        = 0.4;
-  // double icp_x_offset = 0.1;
-  // double icp_y_offset = 0.05;
+  // double icp_y        = 0.05;
+  // double swf_x        = -0.08;
+  // double swf_y        = 0.10;
+  // double icp_x_offset = 0.05;
+  // double icp_y_offset = 0.02;
+  // paper plot for val
+  double icp_x        = 0.00;
+  double icp_y        = 0.10;
+  double swf_x        = -0.25;
+  double swf_y        = 0.4;
+  double icp_x_offset = 0.1;
+  double icp_y_offset = 0.05;
   // walk val
   // double icp_x = 0.0;
   // double icp_y = 0.15;

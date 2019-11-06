@@ -27,9 +27,9 @@ int main(int argc, char const *argv[]) {
   // double swf_x = -0.08;
   // double swf_y = 0.10;
   // val
-  double icp_x = 0.0;
-  double icp_y = 0.15;
-  double swf_x = 0;
+  double icp_x = 0.00;
+  double icp_y = 0.10;
+  double swf_x = -0.25;
   double swf_y = 0.4;
 
   // N-step capture region
@@ -40,29 +40,31 @@ int main(int argc, char const *argv[]) {
   param->read(&icp_x_stp, "icp_x_stp");
   param->read(&icp_x_num, "icp_x_num");
 
-  for(int i = 0; i < icp_x_num; i++) {
-    // set state
-    State state;
-    state.icp.x() = icp_x_min + icp_x_stp * i;
-    state.icp.y() = icp_y;
-    state.swf.x() = swf_x;
-    state.swf.y() = swf_y;
-    state         = grid->roundState(state).state;
+  while(true) {
+    for(int i = 0; i < icp_x_num; i++) {
+      // set state
+      State state;
+      state.icp.x() = icp_x_min + icp_x_stp * i;
+      state.icp.y() = icp_y;
+      state.swf.x() = swf_x;
+      state.swf.y() = swf_y;
+      state         = grid->roundState(state).state;
 
-    cr_plot->initCaptureMap();
-    cr_plot->setFoot(state.swf);
-    cr_plot->setIcp(state.icp);
-    for(int N = 1; N <= 4; N++) {
-      if(capturability->capturable(state, N) ) {
-        std::vector<CaptureSet> region = capturability->getCaptureRegion(state, N);
-        for(size_t i = 0; i < region.size(); i++) {
-          Input input = grid->getInput(region[i].input_id);
-          cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), N);
+      cr_plot->initCaptureMap();
+      cr_plot->setFoot(state.swf);
+      cr_plot->setIcp(state.icp);
+      for(int N = 1; N <= 4; N++) {
+        if(capturability->capturable(state, N) ) {
+          std::vector<CaptureSet> region = capturability->getCaptureRegion(state, N);
+          for(size_t i = 0; i < region.size(); i++) {
+            Input input = grid->getInput(region[i].input_id);
+            cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), N);
+          }
         }
       }
+      cr_plot->plot();
+      usleep(0.5 * 1000000);
     }
-    cr_plot->plot();
-    usleep(0.5 * 1000000);
   }
 
   return 0;

@@ -9,6 +9,7 @@ CRPlot::CRPlot(Model *model, Param *param, Grid *grid)
   // ファイル形式の確認
   // p("unset key");
   p("set encoding utf8");
+  p("set terminal qt size 600,600");
 
   param->read(&x_min, "icp_x_min");
   param->read(&x_max, "icp_x_max");
@@ -23,8 +24,6 @@ CRPlot::CRPlot(Model *model, Param *param, Grid *grid)
 
   // グラフサイズ設定
   p("set size square");
-  fprintf(p.gp, "set xrange [0:%d]\n", x_num - 1);
-  fprintf(p.gp, "set yrange [0:%d]\n", y_num - 1);
 
   // 軸ラベル設定
   p("set xlabel 'y [m]'");
@@ -42,19 +41,19 @@ CRPlot::CRPlot(Model *model, Param *param, Grid *grid)
   p("set mytics 2");
   p("set xtics scale 0,0.001");
   p("set ytics scale 0,0.001");
-  p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'white'");
+  // p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'white'");
   // p("set grid front mxtics mytics lw 2 lt -1 lc rgb 'gray80'");
 
   // xy軸の目盛りの値を再設定
   std::string x_tics, y_tics;
-  for (int i = 0; i < x_num; i++) {
+  for (int i = -1; i <= x_num; i++) {
     x_tics += "\"\" " + str(i);
-    if (i != x_num - 1)
+    if (i != x_num)
       x_tics += ", ";
   }
-  for (int i = 0; i < y_num; i++) {
+  for (int i = -1; i <= y_num; i++) {
     y_tics += "\"\" " + str(i);
-    if (i != y_num - 1)
+    if (i != y_num)
       y_tics += ", ";
   }
   fprintf(p.gp, "set xtics add (%s)\n", x_tics.c_str() );
@@ -106,7 +105,7 @@ std::string CRPlot::str(int val){
 
 void CRPlot::setOutput(std::string type) {
   if (type == "gif") {
-    p("set terminal gif animate optimize delay 300 size 600,900");
+    p("set terminal gif animate optimize delay 50 size 600,900");
     p("set output 'plot.gif'");
   }
   if (type == "svg") {
@@ -120,14 +119,13 @@ void CRPlot::setOutput(std::string type) {
 }
 
 void CRPlot::setFootRegion(){
-  double swf_x_min;
-  double swf_x_max;
-  double swf_y_min;
-  double swf_y_max;
   param->read(&swf_x_min, "swf_x_min");
   param->read(&swf_x_max, "swf_x_max");
+  param->read(&swf_x_num, "swf_x_num");
   param->read(&swf_y_min, "swf_y_min");
   param->read(&swf_y_max, "swf_y_max");
+  param->read(&swf_y_num, "swf_y_num");
+
   swf_x_min -= x_stp / 2.0;
   swf_x_max += x_stp / 2.0;
   swf_y_min -= y_stp / 2.0;
@@ -222,6 +220,35 @@ void CRPlot::plot(){
 
   // 描画
   fprintf(p.gp, "plot \"dat/data.dat\" matrix w image notitle,\\\n");
+  int count = 0;
+  for(int i = 0; i < swf_x_num; i++) {
+    std::string file_name = "dat/tmp" + std::to_string(count) + ".dat";
+    FILE       *fp        = fopen(file_name.c_str(), "w");
+
+    vec2_t point[2];
+    point[0] = cartesianToGraph(swf_x_min + x_stp * i, swf_y_min);
+    point[1] = cartesianToGraph(swf_x_min + x_stp * i, swf_y_max);
+    fprintf(fp, "%f %f\n", point[0].x(), point[0].y() );
+    fprintf(fp, "%f %f\n", point[1].x(), point[1].y() );
+    fclose(fp);
+    fprintf(p.gp, "\"%s\" with lines lt -1 lw 2 lc \"white\" notitle,\\\n", file_name.c_str() );
+
+    count++;
+  }
+  for(int i = 0; i < swf_y_num; i++) {
+    std::string file_name = "dat/tmp" + std::to_string(count) + ".dat";
+    FILE       *fp        = fopen(file_name.c_str(), "w");
+
+    vec2_t point[2];
+    point[0] = cartesianToGraph(swf_x_min, swf_y_min + y_stp * i);
+    point[1] = cartesianToGraph(swf_x_max, swf_y_min + y_stp * i);
+    fprintf(fp, "%f %f\n", point[0].x(), point[0].y() );
+    fprintf(fp, "%f %f\n", point[1].x(), point[1].y() );
+    fclose(fp);
+    fprintf(p.gp, "\"%s\" with lines lt -1 lw 2 lc \"white\" notitle,\\\n", file_name.c_str() );
+
+    count++;
+  }
   fprintf(p.gp, "     \"dat/foot_region.dat\" with lines  lw 2 lc \"dark-blue\" title \"valid stepping region\",\\\n");
   fprintf(p.gp, "     \"dat/foot_r.dat\"      with lines  lw 2 lc \"black\"     title \"support foot\",\\\n");
   fprintf(p.gp, "     \"dat/foot_l.dat\"      with lines  lt 0 dt 1 lw 2 lc \"black\"     title \"swing foot\",\\\n");
@@ -231,8 +258,8 @@ void CRPlot::plot(){
 
 vec2_t CRPlot::cartesianToGraph(vec2_t point){
   vec2_t p;
-  double x = -point.y() / y_stp + ( y_num - 1 ) / 2;
-  double y = +point.x() / x_stp + ( x_num - 1 ) / 2;
+  double x = ( y_max - point.y() ) / y_stp;
+  double y = ( point.x() - x_min ) / x_stp;
   p << x, y;
   return p;
 }

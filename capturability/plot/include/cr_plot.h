@@ -57,9 +57,13 @@ private:
 
   double x_min, x_max, x_stp;
   double y_min, y_max, y_stp;
-  int    x_num;
-  int    y_num;
-  int    c_num; // number of color
+  double swf_x_min, swf_x_max;
+  double swf_y_min, swf_y_max;
+
+  int x_num;
+  int y_num;
+  int swf_x_num, swf_y_num;
+  int c_num;    // number of color
 
   std::vector<std::vector<int> > capture_map;
 };

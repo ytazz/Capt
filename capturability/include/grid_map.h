@@ -36,11 +36,11 @@ public:
   OccupancyType getOccupancy(vec2_t pos);
   OccupancyType getOccupancy(vec2i_t id);
 
-  vec2i_t posToId(vec2_t pos);
-
   void plot();
 
 private:
+  vec2i_t posToId(vec2_t pos);
+
   Param         *param;
   OccupancyPlot *plt;
 

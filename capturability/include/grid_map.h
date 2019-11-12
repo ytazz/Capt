@@ -24,13 +24,17 @@ public:
   GridMap(Param *param);
   ~GridMap();
 
-  void setNode(vec2_t pos);
-  void setNode(vec2i_t id, Node node);
-
   void setObstacle(vec2_t pos);
   void setObstacle(vec2i_t id);
 
+  void setNode(vec2_t pos, Node node);
+  void setNode(vec2i_t id, Node node);
+
+  Node* getNode(vec2_t pos);
   Node* getNode(vec2i_t id);
+
+  OccupancyType getOccupancy(vec2_t pos);
+  OccupancyType getOccupancy(vec2i_t id);
 
   vec2i_t posToId(vec2_t pos);
 

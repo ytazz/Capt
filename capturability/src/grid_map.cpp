@@ -40,6 +40,32 @@ void GridMap::setObstacle(vec2i_t id){
   grid[id.x()][id.y()].type = OccupancyType::OBSTACLE;
 }
 
+void GridMap::setNode(vec2_t pos, Node node){
+  setNode(posToId(pos), node);
+}
+
+void GridMap::setNode(vec2i_t id, Node node){
+  grid[id.x()][id.y()].node = node;
+  grid[id.x()][id.y()].type = OccupancyType::OPEN;
+}
+
+Node* GridMap::getNode(vec2_t pos){
+  return getNode(posToId(pos) );
+}
+
+Node* GridMap::getNode(vec2i_t id){
+  return &( grid[id.x()][id.y()].node );
+}
+
+OccupancyType GridMap::getOccupancy(vec2_t pos){
+  return getOccupancy(posToId(pos) );
+}
+
+OccupancyType GridMap::getOccupancy(vec2i_t id){
+  return ( grid[id.x()][id.y()].type );
+}
+
+
 vec2i_t GridMap::posToId(vec2_t pos){
   int     idx = round( ( pos.x() - x_min ) / x_stp);
   int     idy = round( ( pos.y() - y_min ) / y_stp);

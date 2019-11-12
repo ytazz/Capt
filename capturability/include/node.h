@@ -14,6 +14,12 @@ struct Node {
   Node * parent;
   double cost;
   int    step;
+
+  void operator=(const Node &node) {
+    this->parent = node.parent;
+    this->cost   = node.cost;
+    this->step   = node.step;
+  }
 };
 
 } // namespace Capt

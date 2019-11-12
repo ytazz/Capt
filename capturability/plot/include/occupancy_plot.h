@@ -28,7 +28,7 @@ class OccupancyPlot : public Gnuplot {
   Gnuplot p;
 
 public:
-  OccupancyPlot(Param *param, Grid *grid);
+  OccupancyPlot(Param *param);
   ~OccupancyPlot();
 
   // 出力ファイル形式を選択(.gif .eps .svg)
@@ -38,6 +38,7 @@ public:
   // Open/Close Nodeを設定
   // 決定された着地点を設定
   void setOccupancy(double x, double y, OccupancyType type);
+  void setOccupancy(vec2_t pos, OccupancyType type);
 
   // GridMapのデータを格納するOccupancy
   void initOccupancy();
@@ -46,7 +47,6 @@ public:
 
 private:
   Param *param;
-  Grid  *grid;
 
   std::string str(double val);
   std::string str(int val);

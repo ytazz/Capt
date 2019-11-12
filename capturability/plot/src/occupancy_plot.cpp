@@ -4,8 +4,8 @@ using namespace std;
 
 namespace Capt {
 
-OccupancyPlot::OccupancyPlot(Param *param, Grid *grid)
-  : param(param), grid(grid) {
+OccupancyPlot::OccupancyPlot(Param *param)
+  : param(param){
   // ファイル形式の確認
   // p("unset key");
   p("set encoding utf8");
@@ -19,14 +19,6 @@ OccupancyPlot::OccupancyPlot(Param *param, Grid *grid)
   param->read(&y_max, "map_y_max");
   param->read(&y_stp, "map_y_stp");
   param->read(&y_num, "map_y_num");
-  printf("x_min %lf\n", x_min);
-  printf("x_max %lf\n", x_max);
-  printf("x_stp %lf\n", x_stp);
-  printf("x_num %d\n", x_num);
-  printf("y_min %lf\n", y_min);
-  printf("y_max %lf\n", y_max);
-  printf("y_stp %lf\n", y_stp);
-  printf("y_num %d\n", y_num);
 
   // グラフサイズ設定
   p("set size square");
@@ -70,6 +62,8 @@ OccupancyPlot::OccupancyPlot(Param *param, Grid *grid)
   // 2: blue  (open)
   // 3: red   (footstep path)
   fprintf(p.gp, "set palette defined ( 0 '#ffffff', 1 '#000000', 2 '#cbfeff', 3 '#ff0000')\n");
+  fprintf(p.gp, "set cbrange[0:3]\n");
+  fprintf(p.gp, "set palette maxcolors 4\n");
   fprintf(p.gp, "unset colorbox\n");
 
   initOccupancy();
@@ -120,6 +114,10 @@ void OccupancyPlot::setOccupancy(double x, double y, OccupancyType type){
   // map上の対応するIDに値を代入
   if (0 <= i && i < x_num && 0 <= j && j < y_num)
     occupancy[i][j] = static_cast<int>( type );
+}
+
+void OccupancyPlot::setOccupancy(vec2_t pos, OccupancyType type){
+  setOccupancy(pos.x(), pos.y(), type);
 }
 
 void OccupancyPlot::plot(){

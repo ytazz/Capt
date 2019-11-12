@@ -32,8 +32,9 @@ set(CAPT_SOURCES
   ${PROJECT_SOURCE_DIR}/src/base.cpp
   ${PROJECT_SOURCE_DIR}/src/capturability.cpp
   ${PROJECT_SOURCE_DIR}/src/cycloid.cpp
-  ${PROJECT_SOURCE_DIR}/src/interpolation.cpp
+  ${PROJECT_SOURCE_DIR}/src/grid_map.cpp
   ${PROJECT_SOURCE_DIR}/src/grid.cpp
+  ${PROJECT_SOURCE_DIR}/src/interpolation.cpp
   ${PROJECT_SOURCE_DIR}/src/loader.cpp
   ${PROJECT_SOURCE_DIR}/src/model.cpp
   ${PROJECT_SOURCE_DIR}/src/param.cpp
@@ -54,13 +55,21 @@ set(GPU_SOURCES
   ${PROJECT_SOURCE_DIR}/cuda/src/cuda_vector.cu
 )
 
-add_executable(debug debug.cpp ${CAPT_SOURCES})
+set(PLOT_SOURCES
+  ${PROJECT_SOURCE_DIR}/plot/src/gnuplot.cpp
+  ${PROJECT_SOURCE_DIR}/plot/src/cr_plot.cpp
+  ${PROJECT_SOURCE_DIR}/plot/src/step_plot.cpp
+  ${PROJECT_SOURCE_DIR}/plot/src/occupancy_plot.cpp
+)
+
+add_executable(debug debug.cpp ${CAPT_SOURCES} ${PLOT_SOURCES})
 target_link_libraries(debug ${EXPAT_LIBRARIES})
 
 if(${BUILD_CPU})
   add_executable( main_cpu
     main.cpp
     ${CAPT_SOURCES}
+    ${PLOT_SOURCES}
     ${CPU_SOURCES}
   )
   target_link_libraries(main_cpu ${EXPAT_LIBRARIES})
@@ -70,6 +79,7 @@ if(${BUILD_GPU})
   cuda_add_executable( main_gpu
     main.cu
     ${CAPT_SOURCES}
+    ${PLOT_SOURCES}
     ${GPU_SOURCES}
   )
   target_link_libraries(main_gpu ${EXPAT_LIBRARIES})
@@ -77,7 +87,7 @@ endif()
 
 if(${MAKE_LIBRARY})
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -shared -fPIC")
-  add_library(${PROJECT_NAME} SHARED ${CAPT_SOURCES})
+  add_library(${PROJECT_NAME} SHARED ${CAPT_SOURCES} ${PLOT_SOURCES})
   target_link_libraries(${PROJECT_NAME} ${EXPAT_LIBRARIES})
 endif()
 

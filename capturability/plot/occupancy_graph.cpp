@@ -6,9 +6,8 @@ using namespace Capt;
 
 int main(int argc, char const *argv[]) {
   Param *param = new Param("data/footstep.xml");
-  Grid  *grid  = new Grid(param);
 
-  OccupancyPlot *plot = new OccupancyPlot(param, grid);
+  OccupancyPlot *plot = new OccupancyPlot(param);
 
   for(int i = 0; i <= 5; i++) {
     for(int j = 0; j <= 5; j++) {
@@ -28,7 +27,6 @@ int main(int argc, char const *argv[]) {
   plot->plot();
 
   delete param;
-  delete grid;
   delete plot;
 
   return 0;

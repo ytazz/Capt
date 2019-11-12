@@ -9,13 +9,6 @@
 
 namespace Capt {
 
-struct Node {
-  Node * parent;
-  int    state_id;
-  int    step;
-  vec2_t pos; // 後で計算
-};
-
 class Search {
 public:
   Search(Grid *grid, Capturability *capturability);
@@ -42,11 +35,11 @@ public:
 private:
   Grid          *grid;
   Capturability *capturability;
+  GridMap       *gridmap;
 
   int max_step;
 
-  std::vector<Node> nodes;
-  std::vector<int>  opens;
+  std::vector<Node*> opens;
 
   Foot   s_suf;
   vec2_t s_rfoot, s_lfoot, s_icp; // start

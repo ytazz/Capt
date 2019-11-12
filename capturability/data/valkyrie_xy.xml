@@ -5,13 +5,13 @@
   <unit length="m" angle="deg"/>
 
   <icp>
-    <x min="-0.6" max="0.6" stp="0.025"/>
-    <y min="-0.6" max="0.6" stp="0.025"/>
+    <x min="-0.6" max="0.6" stp="0.05"/>
+    <y min="-0.6" max="0.6" stp="0.05"/>
   </icp>
 
   <swing>
-    <x min="-0.25" max="0.25" stp="0.025"/>
-    <y min="0.2" max="0.5" stp="0.025"/>
+    <x min="-0.25" max="0.25" stp="0.05"/>
+    <y min="0.2" max="0.5" stp="0.05"/>
   </swing>
 
 </coordinate>

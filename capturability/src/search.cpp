@@ -4,6 +4,8 @@ namespace Capt {
 
 Search::Search(Grid *grid, Capturability *capturability) :
   grid(grid), capturability(capturability){
+  gridmap = new GridMap(param);
+
   max_step = capturability->getMaxStep();
 }
 
@@ -11,7 +13,6 @@ Search::~Search() {
 }
 
 void Search::clear(){
-  nodes.clear();
   opens.clear();
 }
 
@@ -27,36 +28,42 @@ void Search::setGoal(vec2_t rfoot, vec2_t lfoot){
   g_lfoot = lfoot;
 }
 
-void Search::addNode(Node node){
-  nodes.push_back(node);
-}
-
-void Search::addOpen(int node_id){
-  opens.push_back(node_id);
+void Search::addOpen(Node* node){
+  opens.push_back(node);
 }
 
 void Search::openNode(int node_id){
-  for(int n = 2; n < max_step; n++) {
-    std::vector<CaptureSet> region = capturability->getCaptureRegion(nodes[node_id].state_id, n);
-    for(size_t i = 0; i < region.size(); i++) {
-      Node node_;
-      node_.parent   = &nodes[node_id];
-      node_.state_id = region[i].next_id;
-      node_.step     = node_.parent->step + 1;
+  Node *node = opens[node_id];
 
-      addNode(node_);
-      addOpen(nodes.size() - 1);
+  vec2_t pos;
+  for(int n = 1; n <= max_step; n++) {
+    std::vector<CaptureSet> region = capturability->getCaptureRegion(node->state_id, n);
+    for(size_t i = 0; i < region.size(); i++) {
+      pos.x() = node->pos.x() + grid->getInput(region.input_id).x();
+      if( ( node->step % 2 ) == 0) { // 最初の支持足と同じ足
+        if(s_suf == FOOT_R)
+          pos.y() = node->pos.y() + grid->getInput(region.input_id).y();
+        else
+          pos.y() = node->pos.y() - grid->getInput(region.input_id).y();
+      }else{ // 最初の支持足と逆の足
+        if(s_suf == FOOT_R)
+          pos.y() = node->pos.y() - grid->getInput(region.input_id).y();
+        else
+          pos.y() = node->pos.y() + grid->getInput(region.input_id).y();
+      }
+      if(gridmap->getOccupancy() == OccupancyType::NONE) {
+        Node node_;
+        node_.parent   = node;
+        node_.state_id = region[i].next_id;
+        node_.step     = node->step + 1;
+
+        gridmap->setNode(pos, node_);
+        addOpen(gridmap->getNode(pos) );
+      }
     }
   }
 
-  opens.erase(opens.begin() );
-}
-
-bool Search::existNode(){
-  bool flag = false;
-  if(nodes.size() > 0)
-    flag = true;
-  return flag;
+  opens.erase(opens.begin() + node_id);
 }
 
 bool Search::existOpen(){

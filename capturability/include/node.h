@@ -12,13 +12,15 @@ struct Node {
   }
 
   Node * parent;
+  int    state_id;
   double cost;
   int    step;
 
   void operator=(const Node &node) {
-    this->parent = node.parent;
-    this->cost   = node.cost;
-    this->step   = node.step;
+    this->parent   = node.parent;
+    this->state_id = node.state_id;
+    this->cost     = node.cost;
+    this->step     = node.step;
   }
 };
 

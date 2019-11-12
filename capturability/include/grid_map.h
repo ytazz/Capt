@@ -38,7 +38,7 @@ public:
 
 private:
   Param         *param;
-  OccupancyPlot *plotter;
+  OccupancyPlot *plt;
 
   double x_min, x_max, x_stp;
   double y_min, y_max, y_stp;

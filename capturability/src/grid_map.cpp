@@ -57,6 +57,21 @@ Node* GridMap::getNode(vec2i_t id){
   return &( grid[id.x()][id.y()].node );
 }
 
+Cell* GridMap::findMinCostCell(){
+  vec2i_t min_id;
+  double  min_cost = 100;
+  for (int i = 0; i < x_num; i++) {
+    for (int j = 0; j < y_num; j++) {
+      if(grid[i][j].type == OPEN) {
+        if(grid[i][j].node.cost < min_cost) {
+          min_id << i, j;
+        }
+      }
+    }
+  }
+  return &grid[min_id.x()][min_id.y()];
+}
+
 OccupancyType GridMap::getOccupancy(vec2_t pos){
   return getOccupancy(posToId(pos) );
 }
@@ -64,7 +79,6 @@ OccupancyType GridMap::getOccupancy(vec2_t pos){
 OccupancyType GridMap::getOccupancy(vec2i_t id){
   return ( grid[id.x()][id.y()].type );
 }
-
 
 vec2i_t GridMap::posToId(vec2_t pos){
   int     idx = round( ( pos.x() - x_min ) / x_stp);

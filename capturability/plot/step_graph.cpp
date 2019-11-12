@@ -19,23 +19,6 @@ int main(int argc, char const *argv[]) {
   capturability->load("gpu/Basin.csv", DataType::BASIN);
   capturability->load("gpu/Nstep.csv", DataType::NSTEP);
 
-  Search *search = new Search(grid, capturability);
-
-  vec2_t s_rfoot(0.0, 0.0);
-  vec2_t s_lfoot(0.0, 0.4);
-  vec2_t s_icp(0.0, 0.15);
-  vec2_t g_rfoot(1.0, 0.0);
-  vec2_t g_lfoot(1.0, 0.4);
-
-  search->setStart(s_rfoot, s_lfoot, s_icp, Foot::FOOT_R);
-  search->setGoal(g_rfoot, g_lfoot);
-
-  bool flag = true;
-  search->exe();
-  // while(flag) {
-  //   search->step();
-  // }
-
   StepPlot *plot = new StepPlot(model, param, grid);
   arr2_t    foot_r, foot_l, icp;
 
@@ -65,7 +48,6 @@ int main(int argc, char const *argv[]) {
   delete param;
   delete grid;
   delete capturability;
-  delete search;
   delete plot;
 
   return 0;

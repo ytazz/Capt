@@ -2,10 +2,8 @@
 
 namespace Capt {
 
-Search::Search(Grid *grid, Capturability *capturability) :
-  grid(grid), capturability(capturability){
-  gridmap = new GridMap(param);
-
+Search::Search(GridMap *gridmap, Grid *grid, Capturability *capturability) :
+  gridmap(gridmap), grid(grid), capturability(capturability){
   max_step = capturability->getMaxStep();
 }
 
@@ -13,7 +11,6 @@ Search::~Search() {
 }
 
 void Search::clear(){
-  opens.clear();
 }
 
 void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){
@@ -28,52 +25,46 @@ void Search::setGoal(vec2_t rfoot, vec2_t lfoot){
   g_lfoot = lfoot;
 }
 
-void Search::addOpen(Node* node){
-  opens.push_back(node);
-}
-
-void Search::openNode(int node_id){
-  Node *node = opens[node_id];
-
+void Search::open(Cell *cell){
   vec2_t pos;
   for(int n = 1; n <= max_step; n++) {
-    std::vector<CaptureSet> region = capturability->getCaptureRegion(node->state_id, n);
+    std::vector<CaptureSet> region = capturability->getCaptureRegion(cell->node.state_id, n);
     for(size_t i = 0; i < region.size(); i++) {
-      pos.x() = node->pos.x() + grid->getInput(region.input_id).x();
-      if( ( node->step % 2 ) == 0) { // 最初の支持足と同じ足
+      pos.x() = cell->pos.x() + grid->getInput(region[i].input_id).swf.x();
+      if( ( cell->node.step % 2 ) == 0) { // 最初の支持足と同じ足
         if(s_suf == FOOT_R)
-          pos.y() = node->pos.y() + grid->getInput(region.input_id).y();
+          pos.y() = cell->pos.y() + grid->getInput(region[i].input_id).swf.y();
         else
-          pos.y() = node->pos.y() - grid->getInput(region.input_id).y();
+          pos.y() = cell->pos.y() - grid->getInput(region[i].input_id).swf.y();
       }else{ // 最初の支持足と逆の足
         if(s_suf == FOOT_R)
-          pos.y() = node->pos.y() - grid->getInput(region.input_id).y();
+          pos.y() = cell->pos.y() - grid->getInput(region[i].input_id).swf.y();
         else
-          pos.y() = node->pos.y() + grid->getInput(region.input_id).y();
+          pos.y() = cell->pos.y() + grid->getInput(region[i].input_id).swf.y();
       }
-      if(gridmap->getOccupancy() == OccupancyType::NONE) {
+      if(gridmap->getOccupancy(pos) == OccupancyType::NONE) {
+        vec2_t diff = pos - cell->pos;
+
         Node node_;
-        node_.parent   = node;
+        node_.parent   = &cell->node;
         node_.state_id = region[i].next_id;
-        node_.step     = node->step + 1;
+        node_.cost     = sqrt(diff.x() * diff.x() + diff.y() * diff.y() );
+        node_.step     = cell->node.step + 1;
 
         gridmap->setNode(pos, node_);
-        addOpen(gridmap->getNode(pos) );
       }
     }
   }
-
-  opens.erase(opens.begin() + node_id);
 }
 
 bool Search::existOpen(){
   bool flag = false;
-  if(opens.size() > 0)
-    flag = true;
+  // if(opens.size() > 0)
+  //   flag = true;
   return flag;
 }
 
-void Search::exe(){
+void Search::init(){
   // Calculate initial state
   State state;
   if(s_suf == FOOT_R) {
@@ -89,28 +80,28 @@ void Search::exe(){
   node.parent   = NULL;
   node.state_id = grid->getStateIndex(state);
   node.step     = 0;
-  nodes.push_back(node);
 
-  // Add open list
-  addOpen(0);
+  gridmap->setNode(vec2_t(0, 0), node);
+
+  gridmap->plot();
+}
+
+void Search::exe(){
+  // Set initial node
+  init();
 
   // Search
-  // while(existOpen() ) {
-  //   openNode(opens[0]);
-  // }
+  while(existOpen() ) {
+    step();
+  }
 }
 
 void Search::step(){
   printf("-----------------------------\n");
-  printf("opens: %d\n", (int)opens.size() );
-  printf("nodes: %d\n", (int)nodes.size() );
-  printf("\t| state_id | step |\n");
-  for(size_t i = 0; i < nodes.size(); i++)
-    printf("\t| %8d | %4d |\n", nodes[i].state_id, nodes[i].step);
-
-  if(existOpen() ) {
-    openNode(opens[0]);
-  }
+  Cell *cell = gridmap->findMinCostCell();
+  open(cell);
+  cell->type = OccupancyType::PATH;
+  gridmap->plot();
 }
 
 } // namespace Capt

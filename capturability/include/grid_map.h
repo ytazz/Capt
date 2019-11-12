@@ -33,6 +33,8 @@ public:
   Node* getNode(vec2_t pos);
   Node* getNode(vec2i_t id);
 
+  Cell* findMinCostCell();
+
   OccupancyType getOccupancy(vec2_t pos);
   OccupancyType getOccupancy(vec2i_t id);
 

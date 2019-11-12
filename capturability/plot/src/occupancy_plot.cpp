@@ -61,7 +61,7 @@ OccupancyPlot::OccupancyPlot(Param *param)
   // 1: black (obstacle)
   // 2: blue  (open)
   // 3: red   (footstep path)
-  fprintf(p.gp, "set palette defined ( 0 '#ffffff', 1 '#000000', 2 '#cbfeff', 3 '#ff0000')\n");
+  fprintf(p.gp, "set palette defined ( 0 '#ffffff', 1 '#000000', 2 '#0097ff', 3 '#ff0000')\n");
   fprintf(p.gp, "set cbrange[0:3]\n");
   fprintf(p.gp, "set palette maxcolors 4\n");
   fprintf(p.gp, "unset colorbox\n");

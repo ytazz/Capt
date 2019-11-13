@@ -4,3 +4,7 @@ bin/
 /build
 /xml/build/
 *.user
+*.aux
+*.dvi
+*.log
+*.synctex.gz

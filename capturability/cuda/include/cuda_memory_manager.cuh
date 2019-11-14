@@ -30,11 +30,15 @@ struct Grid {
   int icp_y_num;
   int swf_x_num;
   int swf_y_num;
+  int cop_x_num;
+  int cop_y_num;
 
   double icp_x_min, icp_x_max, icp_x_stp;
   double icp_y_min, icp_y_max, icp_y_stp;
   double swf_x_min, swf_x_max, swf_x_stp;
   double swf_y_min, swf_y_max, swf_y_stp;
+  double cop_x_min, cop_x_max, cop_x_stp;
+  double cop_y_min, cop_y_max, cop_y_stp;
 
   void operator=(const Grid &grid);
 };
@@ -47,6 +51,7 @@ struct State {
 };
 
 struct Input {
+  vec2_t cop;
   vec2_t swf;
 
   __device__ void operator=(const Input &input);
@@ -82,7 +87,6 @@ public:
   __host__ void initHostFootR(vec2_t *foot);
   __host__ void initHostFootL(vec2_t *foot);
   __host__ void initHostConvex(vec2_t *convex);
-  __host__ void initHostCop(vec2_t *cop);
   __host__ void initHostStepTime(double *step_time);
   __host__ void initHostPhysics(Physics *physics);
 
@@ -95,7 +99,6 @@ public:
   __host__ void initDevFootR(vec2_t *dev_foot_r);
   __host__ void initDevFootL(vec2_t *dev_foot_l);
   __host__ void initDevConvex(vec2_t *dev_convex);
-  __host__ void initDevCop(vec2_t *dev_cop);
   __host__ void initDevStepTime(double *dev_step_time);
   __host__ void initDevPhysics(Physics *dev_physics);
 
@@ -108,7 +111,6 @@ public:
   __host__ void copyHostToDevFootR(vec2_t *foot_r, vec2_t *dev_foot_r);
   __host__ void copyHostToDevFootL(vec2_t *foot_l, vec2_t *dev_foot_l);
   __host__ void copyHostToDevConvex(vec2_t *convex, vec2_t *dev_convex);
-  __host__ void copyHostToDevCop(vec2_t *cop, vec2_t *dev_cop);
   __host__ void copyHostToDevStepTime(double *step_time, double *dev_step_time);
   __host__ void copyHostToDevPhysics(Physics *physics, Physics *dev_physics);
 
@@ -121,13 +123,11 @@ public:
   __host__ void copyDevToHostFootR(vec2_t *dev_foot_r, vec2_t *foot_r);
   __host__ void copyDevToHostFootL(vec2_t *dev_foot_l, vec2_t *foot_l);
   __host__ void copyDevToHostConvex(vec2_t *dev_convex, vec2_t *convex);
-  __host__ void copyDevToHostCop(vec2_t *dev_cop, vec2_t *cop);
   __host__ void copyDevToHostStepTime(double *dev_step_time, double *step_time);
   __host__ void copyDevToHostPhysics(Physics *dev_physics, Physics *physics);
 
   __host__ void saveBasin(std::string file_name, int *basin, bool header = false);
   __host__ void saveNstep(std::string file_name, int *nstep, int *trans, int max_step, bool header = false);
-  __host__ void saveCop(std::string file_name, vec2_t *cop, bool header = false);
   __host__ void saveStepTime(std::string file_name, double *step_time, bool header = false);
 
 private:

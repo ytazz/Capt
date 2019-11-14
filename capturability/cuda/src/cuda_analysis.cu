@@ -88,10 +88,10 @@ __device__ vec2_t getClosestPoint(vec2_t point, vec2_t* vertex, int num_vertex) 
   return closest;
 }
 
-__device__ State step(State state, Input input, vec2_t cop, double step_time, Physics *physics) {
+__device__ State step(State state, Input input, double step_time, Physics *physics) {
   // LIPM
   vec2_t icp;
-  icp = ( state.icp - cop ) * exp(physics->omega * step_time) + cop;
+  icp = ( state.icp - input.cop ) * exp(physics->omega * step_time) + input.cop;
 
   // 状態変換
   State state_;
@@ -166,16 +166,6 @@ __device__ int getStateIndex(State state, Grid *grid) {
 
 /* global function */
 
-__global__ void calcCop(State *state, Grid *grid, vec2_t *foot_r, vec2_t *cop){
-  int tid = threadIdx.x + blockIdx.x * blockDim.x;
-
-  while (tid < grid->state_num) {
-    cop[tid] = getClosestPoint(state[tid].icp, foot_r, grid->foot_r_num );
-
-    tid += blockDim.x * gridDim.x;
-  }
-}
-
 __global__ void calcStepTime(State *state, Input *input, Grid *grid, double *step_time, Physics *physics){
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
@@ -213,14 +203,14 @@ __global__ void calcBasin(State *state, int *basin, Grid *grid, vec2_t *foot_r, 
 }
 
 __global__ void calcTrans(State *state, Input *input, int *trans, Grid *grid,
-                          vec2_t *cop, double *step_time, Physics *physics){
+                          double *step_time, Physics *physics){
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
   while (tid < grid->state_num * grid->input_num) {
     int state_id = tid / grid->input_num;
     int input_id = tid % grid->input_num;
 
-    State state_ = step(state[state_id], input[input_id], cop[state_id], step_time[tid], physics);
+    State state_ = step(state[state_id], input[input_id], step_time[tid], physics);
     if (existState(state_, grid) )
       trans[tid] = getStateIndex(state_, grid);
     else

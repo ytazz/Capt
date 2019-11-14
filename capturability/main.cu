@@ -42,7 +42,6 @@ int main(void) {
   Cuda::vec2_t  *foot_r    = (Cuda::vec2_t*)malloc(sizeof( Cuda::vec2_t ) * foot_r_num );
   Cuda::vec2_t  *foot_l    = (Cuda::vec2_t*)malloc(sizeof( Cuda::vec2_t ) * foot_l_num );
   Cuda::vec2_t  *convex    = (Cuda::vec2_t*)malloc(sizeof( Cuda::vec2_t ) * num_swf * num_vertex );
-  Cuda::vec2_t  *cop       = (Cuda::vec2_t*)malloc(sizeof( Cuda::vec2_t ) * state_num );
   double        *step_time = (double*)malloc(sizeof( double ) * grid_num );
   Cuda::Physics *physics   = (Cuda::Physics*)malloc(sizeof( Cuda::Physics ) );
   mm.initHostState(state);
@@ -54,7 +53,6 @@ int main(void) {
   mm.initHostFootR(foot_r);
   mm.initHostFootL(foot_l);
   mm.initHostConvex(convex);
-  mm.initHostCop(cop);
   mm.initHostStepTime(step_time);
   mm.initHostPhysics(physics);
   // デバイス側
@@ -67,7 +65,6 @@ int main(void) {
   Cuda::vec2_t  *dev_foot_r;
   Cuda::vec2_t  *dev_foot_l;
   Cuda::vec2_t  *dev_convex;
-  Cuda::vec2_t  *dev_cop;
   double        *dev_step_time;
   Cuda::Physics *dev_physics;
   HANDLE_ERROR(cudaMalloc( (void **)&dev_state, state_num * sizeof( Cuda::State ) ) );
@@ -79,7 +76,6 @@ int main(void) {
   HANDLE_ERROR(cudaMalloc( (void **)&dev_foot_r, foot_r_num * sizeof( Cuda::vec2_t ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_foot_l, foot_l_num * sizeof( Cuda::vec2_t ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_convex, num_swf * num_vertex * sizeof( Cuda::vec2_t ) ) );
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_cop, state_num * sizeof( Cuda::vec2_t ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_step_time, grid_num * sizeof( double ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_physics, sizeof( Cuda::Physics ) ) );
   // ホスト側からデバイス側にコピー
@@ -92,7 +88,6 @@ int main(void) {
   mm.copyHostToDevFootR(foot_r, dev_foot_r);
   mm.copyHostToDevFootL(foot_l, dev_foot_l);
   mm.copyHostToDevConvex(convex, dev_convex);
-  mm.copyHostToDevCop(cop, dev_cop);
   mm.copyHostToDevStepTime(step_time, dev_step_time);
   mm.copyHostToDevPhysics(physics, dev_physics);
 
@@ -101,10 +96,9 @@ int main(void) {
   /* 状態遷移計算 */
   printf("  Calculating .... ");
   fflush(stdout);
-  Cuda::calcCop << < BPG, TPB >> > ( dev_state, dev_grid, dev_foot_r, dev_cop );
   Cuda::calcStepTime << < BPG, TPB >> > ( dev_state, dev_input, dev_grid, dev_step_time, dev_physics );
   Cuda::calcBasin << < BPG, TPB >> > ( dev_state, dev_basin, dev_grid, dev_foot_r, dev_foot_l, dev_convex );
-  Cuda::calcTrans << < BPG, TPB >> > ( dev_state, dev_input, dev_trans, dev_grid, dev_cop, dev_step_time, dev_physics );
+  Cuda::calcTrans << < BPG, TPB >> > ( dev_state, dev_input, dev_trans, dev_grid, dev_step_time, dev_physics );
   printf("Done!\n");
 
   /* 解析実行 */
@@ -131,14 +125,12 @@ int main(void) {
   mm.copyDevToHostBasin(dev_basin, basin);
   mm.copyDevToHostNstep(dev_nstep, nstep);
   mm.copyDevToHostTrans(dev_trans, trans);
-  mm.copyDevToHostCop(dev_cop, cop);
   mm.copyDevToHostStepTime(dev_step_time, step_time);
   end_exe = std::chrono::system_clock::now();
 
   /* ファイル書き出し */
   mm.saveBasin("gpu/Basin.csv", basin);
   mm.saveNstep("gpu/Nstep.csv", nstep, trans, step);
-  mm.saveCop("gpu/Cop.csv", cop);
   mm.saveStepTime("gpu/StepTime.csv", step_time);
   end_save = std::chrono::system_clock::now();
 
@@ -162,7 +154,6 @@ int main(void) {
   delete foot_r;
   delete foot_l;
   delete convex;
-  delete cop;
   delete step_time;
   delete physics;
   // デバイス側
@@ -175,7 +166,6 @@ int main(void) {
   cudaFree(dev_foot_r);
   cudaFree(dev_foot_l);
   cudaFree(dev_convex);
-  cudaFree(dev_cop);
   cudaFree(dev_step_time);
   cudaFree(dev_physics);
 

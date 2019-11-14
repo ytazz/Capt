@@ -27,7 +27,7 @@ int main(int argc, char const *argv[]) {
   // double icp_y_offset = 0.02;
   // paper plot for val
   double icp_x        = 0.00;
-  double icp_y        = 0.10;
+  double icp_y        = 0.0;
   double swf_x        = -0.25;
   double swf_y        = 0.4;
   double icp_x_offset = 0.1;
@@ -40,7 +40,7 @@ int main(int argc, char const *argv[]) {
 
   State state;
   Input input;
-  int   cop_id = 11;
+  int   cop_id = 6;
 
   CRPlot *cr_plot;
   // case1
@@ -59,7 +59,6 @@ int main(int argc, char const *argv[]) {
       printf("%d-step capture points %5d\n", N, (int)region.size() );
       for(size_t i = 0; i < region.size(); i++) {
         Input input = grid->getInput(region[i].input_id);
-        printf("%d\n", grid->indexCop(input.cop) );
         if(grid->indexCop(input.cop) == cop_id)
           cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), N);
       }

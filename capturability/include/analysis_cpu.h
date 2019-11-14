@@ -30,13 +30,11 @@ public:
   void initTrans();
   void initBasin();
   void initNstep();
-  void initCop();
   void initStepTime();
 
   // 解析前の状態遷移や0-step、copを計算
   void calcBasin();
   void calcTrans();
-  void calcCop();
   void calcStepTime();
 
   // 解析実行
@@ -46,7 +44,6 @@ public:
   void saveTrans(std::string file_name, bool header = false);
   void saveBasin(std::string file_name, bool header = false);
   void saveNstep(std::string file_name, bool header = false);
-  void saveCop(std::string file_name, bool header = false);
   void saveStepTime(std::string file_name, bool header = false);
 
 private:
@@ -60,7 +57,6 @@ private:
   int    *trans;
   int    *basin;
   int    *nstep;
-  vec2_t *cop;
   double *step_time;
 
   const int state_num;

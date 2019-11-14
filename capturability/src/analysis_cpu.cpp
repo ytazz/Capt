@@ -13,14 +13,12 @@ Analysis::Analysis(Model *model, Grid *grid)
   initTrans();
   initBasin();
   initNstep();
-  initCop();
   initStepTime();
   printf("Done!\n");
 
   printf("  Calculating .... ");
   fflush(stdout);
   calcBasin();
-  calcCop();
   calcStepTime();
   calcTrans();
   printf("Done!\n");
@@ -59,12 +57,6 @@ void Analysis::initNstep(){
     nstep[id] = -1;
 }
 
-void Analysis::initCop(){
-  cop = new vec2_t[state_num];
-  for (int state_id = 0; state_id < state_num; state_id++)
-    cop[state_id] << 0.0, 0.0;
-}
-
 void Analysis::initStepTime(){
   step_time = new double[grid_num];
   for (int id = 0; id < grid_num; id++)
@@ -94,15 +86,6 @@ void Analysis::calcBasin(){
         basin[state_id] = 0;
     }
   }
-
-}
-
-void Analysis::calcCop(){
-  arr2_t foot_r;
-  model->read(&foot_r, "foot_r_convex");
-  Polygon polygon;
-  for(int state_id = 0; state_id < state_num; state_id++)
-    cop[state_id] = polygon.getClosestPoint(state[state_id].icp, foot_r);
 }
 
 void Analysis::calcStepTime(){
@@ -126,7 +109,7 @@ void Analysis::calcTrans(){
       int id = state_id * input_num + input_id;
 
       pendulum.setIcp(state[state_id].icp);
-      pendulum.setCop(cop[state_id]);
+      pendulum.setCop(input[input_id].cop);
       icp = pendulum.getIcp(step_time[id]);
 
       State state_;
@@ -171,28 +154,6 @@ void Analysis::exe(){
   max_step--;
 
   printf("Done!\n");
-}
-
-void Analysis::saveCop(std::string file_name, bool header){
-  FILE *fp = fopen(file_name.c_str(), "w");
-
-  // Header
-  if (header) {
-    // fprintf(fp, "%s,", "state_id");
-    fprintf(fp, "%s,", "cop_x");
-    fprintf(fp, "%s", "cop_y");
-    fprintf(fp, "\n");
-  }
-
-  // Data
-  for(int state_id = 0; state_id < state_num; state_id++) {
-    // fprintf(fp, "%d,", state_id);
-    fprintf(fp, "%1.4lf,", cop[state_id].x() );
-    fprintf(fp, "%1.4lf", cop[state_id].y() );
-    fprintf(fp, "\n");
-  }
-
-  fclose(fp);
 }
 
 void Analysis::saveStepTime(std::string file_name, bool header){

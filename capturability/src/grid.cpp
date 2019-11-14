@@ -9,12 +9,12 @@ Grid::Grid(Param *param) : param(param) {
   state_num = 0;
   input_num = 0;
 
-  icp_x_num = 0.0;
-  icp_y_num = 0.0;
-  swf_x_num = 0.0;
-  swf_y_num = 0.0;
-  swf_x_num = 0.0;
-  swf_y_num = 0.0;
+  icp_x_num = 0;
+  icp_y_num = 0;
+  swf_x_num = 0;
+  swf_y_num = 0;
+  cop_x_num = 0;
+  cop_y_num = 0;
 
   create();
 }
@@ -39,16 +39,25 @@ void Grid::create() {
   param->read(&swf_y[MIN], "swf_y_min");
   param->read(&swf_y[MAX], "swf_y_max");
   param->read(&swf_y[STP], "swf_y_stp");
+  param->read(&cop_x[MIN], "cop_x_min");
+  param->read(&cop_x[MAX], "cop_x_max");
+  param->read(&cop_x[STP], "cop_x_stp");
+  param->read(&cop_y[MIN], "cop_y_min");
+  param->read(&cop_y[MAX], "cop_y_max");
+  param->read(&cop_y[STP], "cop_y_stp");
 
   // num of each grid
   param->read(&icp_x_num, "icp_x_num");
   param->read(&icp_y_num, "icp_y_num");
   param->read(&swf_x_num, "swf_x_num");
   param->read(&swf_y_num, "swf_y_num");
+  param->read(&cop_x_num, "cop_x_num");
+  param->read(&cop_y_num, "cop_y_num");
 
   // current grid value
   double icp_x_ = icp_x[MIN], icp_y_ = icp_y[MIN];
-  double swf_x_ = icp_x[MIN], swf_y_ = icp_y[MIN];
+  double swf_x_ = swf_x[MIN], swf_y_ = swf_y[MIN];
+  double cop_x_ = icp_x[MIN], cop_y_ = icp_y[MIN];
 
   // state
   state_num = 0;
@@ -72,8 +81,7 @@ void Grid::create() {
     exit(EXIT_FAILURE);
   }
   fprintf(fp_state, "index,icp_x,icp_y,swf_x,swf_y\n");
-  for (int i = 0; i < max(icp_x_num, icp_y_num, swf_x_num, swf_y_num);
-       i++) {
+  for (int i = 0; i < max(icp_x_num, icp_y_num, swf_x_num, swf_y_num); i++) {
     fprintf(fp_state, "%d", i);
     if (i < icp_x_num) {
       icp_x_ = icp_x[MIN] + icp_x[STP] * i;
@@ -105,11 +113,17 @@ void Grid::create() {
 
   // input
   input_num = 0;
-  for (int k = 0; k < swf_x_num; k++) {
-    swf_x_ = swf_x[MIN] + swf_x[STP] * k;
-    for (int l = 0; l < swf_y_num; l++) {
-      swf_y_ = swf_y[MIN] + swf_y[STP] * l;
-      setInput(swf_x_, swf_y_);
+  for (int i = 0; i < cop_x_num; i++) {
+    cop_x_ = cop_x[MIN] + cop_x[STP] * i;
+    for (int j = 0; j < cop_y_num; j++) {
+      cop_y_ = cop_y[MIN] + cop_y[STP] * j;
+      for (int k = 0; k < swf_x_num; k++) {
+        swf_x_ = swf_x[MIN] + swf_x[STP] * k;
+        for (int l = 0; l < swf_y_num; l++) {
+          swf_y_ = swf_y[MIN] + swf_y[STP] * l;
+          setInput(cop_x_, cop_y_, swf_x_, swf_y_);
+        }
+      }
     }
   }
 
@@ -118,9 +132,21 @@ void Grid::create() {
     printf("Error: couldn't open input_table.csv\n");
     exit(EXIT_FAILURE);
   }
-  fprintf(fp_input, "index,swf_x,swf_y\n");
-  for (int i = 0; i < max(swf_x_num, swf_y_num); i++) {
+  fprintf(fp_input, "index,cop_x,cop_y,swf_x,swf_y\n");
+  for (int i = 0; i < max(cop_x_num, cop_y_num, swf_x_num, swf_y_num); i++) {
     fprintf(fp_input, "%d", i);
+    if (i < cop_x_num) {
+      cop_x_ = cop_x[MIN] + cop_x[STP] * i;
+      fprintf(fp_input, ",%lf", cop_x_);
+    } else {
+      fprintf(fp_input, ",");
+    }
+    if (i < cop_y_num) {
+      cop_y_ = cop_y[MIN] + cop_y[STP] * i;
+      fprintf(fp_input, ",%lf", cop_y_);
+    } else {
+      fprintf(fp_input, ",");
+    }
     if (i < swf_x_num) {
       swf_x_ = swf_x[MIN] + swf_x[STP] * i;
       fprintf(fp_input, ",%lf", swf_x_);
@@ -195,8 +221,8 @@ void Grid::setState(double icp_x, double icp_y, double swf_x, double swf_y) {
   state_num++;
 }
 
-void Grid::setInput(double swf_x, double swf_y) {
-  Input input_(swf_x, swf_y);
+void Grid::setInput(double cop_x, double cop_y, double swf_x, double swf_y) {
+  Input input_(cop_x, cop_y, swf_x, swf_y);
   input.push_back(input_);
   input_num++;
 }
@@ -277,7 +303,7 @@ Input Grid::getInput(int index) {
   if (existInput(index) ) {
     input_ = input[index];
   }else{
-    input_.set(-1, -1);
+    input_.set(-1, -1, -1, -1);
   }
   return input_;
 }

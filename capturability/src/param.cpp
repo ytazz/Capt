@@ -25,6 +25,13 @@ Param::Param(const std::string &name) : Loader(name) {
   swf_y_max = 0.0;
   swf_y_stp = 0.0;
 
+  cop_x_min = 0.0;
+  cop_x_max = 0.0;
+  cop_x_stp = 0.0;
+  cop_y_min = 0.0;
+  cop_y_max = 0.0;
+  cop_y_stp = 0.0;
+
   map_x_min = 0.0;
   map_x_max = 0.0;
   map_x_stp = 0.0;
@@ -53,6 +60,8 @@ void Param::callbackElement(const std::string &name, const bool is_start) {
       element = ICP;
     if (equalStr(name, "swing") )
       element = SWING;
+    if (equalStr(name, "cop") )
+      element = COP;
     if (equalStr(name, "map") )
       element = MAP;
     break;
@@ -63,6 +72,12 @@ void Param::callbackElement(const std::string &name, const bool is_start) {
       axis = AXIS_Y;
     break;
   case SWING:
+    if (equalStr(name, "x") )
+      axis = AXIS_X;
+    if (equalStr(name, "y") )
+      axis = AXIS_Y;
+    break;
+  case COP:
     if (equalStr(name, "x") )
       axis = AXIS_X;
     if (equalStr(name, "y") )
@@ -89,6 +104,7 @@ void Param::callbackElement(const std::string &name, const bool is_start) {
       break;
     case ICP:
     case SWING:
+    case COP:
     case MAP:
       if (axis != AXIS_NONE)
         axis = AXIS_NONE;
@@ -161,6 +177,26 @@ case SWING:
     }
   }
   break;
+case COP:
+  if (coordinate == COORD_CARTESIAN) {
+    if (axis == AXIS_X) {
+      if (equalStr(name, "min") )
+        cop_x_min = std::stof(value) * unit_length;
+      if (equalStr(name, "max") )
+        cop_x_max = std::stof(value) * unit_length;
+      if (equalStr(name, "stp") )
+        cop_x_stp = std::stof(value) * unit_length;
+    }
+    if (axis == AXIS_Y) {
+      if (equalStr(name, "min") )
+        cop_y_min = std::stof(value) * unit_length;
+      if (equalStr(name, "max") )
+        cop_y_max = std::stof(value) * unit_length;
+      if (equalStr(name, "stp") )
+        cop_y_stp = std::stof(value) * unit_length;
+    }
+  }
+  break;
 case MAP:
   if (coordinate == COORD_CARTESIAN) {
     if (axis == AXIS_X) {
@@ -197,19 +233,18 @@ void Param::read(std::string *val, const std::string &name){
 void Param::read(int *val, const std::string &name) {
   if (equalStr(name, "icp_x_num") )
     *val = icp_x_num;
-
   if (equalStr(name, "icp_y_num") )
     *val = icp_y_num;
-
   if (equalStr(name, "swf_x_num") )
     *val = swf_x_num;
-
   if (equalStr(name, "swf_y_num") )
     *val = swf_y_num;
-
+  if (equalStr(name, "cop_x_num") )
+    *val = cop_x_num;
+  if (equalStr(name, "cop_y_num") )
+    *val = cop_y_num;
   if (equalStr(name, "map_x_num") )
     *val = map_x_num;
-
   if (equalStr(name, "map_y_num") )
     *val = map_y_num;
 }
@@ -243,6 +278,20 @@ void Param::read(double *val, const std::string &name){
   if (equalStr(name, "swf_y_stp") )
     *val = swf_y_stp;
 
+  if (equalStr(name, "cop_x_min") )
+    *val = cop_x_min;
+  if (equalStr(name, "cop_x_max") )
+    *val = cop_x_max;
+  if (equalStr(name, "cop_x_stp") )
+    *val = cop_x_stp;
+
+  if (equalStr(name, "cop_y_min") )
+    *val = cop_y_min;
+  if (equalStr(name, "cop_y_max") )
+    *val = cop_y_max;
+  if (equalStr(name, "cop_y_stp") )
+    *val = cop_y_stp;
+
   if (equalStr(name, "map_x_min") )
     *val = map_x_min;
   if (equalStr(name, "map_x_max") )
@@ -262,6 +311,7 @@ void Param::calcNum() {
   using namespace CaptEnum;
   double epsilon = 0.00001;
   if (coordinate == COORD_CARTESIAN) {
+  // icp
   if(icp_x_stp > epsilon)
     icp_x_num = round( ( icp_x_max - icp_x_min ) / icp_x_stp) + 1;
   else
@@ -270,6 +320,7 @@ void Param::calcNum() {
     icp_y_num = round( ( icp_y_max - icp_y_min ) / icp_y_stp) + 1;
   else
     icp_y_num = 0;
+  // swf
   if(swf_x_stp > epsilon)
     swf_x_num = round( ( swf_x_max - swf_x_min ) / swf_x_stp) + 1;
   else
@@ -278,6 +329,16 @@ void Param::calcNum() {
     swf_y_num = round( ( swf_y_max - swf_y_min ) / swf_y_stp) + 1;
   else
     swf_y_num = 0;
+  // cop
+  if(cop_x_stp > epsilon)
+    cop_x_num = round( ( cop_x_max - cop_x_min ) / cop_x_stp) + 1;
+  else
+    cop_x_num = 0;
+  if(cop_y_stp > epsilon)
+    cop_y_num = round( ( cop_y_max - cop_y_min ) / cop_y_stp) + 1;
+  else
+    cop_y_num = 0;
+  // map
   if(map_x_stp > epsilon)
     map_x_num = round( ( map_x_max - map_x_min ) / map_x_stp) + 1;
   else
@@ -286,8 +347,6 @@ void Param::calcNum() {
     map_y_num = round( ( map_y_max - map_y_min ) / map_y_stp) + 1;
   else
     map_y_num = 0;
-
-
   }
 }
 
@@ -306,42 +365,56 @@ void Param::print() {
   printf("icp:\n");
   if (coordinate == COORD_CARTESIAN) {
   printf("\tx:\n");
-  printf("\t\tmin: %lf\n", icp_x_min);
-  printf("\t\tmax: %lf\n", icp_x_max);
-  printf("\t\tstp: %lf\n", icp_x_stp);
+  printf("\t\tmin: %+lf\n", icp_x_min);
+  printf("\t\tmax: %+lf\n", icp_x_max);
+  printf("\t\tstp: %+lf\n", icp_x_stp);
   printf("\t\tnum: %d \n", icp_x_num);
   printf("\ty:\n");
-  printf("\t\tmin: %lf\n", icp_y_min);
-  printf("\t\tmax: %lf\n", icp_y_max);
-  printf("\t\tstp: %lf\n", icp_y_stp);
+  printf("\t\tmin: %+lf\n", icp_y_min);
+  printf("\t\tmax: %+lf\n", icp_y_max);
+  printf("\t\tstp: %+lf\n", icp_y_stp);
   printf("\t\tnum: %d \n", icp_y_num);
   }
 
   printf("swing:\n");
   if (coordinate == COORD_CARTESIAN) {
     printf("\tx:\n");
-    printf("\t\tmin: %lf\n", swf_x_min);
-    printf("\t\tmax: %lf\n", swf_x_max);
-    printf("\t\tstp: %lf\n", swf_x_stp);
+    printf("\t\tmin: %+lf\n", swf_x_min);
+    printf("\t\tmax: %+lf\n", swf_x_max);
+    printf("\t\tstp: %+lf\n", swf_x_stp);
     printf("\t\tnum: %d \n", swf_x_num);
     printf("\ty:\n");
-    printf("\t\tmin: %lf\n", swf_y_min);
-    printf("\t\tmax: %lf\n", swf_y_max);
-    printf("\t\tstp: %lf\n", swf_y_stp);
+    printf("\t\tmin: %+lf\n", swf_y_min);
+    printf("\t\tmax: %+lf\n", swf_y_max);
+    printf("\t\tstp: %+lf\n", swf_y_stp);
     printf("\t\tnum: %d \n", swf_y_num);
+  }
+
+  printf("cop:\n");
+  if (coordinate == COORD_CARTESIAN) {
+    printf("\tx:\n");
+    printf("\t\tmin: %+lf\n", cop_x_min);
+    printf("\t\tmax: %+lf\n", cop_x_max);
+    printf("\t\tstp: %+lf\n", cop_x_stp);
+    printf("\t\tnum: %d \n", cop_x_num);
+    printf("\ty:\n");
+    printf("\t\tmin: %+lf\n", cop_y_min);
+    printf("\t\tmax: %+lf\n", cop_y_max);
+    printf("\t\tstp: %+lf\n", cop_y_stp);
+    printf("\t\tnum: %d \n", cop_y_num);
   }
 
   printf("map:\n");
   if (coordinate == COORD_CARTESIAN) {
     printf("\tx:\n");
-    printf("\t\tmin: %lf\n", map_x_min);
-    printf("\t\tmax: %lf\n", map_x_max);
-    printf("\t\tstp: %lf\n", map_x_stp);
+    printf("\t\tmin: %+lf\n", map_x_min);
+    printf("\t\tmax: %+lf\n", map_x_max);
+    printf("\t\tstp: %+lf\n", map_x_stp);
     printf("\t\tnum: %d \n", map_x_num);
     printf("\ty:\n");
-    printf("\t\tmin: %lf\n", map_y_min);
-    printf("\t\tmax: %lf\n", map_y_max);
-    printf("\t\tstp: %lf\n", map_y_stp);
+    printf("\t\tmin: %+lf\n", map_y_min);
+    printf("\t\tmax: %+lf\n", map_y_max);
+    printf("\t\tstp: %+lf\n", map_y_stp);
     printf("\t\tnum: %d \n", map_y_num);
   }
   printf("-------------------------------------------\n");

@@ -12,6 +12,7 @@ enum ParamElement {
   UNIT,
   ICP,
   SWING,
+  COP,
   MAP
 };
 
@@ -54,11 +55,15 @@ private:
   int swf_y_num;
   int map_x_num;
   int map_y_num;
+  int cop_x_num;
+  int cop_y_num;
   // cartesian
   double icp_x_min, icp_x_max, icp_x_stp;
   double icp_y_min, icp_y_max, icp_y_stp;
   double swf_x_min, swf_x_max, swf_x_stp;
   double swf_y_min, swf_y_max, swf_y_stp;
+  double cop_x_min, cop_x_max, cop_x_stp;
+  double cop_y_min, cop_y_max, cop_y_stp;
   double map_x_min, map_x_max, map_x_stp;
   double map_y_min, map_y_max, map_y_stp;
 };

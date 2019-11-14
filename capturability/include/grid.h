@@ -61,7 +61,7 @@ private:
   void create();
 
   void setState(double icp_x, double icp_y, double swf_x, double swf_y);
-  void setInput(double swf_x, double swf_y);
+  void setInput(double cop_x, double cop_y, double swf_x, double swf_y);
 
   int getStateIndex(int icp_x_id, int icp_y_id, int swf_x_id, int swf_y_id);
 
@@ -78,11 +78,14 @@ private:
 
   int icp_x_num, icp_y_num;
   int swf_x_num, swf_y_num;
+  int cop_x_num, cop_y_num;
 
   double icp_x[CaptEnum::NUMELEMENT];
   double icp_y[CaptEnum::NUMELEMENT];
   double swf_x[CaptEnum::NUMELEMENT];
   double swf_y[CaptEnum::NUMELEMENT];
+  double cop_x[CaptEnum::NUMELEMENT];
+  double cop_y[CaptEnum::NUMELEMENT];
 };
 
 } // namespace Capt

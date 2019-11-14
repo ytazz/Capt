@@ -14,4 +14,9 @@
     <y min="0.2" max="0.5" stp="0.05"/>
   </swing>
 
+  <cop>
+    <x min="-0.125" max="0.125" stp="0.05"/>
+    <y min="-0.075" max="0.075" stp="0.05"/>
+  </cop>
+
 </coordinate>

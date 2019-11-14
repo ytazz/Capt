@@ -14,7 +14,7 @@
 
 namespace Capt {
 
-enum DataType { BASIN, NSTEP, COP, STEPTIME };
+enum DataType { BASIN, NSTEP, STEPTIME };
 
 struct CaptureSet {
   int state_id;
@@ -22,7 +22,6 @@ struct CaptureSet {
   int next_id;
   int nstep;
 
-  vec2_t cop;
   double step_time;
 
   void operator=(const CaptureSet &capture_set) {
@@ -30,7 +29,6 @@ struct CaptureSet {
     this->input_id  = capture_set.input_id;
     this->next_id   = capture_set.next_id;
     this->nstep     = capture_set.nstep;
-    this->cop       = capture_set.cop;
     this->step_time = capture_set.step_time;
   }
 };

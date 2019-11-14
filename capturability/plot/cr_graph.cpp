@@ -39,6 +39,8 @@ int main(int argc, char const *argv[]) {
   // double swf_y = 0.4;
 
   State state;
+  Input input;
+  int   cop_id = 11;
 
   CRPlot *cr_plot;
   // case1
@@ -49,64 +51,17 @@ int main(int argc, char const *argv[]) {
 
   cr_plot = new CRPlot(model, param, grid);
   cr_plot->initCaptureMap();
-  cr_plot->setFoot(state.swf);
-  cr_plot->setIcp(state.icp);
-  for(int N = 1; N <= 5; N++) {
+  cr_plot->setState(state);
+  cr_plot->setCop(grid->getCop(cop_id) );
+  for(int N = 1; N <= 4; N++) {
     if(capturability->capturable(state, N) ) {
       std::vector<CaptureSet> region = capturability->getCaptureRegion(state, N);
       printf("%d-step capture points %5d\n", N, (int)region.size() );
       for(size_t i = 0; i < region.size(); i++) {
         Input input = grid->getInput(region[i].input_id);
-        cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), N);
-      }
-    }
-  }
-  cr_plot->plot();
-  delete cr_plot;
-
-  // case2
-  printf("plot case 2\n");
-  icp_x += icp_x_offset;
-  state.icp << icp_x, icp_y;
-  state.swf << swf_x, swf_y;
-  state = grid->roundState(state).state;
-
-  cr_plot = new CRPlot(model, param, grid);
-  cr_plot->initCaptureMap();
-  cr_plot->setFoot(state.swf);
-  cr_plot->setIcp(state.icp);
-  for(int N = 1; N <= 5; N++) {
-    if(capturability->capturable(state, N) ) {
-      std::vector<CaptureSet> region = capturability->getCaptureRegion(state, N);
-      printf("%d-step capture points %5d\n", N, (int)region.size() );
-      for(size_t i = 0; i < region.size(); i++) {
-        Input input = grid->getInput(region[i].input_id);
-        cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), N);
-      }
-    }
-  }
-  cr_plot->plot();
-  delete cr_plot;
-
-  // case3
-  printf("plot case 3\n");
-  icp_x -= icp_x_offset;
-  icp_y += icp_y_offset;
-  state.icp << icp_x, icp_y;
-  state.swf << swf_x, swf_y;
-  state = grid->roundState(state).state;
-
-  cr_plot = new CRPlot(model, param, grid);
-  cr_plot->initCaptureMap();
-  cr_plot->setFoot(state.swf);
-  cr_plot->setIcp(state.icp);
-  for(int N = 1; N <= 5; N++) {
-    if(capturability->capturable(state, N) ) {
-      std::vector<CaptureSet> region = capturability->getCaptureRegion(state, N);
-      printf("%d-step capture points %5d\n", N, (int)region.size() );
-      for(size_t i = 0; i < region.size(); i++) {
-        Input input = grid->getInput(region[i].input_id);
-        cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), N);
+        printf("%d\n", grid->indexCop(input.cop) );
+        if(grid->indexCop(input.cop) == cop_id)
+          cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), N);
       }
     }
   }

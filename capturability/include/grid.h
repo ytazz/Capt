@@ -43,6 +43,10 @@ public:
   State getState(int index);
   Input getInput(int index);
 
+  vec2_t getIcp(int index);
+  vec2_t getSwf(int index);
+  vec2_t getCop(int index);
+
   bool existState(int state_id);
   bool existState(State state_);
   bool existInput(int input_id);
@@ -54,6 +58,10 @@ public:
   int getStateIndex(State state_);
 
   GridState roundState(State state_);
+
+  int indexIcp(vec2_t icp);
+  int indexSwf(vec2_t swf);
+  int indexCop(vec2_t cop);
 
   void print();
 

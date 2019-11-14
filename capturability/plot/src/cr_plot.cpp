@@ -150,7 +150,19 @@ void CRPlot::setFootRegion(){
   fclose(fp);
 }
 
-void CRPlot::setFoot(vec2_t swf){
+void CRPlot::setState(State state){
+  setIcp(state.icp);
+  setSwf(state.swf);
+}
+
+void CRPlot::setIcp(vec2_t icp){
+  vec2_t point = cartesianToGraph(icp);
+  FILE  *fp    = fopen("dat/icp.dat", "w");
+  fprintf(fp, "%lf %lf\n", point.x(), point.y() );
+  fclose(fp);
+}
+
+void CRPlot::setSwf(vec2_t swf){
   arr2_t foot_r, foot_l;
   model->read(&foot_r, "foot_r");
   model->read(&foot_l, "foot_l", swf);
@@ -173,9 +185,13 @@ void CRPlot::setFoot(vec2_t swf){
   fclose(fp);
 }
 
-void CRPlot::setIcp(vec2_t icp){
-  vec2_t point = cartesianToGraph(icp);
-  FILE  *fp    = fopen("dat/icp.dat", "w");
+void CRPlot::setInput(Input input){
+  setCop(input.cop);
+}
+
+void CRPlot::setCop(vec2_t cop){
+  vec2_t point = cartesianToGraph(cop);
+  FILE  *fp    = fopen("dat/cop.dat", "w");
   fprintf(fp, "%lf %lf\n", point.x(), point.y() );
   fclose(fp);
 }
@@ -252,7 +268,8 @@ void CRPlot::plot(){
   fprintf(p.gp, "     \"dat/foot_region.dat\" with lines  lw 2 lc \"dark-blue\" title \"valid stepping region\",\\\n");
   fprintf(p.gp, "     \"dat/foot_r.dat\"      with lines  lw 2 lc \"black\"     title \"support foot\",\\\n");
   fprintf(p.gp, "     \"dat/foot_l.dat\"      with lines  lt 0 dt 1 lw 2 lc \"black\"     title \"swing foot\",\\\n");
-  fprintf(p.gp, "     \"dat/icp.dat\"         with points pt 2 lc 1 ps 2        title \"ICP\"\n");
+  fprintf(p.gp, "     \"dat/icp.dat\"         with points pt 2 lc 1 ps 2        title \"ICP\",\\\n");
+  fprintf(p.gp, "     \"dat/cop.dat\"         with points pt 7 lc 1 ps 2        title \"CoP\"\n");
   fflush(p.gp);
 }
 

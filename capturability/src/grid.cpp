@@ -308,6 +308,87 @@ Input Grid::getInput(int index) {
   return input_;
 }
 
+vec2_t Grid::getIcp(int index){
+  vec2_t icp_(-1, -1);
+
+  int idx = index / icp_y_num;
+  int idy = index % icp_y_num;
+  if(0 <= idx && idx < icp_x_num && 0 <= idy && idy < icp_y_num) {
+    double icp_x_ = icp_x[CaptEnum::MIN] + icp_x[CaptEnum::STP] * idx;
+    double icp_y_ = icp_y[CaptEnum::MIN] + icp_y[CaptEnum::STP] * idy;
+    icp_ << icp_x_, icp_y_;
+  }
+
+  return icp_;
+}
+
+vec2_t Grid::getSwf(int index){
+  vec2_t swf_(-1, -1);
+
+  int idx = index / swf_y_num;
+  int idy = index % swf_y_num;
+  if(0 <= idx && idx < swf_x_num && 0 <= idy && idy < swf_y_num) {
+    double swf_x_ = swf_x[CaptEnum::MIN] + swf_x[CaptEnum::STP] * idx;
+    double swf_y_ = swf_y[CaptEnum::MIN] + swf_y[CaptEnum::STP] * idy;
+    swf_ << swf_x_, swf_y_;
+  }
+
+  return swf_;
+}
+
+vec2_t Grid::getCop(int index){
+  vec2_t cop_(-1, -1);
+
+  int idx = index / cop_y_num;
+  int idy = index % cop_y_num;
+  if(0 <= idx && idx < cop_x_num && 0 <= idy && idy < cop_y_num) {
+    double cop_x_ = cop_x[CaptEnum::MIN] + cop_x[CaptEnum::STP] * idx;
+    double cop_y_ = cop_y[CaptEnum::MIN] + cop_y[CaptEnum::STP] * idy;
+    cop_ << cop_x_, cop_y_;
+  }
+
+  return cop_;
+}
+
+int Grid::indexIcp(vec2_t icp){
+  int id = -1;
+
+  int icp_x_id = round( ( icp.x() - icp_x[CaptEnum::MIN] ) / icp_x[CaptEnum::STP]);
+  int icp_y_id = round( ( icp.y() - icp_y[CaptEnum::MIN] ) / icp_y[CaptEnum::STP]);
+  if(0 <= icp_x_id && icp_x_id < icp_x_num &&
+     0 <= icp_y_id && icp_y_id < icp_y_num) {
+    id = icp_y_num * icp_x_id + icp_y_id;
+  }
+
+  return id;
+}
+
+int Grid::indexSwf(vec2_t swf){
+  int id = -1;
+
+  int swf_x_id = round( ( swf.x() - swf_x[CaptEnum::MIN] ) / swf_x[CaptEnum::STP]);
+  int swf_y_id = round( ( swf.y() - swf_y[CaptEnum::MIN] ) / swf_y[CaptEnum::STP]);
+  if(0 <= swf_x_id && swf_x_id < swf_x_num &&
+     0 <= swf_y_id && swf_y_id < swf_y_num) {
+    id = swf_y_num * swf_x_id + swf_y_id;
+  }
+
+  return id;
+}
+
+int Grid::indexCop(vec2_t cop){
+  int id = -1;
+
+  int cop_x_id = round( ( cop.x() - cop_x[CaptEnum::MIN] ) / cop_x[CaptEnum::STP]);
+  int cop_y_id = round( ( cop.y() - cop_y[CaptEnum::MIN] ) / cop_y[CaptEnum::STP]);
+  if(0 <= cop_x_id && cop_x_id < cop_x_num &&
+     0 <= cop_y_id && cop_y_id < cop_y_num) {
+    id = cop_y_num * cop_x_id + cop_y_id;
+  }
+
+  return id;
+}
+
 int Grid::getNumState() {
   return state_num;
 }

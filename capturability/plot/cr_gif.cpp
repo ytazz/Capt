@@ -51,7 +51,7 @@ int main(int argc, char const *argv[]) {
       state         = grid->roundState(state).state;
 
       cr_plot->initCaptureMap();
-      cr_plot->setFoot(state.swf);
+      cr_plot->setSwf(state.swf);
       cr_plot->setIcp(state.icp);
       for(int N = 1; N <= 4; N++) {
         if(capturability->capturable(state, N) ) {

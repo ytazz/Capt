@@ -32,11 +32,14 @@ public:
   // 踏み出し可能領域を設定
   void setFootRegion();
 
-  // 現在の足配置を設定
-  void setFoot(vec2_t swf);
-
-  // 現在のICP位置を設定
+  // 現在の状態を設定
+  void setState(State state);
   void setIcp(vec2_t icp);
+  void setSwf(vec2_t swf);
+
+  // 現在の入力を設定
+  void setInput(Input input);
+  void setCop(vec2_t cop);
 
   // Capture Regionのデータを格納するCapture Map
   void initCaptureMap();

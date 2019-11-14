@@ -62,19 +62,6 @@ void Capturability::load(std::string file_name, DataType type) {
 
       id++;
     }
-  } else if (type == COP) {
-    printf("Find CoP database.\n");
-
-    double buf[2];
-    while (fscanf(fp, "%lf,%lf", &buf[0], &buf[1]) != EOF) {
-      int state_id = id;
-      for(int input_id = 0; input_id < input_num; input_id++) {
-        CaptureSet* set = getCaptureSet(state_id, input_id);
-        set->cop(buf[0], buf[1]);
-      }
-
-      id++;
-    }
   } else if (type == STEPTIME) {
     printf("Find Step-Time database.\n");
 

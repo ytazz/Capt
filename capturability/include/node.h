@@ -43,6 +43,7 @@ struct Node {
 
   Node * parent;
   int    state_id;
+  int    input_id;
   double g_cost;
   double h_cost;
   double cost;
@@ -51,6 +52,7 @@ struct Node {
   void operator=(const Node &node) {
     this->parent   = node.parent;
     this->state_id = node.state_id;
+    this->input_id = node.input_id;
     this->g_cost   = node.g_cost;
     this->h_cost   = node.h_cost;
     this->cost     = node.cost;

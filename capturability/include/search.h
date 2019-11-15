@@ -26,7 +26,7 @@ public:
   void setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf);
   void setGoal(vec2_t center);
 
-  void open(Cell* cell);
+  bool open(Cell* cell);
 
   bool existNode();
   bool existOpen();
@@ -36,6 +36,8 @@ public:
   void exe();
 
   bool step();
+
+  Node* getGoalNode();
 
 private:
   GridMap       *gridmap;
@@ -56,6 +58,8 @@ private:
   int    yaxis[2];
   vec2_t s_arr[2];
   vec2_t g_arr[2];
+
+  Node *g_node;
 };
 
 } // namespace Capt

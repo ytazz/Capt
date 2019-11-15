@@ -5,6 +5,7 @@ namespace Capt {
 Search::Search(GridMap *gridmap, Grid *grid, Capturability *capturability) :
   gridmap(gridmap), grid(grid), capturability(capturability){
   max_step = capturability->getMaxStep();
+  g_node   = NULL;
 }
 
 Search::~Search() {
@@ -52,7 +53,7 @@ void Search::setGoal(vec2_t center){
   gridmap->setOccupancy(g_lfoot, OccupancyType::GOAL);
 }
 
-void Search::open(Cell *cell){
+bool Search::open(Cell *cell){
   vec2_t pos;
   int    num_step = cell->node.step + 1;
   vec2_t swf;
@@ -64,6 +65,18 @@ void Search::open(Cell *cell){
       swf     = grid->getInput(region[i].input_id).swf;
       pos.x() = cell->pos.x() + swf.x();
       pos.y() = cell->pos.y() + yaxis[rl] * swf.y();
+      if(gridmap->getOccupancy(pos) == OccupancyType::GOAL) {
+        Node node_;
+        node_.parent   = &cell->node;
+        node_.state_id = region[i].next_id;
+        node_.input_id = region[i].input_id;
+        node_.step     = num_step;
+        gridmap->setNode(pos, node_);
+
+        g_node = gridmap->getNode(pos);
+
+        return true;
+      }
       if(gridmap->getOccupancy(pos) == OccupancyType::EMPTY) {
         double g_cost = cell->node.g_cost + ( pos - cell->pos ).norm();
         double h_cost = ( pos - g_arr[rl] ).norm();
@@ -71,6 +84,7 @@ void Search::open(Cell *cell){
         Node node_;
         node_.parent   = &cell->node;
         node_.state_id = region[i].next_id;
+        node_.input_id = region[i].input_id;
         node_.g_cost   = g_cost;
         node_.h_cost   = h_cost;
         node_.cost     = g_cost + h_cost;
@@ -80,6 +94,8 @@ void Search::open(Cell *cell){
       }
     }
   }
+
+  return false;
 }
 
 bool Search::existOpen(){
@@ -131,7 +147,7 @@ void Search::init(){
 
   gridmap->setNode(vec2_t(0, 0), node);
 
-  gridmap->plot();
+  // gridmap->plot();
 }
 
 void Search::exe(){
@@ -146,13 +162,20 @@ void Search::exe(){
 bool Search::step(){
   Cell *cell = gridmap->findMinCostCell();
   if(cell != NULL) {
-    open(cell);
+    if(open(cell) ) {
+      printf("found solution!\n");
+      return false;
+    }
     cell->type = OccupancyType::CLOSED;
-    gridmap->plot();
+    // gridmap->plot();
     return true;
   }else{
     return false;
   }
+}
+
+Node* Search::getGoalNode(){
+  return g_node;
 }
 
 } // namespace Capt

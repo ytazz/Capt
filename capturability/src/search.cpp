@@ -22,6 +22,16 @@ void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){
   s_lfoot = lfoot;
   s_icp   = icp;
   s_suf   = suf;
+
+  if(s_suf == FOOT_R) {
+    s_lfoot -= s_rfoot;
+    s_icp   -= s_rfoot;
+  }else{
+    s_rfoot -= s_lfoot;
+    s_icp   -= s_lfoot;
+    s_rfoot *= -1;
+    s_icp   *= -1;
+  }
 }
 
 void Search::setGoal(vec2_t center){
@@ -86,9 +96,10 @@ bool Search::existOpen(){
 void Search::init(){
   // Calculate initial state
   State state;
+
   if(s_suf == FOOT_R) {
-    state.swf = s_lfoot - s_rfoot;
-    state.icp = s_icp - s_rfoot;
+    state.swf = s_lfoot;
+    state.icp = s_icp;
 
     s_arr[0] = s_rfoot;
     s_arr[1] = s_lfoot;
@@ -97,8 +108,8 @@ void Search::init(){
     yaxis[0] = -1;
     yaxis[1] = +1;
   }else{
-    state.swf = s_rfoot - s_lfoot;
-    state.icp = s_icp - s_lfoot;
+    state.swf = s_rfoot;
+    state.icp = s_icp;
 
     s_arr[0] = s_lfoot;
     s_arr[1] = s_rfoot;
@@ -107,6 +118,7 @@ void Search::init(){
     yaxis[0] = +1;
     yaxis[1] = -1;
   }
+  state.print();
 
   // Calculate cost
   double g_cost = 0.0;

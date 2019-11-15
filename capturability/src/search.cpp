@@ -42,7 +42,7 @@ void Search::open(Cell *cell){
         else
           pos.y() = cell->pos.y() + grid->getInput(region[i].input_id).swf.y();
       }
-      if(gridmap->getOccupancy(pos) == OccupancyType::NONE) {
+      if(gridmap->getOccupancy(pos) == OccupancyType::EMPTY) {
         vec2_t diff = pos - cell->pos;
 
         Node node_;
@@ -97,10 +97,9 @@ void Search::exe(){
 }
 
 void Search::step(){
-  printf("-----------------------------\n");
   Cell *cell = gridmap->findMinCostCell();
   open(cell);
-  cell->type = OccupancyType::PATH;
+  cell->type = OccupancyType::CLOSED;
   gridmap->plot();
 }
 

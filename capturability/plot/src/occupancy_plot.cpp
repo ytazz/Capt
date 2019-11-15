@@ -112,8 +112,23 @@ void OccupancyPlot::setOccupancy(double x, double y, OccupancyType type){
   int j = round( ( y - y_min ) / y_stp);
 
   // map上の対応するIDに値を代入
-  if (0 <= i && i < x_num && 0 <= j && j < y_num)
-    occupancy[i][j] = static_cast<int>( type );
+  if (0 <= i && i < x_num && 0 <= j && j < y_num) {
+    switch (type) {
+    case OccupancyType::NONE:
+    case OccupancyType::EMPTY:
+      occupancy[i][j] = 0;
+      break;
+    case OccupancyType::OBSTACLE:
+      occupancy[i][j] = 1;
+      break;
+    case OccupancyType::OPEN:
+      occupancy[i][j] = 2;
+      break;
+    case OccupancyType::CLOSED:
+      occupancy[i][j] = 3;
+      break;
+    }
+  }
 }
 
 void OccupancyPlot::setOccupancy(vec2_t pos, OccupancyType type){

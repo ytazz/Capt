@@ -21,8 +21,8 @@ int main(int argc, char const *argv[]) {
     }
   }
 
-  plot->setOccupancy(0.0, 0.0, OccupancyType::PATH);
-  plot->setOccupancy(0.5, 0.5, OccupancyType::PATH);
+  plot->setOccupancy(0.0, 0.0, OccupancyType::CLOSED);
+  plot->setOccupancy(0.5, 0.5, OccupancyType::CLOSED);
 
   plot->plot();
 

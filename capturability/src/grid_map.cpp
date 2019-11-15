@@ -22,7 +22,7 @@ GridMap::GridMap(Param *param) : param(param){
       pos.y() = y_min + y_stp * j;
 
       grid[i][j].pos  = pos;
-      grid[i][j].type = OccupancyType::NONE;
+      grid[i][j].type = OccupancyType::EMPTY;
     }
   }
 
@@ -77,7 +77,10 @@ OccupancyType GridMap::getOccupancy(vec2_t pos){
 }
 
 OccupancyType GridMap::getOccupancy(vec2i_t id){
-  return ( grid[id.x()][id.y()].type );
+  if(0 <= id.x() && id.x() < x_num && 0 <= id.y() && id.y() < y_num)
+    return ( grid[id.x()][id.y()].type );
+  else
+    return ( OccupancyType::NONE );
 }
 
 vec2i_t GridMap::posToId(vec2_t pos){

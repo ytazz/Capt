@@ -61,6 +61,7 @@ StepPlot::StepPlot(Model *model, Param *param, Grid *grid)
   footstep_r.clear();
   footstep_l.clear();
   icp.clear();
+  cop.clear();
 }
 
 StepPlot::~StepPlot() {
@@ -119,6 +120,39 @@ void StepPlot::setIcp(arr2_t icp){
   }
 }
 
+void StepPlot::setCop(vec2_t cop){
+  this->cop.push_back(cop);
+}
+
+void StepPlot::setCop(arr2_t cop){
+  for(size_t i = 0; i < cop.size(); i++) {
+    setCop(cop[i]);
+  }
+}
+
+void StepPlot::setTransition(std::vector<State> states, std::vector<Input> inputs, Foot suf){
+  if(states.size() - 1 != inputs.size() ) {
+    printf("Error: size\n");
+  }
+
+  vec2_t suf_pos(0, 0);
+  if(suf == Foot::FOOT_R) {
+    for(size_t i = 0; i < states.size(); i++) {
+      setFootL(suf_pos + states[i].swf);
+      setIcp(suf_pos + states[i].icp);
+      if(i < inputs.size() ) {
+        setCop(suf_pos + inputs[i].cop);
+        if( ( i % 2 ) == 0) {
+          suf_pos += inputs[i].swf;
+        }else{
+          suf_pos.x() += inputs[i].swf.x();
+          suf_pos.y() -= inputs[i].swf.y();
+        }
+      }
+    }
+  }
+}
+
 void StepPlot::plot(){
   arr2_t foot_r;
   arr2_t foot_l;
@@ -133,7 +167,8 @@ void StepPlot::plot(){
   for(size_t i = 0; i < footstep_l.size(); i++) {
     fprintf(p.gp, "'-' with lines linewidth 2 lc \"red\",");
   }
-  fprintf(p.gp, "'-' with lines linewidth 2 lc \"dark-blue\"\n");
+  fprintf(p.gp, "'-' with lines  lw 2 lc \"dark-blue\",");
+  fprintf(p.gp, "'-' with points ps 2 lc \"dark-blue\"\n");
 
   // 描画
   // footstep_r
@@ -155,6 +190,12 @@ void StepPlot::plot(){
   // icp
   for(size_t i = 0; i < icp.size(); i++) {
     vec2_t point = cartesianToGraph(icp[i]);
+    fprintf(p.gp, "%f %f\n", point.x(), point.y() );
+  }
+  fprintf(p.gp, "e\n");
+  // cop
+  for(size_t i = 0; i < cop.size(); i++) {
+    vec2_t point = cartesianToGraph(cop[i]);
     fprintf(p.gp, "%f %f\n", point.x(), point.y() );
   }
   fprintf(p.gp, "e\n");

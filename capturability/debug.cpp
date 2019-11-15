@@ -14,6 +14,7 @@ int main(int argc, char const *argv[]) {
   Param *param = new Param("data/footstep.xml");
   Grid  *grid  = new Grid(param);
 
+  // capturability
   Capturability *capturability = new Capturability(grid);
   capturability->load("gpu/Basin.csv", DataType::BASIN);
   capturability->load("gpu/Nstep.csv", DataType::NSTEP);
@@ -27,9 +28,7 @@ int main(int argc, char const *argv[]) {
     }
   }
 
-  Timer timer;
-  timer.start();
-
+  // footstep search
   Search *search = new Search(gridmap, grid, capturability);
 
   vec2_t s_rfoot(0.0, -0.2);
@@ -43,14 +42,10 @@ int main(int argc, char const *argv[]) {
   search->setGoal(g_foot);
 
   search->init();
-  while(search->step() ) {
-    sleep(0.5);
-  }
-  // search->exe();
-  // search->step();
+  search->exe();
 
-  timer.end();
-  timer.print();
+  // draw path
+
 
   return 0;
 }

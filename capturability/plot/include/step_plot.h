@@ -35,9 +35,15 @@ public:
   void setFootL(vec2_t foot_l);
   void setFootL(arr2_t foot_l);
 
-  // 現在のICP位置を設定
+  // ICP位置を設定
   void setIcp(vec2_t icp);
   void setIcp(arr2_t icp);
+
+  // Cop位置を設定
+  void setCop(vec2_t cop);
+  void setCop(arr2_t cop);
+
+  void setTransition(std::vector<State> states, std::vector<Input> inputs, Foot suf);
 
   void plot();
 
@@ -57,9 +63,13 @@ private:
   int    x_num;
   int    y_num;
 
-  std::vector<vec2_t> footstep_r;
-  std::vector<vec2_t> footstep_l;
-  std::vector<vec2_t> icp;
+  arr2_t footstep_r;
+  arr2_t footstep_l;
+  arr2_t icp;
+  arr2_t cop;
+
+  std::vector<State> states;
+  std::vector<Input> inputs;
 };
 }
 

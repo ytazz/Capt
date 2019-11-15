@@ -48,8 +48,8 @@ void Search::setGoal(vec2_t center){
     g_lfoot -= s_lfoot;
   }
 
-  *gridmap->getOccupancy(g_rfoot) = OccupancyType::GOAL;
-  *gridmap->getOccupancy(g_lfoot) = OccupancyType::GOAL;
+  gridmap->setOccupancy(g_rfoot, OccupancyType::GOAL);
+  gridmap->setOccupancy(g_lfoot, OccupancyType::GOAL);
 }
 
 void Search::open(Cell *cell){
@@ -58,15 +58,13 @@ void Search::open(Cell *cell){
   vec2_t swf;
   int    rl = ( num_step % 2 ); // right or left
 
-  Node::printItemWithPos();
-
   for(int n = 1; n <= max_step; n++) {
     std::vector<CaptureSet> region = capturability->getCaptureRegion(cell->node.state_id, n);
     for(size_t i = 0; i < region.size(); i++) {
       swf     = grid->getInput(region[i].input_id).swf;
       pos.x() = cell->pos.x() + swf.x();
       pos.y() = cell->pos.y() + yaxis[rl] * swf.y();
-      if(*gridmap->getOccupancy(pos) == OccupancyType::EMPTY) {
+      if(gridmap->getOccupancy(pos) == OccupancyType::EMPTY) {
         double g_cost = cell->node.g_cost + ( pos - cell->pos ).norm();
         double h_cost = ( pos - g_arr[rl] ).norm();
 
@@ -77,8 +75,6 @@ void Search::open(Cell *cell){
         node_.h_cost   = h_cost;
         node_.cost     = g_cost + h_cost;
         node_.step     = num_step;
-
-        node_.print(pos);
 
         gridmap->setNode(pos, node_);
       }
@@ -136,9 +132,6 @@ void Search::init(){
   gridmap->setNode(vec2_t(0, 0), node);
 
   gridmap->plot();
-
-  Node::printItem();
-  node.print();
 }
 
 void Search::exe(){

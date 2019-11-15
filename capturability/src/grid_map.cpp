@@ -44,6 +44,15 @@ void GridMap::setNode(vec2_t pos, Node node){
   setNode(posToId(pos), node);
 }
 
+void GridMap::setOccupancy(vec2_t pos, OccupancyType type){
+  setOccupancy(posToId(pos), type );
+}
+
+void GridMap::setOccupancy(vec2i_t id, OccupancyType type){
+  if(0 <= id.x() && id.x() < x_num && 0 <= id.y() && id.y() < y_num)
+    grid[id.x()][id.y()].type = type;
+}
+
 void GridMap::setNode(vec2i_t id, Node node){
   grid[id.x()][id.y()].node = node;
   grid[id.x()][id.y()].type = OccupancyType::OPEN;
@@ -72,15 +81,15 @@ Cell* GridMap::findMinCostCell(){
   return cell;
 }
 
-OccupancyType* GridMap::getOccupancy(vec2_t pos){
+OccupancyType GridMap::getOccupancy(vec2_t pos){
   return getOccupancy(posToId(pos) );
 }
 
-OccupancyType* GridMap::getOccupancy(vec2i_t id){
+OccupancyType GridMap::getOccupancy(vec2i_t id){
   if(0 <= id.x() && id.x() < x_num && 0 <= id.y() && id.y() < y_num)
-    return ( &grid[id.x()][id.y()].type );
+    return ( grid[id.x()][id.y()].type );
   else
-    return NULL;
+    return OccupancyType::NONE;
 }
 
 vec2i_t GridMap::posToId(vec2_t pos){

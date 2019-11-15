@@ -30,13 +30,16 @@ public:
   void setNode(vec2_t pos, Node node);
   void setNode(vec2i_t id, Node node);
 
+  void setOccupancy(vec2_t pos, OccupancyType type);
+  void setOccupancy(vec2i_t id, OccupancyType type);
+
   Node* getNode(vec2_t pos);
   Node* getNode(vec2i_t id);
 
   Cell* findMinCostCell();
 
-  OccupancyType* getOccupancy(vec2_t pos);
-  OccupancyType* getOccupancy(vec2i_t id);
+  OccupancyType getOccupancy(vec2_t pos);
+  OccupancyType getOccupancy(vec2i_t id);
 
   void plot();
 

@@ -43,12 +43,11 @@ int main(int argc, char const *argv[]) {
   search->setGoal(g_foot);
 
   search->init();
-  // while(true) {
-  //   search->step();
-  //   sleep(0.5);
-  // }
+  while(search->step() ) {
+    sleep(0.5);
+  }
   // search->exe();
-  search->step();
+  // search->step();
 
   timer.end();
   timer.print();

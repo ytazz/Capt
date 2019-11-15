@@ -23,7 +23,7 @@ int main(int argc, char const *argv[]) {
   for(int i = 0; i <= 5; i++) {
     for(int j = 0; j <= 5; j++) {
       vec2_t pos(0.5 + 0.05 * i, -0.5 + 0.05 * j);
-      gridmap->setObstacle(pos);
+      // gridmap->setObstacle(pos);
     }
   }
 
@@ -32,21 +32,24 @@ int main(int argc, char const *argv[]) {
 
   Search *search = new Search(gridmap, grid, capturability);
 
-  vec2_t s_rfoot(0.0, 0.0);
-  vec2_t s_lfoot(0.0, 0.4);
-  vec2_t s_icp(0.0, 0.15);
-  vec2_t g_rfoot(1.0, 0.0);
-  vec2_t g_lfoot(1.0, 0.4);
+  vec2_t s_rfoot(0.0, -0.2);
+  vec2_t s_lfoot(0.0, 0.2);
+  vec2_t s_icp(0.0, -0.15);
+  vec2_t g_foot(1.0, 0.0);
+  double stance = 0.4;
 
+  search->setStanceWidth(stance);
   search->setStart(s_rfoot, s_lfoot, s_icp, Foot::FOOT_R);
-  search->setGoal(g_rfoot, g_lfoot);
+  search->setGoal(g_foot);
 
   search->init();
   // while(true) {
   //   search->step();
   //   sleep(0.5);
   // }
-  search->exe();
+  // search->exe();
+  search->step();
+  // search->step();
 
   timer.end();
   timer.print();

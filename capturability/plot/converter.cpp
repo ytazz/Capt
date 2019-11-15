@@ -12,7 +12,7 @@ using namespace std;
 using namespace Capt;
 
 int main(int argc, char const *argv[]) {
-  Param *param = new Param("data/nao_xy.xml");
+  Param *param = new Param("data/valkyrie_xy.xml");
   Grid  *grid  = new Grid(param);
 
   int       mode     = 0;
@@ -34,13 +34,13 @@ int main(int argc, char const *argv[]) {
       std::cin >> tmp1;
       std::cout << "icp_yを入力してください ";
       std::cin >> tmp2;
-      state.icp(tmp1, tmp2);
+      state.icp << tmp1, tmp2;
 
       std::cout << "swf_xを入力してください ";
       std::cin >> tmp1;
       std::cout << "swf_yを入力してください ";
       std::cin >> tmp2;
-      state.swf(tmp1, tmp2);
+      state.swf << tmp1, tmp2;
 
       gstate = grid->roundState(state);
       gstate.state.print();

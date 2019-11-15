@@ -22,7 +22,8 @@ enum OccupancyType {
   EMPTY,
   OBSTACLE,
   OPEN,
-  CLOSED
+  CLOSED,
+  GOAL
 };
 
 class OccupancyPlot : public Gnuplot {

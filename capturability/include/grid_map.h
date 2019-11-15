@@ -35,8 +35,8 @@ public:
 
   Cell* findMinCostCell();
 
-  OccupancyType getOccupancy(vec2_t pos);
-  OccupancyType getOccupancy(vec2i_t id);
+  OccupancyType* getOccupancy(vec2_t pos);
+  OccupancyType* getOccupancy(vec2i_t id);
 
   void plot();
 

@@ -125,6 +125,7 @@ void OccupancyPlot::setOccupancy(double x, double y, OccupancyType type){
       occupancy[i][j] = 2;
       break;
     case OccupancyType::CLOSED:
+    case OccupancyType::GOAL:
       occupancy[i][j] = 3;
       break;
     }

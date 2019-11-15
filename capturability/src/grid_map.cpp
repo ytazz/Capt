@@ -72,15 +72,15 @@ Cell* GridMap::findMinCostCell(){
   return cell;
 }
 
-OccupancyType GridMap::getOccupancy(vec2_t pos){
+OccupancyType* GridMap::getOccupancy(vec2_t pos){
   return getOccupancy(posToId(pos) );
 }
 
-OccupancyType GridMap::getOccupancy(vec2i_t id){
+OccupancyType* GridMap::getOccupancy(vec2i_t id){
   if(0 <= id.x() && id.x() < x_num && 0 <= id.y() && id.y() < y_num)
-    return ( grid[id.x()][id.y()].type );
+    return ( &grid[id.x()][id.y()].type );
   else
-    return ( OccupancyType::NONE );
+    return NULL;
 }
 
 vec2i_t GridMap::posToId(vec2_t pos){

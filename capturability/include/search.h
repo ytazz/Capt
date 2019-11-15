@@ -31,7 +31,7 @@ public:
 
   void exe();
 
-  void step();
+  bool step();
 
 private:
   GridMap       *gridmap;

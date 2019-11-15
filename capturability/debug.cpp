@@ -3,6 +3,7 @@
 #include "grid.h"
 #include "grid_map.h"
 #include "search.h"
+#include "timer.h"
 #include <chrono>
 
 using namespace std;
@@ -26,6 +27,9 @@ int main(int argc, char const *argv[]) {
     }
   }
 
+  Timer timer;
+  timer.start();
+
   Search *search = new Search(gridmap, grid, capturability);
 
   vec2_t s_rfoot(0.0, 0.0);
@@ -38,10 +42,14 @@ int main(int argc, char const *argv[]) {
   search->setGoal(g_rfoot, g_lfoot);
 
   search->init();
-  while(true) {
-    search->step();
-    sleep(0.5);
-  }
+  // while(true) {
+  //   search->step();
+  //   sleep(0.5);
+  // }
+  search->exe();
+
+  timer.end();
+  timer.print();
 
   return 0;
 }

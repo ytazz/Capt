@@ -83,7 +83,7 @@ void Search::init(){
 
   gridmap->setNode(vec2_t(0, 0), node);
 
-  gridmap->plot();
+  // gridmap->plot();
 }
 
 void Search::exe(){
@@ -91,16 +91,20 @@ void Search::exe(){
   init();
 
   // Search
-  while(existOpen() ) {
-    step();
+  while(step() ) {
   }
 }
 
-void Search::step(){
+bool Search::step(){
   Cell *cell = gridmap->findMinCostCell();
-  open(cell);
-  cell->type = OccupancyType::CLOSED;
-  gridmap->plot();
+  if(cell != NULL) {
+    open(cell);
+    cell->type = OccupancyType::CLOSED;
+    // gridmap->plot();
+    return true;
+  }else{
+    return false;
+  }
 }
 
 } // namespace Capt

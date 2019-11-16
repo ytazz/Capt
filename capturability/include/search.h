@@ -11,6 +11,12 @@
 
 namespace Capt {
 
+struct Trans {
+  int                size;
+  std::vector<State> states;
+  std::vector<Input> inputs;
+};
+
 class Search {
 public:
   Search(GridMap *gridmap, Grid *grid, Capturability *capturability);
@@ -37,7 +43,7 @@ public:
 
   bool step();
 
-  Node* getGoalNode();
+  Trans getTrans();
 
 private:
   GridMap       *gridmap;

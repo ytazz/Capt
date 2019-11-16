@@ -167,15 +167,33 @@ bool Search::step(){
       return false;
     }
     cell->type = OccupancyType::CLOSED;
-    // gridmap->plot();
+    gridmap->plot();
     return true;
   }else{
     return false;
   }
 }
 
-Node* Search::getGoalNode(){
-  return g_node;
+Trans Search::getTrans(){
+  Trans trans;
+  trans.size = g_node->step;
+
+  Node *node = g_node;
+  // Node::printItem();
+  while(node != NULL) {
+    // node->print();
+
+    trans.states.push_back(grid->getState(node->state_id) );
+    trans.inputs.push_back(grid->getInput(node->input_id) );
+
+    node = node->parent;
+  }
+  trans.inputs.pop_back();
+
+  std::reverse(trans.states.begin(), trans.states.end() );
+  std::reverse(trans.inputs.begin(), trans.inputs.end() );
+
+  return trans;
 }
 
 } // namespace Capt

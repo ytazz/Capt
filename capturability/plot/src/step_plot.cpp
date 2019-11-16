@@ -136,18 +136,40 @@ void StepPlot::setTransition(std::vector<State> states, std::vector<Input> input
   }
 
   vec2_t suf_pos(0, 0);
+  vec2_t swf_pos(0, 0);
+  vec2_t icp_pos(0, 0);
+  vec2_t cop_pos(0, 0);
   if(suf == Foot::FOOT_R) {
     for(size_t i = 0; i < states.size(); i++) {
-      setFootL(suf_pos + states[i].swf);
-      setIcp(suf_pos + states[i].icp);
-      if(i < inputs.size() ) {
-        setCop(suf_pos + inputs[i].cop);
-        if( ( i % 2 ) == 0) {
-          suf_pos += inputs[i].swf;
-        }else{
-          suf_pos.x() += inputs[i].swf.x();
-          suf_pos.y() -= inputs[i].swf.y();
+      if( ( i % 2 ) == 0) {
+        icp_pos = suf_pos + states[i].icp;
+        swf_pos = suf_pos + states[i].swf;
+        setFootR(suf_pos);
+        setFootL(swf_pos);
+        setIcp(icp_pos);
+        if(i < inputs.size() ) {
+          cop_pos = suf_pos + inputs[i].cop;
+          setCop(cop_pos);
         }
+      }else{
+        icp_pos.x() = suf_pos.x() + states[i].icp.x();
+        icp_pos.y() = suf_pos.y() - states[i].icp.y();
+        swf_pos.x() = suf_pos.x() + states[i].swf.x();
+        swf_pos.y() = suf_pos.y() - states[i].swf.y();
+        setFootL(suf_pos);
+        setFootR(swf_pos);
+        setIcp(icp_pos);
+        if(i < inputs.size() ) {
+          cop_pos.x() = suf_pos.x() + inputs[i].cop.x();
+          cop_pos.y() = suf_pos.y() - inputs[i].cop.y();
+          setCop(cop_pos);
+        }
+      }
+      if( ( i % 2 ) == 0) {
+        suf_pos = suf_pos + inputs[i].swf;
+      }else{
+        suf_pos.x() = suf_pos.x() + inputs[i].swf.x();
+        suf_pos.y() = suf_pos.y() - inputs[i].swf.y();
       }
     }
   }
@@ -162,7 +184,7 @@ void StepPlot::plot(){
   // 描画対象の追加
   fprintf(p.gp, "plot ");
   for(size_t i = 0; i < footstep_r.size(); i++) {
-    fprintf(p.gp, "'-' with lines linewidth 2 lc \"green\",");
+    fprintf(p.gp, "'-' with lines lw 2 lc \"green\",");
   }
   for(size_t i = 0; i < footstep_l.size(); i++) {
     fprintf(p.gp, "'-' with lines linewidth 2 lc \"red\",");

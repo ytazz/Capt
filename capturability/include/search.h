@@ -52,7 +52,7 @@ private:
 
   int max_step;
 
-  int h_scale;
+  double h_scale;
 
   // std::vector<Node*> opens;
 

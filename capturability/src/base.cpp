@@ -16,6 +16,11 @@ vec2_t normal(vec2_t v) {
   return normal_vector;
 }
 
+vec2_t mirror(vec2_t v){
+  v.y() *= -1;
+  return v;
+}
+
 int round(double value) {
   int integer = (int)value;
 

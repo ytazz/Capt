@@ -52,6 +52,8 @@ private:
 
   int max_step;
 
+  int h_scale;
+
   // std::vector<Node*> opens;
 
   // 直立した時の足幅

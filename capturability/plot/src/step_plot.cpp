@@ -152,24 +152,49 @@ void StepPlot::setTransition(std::vector<State> states, std::vector<Input> input
           setCop(cop_pos);
         }
       }else{
-        icp_pos.x() = suf_pos.x() + states[i].icp.x();
-        icp_pos.y() = suf_pos.y() - states[i].icp.y();
-        swf_pos.x() = suf_pos.x() + states[i].swf.x();
-        swf_pos.y() = suf_pos.y() - states[i].swf.y();
+        icp_pos = suf_pos + mirror(states[i].icp);
+        swf_pos = suf_pos + mirror(states[i].swf);
         setFootL(suf_pos);
         setFootR(swf_pos);
         setIcp(icp_pos);
         if(i < inputs.size() ) {
-          cop_pos.x() = suf_pos.x() + inputs[i].cop.x();
-          cop_pos.y() = suf_pos.y() - inputs[i].cop.y();
+          cop_pos = suf_pos + mirror(inputs[i].cop );
           setCop(cop_pos);
         }
       }
       if( ( i % 2 ) == 0) {
         suf_pos = suf_pos + inputs[i].swf;
       }else{
-        suf_pos.x() = suf_pos.x() + inputs[i].swf.x();
-        suf_pos.y() = suf_pos.y() - inputs[i].swf.y();
+        suf_pos = suf_pos + mirror(inputs[i].swf);
+      }
+    }
+  }else{
+    for(size_t i = 0; i < states.size(); i++) {
+      if( ( i % 2 ) == 1) {
+        icp_pos = suf_pos + states[i].icp;
+        swf_pos = suf_pos + states[i].swf;
+        setFootR(suf_pos);
+        setFootL(swf_pos);
+        setIcp(icp_pos);
+        if(i < inputs.size() ) {
+          cop_pos = suf_pos + inputs[i].cop;
+          setCop(cop_pos);
+        }
+      }else{
+        icp_pos = suf_pos + mirror(states[i].icp);
+        swf_pos = suf_pos + mirror(states[i].swf);
+        setFootL(suf_pos);
+        setFootR(swf_pos);
+        setIcp(icp_pos);
+        if(i < inputs.size() ) {
+          cop_pos = suf_pos + mirror(inputs[i].cop );
+          setCop(cop_pos);
+        }
+      }
+      if( ( i % 2 ) == 1) {
+        suf_pos = suf_pos + inputs[i].swf;
+      }else{
+        suf_pos = suf_pos + mirror(inputs[i].swf);
       }
     }
   }
@@ -190,7 +215,7 @@ void StepPlot::plot(){
     fprintf(p.gp, "'-' with lines linewidth 2 lc \"red\",");
   }
   fprintf(p.gp, "'-' with lines  lw 2 lc \"dark-blue\",");
-  fprintf(p.gp, "'-' with points ps 2 lc \"dark-blue\"\n");
+  fprintf(p.gp, "'-' with points ps 1 lc \"red\"\n");
 
   // 描画
   // footstep_r

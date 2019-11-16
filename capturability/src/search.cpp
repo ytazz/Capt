@@ -6,6 +6,7 @@ Search::Search(GridMap *gridmap, Grid *grid, Capturability *capturability) :
   gridmap(gridmap), grid(grid), capturability(capturability){
   max_step = capturability->getMaxStep();
   g_node   = NULL;
+  h_scale  = 0.1;
 }
 
 Search::~Search() {
@@ -79,7 +80,7 @@ bool Search::open(Cell *cell){
       }
       if(gridmap->getOccupancy(pos) == OccupancyType::EMPTY) {
         double g_cost = cell->node.g_cost + ( pos - cell->pos ).norm();
-        double h_cost = ( pos - g_arr[rl] ).norm();
+        double h_cost = h_scale * ( pos - g_arr[rl] ).norm();
 
         Node node_;
         node_.parent   = &cell->node;
@@ -134,7 +135,7 @@ void Search::init(){
 
   // Calculate cost
   double g_cost = 0.0;
-  double h_cost = ( s_arr[0] - g_arr[0] ).norm();
+  double h_cost = h_scale * ( s_arr[0] - g_arr[0] ).norm();
 
   // Calculate initial node
   Node node;

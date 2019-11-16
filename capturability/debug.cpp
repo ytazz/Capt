@@ -34,12 +34,12 @@ int main(int argc, char const *argv[]) {
 
   vec2_t s_rfoot(0.0, -0.2);
   vec2_t s_lfoot(0.0, 0.2);
-  vec2_t s_icp(0.0, -0.15);
+  vec2_t s_icp(0.0, 0.0);
   vec2_t g_foot(1.0, 0.0);
   double stance = 0.4;
 
   search->setStanceWidth(stance);
-  search->setStart(s_rfoot, s_lfoot, s_icp, Foot::FOOT_R);
+  search->setStart(s_rfoot, s_lfoot, s_icp, Foot::FOOT_L);
   search->setGoal(g_foot);
 
   search->exe();
@@ -48,7 +48,7 @@ int main(int argc, char const *argv[]) {
   Trans trans = search->getTrans();
 
   StepPlot *plt = new StepPlot(model, param, grid);
-  plt->setTransition(trans.states, trans.inputs, Foot::FOOT_R);
+  plt->setTransition(trans.states, trans.inputs, Foot::FOOT_L);
   plt->plot();
 
   return 0;

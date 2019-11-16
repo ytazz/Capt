@@ -15,8 +15,10 @@ typedef std::vector<vec2_t> arr2_t;
 double dot(vec2_t v1, vec2_t v2);
 double cross(vec2_t v1, vec2_t v2);
 vec2_t normal(vec2_t v);
+vec2_t mirror(vec2_t v);
 
 int round(double val);
+
 
 } // namespace Capt
 

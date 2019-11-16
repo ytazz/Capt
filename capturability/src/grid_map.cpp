@@ -73,7 +73,8 @@ Cell* GridMap::findMinCostCell(){
     for (int j = 0; j < y_num; j++) {
       if(grid[i][j].type == OPEN) {
         if(grid[i][j].node.cost < min_cost) {
-          cell = &grid[i][j];
+          min_cost = grid[i][j].node.cost;
+          cell     = &grid[i][j];
         }
       }
     }

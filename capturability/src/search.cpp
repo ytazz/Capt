@@ -6,7 +6,7 @@ Search::Search(GridMap *gridmap, Grid *grid, Capturability *capturability) :
   gridmap(gridmap), grid(grid), capturability(capturability){
   max_step = capturability->getMaxStep();
   g_node   = NULL;
-  h_scale  = 1;
+  h_scale  = 10;
 }
 
 Search::~Search() {

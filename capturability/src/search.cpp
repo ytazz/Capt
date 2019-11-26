@@ -51,7 +51,7 @@ void Search::setGoal(vec2_t center){
   }
 
   gridmap->setOccupancy(g_rfoot, OccupancyType::GOAL);
-  gridmap->setOccupancy(g_lfoot, OccupancyType::GOAL);
+  gridmap->setOccupancy(g_lfoot, OccupancyType::CLOSED);
 }
 
 bool Search::open(Cell *cell){
@@ -170,7 +170,7 @@ bool Search::step(){
       return false;
     }
     cell->type = OccupancyType::CLOSED;
-    gridmap->plot();
+    // gridmap->plot();
     return true;
   }else{
     return false;

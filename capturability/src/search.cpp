@@ -29,10 +29,10 @@ void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){
     s_lfoot -= s_rfoot;
     s_icp   -= s_rfoot;
   }else{
-    s_rfoot -= s_lfoot;
-    s_icp   -= s_lfoot;
-    s_rfoot *= -1;
-    s_icp   *= -1;
+    s_rfoot     -= s_lfoot;
+    s_icp       -= s_lfoot;
+    s_rfoot.y() *= -1;
+    s_icp.y()   *= -1;
   }
 }
 
@@ -158,6 +158,8 @@ void Search::exe(){
   // Search
   while(step() ) {
   }
+
+  calcFootstep();
 }
 
 bool Search::step(){
@@ -195,6 +197,70 @@ Trans Search::getTrans(){
   std::reverse(trans.inputs.begin(), trans.inputs.end() );
 
   return trans;
+}
+
+void Search::calcFootstep(){
+  Trans trans = getTrans();
+
+  vec2_t   suf_pos(0, 0);
+  vec2_t   swf_pos(0, 0);
+  vec2_t   icp_pos(0, 0);
+  vec2_t   cop_pos(0, 0);
+  Footstep footstep_;
+
+  int amari;
+  if(s_suf == Foot::FOOT_R) {
+    amari   = 0;
+    suf_pos = s_rfoot;
+  }else{
+    amari   = 1;
+    suf_pos = s_lfoot;
+  }
+
+  for(size_t i = 0; i < trans.states.size(); i++) { // right support
+    if( ( (int)i % 2 ) == amari) {
+      icp_pos = suf_pos + trans.states[i].icp;
+      if(i < trans.inputs.size() ) {
+        cop_pos = suf_pos + trans.inputs[i].cop;
+      }
+      footstep_.substitute(Foot::FOOT_R, suf_pos, icp_pos, cop_pos);
+
+      suf_pos = suf_pos + trans.inputs[i].swf;
+    }else{ // left support
+      icp_pos = suf_pos + mirror(trans.states[i].icp);
+      if(i < trans.inputs.size() ) {
+        cop_pos = suf_pos + mirror(trans.inputs[i].cop );
+      }
+      footstep_.substitute(Foot::FOOT_L, suf_pos, icp_pos, cop_pos);
+
+      suf_pos = suf_pos + mirror(trans.inputs[i].swf);
+    }
+    footstep.push_back(footstep_);
+  }
+}
+
+std::vector<Footstep> Search::getFootstep(){
+  return footstep;
+}
+
+std::vector<vec3_t> Search::getFootstepR(){
+  std::vector<vec3_t> footstep_r;
+  for(size_t i = 0; i < footstep.size(); i++) {
+    if(footstep[i].suf == Foot::FOOT_R) {
+      footstep_r.push_back(footstep[i].pos);
+    }
+  }
+  return footstep_r;
+}
+
+std::vector<vec3_t> Search::getFootstepL(){
+  std::vector<vec3_t> footstep_l;
+  for(size_t i = 0; i < footstep.size(); i++) {
+    if(footstep[i].suf == Foot::FOOT_L) {
+      footstep_l.push_back(footstep[i].pos);
+    }
+  }
+  return footstep_l;
 }
 
 } // namespace Capt

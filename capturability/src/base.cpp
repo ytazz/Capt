@@ -21,6 +21,21 @@ vec2_t mirror(vec2_t v){
   return v;
 }
 
+vec3_t vec2Tovec3(vec2_t vec2){
+  vec3_t vec3;
+  vec3.x() = vec2.x();
+  vec3.y() = vec2.y();
+  vec3.z() = 0.0;
+  return vec3;
+}
+
+vec2_t vec3Tovec2(vec3_t vec3){
+  vec2_t vec2;
+  vec2.x() = vec3.x();
+  vec2.y() = vec3.y();
+  return vec2;
+}
+
 int round(double value) {
   int integer = (int)value;
 

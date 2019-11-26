@@ -15,6 +15,11 @@ struct Trans {
   int                size;
   std::vector<State> states;
   std::vector<Input> inputs;
+
+  void clear(){
+    states.clear();
+    inputs.clear();
+  }
 };
 
 class Search {
@@ -38,12 +43,15 @@ public:
   bool existOpen();
 
   void init();
-
   void exe();
-
   bool step();
 
   Trans getTrans();
+
+  void                  calcFootstep();
+  std::vector<Footstep> getFootstep();
+  std::vector<vec3_t>   getFootstepR();
+  std::vector<vec3_t>   getFootstepL();
 
 private:
   GridMap       *gridmap;
@@ -68,6 +76,9 @@ private:
   vec2_t g_arr[2];
 
   Node *g_node;
+
+  // 結果保存用変数
+  std::vector<Footstep> footstep;
 };
 
 } // namespace Capt

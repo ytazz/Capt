@@ -43,7 +43,7 @@ public:
   void setCop(vec2_t cop);
   void setCop(arr2_t cop);
 
-  void setTransition(std::vector<State> states, std::vector<Input> inputs, Foot suf);
+  void setFootstep(std::vector<Footstep> footstep);
 
   void plot();
 
@@ -67,9 +67,6 @@ private:
   arr2_t footstep_l;
   arr2_t icp;
   arr2_t cop;
-
-  std::vector<State> states;
-  std::vector<Input> inputs;
 };
 }
 

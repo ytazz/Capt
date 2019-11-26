@@ -130,73 +130,15 @@ void StepPlot::setCop(arr2_t cop){
   }
 }
 
-void StepPlot::setTransition(std::vector<State> states, std::vector<Input> inputs, Foot suf){
-  if(states.size() - 1 != inputs.size() ) {
-    printf("Error: size\n");
-  }
-
-  vec2_t suf_pos(0, 0);
-  vec2_t swf_pos(0, 0);
-  vec2_t icp_pos(0, 0);
-  vec2_t cop_pos(0, 0);
-  if(suf == Foot::FOOT_R) {
-    for(size_t i = 0; i < states.size(); i++) {
-      if( ( i % 2 ) == 0) {
-        icp_pos = suf_pos + states[i].icp;
-        swf_pos = suf_pos + states[i].swf;
-        setFootR(suf_pos);
-        setFootL(swf_pos);
-        setIcp(icp_pos);
-        if(i < inputs.size() ) {
-          cop_pos = suf_pos + inputs[i].cop;
-          setCop(cop_pos);
-        }
-      }else{
-        icp_pos = suf_pos + mirror(states[i].icp);
-        swf_pos = suf_pos + mirror(states[i].swf);
-        setFootL(suf_pos);
-        setFootR(swf_pos);
-        setIcp(icp_pos);
-        if(i < inputs.size() ) {
-          cop_pos = suf_pos + mirror(inputs[i].cop );
-          setCop(cop_pos);
-        }
-      }
-      if( ( i % 2 ) == 0) {
-        suf_pos = suf_pos + inputs[i].swf;
-      }else{
-        suf_pos = suf_pos + mirror(inputs[i].swf);
-      }
+void StepPlot::setFootstep(std::vector<Footstep> footstep){
+  for(size_t i = 0; i < footstep.size(); i++) {
+    if(footstep[i].suf == Foot::FOOT_R) {
+      setFootR(vec3Tovec2(footstep[i].pos) );
+    }else{
+      setFootL(vec3Tovec2(footstep[i].pos) );
     }
-  }else{
-    for(size_t i = 0; i < states.size(); i++) {
-      if( ( i % 2 ) == 1) {
-        icp_pos = suf_pos + states[i].icp;
-        swf_pos = suf_pos + states[i].swf;
-        setFootR(suf_pos);
-        setFootL(swf_pos);
-        setIcp(icp_pos);
-        if(i < inputs.size() ) {
-          cop_pos = suf_pos + inputs[i].cop;
-          setCop(cop_pos);
-        }
-      }else{
-        icp_pos = suf_pos + mirror(states[i].icp);
-        swf_pos = suf_pos + mirror(states[i].swf);
-        setFootL(suf_pos);
-        setFootR(swf_pos);
-        setIcp(icp_pos);
-        if(i < inputs.size() ) {
-          cop_pos = suf_pos + mirror(inputs[i].cop );
-          setCop(cop_pos);
-        }
-      }
-      if( ( i % 2 ) == 1) {
-        suf_pos = suf_pos + inputs[i].swf;
-      }else{
-        suf_pos = suf_pos + mirror(inputs[i].swf);
-      }
-    }
+    setIcp(vec3Tovec2(footstep[i].icp) );
+    setCop(vec3Tovec2(footstep[i].cop) );
   }
 }
 

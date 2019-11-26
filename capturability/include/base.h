@@ -19,6 +19,9 @@ vec2_t mirror(vec2_t v);
 
 int round(double val);
 
+vec3_t vec2Tovec3(vec2_t vec2);
+vec2_t vec3Tovec2(vec3_t vec3);
+
 enum OccupancyType {
   NONE,
   EMPTY,
@@ -26,6 +29,28 @@ enum OccupancyType {
   OPEN,
   CLOSED,
   GOAL
+};
+
+enum Foot { FOOT_NONE, FOOT_R, FOOT_L };
+
+struct Footstep {
+  Foot   suf;
+  vec3_t pos;
+  vec3_t icp;
+  vec3_t cop;
+
+  void substitute(Foot suf, vec2_t pos, vec2_t icp, vec2_t cop){
+    this->suf     = suf;
+    this->pos.x() = pos.x();
+    this->pos.y() = pos.y();
+    this->pos.z() = 0.0;
+    this->icp.x() = icp.x();
+    this->icp.y() = icp.y();
+    this->icp.z() = 0.0;
+    this->cop.x() = cop.x();
+    this->cop.y() = cop.y();
+    this->cop.z() = 0.0;
+  }
 };
 
 } // namespace Capt

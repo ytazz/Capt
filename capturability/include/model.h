@@ -27,8 +27,6 @@ enum ShapeElement {
   SHAPE_REVERSE
 };
 
-enum Foot { FOOT_NONE, FOOT_R, FOOT_L };
-
 class Model : public Loader {
 
 public:

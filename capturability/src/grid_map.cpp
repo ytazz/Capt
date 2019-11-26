@@ -26,7 +26,7 @@ GridMap::GridMap(Param *param) : param(param){
     }
   }
 
-  plt = new OccupancyPlot(param);
+  // plt = new OccupancyPlot(param);
 }
 
 GridMap::~GridMap(){
@@ -101,13 +101,13 @@ vec2i_t GridMap::posToId(vec2_t pos){
 }
 
 void GridMap::plot(){
-  plt->initOccupancy();
-  for (int i = 0; i < x_num; i++) {
-    for (int j = 0; j < y_num; j++) {
-      plt->setOccupancy(grid[i][j].pos, grid[i][j].type);
-    }
-  }
-  plt->plot();
+  // plt->initOccupancy();
+  // for (int i = 0; i < x_num; i++) {
+  //   for (int j = 0; j < y_num; j++) {
+  //     plt->setOccupancy(grid[i][j].pos, grid[i][j].type);
+  //   }
+  // }
+  // plt->plot();
 }
 
 } // namespace Capt

@@ -19,6 +19,14 @@ vec2_t mirror(vec2_t v);
 
 int round(double val);
 
+enum OccupancyType {
+  NONE,
+  EMPTY,
+  OBSTACLE,
+  OPEN,
+  CLOSED,
+  GOAL
+};
 
 } // namespace Capt
 

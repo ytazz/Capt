@@ -1,29 +1,23 @@
 #ifndef __CAPT_H__
 #define __CAPT_H__
 
+#include "base.h"
 #include "capturability.h"
 #include "cycloid.h"
-#include "foot_planner.h"
-#include "friction_filter.h"
+#include "grid_map.h"
 #include "grid.h"
 #include "input.h"
-#include "kinematics.h"
+#include "interpolation.h"
 #include "loader.h"
 #include "model.h"
-#include "monitor.h"
+#include "node.h"
 #include "param.h"
 #include "pendulum.h"
-#include "planning.h"
 #include "polygon.h"
+#include "search.h"
 #include "state.h"
 #include "swing_foot.h"
+#include "timer.h"
 #include "trajectory.h"
-#include "base.h"
-
-namespace Capt {
-
-// enum SupportFoot { SUPPORT_R, SUPPORT_L };
-
-} // namespace Capt
 
 #endif // __CAPT_H__

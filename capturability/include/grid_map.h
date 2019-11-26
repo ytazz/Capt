@@ -4,7 +4,7 @@
 #include "base.h"
 #include "param.h"
 #include "node.h"
-#include "occupancy_plot.h"
+// #include "occupancy_plot.h"
 #include <iostream>
 #include <vector>
 
@@ -46,8 +46,8 @@ public:
 private:
   vec2i_t posToId(vec2_t pos);
 
-  Param         *param;
-  OccupancyPlot *plt;
+  Param *param;
+  // OccupancyPlot *plt;
 
   double x_min, x_max, x_stp;
   double y_min, y_max, y_stp;

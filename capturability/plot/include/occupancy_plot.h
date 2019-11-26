@@ -17,15 +17,6 @@
 
 namespace Capt {
 
-enum OccupancyType {
-  NONE,
-  EMPTY,
-  OBSTACLE,
-  OPEN,
-  CLOSED,
-  GOAL
-};
-
 class OccupancyPlot : public Gnuplot {
   Gnuplot p;
 

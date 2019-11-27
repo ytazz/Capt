@@ -2,17 +2,26 @@
 
 namespace Capt {
 
-Search::Search(GridMap *gridmap, Grid *grid, Capturability *capturability) :
-  gridmap(gridmap), grid(grid), capturability(capturability){
+Search::Search(Grid *grid, Capturability *capturability) :
+  grid(grid), capturability(capturability){
   max_step = capturability->getMaxStep();
   g_node   = NULL;
-  h_scale  = 10;
+  clear();
 }
 
 Search::~Search() {
 }
 
 void Search::clear(){
+  num_node = 0;
+  for(int i = 0; i < MAX_NODE_SIZE; i++) {
+    nodes[i].parent   = NULL;
+    nodes[i].state_id = 0;
+    nodes[i].input_id = 0;
+    nodes[i].pos << 0, 0;
+    nodes[i].cost = 0.0;
+    nodes[i].step = 0;
+  }
 }
 
 void Search::setStanceWidth(double stance){
@@ -20,135 +29,116 @@ void Search::setStanceWidth(double stance){
 }
 
 void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){
-  s_rfoot = rfoot;
-  s_lfoot = lfoot;
-  s_icp   = icp;
-  s_suf   = suf;
+  this->rfoot = rfoot;
+  this->lfoot = lfoot;
+  s_suf       = suf;
 
   if(s_suf == FOOT_R) {
-    s_lfoot -= s_rfoot;
-    s_icp   -= s_rfoot;
-  }else{
-    s_rfoot     -= s_lfoot;
-    s_icp       -= s_lfoot;
-    s_rfoot.y() *= -1;
-    s_icp.y()   *= -1;
+    s_rfoot << 0, 0;
+    s_lfoot = lfoot - rfoot;
+    s_icp   = icp - rfoot;
   }
 }
 
 void Search::setGoal(vec2_t center){
+  // world coordinate
   g_rfoot.x() = center.x();
   g_rfoot.y() = center.y() - stance / 2.0;
   g_lfoot.x() = center.x();
   g_lfoot.y() = center.y() + stance / 2.0;
 
+  // initial support foot coordinate
   if(s_suf == FOOT_R) {
-    g_rfoot -= s_rfoot;
-    g_lfoot -= s_rfoot;
-  }else{
-    g_rfoot -= s_lfoot;
-    g_lfoot -= s_lfoot;
+    g_rfoot -= rfoot;
+    g_lfoot -= rfoot;
   }
-
-  gridmap->setOccupancy(g_rfoot, OccupancyType::GOAL);
-  gridmap->setOccupancy(g_lfoot, OccupancyType::CLOSED);
 }
 
-bool Search::open(Cell *cell){
-  vec2_t pos;
-  int    num_step = cell->node.step + 1;
+Node* Search::findMinCostNode(){
+  // printf("open list %3d\n", (int)opens.size() );
+  double min  = 100;
+  int    id   = 0;
+  Node  *node = NULL;
+  for(size_t i = 0; i < opens.size(); i++) {
+    if(opens[i]->cost < min) {
+      node = opens[i];
+      id   = (int)i;
+      min  = opens[i]->cost;
+    }
+  }
+  // printf("min cost %lf\n", min);
+  opens.erase(opens.begin() + id);
+  return node;
+}
+
+bool Search::open(Node *node){
+  int    num_step = node->step + 1;
   vec2_t swf;
-  int    rl = ( num_step % 2 ); // right or left
+  vec2_t next_pos;
+  double cost = 0.0;
+
+  if(num_step > 7)
+    return false;
 
   for(int n = 1; n <= max_step; n++) {
-    std::vector<CaptureSet> region = capturability->getCaptureRegion(cell->node.state_id, n);
+    std::vector<CaptureSet> region = capturability->getCaptureRegion(node->state_id, n);
     for(size_t i = 0; i < region.size(); i++) {
-      swf     = grid->getInput(region[i].input_id).swf;
-      pos.x() = cell->pos.x() + swf.x();
-      pos.y() = cell->pos.y() + yaxis[rl] * swf.y();
-      if(gridmap->getOccupancy(pos) == OccupancyType::GOAL) {
-        Node node_;
-        node_.parent   = &cell->node;
-        node_.state_id = region[i].next_id;
-        node_.input_id = region[i].input_id;
-        node_.step     = num_step;
-        gridmap->setNode(pos, node_);
-
-        g_node = gridmap->getNode(pos);
-
+      swf = grid->getInput(region[i].input_id).swf;
+      if( ( num_step % 2 ) == 1) { // 最初の支持足と同じ方
+        next_pos.x() = node->pos.x() + swf.x();
+        next_pos.y() = node->pos.y() + swf.y();
+        cost         = ( g_lfoot - next_pos ).norm();
+      }else{ // 最初の支持足と逆の方
+        next_pos.x() = node->pos.x() + swf.x();
+        next_pos.y() = node->pos.y() - swf.y();
+        cost         = ( g_rfoot - next_pos ).norm();
+      }
+      nodes[num_node].parent   = node;
+      nodes[num_node].state_id = region[i].next_id;
+      nodes[num_node].input_id = region[i].input_id;
+      nodes[num_node].pos      = next_pos;
+      nodes[num_node].cost     = cost;
+      nodes[num_node].step     = num_step;
+      if(cost < 0.01) {
+        printf("find !\n");
+        g_node = &nodes[num_node];
         return true;
       }
-      if(gridmap->getOccupancy(pos) == OccupancyType::EMPTY) {
-        double g_cost = cell->node.g_cost + ( pos - cell->pos ).norm();
-        double h_cost = h_scale * ( pos - g_arr[rl] ).norm();
-
-        Node node_;
-        node_.parent   = &cell->node;
-        node_.state_id = region[i].next_id;
-        node_.input_id = region[i].input_id;
-        node_.g_cost   = g_cost;
-        node_.h_cost   = h_cost;
-        node_.cost     = g_cost + h_cost;
-        node_.step     = num_step;
-
-        gridmap->setNode(pos, node_);
-      }
+      opens.push_back(&nodes[num_node]);
+      num_node++;
     }
   }
 
-  return false;
-}
+  // Node::printItemWithPos();
+  // for(int i = 0; i < num_node; i++) {
+  //   nodes[i].printWithPos();
+  // }
 
-bool Search::existOpen(){
-  bool flag = false;
-  // if(opens.size() > 0)
-  //   flag = true;
-  return flag;
+  return false;
 }
 
 void Search::init(){
   // Calculate initial state
   State state;
-
   if(s_suf == FOOT_R) {
     state.swf = s_lfoot;
     state.icp = s_icp;
-
-    s_arr[0] = s_rfoot;
-    s_arr[1] = s_lfoot;
-    g_arr[0] = g_rfoot;
-    g_arr[1] = g_lfoot;
-    yaxis[0] = -1;
-    yaxis[1] = +1;
-  }else{
-    state.swf = s_rfoot;
-    state.icp = s_icp;
-
-    s_arr[0] = s_lfoot;
-    s_arr[1] = s_rfoot;
-    g_arr[0] = g_lfoot;
-    g_arr[1] = g_rfoot;
-    yaxis[0] = +1;
-    yaxis[1] = -1;
   }
   state.print();
 
   // Calculate cost
-  double g_cost = 0.0;
-  double h_cost = h_scale * ( s_arr[0] - g_arr[0] ).norm();
+  double cost =  ( s_rfoot - g_rfoot ).norm();
 
   // Calculate initial node
-  Node node;
-  node.parent   = NULL;
-  node.state_id = grid->getStateIndex(state);
-  node.g_cost   = g_cost;
-  node.h_cost   = h_cost;
-  node.cost     = g_cost + h_cost;
-  node.step     = 0;
+  nodes[num_node].parent   = NULL;
+  nodes[num_node].state_id = grid->getStateIndex(state);
+  nodes[num_node].cost     = cost;
+  nodes[num_node].step     = 0;
+  num_node++;
 
-  gridmap->setNode(vec2_t(0, 0), node);
-
-  // gridmap->plot();
+  opens.push_back(&nodes[0]);
+  Node::printItemWithPos();
+  nodes[0].printWithPos();
 }
 
 void Search::exe(){
@@ -156,23 +146,25 @@ void Search::exe(){
   init();
 
   // Search
+  int i = 1;
   while(step() ) {
+    // printf("%d-th\n", i);
+    i++;
   }
 
   calcFootstep();
 }
 
 bool Search::step(){
-  Cell *cell = gridmap->findMinCostCell();
-  if(cell != NULL) {
-    if(open(cell) ) {
-      printf("found solution!\n");
+  if(opens.size() > 0) {
+    Node *node = findMinCostNode();
+    if(open(node) ) {
+      printf("found solution !\n");
       return false;
     }
-    cell->type = OccupancyType::CLOSED;
-    // gridmap->plot();
     return true;
   }else{
+    printf("cannot found solution ...\n");
     return false;
   }
 }

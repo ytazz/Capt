@@ -30,7 +30,7 @@ int main(int argc, char const *argv[]) {
   }
 
   // footstep search
-  Search *search = new Search(gridmap, grid, capturability);
+  Search *search = new Search(grid, capturability);
 
   vec2_t s_rfoot(0.0, -0.2);
   vec2_t s_lfoot(0.0, 0.2);
@@ -39,10 +39,17 @@ int main(int argc, char const *argv[]) {
   double stance = 0.4;
 
   search->setStanceWidth(stance);
-  search->setStart(s_rfoot, s_lfoot, s_icp, Foot::FOOT_L);
+  search->setStart(s_rfoot, s_lfoot, s_icp, Foot::FOOT_R);
   search->setGoal(g_foot);
 
+  // search->init();
+  // search->step();
+  // search->step();
+  Timer timer;
+  timer.start();
   search->exe();
+  timer.end();
+  timer.print();
 
   // draw path
   StepPlot *plt = new StepPlot(model, param, grid);

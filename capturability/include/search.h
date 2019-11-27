@@ -9,7 +9,11 @@
 #include "grid_map.h"
 #include <vector>
 
+#define MAX_NODE_SIZE 1000000
+
 namespace Capt {
+
+enum { INI_SUP, INI_SWF };
 
 struct Trans {
   int                size;
@@ -24,7 +28,7 @@ struct Trans {
 
 class Search {
 public:
-  Search(GridMap *gridmap, Grid *grid, Capturability *capturability);
+  Search(Grid *grid, Capturability *capturability);
   ~Search();
 
   void clear();
@@ -37,10 +41,8 @@ public:
   void setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf);
   void setGoal(vec2_t center);
 
-  bool open(Cell* cell);
-
-  bool existNode();
-  bool existOpen();
+  Node* findMinCostNode();
+  bool  open(Node *node);
 
   void init();
   void exe();
@@ -54,18 +56,20 @@ public:
   std::vector<vec3_t>   getFootstepL();
 
 private:
-  GridMap       *gridmap;
   Grid          *grid;
   Capturability *capturability;
 
   int max_step;
+  int num_node;
 
-  double h_scale;
-
-  // std::vector<Node*> opens;
+  Node               nodes[MAX_NODE_SIZE];
+  std::vector<Node*> opens;
 
   // 直立した時の足幅
   double stance;
+
+  // 現在の状態
+  vec2_t rfoot, lfoot;
 
   Foot   s_suf;
   vec2_t s_rfoot, s_lfoot, s_icp; // start

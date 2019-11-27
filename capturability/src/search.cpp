@@ -55,7 +55,6 @@ void Search::setGoal(vec2_t center){
 }
 
 Node* Search::findMinCostNode(){
-  // printf("open list %3d\n", (int)opens.size() );
   double min  = 100;
   int    id   = 0;
   Node  *node = NULL;
@@ -66,7 +65,6 @@ Node* Search::findMinCostNode(){
       min  = opens[i]->cost;
     }
   }
-  // printf("min cost %lf\n", min);
   opens.erase(opens.begin() + id);
   return node;
 }

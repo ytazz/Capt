@@ -118,15 +118,8 @@ void OccupancyPlot::setOccupancy(double x, double y, OccupancyType type){
     case OccupancyType::EMPTY:
       occupancy[i][j] = 0;
       break;
-    case OccupancyType::OBSTACLE:
-      occupancy[i][j] = 1;
-      break;
-    case OccupancyType::OPEN:
+    case OccupancyType::EXIST:
       occupancy[i][j] = 2;
-      break;
-    case OccupancyType::CLOSED:
-    case OccupancyType::GOAL:
-      occupancy[i][j] = 3;
       break;
     }
   }

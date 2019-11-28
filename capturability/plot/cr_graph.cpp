@@ -26,21 +26,21 @@ int main(int argc, char const *argv[]) {
   // double icp_x_offset = 0.05;
   // double icp_y_offset = 0.02;
   // paper plot for val
-  double icp_x        = 0.00;
-  double icp_y        = 0.0;
-  double swf_x        = -0.25;
-  double swf_y        = 0.4;
-  double icp_x_offset = 0.1;
-  double icp_y_offset = 0.05;
+  // double icp_x        = 0.00;
+  // double icp_y        = 0.0;
+  // double swf_x        = -0.25;
+  // double swf_y        = 0.4;
+  // double icp_x_offset = 0.1;
+  // double icp_y_offset = 0.05;
   // walk val
-  // double icp_x = 0.0;
-  // double icp_y = 0.15;
-  // double swf_x = 0;
-  // double swf_y = 0.4;
+  double icp_x = 0.0;
+  double icp_y = 0.2;
+  double swf_x = 0.0;
+  double swf_y = 0.4;
 
   State state;
   Input input;
-  int   cop_id = 6;
+  // int   cop_id = 6;
 
   CRPlot *cr_plot;
   // case1
@@ -49,23 +49,29 @@ int main(int argc, char const *argv[]) {
   state.swf << swf_x, swf_y;
   state = grid->roundState(state).state;
 
-  cr_plot = new CRPlot(model, param, grid);
-  cr_plot->initCaptureMap();
-  cr_plot->setState(state);
-  cr_plot->setCop(grid->getCop(cop_id) );
-  for(int N = 1; N <= 4; N++) {
-    if(capturability->capturable(state, N) ) {
-      std::vector<CaptureSet> region = capturability->getCaptureRegion(state, N);
-      printf("%d-step capture points %5d\n", N, (int)region.size() );
-      for(size_t i = 0; i < region.size(); i++) {
-        Input input = grid->getInput(region[i].input_id);
-        if(grid->indexCop(input.cop) == cop_id)
-          cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), N);
+  int count = 0;
+  for(int cop_id = 0; cop_id < 15; cop_id++) {
+    cr_plot = new CRPlot(model, param, grid);
+    cr_plot->initCaptureMap();
+    cr_plot->setState(state);
+    cr_plot->setCop(grid->getCop(cop_id) );
+    for(int N = 1; N <= 4; N++) {
+      if(capturability->capturable(state, N) ) {
+        std::vector<CaptureSet> region = capturability->getCaptureRegion(state, N);
+        printf("%d-step capture points %5d\n", N, (int)region.size() );
+        count += (int)region.size();
+        for(size_t i = 0; i < region.size(); i++) {
+          Input input = grid->getInput(region[i].input_id);
+          if(grid->indexCop(input.cop) == cop_id)
+            cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), N);
+        }
       }
     }
+    cr_plot->plot();
+    delete cr_plot;
   }
-  cr_plot->plot();
-  delete cr_plot;
+
+  printf("%d\n", count);
 
   return 0;
 }

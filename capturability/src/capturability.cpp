@@ -85,6 +85,19 @@ CaptureSet* Capturability::getCaptureSet(int state_id, int input_id){
   return &data_nstep[state_id][input_id];
 }
 
+std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id) {
+  std::vector<CaptureSet> sets;
+
+  sets.clear();
+  for (int i = 0; i < grid->getNumInput(); i++) {
+    if (data_nstep[state_id][i].nstep > 0) {
+      sets.push_back(data_nstep[state_id][i]);
+    }
+  }
+
+  return sets;
+}
+
 std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id, const int nstep) {
   std::vector<CaptureSet> sets;
 

@@ -1,0 +1,43 @@
+#ifndef __TREE_H__
+#define __TREE_H__
+
+#include "capturability.h"
+#include "grid_map.h"
+#include "node.h"
+
+#define MAX_NODE_SIZE 10000000
+
+namespace Capt {
+
+class Tree {
+public:
+  Tree(Capturability* capturability, GridMap* gridMap);
+  ~Tree();
+
+  // set maximum feasible steps
+  void setStepMax(int stepMax);
+
+  // generate tree
+  void generate();
+
+  //
+  void save();
+
+  // getter
+  void getRootToReaf(vec2_t goalPos);
+
+private:
+  Capturability *capturability;
+  GridMap       *gridMap;
+
+  int captMax, stepMax;
+  int state_num;
+
+  int                num_node;
+  Node               nodes[MAX_NODE_SIZE];
+  std::vector<Node*> opens;
+};
+
+} // namespace Capt
+
+#endif // __TREE_H__

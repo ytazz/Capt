@@ -43,8 +43,8 @@ public:
 
   CaptureSet* getCaptureSet(int state_id, int input_id);
 
-  std::vector<CaptureSet> getCaptureRegion(const int state_id,
-                                           const int nstep);
+  std::vector<CaptureSet> getCaptureRegion(const int state_id);
+  std::vector<CaptureSet> getCaptureRegion(const int state_id, const int nstep);
   std::vector<CaptureSet> getCaptureRegion(const State state, const int nstep);
 
   bool capturable(State state, int nstep);

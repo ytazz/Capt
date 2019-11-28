@@ -4,7 +4,7 @@
 #include "base.h"
 #include "param.h"
 #include "node.h"
-// #include "occupancy_plot.h"
+#include "occupancy_plot.h"
 #include <iostream>
 #include <vector>
 
@@ -14,40 +14,27 @@ struct Cell {
   Cell(){
   }
 
-  vec2_t        pos;
-  Node          node;
-  OccupancyType type;
+  std::vector<Node*> nodes;
+  OccupancyType      type;
 };
 
-class GridMap {
+class GridMap : public Grid {
 public:
   GridMap(Param *param);
   ~GridMap();
 
-  void setObstacle(vec2_t pos);
-  void setObstacle(vec2i_t id);
-
-  void setNode(vec2_t pos, Node node);
-  void setNode(vec2i_t id, Node node);
-
   void setOccupancy(vec2_t pos, OccupancyType type);
-  void setOccupancy(vec2i_t id, OccupancyType type);
+  void setNode(vec2_t pos, Node *node);
 
-  Node* getNode(vec2_t pos);
-  Node* getNode(vec2i_t id);
-
-  Cell* findMinCostCell();
-
-  OccupancyType getOccupancy(vec2_t pos);
-  OccupancyType getOccupancy(vec2i_t id);
+  OccupancyType      getOccupancy(vec2_t pos);
+  std::vector<Node*> getNodes(vec2_t pos);
 
   void plot();
 
 private:
-  vec2i_t posToId(vec2_t pos);
+  vec2i_t pos2id(vec2_t pos);
 
-  Param *param;
-  // OccupancyPlot *plt;
+  OccupancyPlot *plt;
 
   double x_min, x_max, x_stp;
   double y_min, y_max, y_stp;

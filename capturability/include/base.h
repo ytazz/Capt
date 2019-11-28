@@ -25,10 +25,12 @@ vec2_t vec3Tovec2(vec3_t vec3);
 enum OccupancyType {
   NONE,
   EMPTY,
-  OBSTACLE,
-  OPEN,
-  CLOSED,
-  GOAL
+  EXIST
+};
+
+struct Trans {
+  std::vector<int> state_id;
+  std::vector<int> input_id;
 };
 
 enum Foot { FOOT_NONE, FOOT_R, FOOT_L };

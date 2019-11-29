@@ -21,7 +21,7 @@ Tree::Tree(Capturability* capturability, GridMap* gridMap) :
 Tree::~Tree(){
 }
 
-void Tree::setPreviewStepMax(int stepMax){
+void Tree::setPreviewStep(int stepMax){
   this->stepMax = stepMax;
 }
 

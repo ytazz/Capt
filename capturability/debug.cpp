@@ -25,7 +25,7 @@ int main(int argc, char const *argv[]) {
   // gridmap->plot();
 
   Tree *tree = new Tree(capturability, gridmap);
-  tree->setPreviewStepMax(10);
+  tree->setPreviewStep(10);
   tree->generate();
 
   // calc path

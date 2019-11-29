@@ -15,7 +15,7 @@ public:
   ~Tree();
 
   // set maximum feasible steps
-  void setPreviewStepMax(int stepMax);
+  void setPreviewStep(int stepMax);
 
   // generate tree
   void generate();

@@ -11,7 +11,7 @@ namespace Capt {
 
 class Tree {
 public:
-  Tree(Capturability* capturability, GridMap* gridMap);
+  Tree(Capturability* capturability, Grid *grid, Param *param);
   ~Tree();
 
   // set maximum feasible steps
@@ -26,6 +26,7 @@ public:
 
 private:
   Capturability *capturability;
+  Grid          *grid;
   GridMap       *gridMap;
 
   int captMax, stepMax;

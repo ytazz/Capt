@@ -18,7 +18,7 @@ struct Cell {
   OccupancyType type;
 };
 
-class GridMap : public Grid {
+class GridMap {
 public:
   GridMap(Param *param);
   ~GridMap();

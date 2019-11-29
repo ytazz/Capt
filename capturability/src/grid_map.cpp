@@ -2,7 +2,7 @@
 
 namespace Capt {
 
-GridMap::GridMap(Param *param) : Grid(param){
+GridMap::GridMap(Param *param){
   param->read(&x_min, "map_x_min");
   param->read(&x_max, "map_x_max");
   param->read(&x_stp, "map_x_stp");

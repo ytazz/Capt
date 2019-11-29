@@ -2,11 +2,11 @@
 
 namespace Capt {
 
-Tree::Tree(Capturability* capturability, GridMap* gridMap) :
-  capturability(capturability), gridMap(gridMap){
+Tree::Tree(Capturability* capturability, Grid *grid, Param *param) :
+  capturability(capturability), grid(grid){
   captMax   = capturability->getMaxStep();
   stepMax   = 1;
-  state_num = gridMap->getNumState();
+  state_num = grid->getNumState();
 
   num_node = 0;
   for(int i = 0; i < MAX_NODE_SIZE; i++) {
@@ -16,6 +16,8 @@ Tree::Tree(Capturability* capturability, GridMap* gridMap) :
     nodes[i].pos << 0, 0;
     nodes[i].step = 0;
   }
+
+  gridMap = new GridMap(param);
 }
 
 Tree::~Tree(){
@@ -60,7 +62,7 @@ void Tree::generate(){
       for(size_t i = 0; i < region.size(); i++) {
         // calculate next landing position
         vec2_t base = target->pos;
-        vec2_t swf  = gridMap->getInput(region[i].input_id).swf;
+        vec2_t swf  = grid->getInput(region[i].input_id).swf;
         if(target->step % 2 == 0) { // if right foot support
           pos.x() = base.x() + swf.x();
           pos.y() = base.y() + swf.y();

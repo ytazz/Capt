@@ -24,7 +24,7 @@ int main(int argc, char const *argv[]) {
   GridMap *gridmap = new GridMap(param);
   // gridmap->plot();
 
-  Tree *tree = new Tree(capturability, gridmap);
+  Tree *tree = new Tree(capturability, grid, param);
   tree->setPreviewStep(10);
   tree->generate();
 

@@ -28,11 +28,6 @@ enum OccupancyType {
   EXIST
 };
 
-struct Trans {
-  std::vector<int> state_id;
-  std::vector<int> input_id;
-};
-
 enum Foot { FOOT_NONE, FOOT_R, FOOT_L };
 
 struct Footstep {

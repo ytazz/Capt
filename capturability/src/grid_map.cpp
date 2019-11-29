@@ -19,8 +19,8 @@ GridMap::GridMap(Param *param) : Grid(param){
     pos.x() = x_min + x_stp * i;
     grid[i].resize(y_num);
     for (int j = 0; j < y_num; j++) {
-      pos.y() = y_min + y_stp * j;
-      grid[i][j].nodes.clear();
+      pos.y()         = y_min + y_stp * j;
+      grid[i][j].node = NULL;
       grid[i][j].type = OccupancyType::EMPTY;
     }
   }
@@ -38,7 +38,7 @@ void GridMap::setOccupancy(vec2_t pos, OccupancyType type){
 
 void GridMap::setNode(vec2_t pos, Node *node){
   vec2i_t id = pos2id(pos);
-  grid[id.x()][id.y()].nodes.push_back(node);
+  grid[id.x()][id.y()].node = node;
   grid[id.x()][id.y()].type = OccupancyType::EXIST;
 }
 
@@ -50,12 +50,12 @@ OccupancyType GridMap::getOccupancy(vec2_t pos){
     return OccupancyType::NONE;
 }
 
-std::vector<Node*> GridMap::getNodes(vec2_t pos){
-  std::vector<Node*> nodes_;
-  vec2i_t            id = pos2id(pos);
+Node* GridMap::getNode(vec2_t pos){
+  Node   *node_ = NULL;
+  vec2i_t id    = pos2id(pos);
   if(0 <= id.x() && id.x() < x_num && 0 <= id.y() && id.y() < y_num)
-    nodes_ = grid[id.x()][id.y()].nodes;
-  return nodes_;
+    node_ = grid[id.x()][id.y()].node;
+  return node_;
 }
 
 vec2i_t GridMap::pos2id(vec2_t pos){

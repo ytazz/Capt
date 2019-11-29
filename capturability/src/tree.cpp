@@ -21,7 +21,7 @@ Tree::Tree(Capturability* capturability, GridMap* gridMap) :
 Tree::~Tree(){
 }
 
-void Tree::setStepMax(int stepMax){
+void Tree::setPreviewStepMax(int stepMax){
   this->stepMax = stepMax;
 }
 
@@ -71,7 +71,7 @@ void Tree::generate(){
 
         // set
         node_.parent   = target;
-        node_.state_id = region[i].state_id;
+        node_.state_id = region[i].next_id;
         node_.input_id = region[i].input_id;
         node_.step     = target->step + 1;
         node_.pos      = pos;
@@ -89,6 +89,14 @@ void Tree::generate(){
   }
 
   gridMap->plot();
+}
+
+Node* Tree::getReafNode(int state_id, vec2_t pos){
+  return gridMap->getNode(pos);
+}
+
+int Tree::getPreviewStep(){
+  return stepMax;
 }
 
 } // namespace Capt

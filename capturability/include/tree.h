@@ -15,16 +15,14 @@ public:
   ~Tree();
 
   // set maximum feasible steps
-  void setStepMax(int stepMax);
+  void setPreviewStepMax(int stepMax);
 
   // generate tree
   void generate();
 
-  //
-  void save();
-
   // getter
-  void getRootToReaf(vec2_t goalPos);
+  Node* getReafNode(int state_id, vec2_t pos);
+  int   getPreviewStep();
 
 private:
   Capturability *capturability;

@@ -7,13 +7,10 @@
 #include "node.h"
 #include "capturability.h"
 #include "grid_map.h"
+#include "tree.h"
 #include <vector>
 
-#define MAX_NODE_SIZE 1000000
-
 namespace Capt {
-
-enum { INI_SUP, INI_SWF };
 
 struct Trans {
   int                size;
@@ -28,25 +25,14 @@ struct Trans {
 
 class Search {
 public:
-  Search(Grid *grid, Capturability *capturability);
+  Search(Grid *grid, Tree *tree);
   ~Search();
-
-  void clear();
-
-  // set foot width when standing upright
-  // stance = abs(rfoot - lfoot)
-  void setStanceWidth(double stance);
 
   // world frame coord.
   void setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf);
   void setGoal(vec2_t center);
 
-  Node* findMinCostNode();
-  bool  open(Node *node);
-
-  void init();
-  void exe();
-  bool step();
+  void calc();
 
   Trans getTrans();
 
@@ -56,8 +42,8 @@ public:
   std::vector<vec3_t>   getFootstepL();
 
 private:
-  Grid          *grid;
-  Capturability *capturability;
+  Grid *grid;
+  Tree *tree;
 
   int max_step;
   int num_node;
@@ -65,19 +51,12 @@ private:
   Node               nodes[MAX_NODE_SIZE];
   std::vector<Node*> opens;
 
-  // 直立した時の足幅
-  double stance;
-
   // 現在の状態
   vec2_t rfoot, lfoot;
 
-  Foot   s_suf;
-  vec2_t s_rfoot, s_lfoot, s_icp; // start
-  vec2_t g_rfoot, g_lfoot;        // goal
-
-  int    yaxis[2];
-  vec2_t s_arr[2];
-  vec2_t g_arr[2];
+  Foot   s_suf, g_suf;
+  vec2_t s_rfoot, s_lfoot, s_icp;  // start
+  vec2_t g_rfoot, g_lfoot, g_foot; // goal
 
   Node *g_node;
 

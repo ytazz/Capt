@@ -21,8 +21,8 @@ void Timer::end(){
 
 void Timer::print(){
   for(size_t i = 0; i < end_.size(); i++) {
-    double elapsed_ = std::chrono::duration_cast<std::chrono::milliseconds>(end_[i] - start_).count();
-    printf("%lf [ms]\n", elapsed_);
+    int elapsed_ = std::chrono::duration_cast<std::chrono::microseconds>(end_[i] - start_).count();
+    printf("%d.%d [ms]\n", elapsed_ / 1000, elapsed_ % 1000);
   }
 }
 

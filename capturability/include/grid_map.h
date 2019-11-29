@@ -14,8 +14,8 @@ struct Cell {
   Cell(){
   }
 
-  std::vector<Node*> nodes;
-  OccupancyType      type;
+  Node         *node;
+  OccupancyType type;
 };
 
 class GridMap : public Grid {
@@ -26,8 +26,8 @@ public:
   void setOccupancy(vec2_t pos, OccupancyType type);
   void setNode(vec2_t pos, Node *node);
 
-  OccupancyType      getOccupancy(vec2_t pos);
-  std::vector<Node*> getNodes(vec2_t pos);
+  OccupancyType getOccupancy(vec2_t pos);
+  Node*         getNode(vec2_t pos);
 
   void plot();
 

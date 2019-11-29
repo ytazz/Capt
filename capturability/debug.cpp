@@ -4,6 +4,7 @@
 #include "grid_map.h"
 #include "timer.h"
 #include "tree.h"
+#include "search.h"
 #include "step_plot.h"
 #include <chrono>
 
@@ -24,13 +25,23 @@ int main(int argc, char const *argv[]) {
   // gridmap->plot();
 
   Tree *tree = new Tree(capturability, gridmap);
-  tree->setStepMax(10);
+  tree->setPreviewStepMax(10);
   tree->generate();
 
+  // calc path
+  vec2_t  rfoot(0.0, -0.2);
+  vec2_t  lfoot(0.0, 0.2);
+  vec2_t  icp(0.0, 0.0);
+  vec2_t  gfoot(0.5, 0.5);
+  Search* search = new Search(grid, tree);
+  search->setStart(rfoot, lfoot, icp, Foot::FOOT_R);
+  search->setGoal(gfoot);
+  search->calc();
+
   // draw path
-  // StepPlot *plt = new StepPlot(model, param, grid);
-  // plt->setFootstep(search->getFootstep() );
-  // plt->plot();
+  StepPlot *plt = new StepPlot(model, param, grid);
+  plt->setFootstep(search->getFootstep() );
+  plt->plot();
 
   return 0;
 }

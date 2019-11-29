@@ -6,7 +6,7 @@ set(BUILD_CPU     false CACHE BOOL "build programs for CPU")
 set(BUILD_EXAMPLE false CACHE BOOL "build sample programs")
 set(MAKE_LIBRARY  false CACHE BOOL "make Capt library")
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -O3")
 
 set(CUDA_SEPARABLE_COMPILATION ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

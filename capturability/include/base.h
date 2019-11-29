@@ -25,7 +25,9 @@ vec2_t vec3Tovec2(vec3_t vec3);
 enum OccupancyType {
   NONE,
   EMPTY,
-  EXIST
+  EXIST,
+  CLOSED,
+  GOAL
 };
 
 enum Foot { FOOT_NONE, FOOT_R, FOOT_L };

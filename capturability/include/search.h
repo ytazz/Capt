@@ -28,6 +28,8 @@ public:
   Search(Grid *grid, Tree *tree);
   ~Search();
 
+  void clear();
+
   // world frame coord.
   void setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf);
   void setGoal(vec2_t center);
@@ -46,10 +48,6 @@ private:
   Tree *tree;
 
   int max_step;
-  int num_node;
-
-  Node               nodes[MAX_NODE_SIZE];
-  std::vector<Node*> opens;
 
   // 現在の状態
   vec2_t rfoot, lfoot;

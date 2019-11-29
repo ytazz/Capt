@@ -21,28 +21,23 @@ int main(int argc, char const *argv[]) {
   capturability->load("gpu/Basin.csv", DataType::BASIN);
   capturability->load("gpu/Nstep.csv", DataType::NSTEP);
 
-  GridMap *gridmap = new GridMap(param);
-  // gridmap->plot();
-
-  const int state_num = grid->getNumState();
-  Tree    **tree;
-  tree = (Tree**)malloc(sizeof( Tree* ) * state_num);
-  for(int i = 0; i < state_num; i++) {
-    printf("tree %d\n", i);
-    tree[i] = new Tree(capturability, grid, param);
-    tree[i]->setPreviewStep(10);
-    tree[i]->generate();
-  }
+  Tree *tree = new Tree(capturability, grid, param);
+  // tree->setPreviewStep(10);
+  // tree->generate();
 
   // calc path
   vec2_t  rfoot(0.0, -0.2);
   vec2_t  lfoot(0.0, 0.2);
   vec2_t  icp(0.0, 0.0);
-  vec2_t  gfoot(0.5, 0.5);
-  Search* search = new Search(grid, tree[0]);
+  vec2_t  gfoot(1.0, -0.5);
+  Search* search = new Search(grid, tree);
+  Timer   timer;
+  timer.start();
   search->setStart(rfoot, lfoot, icp, Foot::FOOT_R);
   search->setGoal(gfoot);
   search->calc();
+  timer.end();
+  timer.print();
 
   // draw path
   StepPlot *plt = new StepPlot(model, param, grid);

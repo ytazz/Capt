@@ -5,7 +5,7 @@
 #include "grid_map.h"
 #include "node.h"
 
-#define MAX_NODE_SIZE 10000
+#define MAX_NODE_SIZE 1000000
 
 namespace Capt {
 
@@ -18,11 +18,10 @@ public:
   void setPreviewStep(int stepMax);
 
   // generate tree
-  void generate();
+  Node* search(int state_id, vec2_t g_foot);
 
   // getter
-  Node* getReafNode(int state_id, vec2_t pos);
-  int   getPreviewStep();
+  int getPreviewStep();
 
 private:
   Capturability *capturability;

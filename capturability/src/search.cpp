@@ -9,6 +9,9 @@ Search::Search(Grid *grid, Tree *tree) :
 Search::~Search() {
 }
 
+void Search::clear(){
+}
+
 void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){
   this->rfoot = rfoot;
   this->lfoot = lfoot;
@@ -17,16 +20,20 @@ void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){
   if(s_suf == FOOT_R) {
     s_lfoot = lfoot - rfoot;
     s_icp   = icp - rfoot;
+  }else{
+    s_rfoot      = rfoot - lfoot;
+    s_icp        = icp - lfoot;
+    s_rfoot.y() *= -1;
+    s_icp.y()   *= -1;
   }
 }
 
 void Search::setGoal(vec2_t center){
   if(s_suf == FOOT_R) {
-    g_foot.x() = center.x() - rfoot.x();
-    g_foot.y() = center.y() - rfoot.y();
+    g_foot = center - rfoot;
   }else{
-    g_foot.x() = center.x() - lfoot.x();
-    g_foot.y() = -( center.y() - lfoot.y() );
+    g_foot      = center - lfoot;
+    g_foot.y() *= -1;
   }
 }
 
@@ -36,7 +43,7 @@ void Search::calc(){
     state.icp = s_icp;
     state.swf = s_lfoot;
   }
-  g_node = tree->getReafNode(grid->getStateIndex(state), g_foot);
+  g_node = tree->search(grid->getStateIndex(state), g_foot);
   calcFootstep();
 }
 

@@ -14,7 +14,7 @@
 
 namespace Capt {
 
-enum DataType { BASIN, NSTEP, STEPTIME };
+enum DataType { BASIN, NSTEP };
 
 struct CaptureSet {
   int state_id;
@@ -25,11 +25,10 @@ struct CaptureSet {
   double step_time;
 
   void operator=(const CaptureSet &capture_set) {
-    this->state_id  = capture_set.state_id;
-    this->input_id  = capture_set.input_id;
-    this->next_id   = capture_set.next_id;
-    this->nstep     = capture_set.nstep;
-    this->step_time = capture_set.step_time;
+    this->state_id = capture_set.state_id;
+    this->input_id = capture_set.input_id;
+    this->next_id  = capture_set.next_id;
+    this->nstep    = capture_set.nstep;
   }
 };
 
@@ -43,9 +42,9 @@ public:
 
   CaptureSet* getCaptureSet(int state_id, int input_id);
 
-  std::vector<CaptureSet> getCaptureRegion(const int state_id);
-  std::vector<CaptureSet> getCaptureRegion(const int state_id, const int nstep);
-  std::vector<CaptureSet> getCaptureRegion(const State state, const int nstep);
+  std::vector<CaptureSet*> getCaptureRegion(const int state_id);
+  std::vector<CaptureSet*> getCaptureRegion(const int state_id, const int nstep);
+  std::vector<CaptureSet*> getCaptureRegion(const State state, const int nstep);
 
   bool capturable(State state, int nstep);
   bool capturable(int state_id, int nstep);

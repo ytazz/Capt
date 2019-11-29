@@ -62,19 +62,6 @@ void Capturability::load(std::string file_name, DataType type) {
 
       id++;
     }
-  } else if (type == STEPTIME) {
-    printf("Find Step-Time database.\n");
-
-    double buf;
-    while (fscanf(fp, "%lf", &buf) != EOF) {
-      int state_id = id / input_num;
-      int input_id = id % input_num;
-
-      CaptureSet* set = getCaptureSet(state_id, input_id);
-      set->step_time = buf;
-
-      id++;
-    }
   }
 
   printf("Read success! (%d datas)\n", id);
@@ -85,34 +72,34 @@ CaptureSet* Capturability::getCaptureSet(int state_id, int input_id){
   return &data_nstep[state_id][input_id];
 }
 
-std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id) {
-  std::vector<CaptureSet> sets;
+std::vector<CaptureSet*> Capturability::getCaptureRegion(const int state_id) {
+  std::vector<CaptureSet*> sets;
 
-  sets.clear();
+  // sets.clear();
   for (int i = 0; i < grid->getNumInput(); i++) {
     if (data_nstep[state_id][i].nstep > 0) {
-      sets.push_back(data_nstep[state_id][i]);
+      sets.push_back(&data_nstep[state_id][i]);
     }
   }
 
   return sets;
 }
 
-std::vector<CaptureSet> Capturability::getCaptureRegion(const int state_id, const int nstep) {
-  std::vector<CaptureSet> sets;
+std::vector<CaptureSet*> Capturability::getCaptureRegion(const int state_id, const int nstep) {
+  std::vector<CaptureSet*> sets;
 
-  sets.clear();
+  // sets.clear();
   for (int i = 0; i < grid->getNumInput(); i++) {
     if (data_nstep[state_id][i].nstep == nstep) {
-      sets.push_back(data_nstep[state_id][i]);
+      sets.push_back(&data_nstep[state_id][i]);
     }
   }
 
   return sets;
 }
 
-std::vector<CaptureSet> Capturability::getCaptureRegion(const State state, const int nstep) {
-  std::vector<CaptureSet> sets;
+std::vector<CaptureSet*> Capturability::getCaptureRegion(const State state, const int nstep) {
+  std::vector<CaptureSet*> sets;
 
   if (grid->existState(state) ) {
     sets = getCaptureRegion(grid->getStateIndex(state), nstep);

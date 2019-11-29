@@ -5,7 +5,7 @@
 #include "grid_map.h"
 #include "node.h"
 
-#define MAX_NODE_SIZE 10000000
+#define MAX_NODE_SIZE 10000
 
 namespace Capt {
 

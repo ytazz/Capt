@@ -90,7 +90,7 @@ void Tree::generate(){
     count++;
   }
 
-  gridMap->plot();
+  // gridMap->plot();
 }
 
 Node* Tree::getReafNode(int state_id, vec2_t pos){

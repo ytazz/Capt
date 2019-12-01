@@ -28,7 +28,11 @@ void Tree::setPreviewStep(int stepMax){
 }
 
 Node* Tree::search(int state_id, vec2_t g_foot){
-  gridMap->setOccupancy(g_foot, OccupancyType::GOAL);
+  vec2_t g_rfoot, g_lfoot;
+  g_rfoot.x() = g_foot.x();
+  g_rfoot.y() = g_foot.y() - 0.2;
+  g_lfoot.x() = g_foot.x();
+  g_lfoot.y() = g_foot.y() + 0.2;
 
   vec2_t pos;
 
@@ -47,10 +51,6 @@ Node* Tree::search(int state_id, vec2_t g_foot){
   while(opens.size() > 0) {
     // printf("nodes: %8d\t", num_node );
     // printf("opens: %8d\n", (int)opens.size() );
-    // Node::printItemWithPos();
-    // for(int i = 0; i < num_node; i++) {
-    //   nodes[i].printWithPos();
-    // }
     double min = 100;
     int    id  = 0;
     for(size_t i = 0; i < opens.size(); i++) {
@@ -64,35 +64,35 @@ Node* Tree::search(int state_id, vec2_t g_foot){
     std::vector<CaptureSet*> region = capturability->getCaptureRegion(target->state_id);
     for(size_t i = 0; i < region.size(); i++) {
       // calculate next landing position
-      vec2_t base = target->pos;
       vec2_t swf  = grid->getInput(region[i]->input_id).swf;
+      double cost = 0.0;
       if(target->step % 2 == 0) {   // if right foot support
-        pos.x() = base.x() + swf.x();
-        pos.y() = base.y() + swf.y();
+        pos.x() = target->pos.x() + swf.x();
+        pos.y() = target->pos.y() + swf.y();
+        cost    = ( g_lfoot - pos ).norm();
       }else{   // if left foot support
         pos.x() = target->pos.x() + swf.x();
         pos.y() = target->pos.y() - swf.y();
+        cost    = ( g_rfoot - pos ).norm();
       }
 
-      // gridMap->setOccupancy(target->pos, OccupancyType::CLOSED);
-      if(gridMap->getOccupancy(pos) == OccupancyType::GOAL) {
+      if(cost < 0.01) {
         nodes[num_node].parent   = target;
         nodes[num_node].state_id = region[i]->next_id;
         nodes[num_node].input_id = region[i]->input_id;
         nodes[num_node].step     = target->step + 1;
-        nodes[num_node].cost     = ( g_foot - pos ).norm();
+        nodes[num_node].cost     = cost;
         nodes[num_node].pos      = pos;
 
         // gridMap->plot();
         return &nodes[num_node];
-      }
-      if(gridMap->getOccupancy(pos) == OccupancyType::EMPTY) {
+      }else if(gridMap->getOccupancy(pos) != OccupancyType::NONE) {
         // set
         nodes[num_node].parent   = target;
         nodes[num_node].state_id = region[i]->next_id;
         nodes[num_node].input_id = region[i]->input_id;
         nodes[num_node].step     = target->step + 1;
-        nodes[num_node].cost     = ( g_foot - pos ).norm();
+        nodes[num_node].cost     = cost;
         nodes[num_node].pos      = pos;
 
         gridMap->setNode(pos, &nodes[num_node]);

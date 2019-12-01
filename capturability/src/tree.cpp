@@ -92,7 +92,7 @@ Node* Tree::search(int state_id, vec2_t g_foot){
         nodes[num_node].state_id = region[i]->next_id;
         nodes[num_node].input_id = region[i]->input_id;
         nodes[num_node].step     = target->step + 1;
-        nodes[num_node].cost     = cost;
+        nodes[num_node].cost     = cost + 0.1 * nodes[num_node].step;
         nodes[num_node].pos      = pos;
 
         gridMap->setNode(pos, &nodes[num_node]);

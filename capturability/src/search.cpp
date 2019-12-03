@@ -17,33 +17,42 @@ void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){
   this->lfoot = lfoot;
   this->s_suf = suf;
 
+  // round to support foot coord.
   if(s_suf == FOOT_R) {
-    s_lfoot = lfoot - rfoot;
-    s_icp   = icp - rfoot;
+    s_lfoot.x() = +( lfoot.x() - rfoot.x() );
+    s_lfoot.y() = +( lfoot.y() - rfoot.y() );
+    s_icp.x()   = +( icp.x() - rfoot.x() );
+    s_icp.y()   = +( icp.y() - rfoot.y() );
+    s_state.icp = s_icp;
+    s_state.swf = s_lfoot;
   }else{
-    s_rfoot      = rfoot - lfoot;
-    s_icp        = icp - lfoot;
-    s_rfoot.y() *= -1;
-    s_icp.y()   *= -1;
+    s_rfoot.x() = +( rfoot.x() - lfoot.x() );
+    s_rfoot.y() = -( rfoot.y() - lfoot.y() );
+    s_icp.x()   = +( icp.x() - lfoot.x() );
+    s_icp.y()   = -( icp.y() - lfoot.y() );
+    s_state.icp = s_icp;
+    s_state.swf = s_rfoot;
   }
+  s_state    = grid->roundState(s_state).state;
+  s_state_id = grid->roundState(s_state).id;
 }
 
-void Search::setGoal(vec2_t center){
+void Search::setGoal(vec2_t center, double stance){
+  // support foot coord.
+  vec2_t suf_to_center;
   if(s_suf == FOOT_R) {
-    g_foot = center - rfoot;
+    suf_to_center = grid->roundVec(center - rfoot);
   }else{
-    g_foot      = center - lfoot;
-    g_foot.y() *= -1;
+    suf_to_center = grid->roundVec(center - lfoot);
   }
+  g_rfoot.x() = suf_to_center.x();
+  g_rfoot.y() = suf_to_center.y() - stance / 2;
+  g_lfoot.x() = suf_to_center.x();
+  g_lfoot.y() = suf_to_center.y() + stance / 2;
 }
 
 void Search::calc(){
-  State state;
-  if(s_suf == FOOT_R) {
-    state.icp = s_icp;
-    state.swf = s_lfoot;
-  }
-  g_node = tree->search(grid->getStateIndex(state), g_foot);
+  g_node = tree->search(s_state_id, s_suf, g_rfoot, g_lfoot);
   calcFootstep();
 }
 
@@ -81,10 +90,10 @@ void Search::calcFootstep(){
   int amari;
   if(s_suf == Foot::FOOT_R) {
     amari   = 0;
-    suf_pos = s_rfoot;
+    suf_pos = rfoot;
   }else{
     amari   = 1;
-    suf_pos = s_lfoot;
+    suf_pos = lfoot;
   }
 
   for(size_t i = 0; i < trans.states.size(); i++) { // right support

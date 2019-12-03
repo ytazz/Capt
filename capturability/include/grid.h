@@ -57,6 +57,7 @@ public:
 
   int getStateIndex(State state_);
 
+  vec2_t    roundVec(vec2_t vec);
   GridState roundState(State state_);
 
   int indexIcp(vec2_t icp);

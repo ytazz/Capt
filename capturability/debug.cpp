@@ -21,20 +21,18 @@ int main(int argc, char const *argv[]) {
   capturability->load("gpu/Basin.csv", DataType::BASIN);
   capturability->load("gpu/Nstep.csv", DataType::NSTEP);
 
-  Tree *tree = new Tree(capturability, grid, param);
-  // tree->setPreviewStep(10);
-  // tree->generate();
+  Tree *tree = new Tree(param, grid, capturability);
 
   // calc path
-  vec2_t  rfoot(0.0, -0.2);
-  vec2_t  lfoot(0.0, 0.2);
-  vec2_t  icp(0.0, 0.0);
-  vec2_t  gfoot(1.0, -0.5);
+  vec2_t  rfoot(0.038870, -0.137705);
+  vec2_t  lfoot(0.038869, 0.137704);
+  vec2_t  icp(0.013756, -0.000227);
+  vec2_t  gfoot(1.0, 0.0);
   Search* search = new Search(grid, tree);
   Timer   timer;
   timer.start();
   search->setStart(rfoot, lfoot, icp, Foot::FOOT_R);
-  search->setGoal(gfoot);
+  search->setGoal(gfoot, 0.4);
   search->calc();
   timer.end();
   timer.print();

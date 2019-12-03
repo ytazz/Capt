@@ -11,25 +11,18 @@ namespace Capt {
 
 class Tree {
 public:
-  Tree(Capturability* capturability, Grid *grid, Param *param);
+  Tree(Param *param, Grid *grid, Capturability* capturability);
   ~Tree();
 
-  // set maximum feasible steps
-  void setPreviewStep(int stepMax);
+  void clear();
 
   // generate tree
-  Node* search(int state_id, vec2_t g_foot);
-
-  // getter
-  int getPreviewStep();
+  Node* search(int state_id, Foot suf, vec2_t g_rfoot, vec2_t g_lfoot);
 
 private:
-  Capturability *capturability;
   Grid          *grid;
+  Capturability *capturability;
   GridMap       *gridMap;
-
-  int captMax, stepMax;
-  int state_num;
 
   int                num_node;
   Node               nodes[MAX_NODE_SIZE];

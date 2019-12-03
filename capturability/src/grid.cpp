@@ -183,6 +183,16 @@ int Grid::max(int val1, int val2, int val3, int val4) {
   return max_val;
 }
 
+vec2_t Grid::roundVec(vec2_t vec){
+  using CaptEnum::MAX;
+  using CaptEnum::MIN;
+  using CaptEnum::STP;
+  int    idx = round( vec.x() / icp_x[STP]);
+  int    idy = round( vec.y() / icp_y[STP]);
+  vec2_t vec_(icp_x[STP] * idx, icp_y[STP] * idy);
+  return vec_;
+}
+
 GridState Grid::roundState(State state_) {
   using CaptEnum::MAX;
   using CaptEnum::MIN;

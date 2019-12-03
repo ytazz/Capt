@@ -31,6 +31,7 @@ include_directories(${PROJECT_SOURCE_DIR}/plot/include)
 set(CAPT_SOURCES
   ${PROJECT_SOURCE_DIR}/src/base.cpp
   ${PROJECT_SOURCE_DIR}/src/capturability.cpp
+  ${PROJECT_SOURCE_DIR}/src/config.cpp
   ${PROJECT_SOURCE_DIR}/src/cycloid.cpp
   ${PROJECT_SOURCE_DIR}/src/grid_map.cpp
   ${PROJECT_SOURCE_DIR}/src/grid.cpp

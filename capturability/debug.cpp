@@ -1,5 +1,6 @@
 #include "model.h"
 #include "param.h"
+#include "config.h"
 #include "grid.h"
 #include "grid_map.h"
 #include "timer.h"
@@ -12,9 +13,10 @@ using namespace std;
 using namespace Capt;
 
 int main(int argc, char const *argv[]) {
-  Model *model = new Model("data/valkyrie.xml");
-  Param *param = new Param("data/footstep.xml");
-  Grid  *grid  = new Grid(param);
+  Model  *model  = new Model("data/valkyrie.xml");
+  Param  *param  = new Param("data/footstep.xml");
+  Config *config = new Config("data/valkyrie_config.xml");
+  Grid   *grid   = new Grid(param);
 
   // capturability
   Capturability *capturability = new Capturability(grid);

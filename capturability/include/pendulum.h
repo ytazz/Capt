@@ -22,6 +22,7 @@ public:
   void setCop(const vec2_t cop);
   void setCop(const vec3_t cop);
 
+  vec2_t getCop(double dt);
   vec2_t getCom(double dt);
   vec2_t getComVel(double dt);
   vec2_t getIcp(double dt);

@@ -228,6 +228,9 @@ void Model::read(double *val, const std::string &name){
     *val = gravity;
   if (equalStr(name, "friction") )
     *val = friction;
+
+  if (equalStr(name, "omega") )
+    *val = sqrt(gravity / com_height);
 }
 
 void Model::read(arr2_t *val, const std::string &name){

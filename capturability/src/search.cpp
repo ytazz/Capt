@@ -78,6 +78,14 @@ Trans Search::getTrans(){
   return trans;
 }
 
+State Search::getState(){
+  return ini_state;
+}
+
+Input Search::getInput(){
+  return ini_input;
+}
+
 void Search::calcFootstep(){
   Trans trans = getTrans();
 
@@ -116,6 +124,9 @@ void Search::calcFootstep(){
     }
     footstep.push_back(footstep_);
   }
+
+  ini_state = trans.states[0];
+  ini_input = trans.inputs[0];
 }
 
 std::vector<Footstep> Search::getFootstep(){

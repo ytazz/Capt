@@ -17,6 +17,7 @@ double dot(vec2_t v1, vec2_t v2);
 double cross(vec2_t v1, vec2_t v2);
 vec2_t normal(vec2_t v);
 vec2_t mirror(vec2_t v);
+vec3_t mirror(vec3_t v);
 
 int round(double val);
 

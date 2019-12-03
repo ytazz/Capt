@@ -37,6 +37,8 @@ public:
   void calc();
 
   Trans getTrans();
+  State getState();
+  Input getInput();
 
   void                  calcFootstep();
   std::vector<Footstep> getFootstep();
@@ -62,6 +64,9 @@ private:
 
   // 結果保存用変数
   std::vector<Footstep> footstep;
+
+  State ini_state;
+  Input ini_input;
 };
 
 } // namespace Capt

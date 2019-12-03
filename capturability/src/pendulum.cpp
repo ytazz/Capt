@@ -43,6 +43,10 @@ void Pendulum::setCop(const vec3_t cop) {
   this->cop << cop.x(), cop.y();
 }
 
+vec2_t Pendulum::getCop(double dt) {
+  return this->cop;
+}
+
 vec2_t Pendulum::getCom(double dt) {
   vec2_t com_;
   com_ = cop + ( com - cop ) * cosh(omega * dt) + com_vel * sinh(omega * dt) / omega;

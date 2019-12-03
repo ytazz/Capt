@@ -40,8 +40,8 @@ public:
 
   void                  calcFootstep();
   std::vector<Footstep> getFootstep();
-  std::vector<vec3_t>   getFootstepR();
-  std::vector<vec3_t>   getFootstepL();
+  arr3_t                getFootstepR();
+  arr3_t                getFootstepL();
 
 private:
   Grid *grid;

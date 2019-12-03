@@ -11,6 +11,7 @@ typedef Eigen::Vector2f vec2_t;
 typedef Eigen::Vector2i vec2i_t;
 typedef Eigen::Vector3f vec3_t;
 typedef std::vector<vec2_t> arr2_t;
+typedef std::vector<vec3_t> arr3_t;
 
 double dot(vec2_t v1, vec2_t v2);
 double cross(vec2_t v1, vec2_t v2);

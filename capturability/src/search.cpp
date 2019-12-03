@@ -122,8 +122,8 @@ std::vector<Footstep> Search::getFootstep(){
   return footstep;
 }
 
-std::vector<vec3_t> Search::getFootstepR(){
-  std::vector<vec3_t> footstep_r;
+arr3_t Search::getFootstepR(){
+  arr3_t footstep_r;
   for(size_t i = 0; i < footstep.size(); i++) {
     if(footstep[i].suf == Foot::FOOT_R) {
       footstep_r.push_back(footstep[i].pos);
@@ -132,8 +132,8 @@ std::vector<vec3_t> Search::getFootstepR(){
   return footstep_r;
 }
 
-std::vector<vec3_t> Search::getFootstepL(){
-  std::vector<vec3_t> footstep_l;
+arr3_t Search::getFootstepL(){
+  arr3_t footstep_l;
   for(size_t i = 0; i < footstep.size(); i++) {
     if(footstep[i].suf == Foot::FOOT_L) {
       footstep_l.push_back(footstep[i].pos);

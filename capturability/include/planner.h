@@ -5,6 +5,8 @@
 #include "param.h"
 #include "grid.h"
 #include "capturability.h"
+#include "tree.h"
+#include "search.h"
 #include <iostream>
 #include <chrono>
 #include <vector>
@@ -18,16 +20,16 @@ struct Input {
   Capt::vec3_t lfoot;
   Capt::vec3_t icp;
   Capt::vec3_t goal;
+  double       stance;
 
   void operator=(const Input &input) {
-    this->cop          = input.cop;
-    this->swf          = input.swf;
     this->elapsed_time = input.elapsed_time;
     this->suf          = input.suf;
     this->rfoot        = input.rfoot;
     this->lfoot        = input.lfoot;
     this->icp          = input.icp;
     this->goal         = input.goal;
+    this->stance       = input.stance;
   }
 };
 
@@ -58,6 +60,8 @@ public:
 
   void            set(planner::Input input);
   planner::Output get();
+  arr3_t          getFootstepR();
+  arr3_t          getFootstepL();
 
 private:
   void run();
@@ -70,6 +74,9 @@ private:
 
   planner::Input  input;
   planner::Output output;
+
+  Foot   suf;
+  double dt;
 };
 
 } // namespace Capt

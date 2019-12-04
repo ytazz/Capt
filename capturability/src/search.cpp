@@ -104,6 +104,7 @@ void Search::calcFootstep(){
     suf_pos = lfoot;
   }
 
+  footstep.clear();
   for(size_t i = 0; i < trans.states.size(); i++) { // right support
     if( ( (int)i % 2 ) == amari) {
       icp_pos = suf_pos + trans.states[i].icp;

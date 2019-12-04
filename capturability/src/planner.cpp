@@ -8,7 +8,6 @@ Planner::Planner(Model *model, Param *param, Config *config, Grid *grid, Captura
   swingFoot = new SwingFoot(model);
   pendulum  = new Pendulum(model);
 
-  param->read(&omega, "omega");
   config->read(&dt, "timestep");
 }
 
@@ -24,11 +23,10 @@ void Planner::set(planner::Input input){
     selectSupportFoot();
     runSearch();
   }
-
-  generatePath();
 }
 
-planner::Output Planner::get(){
+planner::Output Planner::get(double time){
+  generatePath(time);
   return this->output;
 }
 
@@ -57,7 +55,7 @@ void Planner::selectSupportFoot(){
 void Planner::runSearch(){
   vec2_t rfoot = vec3Tovec2(input.rfoot);
   vec2_t lfoot = vec3Tovec2(input.lfoot);
-  vec2_t icp   = vec3Tovec2(input.com + input.com_vel / omega);
+  vec2_t icp   = vec3Tovec2(input.icp);
   vec2_t goal  = vec3Tovec2(input.goal);
   search->setStart(rfoot, lfoot, icp, suf);
   search->setGoal(goal, input.stance);
@@ -70,24 +68,33 @@ void Planner::runSearch(){
   // calc swing foot trajectory
   swingFoot->set(s.swf, i.swf);
 
-  // calc com & icp trajectory
-  pendulum->setCop(i.cop);
-  pendulum->setIcp(s.icp);
-  pendulum->setCom(input.com);
-  pendulum->setComVel(input.com_vel);
+  // calc icp trajectory
+  vec2_t world_p_cop, world_p_icp;
+  switch (suf) {
+  case FOOT_R:
+    world_p_cop = rfoot + i.cop;
+    world_p_icp = rfoot + s.icp;
+    break;
+  case FOOT_L:
+    world_p_cop = lfoot + mirror(i.cop);
+    world_p_icp = lfoot + mirror(s.icp);
+    break;
+  }
+  pendulum->setCop(world_p_cop);
+  pendulum->setIcp(world_p_icp);
 
   // set to output
   output.duration = swingFoot->getTime();
 }
 
-void Planner::generatePath(){
+void Planner::generatePath(double time){
   if(suf == FOOT_R) {
     output.rfoot = input.rfoot;
-    output.lfoot = input.rfoot + swingFoot->getTraj(input.elapsed + dt);
+    output.lfoot = input.rfoot + swingFoot->getTraj(time);
   }else{
-    output.rfoot = input.lfoot + mirror(swingFoot->getTraj(input.elapsed + dt) );
+    output.rfoot = input.lfoot + mirror(swingFoot->getTraj(time) );
     output.lfoot = input.lfoot;
   }
-  output.icp = vec2Tovec3(pendulum->getIcp(input.elapsed + dt) );
-  output.cop = vec2Tovec3(pendulum->getCop(input.elapsed + dt) );
+  output.icp = vec2Tovec3(pendulum->getIcp(time) );
+  output.cop = vec2Tovec3(pendulum->getCop(time) );
 }

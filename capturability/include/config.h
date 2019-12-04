@@ -4,9 +4,9 @@
 #include "loader.h"
 #include <math.h>
 
-namespace {
+namespace ConfigEnum {
 
-enum ConfigElement {
+enum Element {
   CONFIG_ELE_NONE,
   UNIT,
   SIMULATION,
@@ -32,7 +32,7 @@ public:
   void print();
 
 private:
-  ConfigElement element;
+  ConfigEnum::Element element;
 
   // unit
   double unit_length; // [m]

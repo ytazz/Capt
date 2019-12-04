@@ -5,7 +5,7 @@ namespace Capt {
 Config::Config(const std::string &name) : Loader(name) {
   printf("\x1b[36mConfig File: %s\x1b[39m\n", name.c_str() );
 
-  element = CONFIG_ELE_NONE;
+  element = ConfigEnum::CONFIG_ELE_NONE;
 
   unit_length = 1.0;
   unit_mass   = 1.0;
@@ -21,23 +21,23 @@ Config::~Config() {
 void Config::callbackElement(const std::string &name, const bool is_start) {
   if (is_start) {
     switch (element) {
-    case CONFIG_ELE_NONE:
+    case ConfigEnum::CONFIG_ELE_NONE:
       if (equalStr(name, "unit") )
-        element = UNIT;
+        element = ConfigEnum::UNIT;
       if (equalStr(name, "simulation") )
-        element = SIMULATION;
+        element = ConfigEnum::SIMULATION;
       if (equalStr(name, "control") )
-        element = CONTROL;
+        element = ConfigEnum::CONTROL;
       break;
     default:
       break;
     }
   } else {
     switch (element) {
-    case UNIT:
-    case SIMULATION:
-    case CONTROL:
-      element = CONFIG_ELE_NONE;
+    case ConfigEnum::UNIT:
+    case ConfigEnum::SIMULATION:
+    case ConfigEnum::CONTROL:
+      element = ConfigEnum::CONFIG_ELE_NONE;
       break;
     default:
       break;
@@ -48,7 +48,7 @@ void Config::callbackElement(const std::string &name, const bool is_start) {
 void Config::callbackAttribute(const std::string &name,
                                const std::string &value) {
   switch (element) {
-  case UNIT:
+  case ConfigEnum::UNIT:
     if (equalStr(name, "length") ) {
       if (equalStr(value, "m") )
         unit_length = 1.0;
@@ -76,7 +76,7 @@ void Config::callbackAttribute(const std::string &name,
         unit_angle = M_PI / 180.0;
     }
     break;
-  case SIMULATION:
+  case ConfigEnum::SIMULATION:
     if (equalStr(name, "timestep") )
       timestep = std::stof(value) * unit_time;
     break;

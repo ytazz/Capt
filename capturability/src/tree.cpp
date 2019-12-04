@@ -20,6 +20,7 @@ void Tree::clear(){
     nodes[i].pos << 0, 0;
     nodes[i].step = 0;
   }
+  opens.clear();
 }
 
 Node* Tree::search(int state_id, Foot suf, vec2_t g_rfoot, vec2_t g_lfoot){

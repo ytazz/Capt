@@ -69,19 +69,8 @@ void Planner::runSearch(){
   swingFoot->set(s.swf, i.swf);
 
   // calc icp trajectory
-  vec2_t world_p_cop, world_p_icp;
-  switch (suf) {
-  case FOOT_R:
-    world_p_cop = rfoot + i.cop;
-    world_p_icp = rfoot + s.icp;
-    break;
-  case FOOT_L:
-    world_p_cop = lfoot + mirror(i.cop);
-    world_p_icp = lfoot + mirror(s.icp);
-    break;
-  }
-  pendulum->setCop(world_p_cop);
-  pendulum->setIcp(world_p_icp);
+  pendulum->setCop(i.cop);
+  pendulum->setIcp(s.icp);
 
   // set to output
   output.duration = swingFoot->getTime();
@@ -90,9 +79,9 @@ void Planner::runSearch(){
 void Planner::generatePath(double time){
   if(suf == FOOT_R) {
     output.rfoot = input.rfoot;
-    output.lfoot = input.rfoot + swingFoot->getTraj(time);
+    output.lfoot = swingFoot->getTraj(time);
   }else{
-    output.rfoot = input.lfoot + mirror(swingFoot->getTraj(time) );
+    output.rfoot = swingFoot->getTraj(time);
     output.lfoot = input.lfoot;
   }
   output.icp = vec2Tovec3(pendulum->getIcp(time) );

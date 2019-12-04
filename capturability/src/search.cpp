@@ -140,6 +140,7 @@ void Search::calcFootstep(){
     }
     footstep.push_back(footstep_);
   }
+  footstep.erase(footstep.begin() );
 }
 
 std::vector<Footstep> Search::getFootstep(){

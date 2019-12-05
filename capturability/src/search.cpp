@@ -51,30 +51,45 @@ void Search::setGoal(vec2_t center, double stance){
   g_lfoot.y() = suf_to_center.y() + stance / 2;
 }
 
-void Search::calc(){
+bool Search::calc(){
   tree->clear();
+  footstep.clear();
+  region.clear();
   g_node = tree->search(s_state_id, s_suf, g_rfoot, g_lfoot);
-  calcFootstep();
+  if(g_node == NULL) {
+    return false;
+  }else{
+    calcFootstep();
+    if(s_suf == FOOT_R) {
+      region = tree->getCaptureRegion(s_state_id, s_input_id, s_suf, rfoot);
+    }else{
+      region = tree->getCaptureRegion(s_state_id, s_input_id, s_suf, lfoot);
+    }
+    return true;
+  }
 }
 
 Trans Search::getTrans(){
   Trans trans;
   trans.size = g_node->step;
 
-  Node *node = g_node;
-  // Node::printItem();
+  std::vector<int> input_ids;
+  Node            *node = g_node;
   while(node != NULL) {
-    // node->print();
-
     trans.states.push_back(grid->getState(node->state_id) );
     trans.inputs.push_back(grid->getInput(node->input_id) );
+    input_ids.push_back(node->input_id);
 
     node = node->parent;
   }
   trans.inputs.pop_back();
+  input_ids.pop_back();
 
   std::reverse(trans.states.begin(), trans.states.end() );
   std::reverse(trans.inputs.begin(), trans.inputs.end() );
+  std::reverse(input_ids.begin(), input_ids.end() );
+
+  s_input_id = input_ids[0];
 
   return trans;
 }
@@ -105,7 +120,6 @@ void Search::calcFootstep(){
     suf_pos = lfoot;
   }
 
-  footstep.clear();
   for(size_t i = 0; i < trans.states.size(); i++) { // right support
     if( ( (int)i % 2 ) == amari) {
       icp_pos = suf_pos + trans.states[i].icp;
@@ -165,6 +179,10 @@ arr3_t Search::getFootstepL(){
     }
   }
   return footstep_l;
+}
+
+std::vector<CaptData> Search::getCaptureRegion(){
+  return region;
 }
 
 } // namespace Capt

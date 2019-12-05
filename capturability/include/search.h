@@ -34,7 +34,7 @@ public:
   void setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf);
   void setGoal(vec2_t center, double stance);
 
-  void calc();
+  bool calc();
 
   Trans getTrans();
   State getState();
@@ -44,6 +44,8 @@ public:
   std::vector<Footstep> getFootstep();
   arr3_t                getFootstepR();
   arr3_t                getFootstepL();
+
+  std::vector<CaptData> getCaptureRegion();
 
 private:
   Grid *grid;
@@ -56,7 +58,7 @@ private:
 
   Foot   s_suf, g_suf;
   State  s_state;
-  int    s_state_id;
+  int    s_state_id, s_input_id;
   vec2_t s_rfoot, s_lfoot, s_icp; // start
   vec2_t g_rfoot, g_lfoot;        // goal
 
@@ -64,6 +66,7 @@ private:
 
   // 結果保存用変数
   std::vector<Footstep> footstep;
+  std::vector<CaptData> region;
 
   State ini_state;
   Input ini_input;

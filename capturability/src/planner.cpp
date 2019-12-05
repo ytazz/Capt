@@ -59,31 +59,42 @@ void Planner::runSearch(){
   vec2_t goal  = vec3Tovec2(input.goal);
   search->setStart(rfoot, lfoot, icp, suf);
   search->setGoal(goal, input.stance);
-  search->calc();
+  found = search->calc();
 
-  // get state & input
-  State s = search->getState();
-  Input i = search->getInput();
+  if(found) { // if found solution
+    // get state & input
+    State s = search->getState();
+    Input i = search->getInput();
 
-  // calc swing foot trajectory
-  swingFoot->set(s.swf, i.swf);
+    // calc swing foot trajectory
+    swingFoot->set(s.swf, i.swf);
 
-  // calc icp trajectory
-  pendulum->setCop(i.cop);
-  pendulum->setIcp(s.icp);
+    // calc icp trajectory
+    pendulum->setCop(i.cop);
+    pendulum->setIcp(s.icp);
 
-  // set to output
-  output.duration = swingFoot->getTime();
+    // set to output
+    output.duration = swingFoot->getTime();
+  }else{ // couldn't found solution or reached goal
+  }
 }
 
 void Planner::generatePath(double time){
-  if(suf == FOOT_R) {
-    output.rfoot = input.rfoot;
-    output.lfoot = swingFoot->getTraj(time);
+  if(found) {
+    if(suf == FOOT_R) {
+      output.rfoot = input.rfoot;
+      output.lfoot = swingFoot->getTraj(time);
+    }else{
+      output.rfoot = swingFoot->getTraj(time);
+      output.lfoot = input.lfoot;
+    }
+    output.icp = vec2Tovec3(pendulum->getIcp(time) );
+    output.cop = vec2Tovec3(pendulum->getCop(time) );
   }else{
-    output.rfoot = swingFoot->getTraj(time);
-    output.lfoot = input.lfoot;
+    output.cop = output.icp;
   }
-  output.icp = vec2Tovec3(pendulum->getIcp(time) );
-  output.cop = vec2Tovec3(pendulum->getCop(time) );
+}
+
+std::vector<CaptData> Planner::getCaptureRegion(){
+  return search->getCaptureRegion();
 }

@@ -92,10 +92,11 @@ public:
   Planner(Model *model, Param *param, Config *config, Grid *grid, Capturability *capt);
   ~Planner();
 
-  void            set(planner::Input input);
-  planner::Output get(double time);
-  arr3_t          getFootstepR();
-  arr3_t          getFootstepL();
+  void                  set(planner::Input input);
+  planner::Output       get(double time);
+  arr3_t                getFootstepR();
+  arr3_t                getFootstepL();
+  std::vector<CaptData> getCaptureRegion();
 
 private:
   void run();
@@ -113,6 +114,8 @@ private:
 
   Foot   suf;
   double dt;
+
+  bool found;
 };
 
 } // namespace Capt

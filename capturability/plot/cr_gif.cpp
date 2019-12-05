@@ -55,9 +55,9 @@ int main(int argc, char const *argv[]) {
       cr_plot->setIcp(state.icp);
       for(int N = 1; N <= 4; N++) {
         if(capturability->capturable(state, N) ) {
-          std::vector<CaptureSet> region = capturability->getCaptureRegion(state, N);
+          std::vector<CaptureSet*> region = capturability->getCaptureRegion(state, N);
           for(size_t i = 0; i < region.size(); i++) {
-            Input input = grid->getInput(region[i].input_id);
+            Input input = grid->getInput(region[i]->input_id);
             cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), N);
           }
         }

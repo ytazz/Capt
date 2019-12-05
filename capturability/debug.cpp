@@ -26,9 +26,12 @@ int main(int argc, char const *argv[]) {
   Tree *tree = new Tree(param, grid, capturability);
 
   // calc path
-  vec2_t  rfoot(0.038870, -0.137705);
-  vec2_t  lfoot(0.038869, 0.137704);
-  vec2_t  icp(0.013756, -0.000227);
+  vec2_t rfoot(0.038870, -0.137705);
+  vec2_t lfoot(0.038869, 0.137704);
+  vec2_t icp(0.013756, -0.000227);
+  // vec2_t  rfoot(0, -0.2);
+  // vec2_t  lfoot(0, 0.2);
+  // vec2_t  icp(0, 0);
   vec2_t  gfoot(1.0, 0.0);
   Search* search = new Search(grid, tree);
   Timer   timer;

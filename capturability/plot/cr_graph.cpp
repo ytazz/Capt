@@ -57,11 +57,11 @@ int main(int argc, char const *argv[]) {
     cr_plot->setCop(grid->getCop(cop_id) );
     for(int N = 1; N <= 4; N++) {
       if(capturability->capturable(state, N) ) {
-        std::vector<CaptureSet> region = capturability->getCaptureRegion(state, N);
+        std::vector<CaptureSet*> region = capturability->getCaptureRegion(state, N);
         printf("%d-step capture points %5d\n", N, (int)region.size() );
         count += (int)region.size();
         for(size_t i = 0; i < region.size(); i++) {
-          Input input = grid->getInput(region[i].input_id);
+          Input input = grid->getInput(region[i]->input_id);
           if(grid->indexCop(input.cop) == cop_id)
             cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), N);
         }

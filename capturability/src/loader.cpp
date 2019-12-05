@@ -120,7 +120,7 @@ vec3_t Loader::convertStrToVec3(const std::string &str) {
     val[2] += str[i];
   }
 
-  vec3_t vec = Eigen::Vector3f::Zero();
+  vec3_t vec = vec3_t::Zero();
   for (int i = 0; i < 3; i++) {
     vec(i) = stof(val[i]);
   }

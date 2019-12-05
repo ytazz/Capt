@@ -3,8 +3,8 @@
 namespace Capt {
 
 SwingFoot::SwingFoot(Model *model) {
-  foot     = Eigen::Vector3f::Zero();
-  foot_des = Eigen::Vector3f::Zero();
+  foot     = vec3_t::Zero();
+  foot_des = vec3_t::Zero();
 
   step_time = 0.0;
 

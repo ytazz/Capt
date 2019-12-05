@@ -97,7 +97,7 @@ Node* Tree::search(int state_id, Foot suf, vec2_t g_rfoot, vec2_t g_lfoot){
     }
     Node *target = opens[id];
     // target node expansion
-    std::vector<CaptureSet*> region = capturability->getCaptureRegion(target->state_id);
+    std::vector<CaptureSet*> region = capturability->getCaptureRegion(target->state_id, 1);
     for(size_t i = 0; i < region.size(); i++) {
       // calculate next landing position
       vec2_t swf  = grid->getInput(region[i]->input_id).swf;

@@ -10,8 +10,8 @@
 namespace Capt {
 
 struct CaptData {
-  Eigen::Vector3f pos;
-  int             nstep;
+  vec3_t pos;
+  int    nstep;
 };
 
 class Tree {

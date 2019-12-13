@@ -2,9 +2,8 @@
 
 namespace Capt {
 
-Tree::Tree(Param *param, Grid *grid, Capturability* capturability) :
+Tree::Tree(Grid *grid, Capturability* capturability) :
   grid(grid), capturability(capturability){
-  gridMap = new GridMap(param);
   clear();
 }
 
@@ -78,7 +77,6 @@ Node* Tree::search(int state_id, Foot suf, vec2_t g_rfoot, vec2_t g_lfoot){
       nodes[num_node].cost     = cost;
       nodes[num_node].pos      = pos;
 
-      // gridMap->plot();
       return &nodes[num_node];
     }
   }
@@ -121,9 +119,8 @@ Node* Tree::search(int state_id, Foot suf, vec2_t g_rfoot, vec2_t g_lfoot){
         nodes[num_node].cost     = cost;
         nodes[num_node].pos      = pos;
 
-        // gridMap->plot();
         return &nodes[num_node];
-      }else if(gridMap->getOccupancy(pos) != OccupancyType::NONE) {
+      }else{
         // set
         nodes[num_node].parent   = target;
         nodes[num_node].state_id = region[i]->next_id;
@@ -132,14 +129,11 @@ Node* Tree::search(int state_id, Foot suf, vec2_t g_rfoot, vec2_t g_lfoot){
         nodes[num_node].cost     = cost + 0.1 * nodes[num_node].step;
         nodes[num_node].pos      = pos;
 
-        gridMap->setNode(pos, &nodes[num_node]);
         opens.push_back(&nodes[num_node]);
         num_node++;
       }
     }
     opens.erase(opens.begin() + id);
-    // gridMap->plot();
-    // usleep(0.5 * 1000000);
   }
   return NULL;
 }

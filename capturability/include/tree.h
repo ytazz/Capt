@@ -2,7 +2,6 @@
 #define __TREE_H__
 
 #include "capturability.h"
-#include "grid_map.h"
 #include "node.h"
 
 #define MAX_NODE_SIZE 1000000
@@ -16,7 +15,7 @@ struct CaptData {
 
 class Tree {
 public:
-  Tree(Param *param, Grid *grid, Capturability* capturability);
+  Tree(Grid *grid, Capturability* capturability);
   ~Tree();
 
   void clear();
@@ -29,7 +28,6 @@ public:
 private:
   Grid          *grid;
   Capturability *capturability;
-  GridMap       *gridMap;
 
   int                num_node;
   Node               nodes[MAX_NODE_SIZE];

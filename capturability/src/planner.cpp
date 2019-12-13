@@ -3,7 +3,7 @@
 using namespace Capt;
 
 Planner::Planner(Model *model, Param *param, Config *config, Grid *grid, Capturability *capt){
-  tree      = new Tree(param, grid, capt);
+  tree      = new Tree(grid, capt);
   search    = new Search(grid, tree);
   swingFoot = new SwingFoot(model);
   pendulum  = new Pendulum(model);

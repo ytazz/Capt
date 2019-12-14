@@ -94,6 +94,7 @@ public:
 
   void                  set(planner::Input input);
   planner::Output       get(double time);
+  std::vector<Sequence> getSequence();
   arr3_t                getFootstepR();
   arr3_t                getFootstepL();
   std::vector<CaptData> getCaptureRegion();

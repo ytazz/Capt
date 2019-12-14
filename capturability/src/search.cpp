@@ -154,7 +154,7 @@ void Search::calcSequence(){
     }
     seq.push_back(seq_);
   }
-  seq.erase(seq.begin() );
+  // seq.erase(seq.begin() );
 }
 
 std::vector<Sequence> Search::getSequence(){

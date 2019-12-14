@@ -30,6 +30,10 @@ planner::Output Planner::get(double time){
   return this->output;
 }
 
+std::vector<Sequence> Planner::getSequence(){
+  return search->getSequence();
+}
+
 arr3_t Planner::getFootstepR(){
   return search->getFootstepR();
 }

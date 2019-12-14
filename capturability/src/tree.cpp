@@ -22,9 +22,9 @@ void Tree::clear(){
   opens.clear();
 }
 
-Node* Tree::search(int state_id, Foot suf, vec2_t g_rfoot, vec2_t g_lfoot){
+Node* Tree::search(int state_id, Foot s_suf, vec2_t g_foot, Foot g_suf){
   int amari;
-  if(suf == FOOT_R) {
+  if(s_suf == FOOT_R) {
     amari = 0;
   }else{
     amari = 1;
@@ -40,46 +40,6 @@ Node* Tree::search(int state_id, Foot suf, vec2_t g_rfoot, vec2_t g_lfoot){
   num_node++;
 
   opens.push_back(&nodes[0]);
-
-  // if initial condition = goal
-  if(suf == FOOT_R) {
-    if(g_rfoot.norm() < 0.01)
-      return NULL;
-  }else{
-    if(g_lfoot.norm() < 0.01)
-      return NULL;
-  }
-
-  // if goal in 1-step capture region
-  // target node expansion
-  std::vector<CaptureSet*> region = capturability->getCaptureRegion(state_id, 1);
-  for(size_t i = 0; i < region.size(); i++) {
-    // calculate next landing position
-    vec2_t pos;
-    vec2_t swf  = grid->getInput(region[i]->input_id).swf;
-    double cost = 0.0;
-    if(suf == FOOT_R) {   // if right foot support
-      pos.x() = swf.x();
-      pos.y() = swf.y();
-      cost    = ( g_lfoot - pos ).norm();
-    }else{   // if left foot support
-      pos.x() = swf.x();
-      pos.y() = swf.y();
-      cost    = ( g_rfoot - pos ).norm();
-    }
-
-    // determine if next position reach goal or not
-    if(cost < 0.01) {
-      nodes[num_node].parent   = &nodes[0];
-      nodes[num_node].state_id = region[i]->next_id;
-      nodes[num_node].input_id = region[i]->input_id;
-      nodes[num_node].step     = 1;
-      nodes[num_node].cost     = cost;
-      nodes[num_node].pos      = pos;
-
-      return &nodes[num_node];
-    }
-  }
 
   // calculate reaves
   vec2_t pos;
@@ -103,11 +63,11 @@ Node* Tree::search(int state_id, Foot suf, vec2_t g_rfoot, vec2_t g_lfoot){
       if(target->step % 2 == amari) {   // if right foot support
         pos.x() = target->pos.x() + swf.x();
         pos.y() = target->pos.y() + swf.y();
-        cost    = ( g_lfoot - pos ).norm();
+        cost    = ( g_foot - pos ).norm();
       }else{   // if left foot support
         pos.x() = target->pos.x() + swf.x();
         pos.y() = target->pos.y() - swf.y();
-        cost    = ( g_rfoot - pos ).norm();
+        cost    = ( g_foot - pos ).norm();
       }
 
       // determine if next position reach goal or not

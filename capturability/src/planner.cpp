@@ -20,7 +20,6 @@ void Planner::set(planner::Input input){
   this->input = input;
 
   if(input.elapsed < dt) {
-    selectSupportFoot();
     runSearch();
   }
 }
@@ -42,27 +41,13 @@ arr3_t Planner::getFootstepL(){
   return search->getFootstepL();
 }
 
-void Planner::selectSupportFoot(){
-  switch (input.suf) {
-  case FOOT_NONE:
-    this->suf = FOOT_R;
-    break;
-  case FOOT_R:
-    this->suf = FOOT_R;
-    break;
-  case FOOT_L:
-    this->suf = FOOT_L;
-    break;
-  }
-}
-
 void Planner::runSearch(){
   vec2_t rfoot = vec3Tovec2(input.rfoot);
   vec2_t lfoot = vec3Tovec2(input.lfoot);
   vec2_t icp   = vec3Tovec2(input.icp);
   vec2_t goal  = vec3Tovec2(input.goal);
-  search->setStart(rfoot, lfoot, icp, suf);
-  search->setGoal(goal, input.stance);
+  search->setStart(rfoot, lfoot, icp, input.s_suf);
+  search->setGoal(goal, input.g_suf);
   found = search->calc();
 
   if(found) { // if found solution
@@ -85,7 +70,7 @@ void Planner::runSearch(){
 
 void Planner::generatePath(double time){
   if(found) {
-    if(suf == FOOT_R) {
+    if(input.s_suf == FOOT_R) {
       output.rfoot = input.rfoot;
       output.lfoot = swingFoot->getTraj(time);
     }else{

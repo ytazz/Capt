@@ -21,7 +21,7 @@ public:
   void clear();
 
   // generate tree
-  Node* search(int state_id, Foot suf, vec2_t g_rfoot, vec2_t g_lfoot);
+  Node* search(int state_id, Foot s_suf, vec2_t g_foot, Foot g_suf);
 
   std::vector<CaptData> getCaptureRegion(int state_id, int input_id, Foot suf, vec2_t p_suf);
 

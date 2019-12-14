@@ -28,19 +28,19 @@ int main(int argc, char const *argv[]) {
 
   planner::Input input;
   input.elapsed = 0.0;
-  input.suf     = Foot::FOOT_R;
+  input.s_suf   = Foot::FOOT_R;
+  input.g_suf   = Foot::FOOT_R;
   input.rfoot   = vec3_t(0, -0.2, 0);
   input.lfoot   = vec3_t(0, +0.2, 0);
   input.icp     = vec3_t(0, 0, 0);
-  input.goal    = vec3_t(1, 0, 0);
-  input.stance  = 0.4;
+  input.goal    = vec3_t(1, -0.2, 0);
 
-  // Timer timer;
-  // timer.start();
+  Timer timer;
+  timer.start();
   planner::Output output;
   planner->set(input);
-  // timer.end();
-  // timer.print();
+  timer.end();
+  timer.print();
 
   // draw path
   StepPlot *plt = new StepPlot(model, param, grid);

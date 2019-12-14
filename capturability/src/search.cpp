@@ -37,25 +37,22 @@ void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){
   s_state_id = grid->roundState(s_state).id;
 }
 
-void Search::setGoal(vec2_t center, double stance){
-  // support foot coord.
-  vec2_t suf_to_center;
+void Search::setGoal(vec2_t foot, Foot suf){
+  this->g_suf = suf;
   if(s_suf == FOOT_R) {
-    suf_to_center = grid->roundVec(center - rfoot);
+    g_foot.x() = +( foot.x() - rfoot.x() );
+    g_foot.y() = +( foot.y() - rfoot.y() );
   }else{
-    suf_to_center = grid->roundVec(center - lfoot);
+    g_foot.x() = +( foot.x() - lfoot.x() );
+    g_foot.y() = -( foot.y() - lfoot.y() );
   }
-  g_rfoot.x() = suf_to_center.x();
-  g_rfoot.y() = suf_to_center.y() - stance / 2;
-  g_lfoot.x() = suf_to_center.x();
-  g_lfoot.y() = suf_to_center.y() + stance / 2;
 }
 
 bool Search::calc(){
   tree->clear();
   seq.clear();
   region.clear();
-  g_node = tree->search(s_state_id, s_suf, g_rfoot, g_lfoot);
+  g_node = tree->search(s_state_id, s_suf, g_foot, g_suf);
   if(g_node == NULL) {
     return false;
   }else{

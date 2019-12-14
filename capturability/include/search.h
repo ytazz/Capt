@@ -32,7 +32,7 @@ public:
 
   // world frame coord.
   void setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf);
-  void setGoal(vec2_t center, double stance);
+  void setGoal(vec2_t foot, Foot suf);
 
   bool calc();
 
@@ -60,7 +60,7 @@ private:
   State  s_state;
   int    s_state_id, s_input_id;
   vec2_t s_rfoot, s_lfoot, s_icp; // start
-  vec2_t g_rfoot, g_lfoot;        // goal
+  vec2_t g_foot;                  // goal
 
   Node *g_node;
 

@@ -18,41 +18,21 @@ namespace planner {
 
 struct Input {
   double       elapsed;
-  Capt::Foot   suf;
+  Capt::Foot   s_suf;
+  Capt::Foot   g_suf;
   Capt::vec3_t rfoot;
   Capt::vec3_t lfoot;
   Capt::vec3_t icp;
   Capt::vec3_t goal;
-  double       stance;
-
-  void print(){
-    printf("elapsed: %1.4lf\n", elapsed);
-    switch (suf) {
-    case Capt::Foot::FOOT_NONE:
-      printf("suf: %s\n", "FOOT_NONE");
-      break;
-    case Capt::Foot::FOOT_R:
-      printf("suf: %s\n", "FOOT_R");
-      break;
-    case Capt::Foot::FOOT_L:
-      printf("suf: %s\n", "FOOT_L");
-      break;
-    }
-    printf("rfoot : [ %+1.6lf, %+1.6lf, %+1.6lf ]\n", rfoot.x(), rfoot.y(), rfoot.z() );
-    printf("lfoot : [ %+1.6lf, %+1.6lf, %+1.6lf ]\n", lfoot.x(), lfoot.y(), lfoot.z() );
-    printf("icp   : [ %+1.6lf, %+1.6lf, %+1.6lf ]\n", icp.x(), icp.y(), icp.z() );
-    printf("goal  : [ %+1.6lf, %+1.6lf, %+1.6lf ]\n", goal.x(), goal.y(), goal.z() );
-    printf("stance: %+1.6lf\n", stance );
-  }
 
   void operator=(const Input &input) {
     this->elapsed = input.elapsed;
-    this->suf     = input.suf;
+    this->s_suf   = input.s_suf;
+    this->g_suf   = input.g_suf;
     this->rfoot   = input.rfoot;
     this->lfoot   = input.lfoot;
     this->icp     = input.icp;
     this->goal    = input.goal;
-    this->stance  = input.stance;
   }
 };
 
@@ -63,15 +43,6 @@ struct Output {
   Capt::vec3_t lfoot;
   Capt::vec3_t icp;
   Capt::vec3_t cop;
-
-  void print(){
-    printf("planning_time: %1.4lf\n", planning_time);
-    printf("duration: %1.4lf\n", duration);
-    printf("rfoot : [ %+1.6lf, %+1.6lf, %+1.6lf ]\n", rfoot.x(), rfoot.y(), rfoot.z() );
-    printf("lfoot : [ %+1.6lf, %+1.6lf, %+1.6lf ]\n", lfoot.x(), lfoot.y(), lfoot.z() );
-    printf("icp   : [ %+1.6lf, %+1.6lf, %+1.6lf ]\n", icp.x(), icp.y(), icp.z() );
-    printf("cop   : [ %+1.6lf, %+1.6lf, %+1.6lf ]\n", cop.x(), cop.y(), cop.z() );
-  }
 
   void operator=(const Output &output) {
     this->planning_time = output.planning_time;
@@ -101,7 +72,6 @@ public:
 
 private:
   void run();
-  void selectSupportFoot();
   void runSearch();
   void generatePath(double time);
 
@@ -113,7 +83,6 @@ private:
   planner::Input  input;
   planner::Output output;
 
-  Foot   suf;
   double dt;
 
   bool found;

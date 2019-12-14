@@ -53,13 +53,13 @@ void Search::setGoal(vec2_t center, double stance){
 
 bool Search::calc(){
   tree->clear();
-  footstep.clear();
+  seq.clear();
   region.clear();
   g_node = tree->search(s_state_id, s_suf, g_rfoot, g_lfoot);
   if(g_node == NULL) {
     return false;
   }else{
-    calcFootstep();
+    calcSequence();
     if(s_suf == FOOT_R) {
       region = tree->getCaptureRegion(s_state_id, s_input_id, s_suf, rfoot);
     }else{
@@ -102,14 +102,14 @@ Input Search::getInput(){
   return ini_input;
 }
 
-void Search::calcFootstep(){
+void Search::calcSequence(){
   Trans trans = getTrans();
 
   vec2_t   suf_pos(0, 0);
   vec2_t   swf_pos(0, 0);
   vec2_t   icp_pos(0, 0);
   vec2_t   cop_pos(0, 0);
-  Footstep footstep_;
+  Sequence seq_;
 
   int amari;
   if(s_suf == Foot::FOOT_R) {
@@ -126,7 +126,7 @@ void Search::calcFootstep(){
       if(i < trans.inputs.size() ) {
         cop_pos = suf_pos + trans.inputs[i].cop;
       }
-      footstep_.substitute(Foot::FOOT_R, suf_pos, icp_pos, cop_pos);
+      seq_.substitute(Foot::FOOT_R, suf_pos, icp_pos, cop_pos);
 
       if(i == 0) {
         ini_state.icp = suf_pos + trans.states[0].icp;
@@ -141,7 +141,7 @@ void Search::calcFootstep(){
       if(i < trans.inputs.size() ) {
         cop_pos = suf_pos + mirror(trans.inputs[i].cop );
       }
-      footstep_.substitute(Foot::FOOT_L, suf_pos, icp_pos, cop_pos);
+      seq_.substitute(Foot::FOOT_L, suf_pos, icp_pos, cop_pos);
 
       if(i == 0) {
         ini_state.icp = icp_pos;
@@ -152,20 +152,20 @@ void Search::calcFootstep(){
 
       suf_pos = suf_pos + mirror(trans.inputs[i].swf);
     }
-    footstep.push_back(footstep_);
+    seq.push_back(seq_);
   }
-  footstep.erase(footstep.begin() );
+  seq.erase(seq.begin() );
 }
 
-std::vector<Footstep> Search::getFootstep(){
-  return footstep;
+std::vector<Sequence> Search::getSequence(){
+  return seq;
 }
 
 arr3_t Search::getFootstepR(){
   arr3_t footstep_r;
-  for(size_t i = 0; i < footstep.size(); i++) {
-    if(footstep[i].suf == Foot::FOOT_R) {
-      footstep_r.push_back(footstep[i].pos);
+  for(size_t i = 0; i < seq.size(); i++) {
+    if(seq[i].suf == Foot::FOOT_R) {
+      footstep_r.push_back(seq[i].pos);
     }
   }
   return footstep_r;
@@ -173,9 +173,9 @@ arr3_t Search::getFootstepR(){
 
 arr3_t Search::getFootstepL(){
   arr3_t footstep_l;
-  for(size_t i = 0; i < footstep.size(); i++) {
-    if(footstep[i].suf == Foot::FOOT_L) {
-      footstep_l.push_back(footstep[i].pos);
+  for(size_t i = 0; i < seq.size(); i++) {
+    if(seq[i].suf == Foot::FOOT_L) {
+      footstep_l.push_back(seq[i].pos);
     }
   }
   return footstep_l;

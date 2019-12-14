@@ -40,8 +40,8 @@ public:
   State getState();
   Input getInput();
 
-  void                  calcFootstep();
-  std::vector<Footstep> getFootstep();
+  void                  calcSequence();
+  std::vector<Sequence> getSequence();
   arr3_t                getFootstepR();
   arr3_t                getFootstepL();
 
@@ -65,7 +65,7 @@ private:
   Node *g_node;
 
   // 結果保存用変数
-  std::vector<Footstep> footstep;
+  std::vector<Sequence> seq;
   std::vector<CaptData> region;
 
   State ini_state;

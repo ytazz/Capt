@@ -23,7 +23,7 @@ int main(int argc, char const *argv[]) {
   capturability->load("gpu/Basin.csv", DataType::BASIN);
   capturability->load("gpu/Nstep.csv", DataType::NSTEP);
 
-  Tree *tree = new Tree(param, grid, capturability);
+  Tree *tree = new Tree(grid, capturability);
 
   // calc path
   vec2_t rfoot(0.038870, -0.137705);
@@ -44,7 +44,7 @@ int main(int argc, char const *argv[]) {
 
   // draw path
   StepPlot *plt = new StepPlot(model, param, grid);
-  plt->setFootstep(search->getFootstep() );
+  plt->setSequence(search->getSequence() );
   plt->plot();
 
   return 0;

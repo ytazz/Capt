@@ -130,15 +130,15 @@ void StepPlot::setCop(arr2_t cop){
   }
 }
 
-void StepPlot::setFootstep(std::vector<Footstep> footstep){
-  for(size_t i = 0; i < footstep.size(); i++) {
-    if(footstep[i].suf == Foot::FOOT_R) {
-      setFootR(vec3Tovec2(footstep[i].pos) );
+void StepPlot::setSequence(std::vector<Sequence> seq){
+  for(size_t i = 0; i < seq.size(); i++) {
+    if(seq[i].suf == Foot::FOOT_R) {
+      setFootR(vec3Tovec2(seq[i].pos) );
     }else{
-      setFootL(vec3Tovec2(footstep[i].pos) );
+      setFootL(vec3Tovec2(seq[i].pos) );
     }
-    setIcp(vec3Tovec2(footstep[i].icp) );
-    setCop(vec3Tovec2(footstep[i].cop) );
+    setIcp(vec3Tovec2(seq[i].icp) );
+    setCop(vec3Tovec2(seq[i].cop) );
   }
 }
 

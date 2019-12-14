@@ -43,7 +43,7 @@ public:
   void setCop(vec2_t cop);
   void setCop(arr2_t cop);
 
-  void setFootstep(std::vector<Footstep> footstep);
+  void setSequence(std::vector<Sequence> seq);
 
   void plot();
 

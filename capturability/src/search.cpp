@@ -68,7 +68,6 @@ bool Search::calc(){
 
 Trans Search::getTrans(){
   Trans trans;
-  trans.size = g_node->step;
 
   std::vector<int> input_ids;
   Node            *node = g_node;

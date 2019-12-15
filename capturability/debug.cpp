@@ -33,7 +33,7 @@ int main(int argc, char const *argv[]) {
   input.rfoot   = vec3_t(0, -0.2, 0);
   input.lfoot   = vec3_t(0, +0.2, 0);
   input.icp     = vec3_t(0, 0, 0);
-  input.goal    = vec3_t(1, -0.2, 0);
+  input.goal    = vec3_t(0.5, -0.2, 0);
 
   Timer timer;
   timer.start();

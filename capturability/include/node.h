@@ -26,8 +26,6 @@ struct Node {
   void print(){
     printf("| %8d ", state_id);
     printf("| %8d ", input_id);
-    printf("| %2.4lf ", cost);
-    printf("| %4d |\n", step);
   }
 
   void printWithPos(){
@@ -35,23 +33,19 @@ struct Node {
     printf("| %+1.2lf ", pos.y() );
     printf("| %8d ", state_id);
     printf("| %8d ", input_id);
-    printf("| %2.4lf ", cost);
-    printf("| %4d |\n", step);
   }
 
   Node * parent;
   int    state_id;
   int    input_id;
-  int    step;
-  double cost;
+  Foot   suf;
   vec2_t pos;
 
   void operator=(const Node &node) {
     this->parent   = node.parent;
     this->state_id = node.state_id;
     this->input_id = node.input_id;
-    this->step     = node.step;
-    this->cost     = node.cost;
+    this->suf      = node.suf;
     this->pos      = node.pos;
   }
 };

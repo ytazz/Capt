@@ -3,7 +3,7 @@
 namespace Capt {
 
 Tree::Tree(Grid *grid, Capturability* capturability) :
-  grid(grid), capturability(capturability){
+  grid(grid), capturability(capturability), epsilon(0.05){
   clear();
 }
 
@@ -16,84 +16,56 @@ void Tree::clear(){
     nodes[i].parent   = NULL;
     nodes[i].state_id = 0;
     nodes[i].input_id = 0;
+    nodes[i].suf      = FOOT_NONE;
     nodes[i].pos << 0, 0;
-    nodes[i].step = 0;
   }
-  opens.clear();
+  opened = 0;
 }
 
 Node* Tree::search(int state_id, Foot s_suf, vec2_t g_foot, Foot g_suf){
-  int amari;
-  if(s_suf == FOOT_R) {
-    amari = 0;
-  }else{
-    amari = 1;
-  }
-
   // set start node
   nodes[num_node].parent   = NULL;
   nodes[num_node].state_id = state_id;
   nodes[num_node].input_id = 0;
-  nodes[num_node].step     = 0;
-  nodes[num_node].cost     = 0;
+  nodes[num_node].suf      = s_suf;
   nodes[num_node].pos << 0.0, 0.0;
   num_node++;
 
-  opens.push_back(&nodes[0]);
-
   // calculate reaves
-  vec2_t pos;
-  while(opens.size() > 0) {
-    // find minimun cost node
-    double min = 100;
-    int    id  = 0;
-    for(size_t i = 0; i < opens.size(); i++) {
-      if(opens[i]->cost < min) {
-        id  = (int)i;
-        min = opens[i]->cost;
-      }
-    }
-    Node *target = opens[id];
+  vec2_t swf, pos;
+  while(true) {
+    // set target node based on breadth first search
+    Node *target = &nodes[opened];
     // target node expansion
     std::vector<CaptureSet*> region = capturability->getCaptureRegion(target->state_id, 1);
     for(size_t i = 0; i < region.size(); i++) {
+      // set parent
+      nodes[num_node].parent   = target;
+      nodes[num_node].state_id = region[i]->next_id;
+      nodes[num_node].input_id = region[i]->input_id;
+
       // calculate next landing position
-      vec2_t swf  = grid->getInput(region[i]->input_id).swf;
-      double cost = 0.0;
-      if(target->step % 2 == amari) {   // if right foot support
-        pos.x() = target->pos.x() + swf.x();
-        pos.y() = target->pos.y() + swf.y();
-        cost    = ( g_foot - pos ).norm();
+      swf = grid->getInput(region[i]->input_id).swf;
+      if(target->suf == FOOT_R) {   // if right foot support
+        nodes[num_node].pos.x() = target->pos.x() + swf.x();
+        nodes[num_node].pos.y() = target->pos.y() + swf.y();
+        nodes[num_node].suf     = FOOT_L;
       }else{   // if left foot support
-        pos.x() = target->pos.x() + swf.x();
-        pos.y() = target->pos.y() - swf.y();
-        cost    = ( g_foot - pos ).norm();
+        nodes[num_node].pos.x() = target->pos.x() + swf.x();
+        nodes[num_node].pos.y() = target->pos.y() - swf.y();
+        nodes[num_node].suf     = FOOT_R;
       }
 
-      // determine if next position reach goal or not
-      if(cost < 0.01) {
-        nodes[num_node].parent   = target;
-        nodes[num_node].state_id = region[i]->next_id;
-        nodes[num_node].input_id = region[i]->input_id;
-        nodes[num_node].step     = target->step + 1;
-        nodes[num_node].cost     = cost;
-        nodes[num_node].pos      = pos;
-
-        return &nodes[num_node];
-      }else{
-        // set
-        nodes[num_node].parent   = target;
-        nodes[num_node].state_id = region[i]->next_id;
-        nodes[num_node].input_id = region[i]->input_id;
-        nodes[num_node].step     = target->step + 1;
-        nodes[num_node].cost     = cost + 0.1 * nodes[num_node].step;
-        nodes[num_node].pos      = pos;
-
-        opens.push_back(&nodes[num_node]);
-        num_node++;
+      // determine if next position reach goal
+      if(nodes[num_node].suf == g_suf) {
+        if( ( nodes[num_node].pos - g_foot ).norm() < epsilon) {
+          return &nodes[num_node];
+        }
       }
+
+      num_node++;
     }
-    opens.erase(opens.begin() + id);
+    opened++;
   }
   return NULL;
 }

@@ -29,9 +29,9 @@ private:
   Grid          *grid;
   Capturability *capturability;
 
-  int                num_node;
-  Node               nodes[MAX_NODE_SIZE];
-  std::vector<Node*> opens;
+  int          num_node, opened;
+  Node         nodes[MAX_NODE_SIZE];
+  const double epsilon;
 };
 
 } // namespace Capt

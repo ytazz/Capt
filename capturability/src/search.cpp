@@ -39,6 +39,7 @@ void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){
 
 void Search::setGoal(vec2_t foot, Foot suf){
   this->g_suf = suf;
+
   if(s_suf == FOOT_R) {
     g_foot.x() = +( foot.x() - rfoot.x() );
     g_foot.y() = +( foot.y() - rfoot.y() );
@@ -46,6 +47,9 @@ void Search::setGoal(vec2_t foot, Foot suf){
     g_foot.x() = +( foot.x() - lfoot.x() );
     g_foot.y() = -( foot.y() - lfoot.y() );
   }
+
+  g_foot.x() = round(g_foot.x() / 0.05) * 0.05;
+  g_foot.y() = round(g_foot.y() / 0.05) * 0.05;
 }
 
 bool Search::calc(){

@@ -17,22 +17,20 @@
 namespace planner {
 
 struct Input {
-  double       elapsed;
-  Capt::Foot   s_suf;
-  Capt::Foot   g_suf;
-  Capt::vec3_t rfoot;
-  Capt::vec3_t lfoot;
-  Capt::vec3_t icp;
-  Capt::vec3_t goal;
+  double         elapsed;
+  Capt::Footstep footstep;
+  Capt::Foot     s_suf;
+  Capt::vec3_t   rfoot;
+  Capt::vec3_t   lfoot;
+  Capt::vec3_t   icp;
 
   void operator=(const Input &input) {
-    this->elapsed = input.elapsed;
-    this->s_suf   = input.s_suf;
-    this->g_suf   = input.g_suf;
-    this->rfoot   = input.rfoot;
-    this->lfoot   = input.lfoot;
-    this->icp     = input.icp;
-    this->goal    = input.goal;
+    this->elapsed  = input.elapsed;
+    this->footstep = input.footstep;
+    this->s_suf    = input.s_suf;
+    this->rfoot    = input.rfoot;
+    this->lfoot    = input.lfoot;
+    this->icp      = input.icp;
   }
 };
 
@@ -68,10 +66,14 @@ public:
   std::vector<Sequence> getSequence();
   arr3_t                getFootstepR();
   arr3_t                getFootstepL();
+  double                getPreviewRadius();
   std::vector<CaptData> getCaptureRegion();
 
 private:
-  void run();
+  void plan();
+  void replan();
+
+  void calculateGoal();
   void runSearch();
   void generatePath(double time);
 
@@ -83,7 +85,11 @@ private:
   planner::Input  input;
   planner::Output output;
 
+  Foot   g_suf;
+  vec3_t g_foot;
+
   double dt;
+  double preview;
 
   bool found;
 };

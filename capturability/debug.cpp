@@ -18,6 +18,7 @@ int main(int argc, char const *argv[]) {
   Param  *param  = new Param("data/footstep.xml");
   Config *config = new Config("data/valkyrie_config.xml");
   Grid   *grid   = new Grid(param);
+  config->print();
 
   // capturability
   Capturability *capturability = new Capturability(grid);
@@ -26,14 +27,40 @@ int main(int argc, char const *argv[]) {
 
   Planner *planner = new Planner(model, param, config, grid, capturability);
 
+  // footstep
+  Step step[10];
+  step[0].pos = vec3_t(0.025, 0.225, 0.000);
+  step[0].suf = Foot::FOOT_L;
+  step[1].pos = vec3_t(0.275, 0.025, 0.000);
+  step[1].suf = Foot::FOOT_R;
+  step[2].pos = vec3_t(0.525, 0.225, 0.000);
+  step[2].suf = Foot::FOOT_L;
+  step[3].pos = vec3_t(0.775, 0.025, 0.000);
+  step[3].suf = Foot::FOOT_R;
+  step[4].pos = vec3_t(1.025, 0.225, 0.000);
+  step[4].suf = Foot::FOOT_L;
+  step[5].pos = vec3_t(1.275, 0.025, 0.000);
+  step[5].suf = Foot::FOOT_R;
+  step[6].pos = vec3_t(1.525, 0.225, 0.000);
+  step[6].suf = Foot::FOOT_L;
+  step[7].pos = vec3_t(1.775, 0.025, 0.000);
+  step[7].suf = Foot::FOOT_R;
+  step[8].pos = vec3_t(2.025, 0.225, 0.000);
+  step[8].suf = Foot::FOOT_L;
+  step[9].pos = vec3_t(2.000, -0.200, 0.000);
+  step[9].suf = Foot::FOOT_R;
+  Footstep footstep;
+  for(int i = 0; i < 10; i++) {
+    footstep.push_back(step[i]);
+  }
+
   planner::Input input;
-  input.elapsed = 0.0;
-  input.s_suf   = Foot::FOOT_R;
-  input.g_suf   = Foot::FOOT_R;
-  input.rfoot   = vec3_t(0, -0.2, 0);
-  input.lfoot   = vec3_t(0, +0.2, 0);
-  input.icp     = vec3_t(0, 0, 0);
-  input.goal    = vec3_t(0.5, -0.2, 0);
+  input.elapsed  = 0.0;
+  input.footstep = footstep;
+  input.s_suf    = Foot::FOOT_R;
+  input.rfoot    = vec3_t(0, -0.2, 0);
+  input.lfoot    = vec3_t(0, +0.2, 0);
+  input.icp      = vec3_t(0, 0, 0);
 
   Timer timer;
   timer.start();

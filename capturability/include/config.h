@@ -10,6 +10,7 @@ enum Element {
   CONFIG_ELE_NONE,
   UNIT,
   SIMULATION,
+  LOCAL,
   CONTROL
 };
 
@@ -42,6 +43,7 @@ private:
 
   // parameter
   double timestep;
+  double preview;
 };
 
 } // namespace Capt

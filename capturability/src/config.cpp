@@ -26,6 +26,8 @@ void Config::callbackElement(const std::string &name, const bool is_start) {
         element = ConfigEnum::UNIT;
       if (equalStr(name, "simulation") )
         element = ConfigEnum::SIMULATION;
+      if (equalStr(name, "local") )
+        element = ConfigEnum::LOCAL;
       if (equalStr(name, "control") )
         element = ConfigEnum::CONTROL;
       break;
@@ -36,6 +38,7 @@ void Config::callbackElement(const std::string &name, const bool is_start) {
     switch (element) {
     case ConfigEnum::UNIT:
     case ConfigEnum::SIMULATION:
+    case ConfigEnum::LOCAL:
     case ConfigEnum::CONTROL:
       element = ConfigEnum::CONFIG_ELE_NONE;
       break;
@@ -80,6 +83,10 @@ void Config::callbackAttribute(const std::string &name,
     if (equalStr(name, "timestep") )
       timestep = std::stof(value) * unit_time;
     break;
+  case ConfigEnum::LOCAL:
+    if (equalStr(name, "preview") )
+      preview = std::stof(value) * unit_length;
+    break;
   default:
     break;
   }
@@ -91,6 +98,8 @@ void Config::read(int *val, const std::string &name) {
 void Config::read(double *val, const std::string &name){
   if (equalStr(name, "timestep") )
     *val = timestep;
+  if (equalStr(name, "preview") )
+    *val = preview;
 }
 
 void Config::print() {
@@ -104,6 +113,9 @@ void Config::print() {
 
   printf("simulation:\n");
   printf("\ttimestep: %lf\n", timestep);
+
+  printf("local:\n");
+  printf("\tpreview : %lf\n", preview );
 
   printf("-------------------------------------------\n");
 }

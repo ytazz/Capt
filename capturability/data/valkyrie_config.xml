@@ -4,6 +4,8 @@
 
   <unit length="m" mass="kg" time="s" angle="deg"/>
 
-  <simulation timestep="0.001">
+  <simulation timestep="0.001"/>
+
+  <local preview="0.5"/>
 
 </robot>

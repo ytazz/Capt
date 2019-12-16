@@ -55,26 +55,28 @@ void Planner::calculateGoal(){
     suf = input.lfoot;
   }
 
-  printf("%lf\n", preview);
+  // printf("%d\n", preview);
+  double distMin       = 100; // set very large value as initial value
+  int    currentFootId = 0;
   for(size_t i = 0; i < input.footstep.size(); i++) {
-    double dist = ( input.footstep[i].pos - suf ).norm();
-    printf("%1.3lf\n", dist);
-    if(dist <= preview) {
-      g_suf  = input.footstep[i].suf;
-      g_foot = input.footstep[i].pos;
+    if(input.footstep[i].suf == input.s_suf) {
+      double dist = ( input.footstep[i].pos - suf ).norm();
+      printf("%1.3lf\n", dist);
+      if(dist < distMin) {
+        distMin       = dist;
+        currentFootId = (int)i;
+      }
     }
   }
-  printf("goal\n");
-  if(g_suf == FOOT_R) {
-    printf("suf: FOOT_R\n");
-  }else{
-    printf("suf: FOOT_L\n");
-  }
-  printf("g_foot %1.3lf, %1.3lf\n", g_foot.x(), g_foot.y() );
-
-  // g_foot.x() = 0.75;
-  // g_foot.y() = 0.05;
-  // g_suf      = FOOT_R;
+  g_suf  = input.footstep[currentFootId + preview].suf;
+  g_foot = input.footstep[currentFootId + preview].pos;
+  // printf("goal\n");
+  // if(g_suf == FOOT_R) {
+  //   printf("suf: FOOT_R\n");
+  // }else{
+  //   printf("suf: FOOT_L\n");
+  // }
+  // printf("g_foot %1.3lf, %1.3lf\n", g_foot.x(), g_foot.y() );
 }
 
 void Planner::runSearch(){

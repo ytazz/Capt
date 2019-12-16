@@ -89,7 +89,7 @@ private:
   vec3_t g_foot;
 
   double dt;
-  double preview;
+  int    preview;
 
   bool found;
 };

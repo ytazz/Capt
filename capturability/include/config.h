@@ -43,7 +43,7 @@ private:
 
   // parameter
   double timestep;
-  double preview;
+  int    preview;
 };
 
 } // namespace Capt

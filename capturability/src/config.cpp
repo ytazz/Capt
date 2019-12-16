@@ -93,13 +93,13 @@ void Config::callbackAttribute(const std::string &name,
 }
 
 void Config::read(int *val, const std::string &name) {
+  if (equalStr(name, "preview") )
+    *val = preview;
 }
 
 void Config::read(double *val, const std::string &name){
   if (equalStr(name, "timestep") )
     *val = timestep;
-  if (equalStr(name, "preview") )
-    *val = preview;
 }
 
 void Config::print() {
@@ -112,10 +112,10 @@ void Config::print() {
   printf("\tangle : %lf [rad]\n", unit_angle);
 
   printf("simulation:\n");
-  printf("\ttimestep: %lf\n", timestep);
+  printf("\ttimestep: %lf [s]\n", timestep);
 
   printf("local:\n");
-  printf("\tpreview : %lf\n", preview );
+  printf("\tpreview : %d [step]\n", preview );
 
   printf("-------------------------------------------\n");
 }

@@ -28,9 +28,13 @@ public:
   vec2_t getIcp(double dt);
   vec2_t getIcpVel(double dt);
 
-  // icp: icp_before_move
-  // hat_icp: icp_after_move
-  vec2_t inverse(vec2_t icp, vec2_t hat_icp, double dt);
+  // inverse time
+  //   - icp: icp_before_move
+  //   - hat_icp: icp_after_move
+  // calculate equivalent cop
+  vec2_t invCop(vec2_t icp, vec2_t hat_icp, double dt);
+  // calculate equivalent icp(0)
+  vec2_t invIcp(vec2_t cop, vec2_t hat_icp, double dt);
 
 private:
   vec2_t com, com_vel;

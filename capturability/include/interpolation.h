@@ -32,7 +32,7 @@ public:
   Interp2();
   ~Interp2();
 
-  void   set(const double x0, const double xf, const double vf, const double vf, const double tf);
+  void   set(const double x0, const double xf, const double vf, const double tf);
   double get(const double t);
 
 private:

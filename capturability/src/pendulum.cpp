@@ -71,10 +71,16 @@ vec2_t Pendulum::getIcpVel(double dt) {
   return icp_vel_;
 }
 
-vec2_t Pendulum::inverse(vec2_t icp, vec2_t hat_icp, double dt){
+vec2_t Pendulum::invCop(vec2_t icp, vec2_t hat_icp, double dt){
   vec2_t cop_;
   cop_ = ( hat_icp - icp * exp(omega * dt) ) / ( 1 - exp(omega * dt) );
   return cop_;
+}
+
+vec2_t Pendulum::invIcp(vec2_t cop, vec2_t hat_icp, double dt){
+  vec2_t icp_;
+  icp_ = cop + ( hat_icp - cop ) / exp(omega * dt);
+  return icp_;
 }
 
 } // namespace Capt

@@ -8,6 +8,7 @@
 #include "input.h"
 #include "pendulum.h"
 #include "swing_foot.h"
+#include "planner.h"
 
 namespace Capt {
 
@@ -16,21 +17,22 @@ public:
   Trajectory(Model *model);
   ~Trajectory();
 
-  void set(State state, Input input, vec3_t world_p_com, vec3_t world_p_suf, Foot suf);
+  void set(planner::Output input, Foot suf);
 
-  double getTime();
-  vec3_t getCom(double elapsed_time);
-  vec3_t getIcp(double elapsed_time);
-  vec3_t getFootR(double elapsed_time);
-  vec3_t getFootL(double elapsed_time);
+  vec3_t getCop(double elapsed);
+  vec3_t getIcp(double elapsed);
+  vec3_t getFootR(double elapsed);
+  vec3_t getFootL(double elapsed);
 
 private:
+  planner::Output input;
+
   Pendulum  pendulum;
   SwingFoot swing_foot;
 
   double h;
   Foot   suf;
-  vec3_t world_p_suf;
+  double time;
 };
 
 } // namespace Capt

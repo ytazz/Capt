@@ -55,17 +55,17 @@ int main(int argc, char const *argv[]) {
   }
 
   planner::Input input;
-  input.elapsed  = 0.0;
   input.footstep = footstep;
-  input.s_suf    = Foot::FOOT_R;
   input.rfoot    = vec3_t(0, -0.2, 0);
   input.lfoot    = vec3_t(0, +0.2, 0);
   input.icp      = vec3_t(0, 0, 0);
+  input.s_suf    = Foot::FOOT_R;
 
   Timer timer;
   timer.start();
   planner::Output output;
   planner->set(input);
+  planner->plan();
   timer.end();
   timer.print();
 

@@ -17,38 +17,40 @@
 namespace planner {
 
 struct Input {
-  double         elapsed;
   Capt::Footstep footstep;
-  Capt::Foot     s_suf;
+  Capt::vec3_t   icp;
   Capt::vec3_t   rfoot;
   Capt::vec3_t   lfoot;
-  Capt::vec3_t   icp;
+  Capt::Foot     s_suf;
 
   void operator=(const Input &input) {
-    this->elapsed  = input.elapsed;
     this->footstep = input.footstep;
-    this->s_suf    = input.s_suf;
+    this->icp      = input.icp;
     this->rfoot    = input.rfoot;
     this->lfoot    = input.lfoot;
-    this->icp      = input.icp;
+    this->s_suf    = input.s_suf;
   }
 };
 
 struct Output {
-  double       planning_time;
+  double       computation;
   double       duration; // step duration
-  Capt::vec3_t rfoot;
-  Capt::vec3_t lfoot;
-  Capt::vec3_t icp;
+  double       alpha;    // elapsed time / step duration
   Capt::vec3_t cop;
+  Capt::vec3_t icp;
+  Capt::vec3_t suf;
+  Capt::vec3_t swf;
+  Capt::vec3_t land;
 
   void operator=(const Output &output) {
-    this->planning_time = output.planning_time;
-    this->duration      = output.duration;
-    this->rfoot         = output.rfoot;
-    this->lfoot         = output.lfoot;
-    this->icp           = output.icp;
-    this->cop           = output.cop;
+    this->computation = output.computation;
+    this->duration    = output.duration;
+    this->alpha       = output.alpha;
+    this->cop         = output.cop;
+    this->icp         = output.icp;
+    this->suf         = output.suf;
+    this->swf         = output.swf;
+    this->land        = output.land;
   }
 };
 
@@ -62,20 +64,19 @@ public:
   ~Planner();
 
   void                  set(planner::Input input);
-  planner::Output       get(double time);
+  planner::Output       get();
   std::vector<Sequence> getSequence();
   arr3_t                getFootstepR();
   arr3_t                getFootstepL();
-  double                getPreviewRadius();
   std::vector<CaptData> getCaptureRegion();
 
-private:
   void plan();
   void replan();
 
+private:
+  void calculateStart();
   void calculateGoal();
   void runSearch();
-  void generatePath(double time);
 
   Tree      *tree;
   Search    *search;
@@ -85,8 +86,12 @@ private:
   planner::Input  input;
   planner::Output output;
 
+  // start
+  Foot   s_suf;
+  vec2_t rfoot, lfoot, icp;
+  // goal
   Foot   g_suf;
-  vec3_t g_foot;
+  vec2_t goal;
 
   double dt;
   int    preview;

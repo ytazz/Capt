@@ -19,15 +19,9 @@ Planner::~Planner(){
 
 void Planner::set(planner::Input input){
   this->input = input;
-
-  if(input.elapsed < dt) {
-    calculateGoal();
-    runSearch();
-  }
 }
 
-planner::Output Planner::get(double time){
-  generatePath(time);
+planner::Output Planner::get(){
   return this->output;
 }
 
@@ -43,8 +37,24 @@ arr3_t Planner::getFootstepL(){
   return search->getFootstepL();
 }
 
-double Planner::getPreviewRadius(){
-  return preview;
+void Planner::plan(){
+  rfoot = vec3Tovec2(input.rfoot);
+  lfoot = vec3Tovec2(input.lfoot);
+  icp   = vec3Tovec2(input.icp);
+  s_suf = input.s_suf;
+
+  calculateGoal();
+  runSearch();
+}
+
+void Planner::replan(){
+  // calculateStart();
+  calculateGoal();
+  runSearch();
+}
+
+void Planner::calculateStart(){
+
 }
 
 void Planner::calculateGoal(){
@@ -55,36 +65,24 @@ void Planner::calculateGoal(){
     suf = input.lfoot;
   }
 
-  // printf("%d\n", preview);
   double distMin       = 100; // set very large value as initial value
   int    currentFootId = 0;
   for(size_t i = 0; i < input.footstep.size(); i++) {
     if(input.footstep[i].suf == input.s_suf) {
       double dist = ( input.footstep[i].pos - suf ).norm();
-      printf("%1.3lf\n", dist);
       if(dist < distMin) {
         distMin       = dist;
         currentFootId = (int)i;
       }
     }
   }
-  g_suf  = input.footstep[currentFootId + preview].suf;
-  g_foot = input.footstep[currentFootId + preview].pos;
-  // printf("goal\n");
-  // if(g_suf == FOOT_R) {
-  //   printf("suf: FOOT_R\n");
-  // }else{
-  //   printf("suf: FOOT_L\n");
-  // }
-  // printf("g_foot %1.3lf, %1.3lf\n", g_foot.x(), g_foot.y() );
+  g_suf = input.footstep[currentFootId + preview].suf;
+  vec3_t g_foot = input.footstep[currentFootId + preview].pos;
+  goal = vec3Tovec2(g_foot);
 }
 
 void Planner::runSearch(){
-  vec2_t rfoot = vec3Tovec2(input.rfoot);
-  vec2_t lfoot = vec3Tovec2(input.lfoot);
-  vec2_t icp   = vec3Tovec2(input.icp);
-  vec2_t goal  = vec3Tovec2(g_foot);
-  search->setStart(rfoot, lfoot, icp, input.s_suf);
+  search->setStart(rfoot, lfoot, icp, s_suf);
   search->setGoal(goal, g_suf);
   found = search->calc();
 
@@ -96,29 +94,27 @@ void Planner::runSearch(){
     // calc swing foot trajectory
     swingFoot->set(s.swf, i.swf);
 
-    // calc icp trajectory
-    pendulum->setCop(i.cop);
-    pendulum->setIcp(s.icp);
+    // calculate distance
+    double de = 0.0, dr = 0.0;
+    if(s_suf == FOOT_R) {
+      de         = ( s.swf - lfoot ).norm();
+      dr         = ( i.swf - lfoot ).norm();
+      output.suf = vec2Tovec3(rfoot);
+    }else{
+      de         = ( s.swf - rfoot ).norm();
+      dr         = ( i.swf - rfoot ).norm();
+      output.suf = vec2Tovec3(lfoot);
+    }
 
     // set to output
-    output.duration = swingFoot->getTime();
+    output.computation = 0.0;
+    output.duration    = swingFoot->getTime();
+    output.alpha       = de / ( de + dr );
+    output.cop         = vec2Tovec3(i.cop);
+    output.icp         = vec2Tovec3(s.icp);
+    output.swf         = vec2Tovec3(s.swf);
+    output.land        = vec2Tovec3(i.swf);
   }else{ // couldn't found solution or reached goal
-  }
-}
-
-void Planner::generatePath(double time){
-  if(found) {
-    if(input.s_suf == FOOT_R) {
-      output.rfoot = input.rfoot;
-      output.lfoot = swingFoot->getTraj(time);
-    }else{
-      output.rfoot = swingFoot->getTraj(time);
-      output.lfoot = input.lfoot;
-    }
-    output.icp = vec2Tovec3(pendulum->getIcp(time) );
-    output.cop = vec2Tovec3(pendulum->getCop(time) );
-  }else{
-    output.cop = output.icp;
   }
 }
 

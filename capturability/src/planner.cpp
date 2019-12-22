@@ -45,6 +45,8 @@ void Planner::plan(){
 
   calculateGoal();
   runSearch();
+
+  output.alpha = 0.0;
 }
 
 void Planner::replan(){

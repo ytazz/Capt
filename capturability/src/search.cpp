@@ -144,10 +144,15 @@ void Search::calcSequence(){
       seq_.substitute(Foot::FOOT_L, suf_pos, icp_pos, cop_pos);
 
       if(i == 0) {
-        ini_state.icp = icp_pos;
+        ini_state.icp = suf_pos + mirror(trans.states[0].icp);
         ini_state.swf = suf_pos + mirror(trans.states[0].swf);
-        ini_input.cop = cop_pos;
+        ini_input.cop = suf_pos + mirror(trans.inputs[0].cop);
         ini_input.swf = suf_pos + mirror(trans.inputs[0].swf);
+        printf("suf: %+1.3lf, %+1.3lf\n", suf_pos.x(), suf_pos.y() );
+        printf("icp: %+1.3lf, %+1.3lf\n", ini_state.icp.x(), ini_state.icp.y() );
+        printf("swf: %+1.3lf, %+1.3lf\n", ini_state.swf.x(), ini_state.swf.y() );
+        printf("cop: %+1.3lf, %+1.3lf\n", ini_input.cop.x(), ini_input.cop.y() );
+        printf("swf: %+1.3lf, %+1.3lf\n", ini_input.swf.x(), ini_input.swf.y() );
       }
 
       suf_pos = suf_pos + mirror(trans.inputs[i].swf);

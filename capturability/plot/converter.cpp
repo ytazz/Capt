@@ -31,16 +31,17 @@ int main(int argc, char const *argv[]) {
     switch (mode) {
     case 1:
       std::cout << "icp_xを入力してください ";
-      std::cin >> tmp1;
+      std::cin >> state.icp.x();
       std::cout << "icp_yを入力してください ";
-      std::cin >> tmp2;
-      state.icp << tmp1, tmp2;
+      std::cin >> state.icp.y();
 
       std::cout << "swf_xを入力してください ";
-      std::cin >> tmp1;
+      std::cin >> state.swf.x();
       std::cout << "swf_yを入力してください ";
-      std::cin >> tmp2;
-      state.swf << tmp1, tmp2;
+      std::cin >> state.swf.x();
+
+      std::cout << "elapsedを入力してください ";
+      std::cin >> state.elp;
 
       gstate = grid->roundState(state);
       gstate.state.print();

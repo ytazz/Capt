@@ -15,6 +15,7 @@ Grid::Grid(Param *param) : param(param) {
   swf_y_num = 0;
   cop_x_num = 0;
   cop_y_num = 0;
+  elp_t_num = 0;
 
   create();
 }
@@ -45,6 +46,9 @@ void Grid::create() {
   param->read(&cop_y[MIN], "cop_y_min");
   param->read(&cop_y[MAX], "cop_y_max");
   param->read(&cop_y[STP], "cop_y_stp");
+  param->read(&elp_t[MIN], "elp_t_min");
+  param->read(&elp_t[MAX], "elp_t_max");
+  param->read(&elp_t[STP], "elp_t_stp");
 
   // num of each grid
   param->read(&icp_x_num, "icp_x_num");
@@ -53,11 +57,13 @@ void Grid::create() {
   param->read(&swf_y_num, "swf_y_num");
   param->read(&cop_x_num, "cop_x_num");
   param->read(&cop_y_num, "cop_y_num");
+  param->read(&elp_t_num, "elp_t_num");
 
   // current grid value
   double icp_x_ = icp_x[MIN], icp_y_ = icp_y[MIN];
   double swf_x_ = swf_x[MIN], swf_y_ = swf_y[MIN];
   double cop_x_ = icp_x[MIN], cop_y_ = icp_y[MIN];
+  double elp_t_ = elp_t[MIN];
 
   // state
   state_num = 0;
@@ -69,7 +75,10 @@ void Grid::create() {
         swf_x_ = swf_x[MIN] + swf_x[STP] * k;
         for (int l = 0; l < swf_y_num; l++) {
           swf_y_ = swf_y[MIN] + swf_y[STP] * l;
-          setState(icp_x_, icp_y_, swf_x_, swf_y_);
+          for (int m = 0; m < elp_t_num; m++) {
+            elp_t_ = elp_t[MIN] + elp_t[STP] * m;
+            setState(icp_x_, icp_y_, swf_x_, swf_y_, elp_t_);
+          }
         }
       }
     }
@@ -80,8 +89,8 @@ void Grid::create() {
     printf("Error: couldn't open state_table.csv\n");
     exit(EXIT_FAILURE);
   }
-  fprintf(fp_state, "index,icp_x,icp_y,swf_x,swf_y\n");
-  for (int i = 0; i < max(icp_x_num, icp_y_num, swf_x_num, swf_y_num); i++) {
+  fprintf(fp_state, "index, icp_x, icp_y, swf_x, swf_y, elp_t\n");
+  for (int i = 0; i < max(icp_x_num, icp_y_num, swf_x_num, swf_y_num, elp_t_num); i++) {
     fprintf(fp_state, "%d", i);
     if (i < icp_x_num) {
       icp_x_ = icp_x[MIN] + icp_x[STP] * i;
@@ -104,6 +113,12 @@ void Grid::create() {
     if (i < swf_y_num) {
       swf_y_ = swf_y[MIN] + swf_y[STP] * i;
       fprintf(fp_state, ",%lf", swf_y_);
+    } else {
+      fprintf(fp_state, ",");
+    }
+    if (i < elp_t_num) {
+      elp_t_ = elp_t[MIN] + elp_t[STP] * i;
+      fprintf(fp_state, ",%lf", elp_t_);
     } else {
       fprintf(fp_state, ",");
     }
@@ -183,6 +198,14 @@ int Grid::max(int val1, int val2, int val3, int val4) {
   return max_val;
 }
 
+int Grid::max(int val1, int val2, int val3, int val4, int val5) {
+  int max_val = 0;
+
+  max_val = max(max(val1, val2), max(max(val3, val4), val5) );
+
+  return max_val;
+}
+
 vec2_t Grid::roundVec(vec2_t vec){
   using CaptEnum::MAX;
   using CaptEnum::MIN;
@@ -203,17 +226,20 @@ GridState Grid::roundState(State state_) {
 
   int icp_x_id = 0, icp_y_id = 0;
   int swf_x_id = 0, swf_y_id = 0;
+  int elp_t_id = 0;
 
   icp_x_id = round( ( state_.icp.x() - icp_x[MIN] ) / icp_x[STP]);
   icp_y_id = round( ( state_.icp.y() - icp_y[MIN] ) / icp_y[STP]);
   swf_x_id = round( ( state_.swf.x() - swf_x[MIN] ) / swf_x[STP]);
   swf_y_id = round( ( state_.swf.y() - swf_y[MIN] ) / swf_y[STP]);
+  elp_t_id = round( ( state_.elp - elp_t[MIN] ) / elp_t[STP]);
 
   if(0 <= icp_x_id && icp_x_id < icp_x_num &&
      0 <= icp_y_id && icp_y_id < icp_y_num &&
      0 <= swf_x_id && swf_x_id < swf_x_num &&
-     0 <= swf_y_id && swf_y_id < swf_y_num)
-    state_id = getStateIndex(icp_x_id, icp_y_id, swf_x_id, swf_y_id);
+     0 <= swf_y_id && swf_y_id < swf_y_num &&
+     0 <= elp_t_id && elp_t_id < elp_t_num )
+    state_id = getStateIndex(icp_x_id, icp_y_id, swf_x_id, swf_y_id, elp_t_id);
 
   gs.id    = state_id;
   gs.state = getState(state_id);
@@ -225,8 +251,8 @@ int Grid::getStateIndex(State state_) {
   return roundState(state_).id;
 }
 
-void Grid::setState(double icp_x, double icp_y, double swf_x, double swf_y) {
-  State state_(icp_x, icp_y, swf_x, swf_y);
+void Grid::setState(double icp_x, double icp_y, double swf_x, double swf_y, double elp_t) {
+  State state_(icp_x, icp_y, swf_x, swf_y, elp_t);
   state.push_back(state_);
   state_num++;
 }
@@ -254,6 +280,7 @@ bool Grid::existState(State state_) {
 
   bool flag_icp_x = false, flag_icp_y = false;
   bool flag_swf_x = false, flag_swf_y = false;
+  bool flag_elp_t = false;
 
   // icp_x
   if (state_.icp.x() >= icp_x[MIN] - icp_x[STP] / 2.0 &&
@@ -275,7 +302,13 @@ bool Grid::existState(State state_) {
       state_.swf.y() < swf_y[MAX] + swf_y[STP] / 2.0) {
     flag_swf_y = true;
   }
-  flag = flag_icp_x * flag_icp_y * flag_swf_x * flag_swf_y;
+  // elapsed
+  if (state_.elp >= elp_t[MIN] - elp_t[STP] / 2.0 &&
+      state_.elp < elp_t[MAX] + elp_t[STP] / 2.0) {
+    flag_elp_t = true;
+  }
+
+  flag = flag_icp_x * flag_icp_y * flag_swf_x * flag_swf_y * flag_elp_t;
 
   return flag;
 }
@@ -288,12 +321,13 @@ bool Grid::existInput(int input_id) {
   return is_exist;
 }
 
-int Grid::getStateIndex(int icp_x_id, int icp_y_id, int swf_x_id, int swf_y_id) {
+int Grid::getStateIndex(int icp_x_id, int icp_y_id, int swf_x_id, int swf_y_id, int elp_t_id) {
   int index = 0;
-  index = swf_y_num * swf_x_num * icp_y_num * icp_x_id +
-          swf_y_num * swf_x_num * icp_y_id +
-          swf_y_num * swf_x_id +
-          swf_y_id;
+  index = swf_y_num * swf_x_num * icp_y_num * elp_t_num * icp_x_id +
+          swf_y_num * swf_x_num * elp_t_num * icp_y_id +
+          swf_y_num * elp_t_num * swf_x_id +
+          elp_t_num * swf_y_id +
+          elp_t_id;
   return index;
 }
 
@@ -302,7 +336,7 @@ State Grid::getState(int index) {
   if (existState(index) ) {
     state_ = state[index];
   }else{
-    state_.set(-1, -1, -1, -1);
+    state_.set(-1, -1, -1, -1, -1);
   }
 
   return state_;

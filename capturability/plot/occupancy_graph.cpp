@@ -5,7 +5,7 @@ using namespace std;
 using namespace Capt;
 
 int main(int argc, char const *argv[]) {
-  Param *param = new Param("data/footstep.xml");
+  Param *param = new Param("data/valkyrie_xy.xml");
 
   OccupancyPlot *plot = new OccupancyPlot(param);
 

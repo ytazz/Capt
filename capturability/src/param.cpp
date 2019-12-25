@@ -32,6 +32,10 @@ Param::Param(const std::string &name) : Loader(name) {
   cop_y_max = 0.0;
   cop_y_stp = 0.0;
 
+  elp_t_min = 0.0;
+  elp_t_max = 0.0;
+  elp_t_stp = 0.0;
+
   map_x_min = 0.0;
   map_x_max = 0.0;
   map_x_stp = 0.0;
@@ -62,6 +66,8 @@ void Param::callbackElement(const std::string &name, const bool is_start) {
       element = SWING;
     if (equalStr(name, "cop") )
       element = COP;
+    if (equalStr(name, "elapsed") )
+      element = ELAPSED;
     if (equalStr(name, "map") )
       element = MAP;
     break;
@@ -82,6 +88,10 @@ void Param::callbackElement(const std::string &name, const bool is_start) {
       axis = AXIS_X;
     if (equalStr(name, "y") )
       axis = AXIS_Y;
+    break;
+  case ELAPSED:
+    if (equalStr(name, "t") )
+      axis = AXIS_T;
     break;
   case MAP:
     if (equalStr(name, "x") )
@@ -105,6 +115,7 @@ void Param::callbackElement(const std::string &name, const bool is_start) {
     case ICP:
     case SWING:
     case COP:
+    case ELAPSED:
     case MAP:
       if (axis != AXIS_NONE)
         axis = AXIS_NONE;
@@ -197,6 +208,18 @@ case COP:
     }
   }
   break;
+case ELAPSED:
+  if (coordinate == COORD_CARTESIAN) {
+    if (axis == AXIS_T) {
+      if (equalStr(name, "min") )
+        elp_t_min = std::stof(value);
+      if (equalStr(name, "max") )
+        elp_t_max = std::stof(value);
+      if (equalStr(name, "stp") )
+        elp_t_stp = std::stof(value);
+    }
+  }
+  break;
 case MAP:
   if (coordinate == COORD_CARTESIAN) {
     if (axis == AXIS_X) {
@@ -243,6 +266,8 @@ void Param::read(int *val, const std::string &name) {
     *val = cop_x_num;
   if (equalStr(name, "cop_y_num") )
     *val = cop_y_num;
+  if (equalStr(name, "elp_t_num") )
+    *val = elp_t_num;
   if (equalStr(name, "map_x_num") )
     *val = map_x_num;
   if (equalStr(name, "map_y_num") )
@@ -292,6 +317,13 @@ void Param::read(double *val, const std::string &name){
   if (equalStr(name, "cop_y_stp") )
     *val = cop_y_stp;
 
+  if (equalStr(name, "elp_t_min") )
+    *val = elp_t_min;
+  if (equalStr(name, "elp_t_max") )
+    *val = elp_t_max;
+  if (equalStr(name, "elp_t_stp") )
+    *val = elp_t_stp;
+
   if (equalStr(name, "map_x_min") )
     *val = map_x_min;
   if (equalStr(name, "map_x_max") )
@@ -338,6 +370,11 @@ void Param::calcNum() {
     cop_y_num = round( ( cop_y_max - cop_y_min ) / cop_y_stp) + 1;
   else
     cop_y_num = 0;
+  // elapsed
+  if(elp_t_stp > epsilon)
+    elp_t_num = round( ( elp_t_max - elp_t_min ) / elp_t_stp) + 1;
+  else
+    elp_t_num = 0;
   // map
   if(map_x_stp > epsilon)
     map_x_num = round( ( map_x_max - map_x_min ) / map_x_stp) + 1;
@@ -368,12 +405,12 @@ void Param::print() {
   printf("\t\tmin: %+lf\n", icp_x_min);
   printf("\t\tmax: %+lf\n", icp_x_max);
   printf("\t\tstp: %+lf\n", icp_x_stp);
-  printf("\t\tnum: %d \n", icp_x_num);
+  printf("\t\tnum: %d  \n", icp_x_num);
   printf("\ty:\n");
   printf("\t\tmin: %+lf\n", icp_y_min);
   printf("\t\tmax: %+lf\n", icp_y_max);
   printf("\t\tstp: %+lf\n", icp_y_stp);
-  printf("\t\tnum: %d \n", icp_y_num);
+  printf("\t\tnum: %d  \n", icp_y_num);
   }
 
   printf("swing:\n");
@@ -382,12 +419,12 @@ void Param::print() {
     printf("\t\tmin: %+lf\n", swf_x_min);
     printf("\t\tmax: %+lf\n", swf_x_max);
     printf("\t\tstp: %+lf\n", swf_x_stp);
-    printf("\t\tnum: %d \n", swf_x_num);
+    printf("\t\tnum: %d  \n", swf_x_num);
     printf("\ty:\n");
     printf("\t\tmin: %+lf\n", swf_y_min);
     printf("\t\tmax: %+lf\n", swf_y_max);
     printf("\t\tstp: %+lf\n", swf_y_stp);
-    printf("\t\tnum: %d \n", swf_y_num);
+    printf("\t\tnum: %d  \n", swf_y_num);
   }
 
   printf("cop:\n");
@@ -396,12 +433,21 @@ void Param::print() {
     printf("\t\tmin: %+lf\n", cop_x_min);
     printf("\t\tmax: %+lf\n", cop_x_max);
     printf("\t\tstp: %+lf\n", cop_x_stp);
-    printf("\t\tnum: %d \n", cop_x_num);
+    printf("\t\tnum: %d  \n", cop_x_num);
     printf("\ty:\n");
     printf("\t\tmin: %+lf\n", cop_y_min);
     printf("\t\tmax: %+lf\n", cop_y_max);
     printf("\t\tstp: %+lf\n", cop_y_stp);
-    printf("\t\tnum: %d \n", cop_y_num);
+    printf("\t\tnum: %d  \n", cop_y_num);
+  }
+
+  printf("elapsed:\n");
+  if (coordinate == COORD_CARTESIAN) {
+    printf("\tt:\n");
+    printf("\t\tmin: %+lf\n", elp_t_min);
+    printf("\t\tmax: %+lf\n", elp_t_max);
+    printf("\t\tstp: %+lf\n", elp_t_stp);
+    printf("\t\tnum: %d  \n", elp_t_num);
   }
 
   printf("map:\n");
@@ -410,12 +456,12 @@ void Param::print() {
     printf("\t\tmin: %+lf\n", map_x_min);
     printf("\t\tmax: %+lf\n", map_x_max);
     printf("\t\tstp: %+lf\n", map_x_stp);
-    printf("\t\tnum: %d \n", map_x_num);
+    printf("\t\tnum: %d  \n", map_x_num);
     printf("\ty:\n");
     printf("\t\tmin: %+lf\n", map_y_min);
     printf("\t\tmax: %+lf\n", map_y_max);
     printf("\t\tstp: %+lf\n", map_y_stp);
-    printf("\t\tnum: %d \n", map_y_num);
+    printf("\t\tnum: %d  \n", map_y_num);
   }
   printf("-------------------------------------------\n");
 }

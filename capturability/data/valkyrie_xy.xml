@@ -19,6 +19,10 @@
     <y min="-0.05" max="0.05" stp="0.05"/>
   </cop>
 
+  <elapsed>
+    <t min="0" max="0.10" stp="0.01"/>
+  </elapsed>
+
   <map>
     <x min="-0.5" max="1.5" stp="0.05"/>
     <y min="-1.0" max="1.0" stp="0.05"/>

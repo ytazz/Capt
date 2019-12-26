@@ -315,7 +315,7 @@ bool Grid::existState(State state_) {
 
 bool Grid::existInput(int input_id) {
   bool is_exist = false;
-  if (0 <= input_id && input_id <= input_num)
+  if (0 <= input_id && input_id < input_num)
     is_exist = true;
 
   return is_exist;

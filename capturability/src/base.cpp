@@ -26,6 +26,20 @@ vec3_t mirror(vec3_t v){
   return v;
 }
 
+double min(double val1, double val2){
+  if(val1 < val2)
+    return val1;
+  else
+    return val2;
+}
+
+double max(double val1, double val2){
+  if(val1 > val2)
+    return val1;
+  else
+    return val2;
+}
+
 vec3_t vec2Tovec3(vec2_t vec2){
   vec3_t vec3;
   vec3.x() = vec2.x();

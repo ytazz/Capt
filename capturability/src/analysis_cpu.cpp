@@ -4,7 +4,11 @@ namespace Capt {
 
 Analysis::Analysis(Model *model, Grid *grid)
   : model(model), grid(grid),
-    state_num(grid->getNumState() ), input_num(grid->getNumInput() ), grid_num(grid->getNumGrid() ){
+    state_num(grid->getNumState() ), input_num(grid->getNumInput() ), grid_num(grid->getNumGrid() ),
+    epsilon(0.001){
+  model->read(&foot_vel_max, "foot_vel_max");
+  model->read(&step_time_min, "step_time_min");
+
   printf("*** Analysis ***\n");
   printf("  Initializing ... ");
   fflush(stdout);
@@ -13,13 +17,11 @@ Analysis::Analysis(Model *model, Grid *grid)
   initTrans();
   initBasin();
   initNstep();
-  initStepTime();
   printf("Done!\n");
 
   printf("  Calculating .... ");
   fflush(stdout);
   calcBasin();
-  calcStepTime();
   calcTrans();
   printf("Done!\n");
 }
@@ -57,12 +59,6 @@ void Analysis::initNstep(){
     nstep[id] = -1;
 }
 
-void Analysis::initStepTime(){
-  step_time = new double[grid_num];
-  for (int id = 0; id < grid_num; id++)
-    step_time[id] = 0.0;
-}
-
 void Analysis::calcBasin(){
   arr2_t foot_r;
   arr2_t foot_l;
@@ -82,20 +78,8 @@ void Analysis::calcBasin(){
   }else{
     for(int state_id = 0; state_id < state_num; state_id++) {
       Polygon polygon;
-      if(polygon.inPolygon(state[state_id].icp, foot_r) )
+      if(polygon.inPolygon(state[state_id].icp, foot_r) && state[state_id].elp < epsilon )
         basin[state_id] = 0;
-    }
-  }
-}
-
-void Analysis::calcStepTime(){
-  SwingFoot swing_foot(model);
-
-  for(int state_id = 0; state_id < state_num; state_id++) {
-    for(int input_id = 0; input_id < input_num; input_id++) {
-      int id = state_id * input_num + input_id;
-      swing_foot.set(state[state_id].swf, input[input_id].swf);
-      step_time[id] = swing_foot.getTime();
     }
   }
 }
@@ -104,21 +88,33 @@ void Analysis::calcTrans(){
   Pendulum pendulum(model);
   vec2_t   icp;
 
+  FILE *fp = fopen("stepTime.csv", "w");
+
+  fprintf(fp, "state_id, input_id, trans_id, tau, icp.x, icp.y\n");
   for(int state_id = 0; state_id < state_num; state_id++) {
     for(int input_id = 0; input_id < input_num; input_id++) {
       int id = state_id * input_num + input_id;
 
+      double dist = ( input[input_id].swf - state[state_id].swf ).norm();
+      double tau  = max(0, step_time_min / 2 - state[state_id].elp) +
+                    dist / foot_vel_max + step_time_min / 2;
+
       pendulum.setIcp(state[state_id].icp);
       pendulum.setCop(input[input_id].cop);
-      icp = pendulum.getIcp(step_time[id]);
+      icp = pendulum.getIcp(tau);
 
       State state_;
       state_.icp << -input[input_id].swf.x() + icp.x(), input[input_id].swf.y() - icp.y();
       state_.swf << -input[input_id].swf.x(), input[input_id].swf.y();
+      state_.elp = 0.0;
 
       trans[id] = grid->roundState(state_).id;
+      if(trans[id] >= 0)
+        fprintf(fp, "%d, %d, %d, %lf, %lf, %lf\n", state_id, input_id, trans[id], tau, state_.icp.x(), state_.icp.y() );
     }
   }
+
+  fclose(fp);
 }
 
 bool Analysis::exe(const int n){
@@ -154,31 +150,6 @@ void Analysis::exe(){
   max_step--;
 
   printf("Done!\n");
-}
-
-void Analysis::saveStepTime(std::string file_name, bool header){
-  FILE *fp = fopen(file_name.c_str(), "w");
-
-  // Header
-  if (header) {
-    // fprintf(fp, "%s,", "state_id");
-    // fprintf(fp, "%s,", "input_id");
-    fprintf(fp, "%s", "step_time");
-    fprintf(fp, "\n");
-  }
-
-  // Data
-  for (int state_id = 0; state_id < state_num; state_id++) {
-    for (int input_id = 0; input_id < input_num; input_id++) {
-      int id = state_id * input_num + input_id;
-      // fprintf(fp, "%d,", state_id);
-      // fprintf(fp, "%d,", input_id);
-      fprintf(fp, "%1.4lf", step_time[id]);
-      fprintf(fp, "\n");
-    }
-  }
-
-  fclose(fp);
 }
 
 void Analysis::saveBasin(std::string file_name, bool header){

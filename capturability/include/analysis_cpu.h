@@ -30,12 +30,10 @@ public:
   void initTrans();
   void initBasin();
   void initNstep();
-  void initStepTime();
 
   // 解析前の状態遷移や0-step、copを計算
   void calcBasin();
   void calcTrans();
-  void calcStepTime();
 
   // 解析実行
   void exe();
@@ -44,7 +42,6 @@ public:
   void saveTrans(std::string file_name, bool header = false);
   void saveBasin(std::string file_name, bool header = false);
   void saveNstep(std::string file_name, bool header = false);
-  void saveStepTime(std::string file_name, bool header = false);
 
 private:
   bool exe(const int n);
@@ -52,16 +49,21 @@ private:
   Model *model;
   Grid  *grid;
 
-  State  *state;
-  Input  *input;
-  int    *trans;
-  int    *basin;
-  int    *nstep;
-  double *step_time;
+  State *state;
+  Input *input;
+  int   *trans;
+  int   *basin;
+  int   *nstep;
 
   const int state_num;
   const int input_num;
   const int grid_num;
+
+  const double epsilon;
+
+  // 解析パラメータ
+  double foot_vel_max;
+  double step_time_min;
 
   // 解析結果の最大踏み出し歩数
   int max_step;

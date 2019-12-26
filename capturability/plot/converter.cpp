@@ -38,7 +38,7 @@ int main(int argc, char const *argv[]) {
       std::cout << "swf_xを入力してください ";
       std::cin >> state.swf.x();
       std::cout << "swf_yを入力してください ";
-      std::cin >> state.swf.x();
+      std::cin >> state.swf.y();
 
       std::cout << "elapsedを入力してください ";
       std::cin >> state.elp;

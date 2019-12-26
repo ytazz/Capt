@@ -19,6 +19,9 @@ vec2_t normal(vec2_t v);
 vec2_t mirror(vec2_t v);
 vec3_t mirror(vec3_t v);
 
+double min(double val1, double val2);
+double max(double val1, double val2);
+
 int round(double val);
 
 vec3_t vec2Tovec3(vec2_t vec2);

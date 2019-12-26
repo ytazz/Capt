@@ -18,7 +18,6 @@ int main(int argc, char const *argv[]) {
   analysis.exe();
   end_exe = std::chrono::system_clock::now();
 
-  analysis.saveStepTime("cpu/StepTime.csv");
   analysis.saveBasin("cpu/Basin.csv");
   analysis.saveNstep("cpu/Nstep.csv");
   end_save = std::chrono::system_clock::now();

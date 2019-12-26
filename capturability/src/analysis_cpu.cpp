@@ -72,7 +72,7 @@ void Analysis::calcBasin(){
       polygon.setVertex(foot_r);
       polygon.setVertex(foot_l);
       region = polygon.getConvexHull();
-      if(polygon.inPolygon(state[state_id].icp, region) )
+      if(polygon.inPolygon(state[state_id].icp, region) && state[state_id].elp < epsilon )
         basin[state_id] = 0;
     }
   }else{

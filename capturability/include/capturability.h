@@ -14,8 +14,6 @@
 
 namespace Capt {
 
-enum DataType { BASIN, NSTEP };
-
 struct CaptureSet {
   int state_id;
   int input_id;
@@ -38,7 +36,8 @@ public:
   // Capturability(const Capturability &obj);
   ~Capturability();
 
-  void load(std::string file_name, DataType type);
+  void loadBasin(std::string file_name);
+  void loadNstep(std::string file_name);
 
   CaptureSet* getCaptureSet(int state_id, int input_id);
 

@@ -22,8 +22,8 @@ int main(int argc, char const *argv[]) {
 
   // capturability
   Capturability *capturability = new Capturability(grid);
-  capturability->load("gpu/Basin.csv", DataType::BASIN);
-  capturability->load("gpu/Nstep.csv", DataType::NSTEP);
+  capturability->loadBasin("cpu/Basin.csv");
+  capturability->loadNstep("cpu/Nstep.csv");
 
   Planner *planner = new Planner(model, param, config, grid, capturability);
 

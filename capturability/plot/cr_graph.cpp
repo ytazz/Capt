@@ -15,8 +15,8 @@ int main(int argc, char const *argv[]) {
   Grid  *grid  = new Grid(param);
 
   Capturability *capturability = new Capturability(grid);
-  capturability->load("gpu/Basin.csv", DataType::BASIN);
-  capturability->load("gpu/Nstep.csv", DataType::NSTEP);
+  capturability->loadBasin("gpu/Basin.csv");
+  capturability->loadNstep("gpu/Nstep.csv");
 
   // paper plot for nao
   // double icp_x        = 0.00;

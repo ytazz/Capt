@@ -16,18 +16,10 @@ Capturability::Capturability(Grid *grid)
   max_step = 0;
 }
 
-// Capturability::Capturability(const Capturability &obj){
-//   data_basin = new int [state_num];
-//   data_nstep = new CaptureSet*[state_num];
-//   for (int i = 0; i < state_num; i++) {
-//     data_nstep[i] = new CaptureSet[input_num];
-//   }
-// }
-
 Capturability::~Capturability() {
 }
 
-void Capturability::load(std::string file_name, DataType type) {
+void Capturability::loadBasin(std::string file_name) {
   FILE *fp = fopen(file_name.c_str(), "r");
   if ( fp == NULL) {
     printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str() );
@@ -35,33 +27,43 @@ void Capturability::load(std::string file_name, DataType type) {
   }
   int id = 0;
 
-  if (type == BASIN) {
-    printf("Find Basin database.\n");
+  printf("Find Basin database.\n");
 
-    int buf;
-    while (fscanf(fp, "%d", &buf) != EOF) {
-      data_basin[id] = buf;
-      id++;
-    }
-  } else if (type == NSTEP) {
-    printf("Find N-step database.\n");
+  int buf;
+  while (fscanf(fp, "%d", &buf) != EOF) {
+    data_basin[id] = buf;
+    id++;
+  }
 
-    int buf[2];
-    while (fscanf(fp, "%d,%d", &buf[0], &buf[1]) != EOF) {
-      int state_id = id / input_num;
-      int input_id = id % input_num;
+  printf("Read success! (%d datas)\n", id);
+  fclose(fp);
+}
 
-      CaptureSet* set = getCaptureSet(state_id, input_id);
-      set->state_id = state_id;
-      set->input_id = input_id;
-      set->next_id  = buf[0];
-      set->nstep    = buf[1];
+void Capturability::loadNstep(std::string file_name) {
+  FILE *fp = fopen(file_name.c_str(), "r");
+  if ( fp == NULL) {
+    printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str() );
+    exit(EXIT_FAILURE);
+  }
+  int id = 0;
 
-      if(max_step < set->nstep)
-        max_step = set->nstep;
+  printf("Find Nstep database.\n");
 
-      id++;
-    }
+  int buf[2];
+  while (fscanf(fp, "%d,%d", &buf[0], &buf[1]) != EOF) {
+    int state_id = id / input_num;
+    int input_id = id % input_num;
+
+    CaptureSet* set = getCaptureSet(state_id, input_id);
+    set->state_id = state_id;
+    set->input_id = input_id;
+    set->next_id  = buf[0];
+    set->nstep    = buf[1];
+
+    if(max_step < set->nstep)
+      max_step = set->nstep;
+
+    id++;
   }
 
   printf("Read success! (%d datas)\n", id);

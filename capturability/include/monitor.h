@@ -9,12 +9,17 @@ namespace Capt {
 
 class Monitor {
 public:
-  Monitor();
+  Monitor(Grid *grid, Capturability *capturability);
   ~Monitor();
 
-  bool check();
+  bool check(EnhancedState state, vec2_t nextLandingPos);
 
 private:
+  Grid          *grid;
+  Capturability *capturability;
+
+  double min;
+  int    minId;
 };
 
 } // namespace Capt

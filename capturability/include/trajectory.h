@@ -17,7 +17,7 @@ public:
   Trajectory(Model *model);
   ~Trajectory();
 
-  void set(planner::Output input, Foot suf);
+  void set(EnhancedInput input, Foot suf);
 
   vec3_t getCop(double elapsed);
   vec3_t getIcp(double elapsed);
@@ -25,7 +25,7 @@ public:
   vec3_t getFootL(double elapsed);
 
 private:
-  planner::Output input;
+  EnhancedInput input;
 
   Pendulum pendulum;
   Swing    swing;

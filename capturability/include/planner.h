@@ -14,46 +14,6 @@
 #include <chrono>
 #include <vector>
 
-namespace planner {
-
-struct Input {
-  Capt::Footstep footstep;
-  Capt::vec3_t   icp;
-  Capt::vec3_t   rfoot;
-  Capt::vec3_t   lfoot;
-  double         elapsed;
-  Capt::Foot     s_suf;
-
-  void operator=(const Input &input) {
-    this->footstep = input.footstep;
-    this->icp      = input.icp;
-    this->rfoot    = input.rfoot;
-    this->lfoot    = input.lfoot;
-    this->elapsed  = input.elapsed;
-    this->s_suf    = input.s_suf;
-  }
-};
-
-struct Output {
-  double       duration; // remained step duration
-  Capt::vec3_t cop;
-  Capt::vec3_t icp;
-  Capt::vec3_t suf;
-  Capt::vec3_t swf;
-  Capt::vec3_t land;
-
-  void operator=(const Output &output) {
-    this->duration = output.duration;
-    this->cop      = output.cop;
-    this->icp      = output.icp;
-    this->suf      = output.suf;
-    this->swf      = output.swf;
-    this->land     = output.land;
-  }
-};
-
-}
-
 namespace Capt {
 
 class Planner {
@@ -61,8 +21,8 @@ public:
   Planner(Model *model, Param *param, Config *config, Grid *grid, Capturability *capt);
   ~Planner();
 
-  void                  set(planner::Input input);
-  planner::Output       get();
+  void                  set(EnhancedState state);
+  EnhancedInput         get();
   std::vector<Sequence> getSequence();
   arr3_t                getFootstepR();
   arr3_t                getFootstepL();
@@ -81,8 +41,8 @@ private:
   Swing    *swing;
   Pendulum *pendulum;
 
-  planner::Input  input;
-  planner::Output output;
+  EnhancedState state;
+  EnhancedInput input;
 
   // start
   Foot   s_suf;

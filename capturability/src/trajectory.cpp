@@ -9,7 +9,7 @@ Trajectory::Trajectory(Model *model) : pendulum(model), swing(model){
 Trajectory::~Trajectory(){
 }
 
-void Trajectory::set(planner::Output input, Foot suf){
+void Trajectory::set(EnhancedInput input, Foot suf){
   this->input = input;
   this->suf   = suf;
 

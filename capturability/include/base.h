@@ -64,6 +64,42 @@ struct Sequence {
   }
 };
 
+struct EnhancedState {
+  Capt::Footstep footstep;
+  Capt::vec3_t   icp;
+  Capt::vec3_t   rfoot;
+  Capt::vec3_t   lfoot;
+  double         elapsed;
+  Capt::Foot     s_suf;
+
+  void operator=(const EnhancedState &eState) {
+    this->footstep = eState.footstep;
+    this->icp      = eState.icp;
+    this->rfoot    = eState.rfoot;
+    this->lfoot    = eState.lfoot;
+    this->elapsed  = eState.elapsed;
+    this->s_suf    = eState.s_suf;
+  }
+};
+
+struct EnhancedInput {
+  double       duration; // remained step duration
+  Capt::vec3_t cop;
+  Capt::vec3_t icp;
+  Capt::vec3_t suf;
+  Capt::vec3_t swf;
+  Capt::vec3_t land;
+
+  void operator=(const EnhancedInput &eInput) {
+    this->duration = eInput.duration;
+    this->cop      = eInput.cop;
+    this->icp      = eInput.icp;
+    this->suf      = eInput.suf;
+    this->swf      = eInput.swf;
+    this->land     = eInput.land;
+  }
+};
+
 } // namespace Capt
 
 #endif // __BASE_H__

@@ -21,6 +21,7 @@ struct Input {
   Capt::vec3_t   icp;
   Capt::vec3_t   rfoot;
   Capt::vec3_t   lfoot;
+  double         elapsed;
   Capt::Foot     s_suf;
 
   void operator=(const Input &input) {
@@ -28,14 +29,13 @@ struct Input {
     this->icp      = input.icp;
     this->rfoot    = input.rfoot;
     this->lfoot    = input.lfoot;
+    this->elapsed  = input.elapsed;
     this->s_suf    = input.s_suf;
   }
 };
 
 struct Output {
-  double       computation;
-  double       duration; // step duration
-  double       alpha;    // elapsed time / step duration
+  double       duration; // remained step duration
   Capt::vec3_t cop;
   Capt::vec3_t icp;
   Capt::vec3_t suf;
@@ -43,14 +43,12 @@ struct Output {
   Capt::vec3_t land;
 
   void operator=(const Output &output) {
-    this->computation = output.computation;
-    this->duration    = output.duration;
-    this->alpha       = output.alpha;
-    this->cop         = output.cop;
-    this->icp         = output.icp;
-    this->suf         = output.suf;
-    this->swf         = output.swf;
-    this->land        = output.land;
+    this->duration = output.duration;
+    this->cop      = output.cop;
+    this->icp      = output.icp;
+    this->suf      = output.suf;
+    this->swf      = output.swf;
+    this->land     = output.land;
   }
 };
 
@@ -89,11 +87,12 @@ private:
   // start
   Foot   s_suf;
   vec2_t rfoot, lfoot, icp;
+  double elapsed;
   // goal
   Foot   g_suf;
   vec2_t goal;
 
-  double dt;
+  double dt, dt_min;
   int    preview;
 
   bool found;

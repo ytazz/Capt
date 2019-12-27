@@ -8,6 +8,8 @@ Planner::Planner(Model *model, Param *param, Config *config, Grid *grid, Captura
   swingFoot = new SwingFoot(model);
   pendulum  = new Pendulum(model);
 
+  model->read(&dt_min, "step_time_min");
+
   config->read(&dt, "timestep");
   config->read(&preview, "preview");
 }
@@ -41,12 +43,15 @@ void Planner::plan(){
   rfoot = vec3Tovec2(input.rfoot);
   lfoot = vec3Tovec2(input.lfoot);
   icp   = vec3Tovec2(input.icp);
+  if(input.elapsed < dt_min / 2) {
+    elapsed = input.elapsed;
+  }else{
+    elapsed = dt_min / 2;
+  }
   s_suf = input.s_suf;
 
   calculateGoal();
   runSearch();
-
-  output.alpha = 0.0;
 }
 
 void Planner::replan(){
@@ -78,8 +83,8 @@ void Planner::calculateGoal(){
       }
     }
   }
-  g_suf = input.footstep[currentFootId + preview].suf;
-  vec3_t g_foot = input.footstep[currentFootId + preview].pos;
+  g_suf = input.footstep[currentFootId + 1].suf;
+  vec3_t g_foot = input.footstep[currentFootId + 1].pos;
   goal = vec3Tovec2(g_foot);
 }
 
@@ -96,26 +101,12 @@ void Planner::runSearch(){
     // calc swing foot trajectory
     swingFoot->set(s.swf, i.swf);
 
-    // calculate distance
-    double de = 0.0, dr = 0.0;
-    if(s_suf == FOOT_R) {
-      de         = ( s.swf - lfoot ).norm();
-      dr         = ( i.swf - lfoot ).norm();
-      output.suf = vec2Tovec3(rfoot);
-    }else{
-      de         = ( s.swf - rfoot ).norm();
-      dr         = ( i.swf - rfoot ).norm();
-      output.suf = vec2Tovec3(lfoot);
-    }
-
     // set to output
-    output.computation = 0.0;
-    output.duration    = swingFoot->getTime();
-    output.alpha       = de / ( de + dr );
-    output.cop         = vec2Tovec3(i.cop);
-    output.icp         = vec2Tovec3(s.icp);
-    output.swf         = vec2Tovec3(s.swf);
-    output.land        = vec2Tovec3(i.swf);
+    output.duration = swingFoot->getTime();
+    output.cop      = vec2Tovec3(i.cop);
+    output.icp      = vec2Tovec3(s.icp);
+    output.swf      = vec2Tovec3(s.swf);
+    output.land     = vec2Tovec3(i.swf);
   }else{ // couldn't found solution or reached goal
   }
 }

@@ -15,7 +15,7 @@ void Trajectory::set(EnhancedInput input, Foot suf){
 
   pendulum.setCop(vec3Tovec2(input.cop) );
   pendulum.setIcp(vec3Tovec2(input.icp) );
-  swing.set(input.swf, input.land);
+  swing.set(input.swf, input.land, input.duration);
 }
 
 vec3_t Trajectory::getCop(double elapsed){

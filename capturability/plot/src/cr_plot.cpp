@@ -219,8 +219,11 @@ void CRPlot::setCaptureMap(double x, double y, int n_step){
     j++;
 
   // map上の対応するIDに値を代入
-  if (0 <= i && i < x_num && 0 <= j && j < y_num)
-    capture_map[i][j] = n_step;
+  if (0 <= i && i < x_num && 0 <= j && j < y_num) {
+    if(capture_map[i][j] == 0 || n_step < capture_map[i][j]) {
+      capture_map[i][j] = n_step;
+    }
+  }
 }
 
 void CRPlot::plot(){
@@ -268,8 +271,8 @@ void CRPlot::plot(){
   fprintf(p.gp, "     \"dat/foot_region.dat\" with lines  lw 2 lc \"dark-blue\" title \"valid stepping region\",\\\n");
   fprintf(p.gp, "     \"dat/foot_r.dat\"      with lines  lw 2 lc \"black\"     title \"support foot\",\\\n");
   fprintf(p.gp, "     \"dat/foot_l.dat\"      with lines  lt 0 dt 1 lw 2 lc \"black\"     title \"swing foot\",\\\n");
-  fprintf(p.gp, "     \"dat/icp.dat\"         with points pt 2 lc 1 ps 2        title \"ICP\",\\\n");
-  fprintf(p.gp, "     \"dat/cop.dat\"         with points pt 7 lc 1 ps 2        title \"CoP\"\n");
+  fprintf(p.gp, "     \"dat/icp.dat\"         with points pt 2 lc 1 ps 2        title \"ICP\"\n");
+  // fprintf(p.gp, "     \"dat/cop.dat\"         with points pt 7 lc 1 ps 2        title \"CoP\"\n");
   fflush(p.gp);
 }
 

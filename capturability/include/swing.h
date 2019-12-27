@@ -1,8 +1,8 @@
 #ifndef __SWING_H__
 #define __SWING_H__
 
-// #include "interpolation.h"
-#include "cycloid.h"
+#include "interpolation.h"
+// #include "cycloid.h"
 #include "model.h"
 #include "base.h"
 
@@ -13,13 +13,16 @@ public:
   Swing(Model *model);
   ~Swing();
 
-  void   set(vec2_t foot, vec2_t foot_des);
-  void   set(vec3_t foot, vec3_t foot_des);
+  void   set(vec2_t foot, vec2_t foot_des, double elapsed);
+  void   set(vec3_t foot, vec3_t foot_des, double elapsed);
   double getTime();
   vec3_t getTraj(double dt);
 
 private:
-  Cycloid cycloid;
+  // Cycloid cycloid;
+  Interp2 swingX;
+  Interp2 swingY;
+  Interp2 swingZ;
 
   vec3_t foot, foot_des;
   double step_time_min, step_time;

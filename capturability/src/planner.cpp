@@ -99,7 +99,7 @@ void Planner::runSearch(){
     Input i = search->getInput();
 
     // calc swing foot trajectory
-    swing->set(s.swf, i.swf);
+    swing->set(s.swf, i.swf, elapsed);
 
     // set to output
     input.duration = swing->getTime();

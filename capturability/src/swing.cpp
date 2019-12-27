@@ -16,7 +16,7 @@ Swing::Swing(Model *model) {
 Swing::~Swing() {
 }
 
-void Swing::set(vec2_t foot, vec2_t foot_des) {
+void Swing::set(vec2_t foot, vec2_t foot_des, double elapsed) {
   this->foot.x()     = foot.x();
   this->foot.y()     = foot.y();
   this->foot.z()     = 0.0;
@@ -24,10 +24,10 @@ void Swing::set(vec2_t foot, vec2_t foot_des) {
   this->foot_des.y() = foot_des.y();
   this->foot_des.z() = 0.0;
 
-  set(this->foot, this->foot_des);
+  set(this->foot, this->foot_des, elapsed);
 }
 
-void Swing::set(vec3_t foot, vec3_t foot_des) {
+void Swing::set(vec3_t foot, vec3_t foot_des, double elapsed) {
   this->foot.x()     = foot.x();
   this->foot.y()     = foot.y();
   this->foot.z()     = foot.z();
@@ -37,9 +37,12 @@ void Swing::set(vec3_t foot, vec3_t foot_des) {
 
   double dist = sqrt( ( foot_des.x() - foot.x() ) * ( foot_des.x() - foot.x() ) +
                       ( foot_des.y() - foot.y() ) * ( foot_des.y() - foot.y() ) );
-  step_time = dist / foot_vel + step_time_min;
+  step_time = max(0, step_time_min / 2 - elapsed) + dist / foot_vel + step_time_min / 2;
 
-  cycloid.set(foot, foot_des, step_time);
+  // cycloid.set(foot, foot_des, step_time);
+  swingX.set(foot.x(), foot_des.x(), 0.0, step_time);
+  swingY.set(foot.y(), foot_des.y(), 0.0, step_time);
+  swingZ.set(foot.z(), foot_des.z(), 0.0, step_time);
 }
 
 double Swing::getTime() {
@@ -47,7 +50,12 @@ double Swing::getTime() {
 }
 
 vec3_t Swing::getTraj(double dt) {
-  return cycloid.get(dt);
+  // return cycloid.get(dt);
+  vec3_t pos;
+  pos.x() = swingX.get(dt);
+  pos.y() = swingY.get(dt);
+  pos.z() = swingZ.get(dt);
+  return pos;
 }
 
 } // namespace Capt

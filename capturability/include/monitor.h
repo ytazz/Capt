@@ -2,21 +2,30 @@
 #define __MONITOR_H__
 
 #include <iostream>
-#include <chrono>
 #include <vector>
+#include "swing.h"
+#include "grid.h"
+#include "capturability.h"
 
 namespace Capt {
 
 class Monitor {
 public:
-  Monitor(Grid *grid, Capturability *capturability);
+  Monitor(Model *model, Grid *grid, Capturability *capturability);
   ~Monitor();
 
-  bool check(EnhancedState state, vec2_t nextLandingPos);
+  bool          check(EnhancedState state, vec2_t nextLandingPos);
+  EnhancedInput get();
 
 private:
   Grid          *grid;
   Capturability *capturability;
+  Swing         *swing;
+
+  EnhancedState state;
+  EnhancedInput input;
+
+  double dt_min;
 
   double min;
   int    minId;

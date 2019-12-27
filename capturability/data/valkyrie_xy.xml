@@ -20,7 +20,7 @@
   </cop>
 
   <elapsed>
-    <t min="0" max="0.10" stp="0.01"/>
+    <t min="0" max="0" stp="0.01"/>
   </elapsed>
 
   <map>

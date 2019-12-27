@@ -7,6 +7,7 @@
 #include "tree.h"
 #include "search.h"
 #include "step_plot.h"
+#include "monitor.h"
 #include "planner.h"
 #include <chrono>
 
@@ -18,13 +19,13 @@ int main(int argc, char const *argv[]) {
   Param  *param  = new Param("data/valkyrie_xy.xml");
   Config *config = new Config("data/valkyrie_config.xml");
   Grid   *grid   = new Grid(param);
-  param->print();
 
   // capturability
   Capturability *capturability = new Capturability(grid);
   capturability->loadBasin("cpu/Basin.csv");
   capturability->loadNstep("cpu/Nstep.csv");
 
+  Monitor *monitor = new Monitor(model, grid, capturability);
   Planner *planner = new Planner(model, param, config, grid, capturability);
 
   // footstep
@@ -54,25 +55,27 @@ int main(int argc, char const *argv[]) {
     footstep.push_back(step[i]);
   }
 
-  planner::Input input;
-  input.footstep = footstep;
-  input.rfoot    = vec3_t(0, -0.2, 0);
-  input.lfoot    = vec3_t(0, +0.2, 0);
-  input.icp      = vec3_t(0, 0, 0);
-  input.s_suf    = Foot::FOOT_R;
+  EnhancedState state;
+  state.footstep = footstep;
+  state.rfoot    = vec3_t(0, -0.2, 0);
+  state.lfoot    = vec3_t(0, +0.2, 0);
+  state.icp      = vec3_t(0, 0, 0);
+  state.elapsed  = 0.0;
+  state.s_suf    = Foot::FOOT_R;
 
   Timer timer;
   timer.start();
-  planner::Output output;
-  planner->set(input);
-  planner->plan();
+  // planner->set(state);
+  // planner->plan();
+  bool safe = monitor->check(state, vec3Tovec2(step[0].pos) );
   timer.end();
   timer.print();
+  printf("safe: %d\n", safe);
 
   // draw path
-  StepPlot *plt = new StepPlot(model, param, grid);
-  plt->setSequence(planner->getSequence() );
-  plt->plot();
+  // StepPlot *plt = new StepPlot(model, param, grid);
+  // plt->setSequence(planner->getSequence() );
+  // plt->plot();
 
   return 0;
 }

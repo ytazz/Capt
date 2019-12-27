@@ -44,34 +44,35 @@ int main(int argc, char const *argv[]) {
 
   CRPlot *cr_plot;
   // case1
-  printf("plot case 1\n");
   state.icp << icp_x, icp_y;
   state.swf << swf_x, swf_y;
-  state = grid->roundState(state).state;
+  state.elp = 0.0;
+  state     = grid->roundState(state).state;
+  int stateId = grid->roundState(state).id;
 
   int count = 0;
-  for(int cop_id = 0; cop_id < 15; cop_id++) {
-    cr_plot = new CRPlot(model, param, grid);
-    cr_plot->initCaptureMap();
-    cr_plot->setState(state);
-    cr_plot->setCop(grid->getCop(cop_id) );
-    for(int N = 1; N <= 4; N++) {
-      if(capturability->capturable(state, N) ) {
-        std::vector<CaptureSet*> region = capturability->getCaptureRegion(state, N);
-        printf("%d-step capture points %5d\n", N, (int)region.size() );
-        count += (int)region.size();
-        for(size_t i = 0; i < region.size(); i++) {
-          Input input = grid->getInput(region[i]->input_id);
-          if(grid->indexCop(input.cop) == cop_id)
-            cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), N);
-        }
-      }
-    }
-    cr_plot->plot();
-    delete cr_plot;
+  // for(int cop_id = 0; cop_id < 15; cop_id++) {
+  cr_plot = new CRPlot(model, param, grid);
+  cr_plot->initCaptureMap();
+  cr_plot->setState(state);
+  // cr_plot->setCop(grid->getCop(cop_id) );
+  // for(int N = 1; N <= 4; N++) {
+  // if(capturability->capturable(state, N) ) {
+  std::vector<CaptureSet*> region = capturability->getCaptureRegion(stateId);
+  // printf("%d-step capture points %5d\n", N, (int)region.size() );
+  // count += (int)region.size();
+  for(size_t i = 0; i < region.size(); i++) {
+    Input input = grid->getInput(region[i]->input_id);
+    // if(grid->indexCop(input.cop) == cop_id)
+    cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), region[i]->nstep);
   }
+  // }
+  // }
+  cr_plot->plot();
+  delete cr_plot;
+  // }
 
-  printf("%d\n", count);
+  // printf("%d\n", count);
 
   return 0;
 }

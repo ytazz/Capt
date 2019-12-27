@@ -2,15 +2,19 @@
 
 namespace Capt {
 
-Monitor::Monitor(Grid *grid, Capturability *capturability){
-  this->grid          = grid;
-  this->capturability = capturability;
+Monitor::Monitor(Model *model, Grid *grid, Capturability *capturability) :
+  grid(grid), capturability(capturability){
+  swing = new Swing(model);
+
+  model->read(&dt_min, "step_time_min");
 }
 
 Monitor::~Monitor(){
 }
 
-bool Monitor::check(EnhancedState state){
+bool Monitor::check(EnhancedState state, vec2_t nextLandingPos){
+  this->state = state;
+
   vec2_t rfoot = vec3Tovec2(state.rfoot);
   vec2_t lfoot = vec3Tovec2(state.lfoot);
   vec2_t icp   = vec3Tovec2(state.icp);
@@ -29,9 +33,9 @@ bool Monitor::check(EnhancedState state){
     s_state.swf.y() = -( rfoot.y() - lfoot.y() );
   }
   if(state.elapsed < dt_min / 2) {
-    s_state.elapsed = state.elapsed;
+    s_state.elp = state.elapsed;
   }else{
-    s_state.elapsed = dt_min / 2;
+    s_state.elp = dt_min / 2;
   }
 
   // calculate current state id
@@ -44,7 +48,7 @@ bool Monitor::check(EnhancedState state){
   arr2_t captureRegion;
   captureRegion.resize(region.size() );
   for (size_t i = 0; i < region.size(); i++) {
-    vec2_t point = grid->getInput(region[i].input_id).swf;
+    vec2_t point = grid->getInput(region[i]->input_id).swf;
     if(state.s_suf == FOOT_R) {
       captureRegion[i] = rfoot + point;
     }else{
@@ -66,8 +70,33 @@ bool Monitor::check(EnhancedState state){
     }
   }
 
+  // set swing foot trajectory
+  if(state.s_suf == FOOT_R) {
+    swing->set(lfoot, nextLandingPos, s_state.elp);
+  }else{
+    swing->set(rfoot, nextLandingPos, s_state.elp);
+  }
+
+  // calculate input
+  input.duration = swing->getTime();
+  input.cop      = vec2Tovec3(grid->getInput(region[minId]->input_id).cop);
+  input.icp      = state.icp;
+  input.land     = vec2Tovec3(nextLandingPos);
+
+  if(state.s_suf == FOOT_R) {
+    input.suf = state.rfoot;
+    input.swf = state.lfoot;
+  }else{
+    input.suf = state.lfoot;
+    input.swf = state.rfoot;
+  }
+
   // if 1-step capturable, return true
   return isOneStepCapturable;
+}
+
+EnhancedInput Monitor::get(){
+  return input;
 }
 
 } // namespace Capt

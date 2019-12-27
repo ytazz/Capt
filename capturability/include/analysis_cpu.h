@@ -9,7 +9,7 @@
 #include "param.h"
 #include "pendulum.h"
 #include "state.h"
-#include "swing_foot.h"
+#include "swing.h"
 #include "base.h"
 #include <chrono>
 #include <iostream>

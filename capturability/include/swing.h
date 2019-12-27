@@ -1,5 +1,5 @@
-#ifndef __SWING_FOOT_H__
-#define __SWING_FOOT_H__
+#ifndef __SWING_H__
+#define __SWING_H__
 
 // #include "interpolation.h"
 #include "cycloid.h"
@@ -8,10 +8,10 @@
 
 namespace Capt {
 
-class SwingFoot {
+class Swing {
 public:
-  SwingFoot(Model *model);
-  ~SwingFoot();
+  Swing(Model *model);
+  ~Swing();
 
   void   set(vec2_t foot, vec2_t foot_des);
   void   set(vec3_t foot, vec3_t foot_des);
@@ -29,4 +29,4 @@ private:
 
 } // namespace Capt
 
-#endif // __SWING_FOOT_H__
+#endif // __SWING_H__

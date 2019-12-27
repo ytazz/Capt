@@ -7,7 +7,7 @@
 #include "state.h"
 #include "input.h"
 #include "pendulum.h"
-#include "swing_foot.h"
+#include "swing.h"
 #include "planner.h"
 
 namespace Capt {
@@ -27,8 +27,8 @@ public:
 private:
   planner::Output input;
 
-  Pendulum  pendulum;
-  SwingFoot swing_foot;
+  Pendulum pendulum;
+  Swing    swing;
 
   double h;
   Foot   suf;

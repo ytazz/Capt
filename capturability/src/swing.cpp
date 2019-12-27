@@ -1,8 +1,8 @@
-#include "swing_foot.h"
+#include "swing.h"
 
 namespace Capt {
 
-SwingFoot::SwingFoot(Model *model) {
+Swing::Swing(Model *model) {
   foot     = vec3_t::Zero();
   foot_des = vec3_t::Zero();
 
@@ -13,10 +13,10 @@ SwingFoot::SwingFoot(Model *model) {
   model->read(&step_height, "step_height");
 }
 
-SwingFoot::~SwingFoot() {
+Swing::~Swing() {
 }
 
-void SwingFoot::set(vec2_t foot, vec2_t foot_des) {
+void Swing::set(vec2_t foot, vec2_t foot_des) {
   this->foot.x()     = foot.x();
   this->foot.y()     = foot.y();
   this->foot.z()     = 0.0;
@@ -27,7 +27,7 @@ void SwingFoot::set(vec2_t foot, vec2_t foot_des) {
   set(this->foot, this->foot_des);
 }
 
-void SwingFoot::set(vec3_t foot, vec3_t foot_des) {
+void Swing::set(vec3_t foot, vec3_t foot_des) {
   this->foot.x()     = foot.x();
   this->foot.y()     = foot.y();
   this->foot.z()     = foot.z();
@@ -42,11 +42,11 @@ void SwingFoot::set(vec3_t foot, vec3_t foot_des) {
   cycloid.set(foot, foot_des, step_time);
 }
 
-double SwingFoot::getTime() {
+double Swing::getTime() {
   return step_time;
 }
 
-vec3_t SwingFoot::getTraj(double dt) {
+vec3_t Swing::getTraj(double dt) {
   return cycloid.get(dt);
 }
 

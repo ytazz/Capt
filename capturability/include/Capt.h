@@ -18,7 +18,7 @@
 #include "polygon.h"
 #include "search.h"
 #include "state.h"
-#include "swing_foot.h"
+#include "swing.h"
 #include "timer.h"
 #include "trajectory.h"
 #include "tree.h"

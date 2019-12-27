@@ -7,7 +7,7 @@
 #include "param.h"
 #include "polygon.h"
 #include "state.h"
-#include "swing_foot.h"
+#include "swing.h"
 #include <iostream>
 #include <stdio.h>
 #include <vector>

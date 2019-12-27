@@ -8,7 +8,7 @@
 #include "capturability.h"
 #include "tree.h"
 #include "search.h"
-#include "swing_foot.h"
+#include "swing.h"
 #include "pendulum.h"
 #include <iostream>
 #include <chrono>
@@ -76,10 +76,10 @@ private:
   void calculateGoal();
   void runSearch();
 
-  Tree      *tree;
-  Search    *search;
-  SwingFoot *swingFoot;
-  Pendulum  *pendulum;
+  Tree     *tree;
+  Search   *search;
+  Swing    *swing;
+  Pendulum *pendulum;
 
   planner::Input  input;
   planner::Output output;

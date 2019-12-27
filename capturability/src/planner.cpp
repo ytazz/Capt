@@ -5,7 +5,7 @@ using namespace Capt;
 Planner::Planner(Model *model, Param *param, Config *config, Grid *grid, Capturability *capt){
   tree      = new Tree(grid, capt);
   search    = new Search(grid, tree);
-  swingFoot = new SwingFoot(model);
+  swing = new Swing(model);
   pendulum  = new Pendulum(model);
 
   model->read(&dt_min, "step_time_min");
@@ -99,10 +99,10 @@ void Planner::runSearch(){
     Input i = search->getInput();
 
     // calc swing foot trajectory
-    swingFoot->set(s.swf, i.swf);
+    swing->set(s.swf, i.swf);
 
     // set to output
-    output.duration = swingFoot->getTime();
+    output.duration = swing->getTime();
     output.cop      = vec2Tovec3(i.cop);
     output.icp      = vec2Tovec3(s.icp);
     output.swf      = vec2Tovec3(s.swf);

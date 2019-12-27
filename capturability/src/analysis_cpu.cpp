@@ -88,9 +88,6 @@ void Analysis::calcTrans(){
   Pendulum pendulum(model);
   vec2_t   icp;
 
-  FILE *fp = fopen("stepTime.csv", "w");
-
-  fprintf(fp, "state_id, input_id, trans_id, tau, icp.x, icp.y\n");
   for(int state_id = 0; state_id < state_num; state_id++) {
     for(int input_id = 0; input_id < input_num; input_id++) {
       int id = state_id * input_num + input_id;
@@ -109,12 +106,8 @@ void Analysis::calcTrans(){
       state_.elp = 0.0;
 
       trans[id] = grid->roundState(state_).id;
-      if(trans[id] >= 0)
-        fprintf(fp, "%d, %d, %d, %lf, %lf, %lf\n", state_id, input_id, trans[id], tau, state_.icp.x(), state_.icp.y() );
     }
   }
-
-  fclose(fp);
 }
 
 bool Analysis::exe(const int n){

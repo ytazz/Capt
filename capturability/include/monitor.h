@@ -14,7 +14,7 @@ public:
   Monitor(Model *model, Grid *grid, Capturability *capturability);
   ~Monitor();
 
-  bool          check(EnhancedState state, vec2_t nextLandingPos);
+  bool          check(EnhancedState state, Footstep footstep);
   EnhancedInput get();
 
 private:

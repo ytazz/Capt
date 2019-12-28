@@ -67,7 +67,7 @@ int main(int argc, char const *argv[]) {
   timer.start();
   // planner->set(state);
   // planner->plan();
-  bool safe = monitor->check(state, vec3Tovec2(step[0].pos) );
+  bool safe = monitor->check(state, footstep );
   timer.end();
   timer.print();
   printf("safe: %d\n", safe);

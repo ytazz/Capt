@@ -11,6 +11,7 @@
 #include "interpolation.h"
 #include "loader.h"
 #include "model.h"
+#include "monitor.h"
 #include "node.h"
 #include "param.h"
 #include "pendulum.h"

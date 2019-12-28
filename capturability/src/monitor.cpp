@@ -12,12 +12,35 @@ Monitor::Monitor(Model *model, Grid *grid, Capturability *capturability) :
 Monitor::~Monitor(){
 }
 
-bool Monitor::check(EnhancedState state, vec2_t nextLandingPos){
+bool Monitor::check(EnhancedState state, Footstep footstep){
   this->state = state;
 
   vec2_t rfoot = vec3Tovec2(state.rfoot);
   vec2_t lfoot = vec3Tovec2(state.lfoot);
   vec2_t icp   = vec3Tovec2(state.icp);
+
+  // calculate next landing position
+  vec2_t nextLandingPos;
+  vec3_t suf;
+  if(state.s_suf == FOOT_R) {
+    suf = state.rfoot;
+  }else{
+    suf = state.lfoot;
+  }
+
+  double distMin       = 100; // set very large value as initial value
+  int    currentFootId = 0;
+  for(size_t i = 0; i < state.footstep.size(); i++) {
+    if(state.footstep[i].suf == state.s_suf) {
+      double dist = ( state.footstep[i].pos - suf ).norm();
+      if(dist < distMin) {
+        distMin       = dist;
+        currentFootId = (int)i;
+      }
+    }
+  }
+  nextLandingPos = vec3Tovec2(state.footstep[currentFootId + 1].pos);
+  printf("%lf, %lf\n", nextLandingPos.x(), nextLandingPos.y() );
 
   // calculate current state
   State s_state;

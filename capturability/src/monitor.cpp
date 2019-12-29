@@ -40,7 +40,6 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
     }
   }
   nextLandingPos = vec3Tovec2(state.footstep[currentFootId + 1].pos);
-  printf("%lf, %lf\n", nextLandingPos.x(), nextLandingPos.y() );
 
   // calculate current state
   State s_state;
@@ -76,21 +75,25 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
       captureRegion[i] = rfoot + point;
     }else{
       captureRegion[i].x() = lfoot.x() + point.x();
-      captureRegion[i].y() = lfoot.y() + point.y();
+      captureRegion[i].y() = lfoot.y() - point.y();
     }
   }
 
   // judge 1-step capturable or not
   bool isOneStepCapturable = false;
-  min   = ( nextLandingPos - captureRegion[0] ).norm();
+  min   = 100;
   minId = 0;
   for(size_t i = 0; i < region.size(); i++) {
     double dist = ( nextLandingPos - captureRegion[i] ).norm();
+    // printf("dist: %1.4lf, min: %1.4lf\n", dist, min);
     if(dist < min) {
-      min                 = dist;
-      minId               = (int)i;
-      isOneStepCapturable = true;
+      min   = dist;
+      minId = (int)i;
     }
+    // printf("%lf, %lf\n", captureRegion[i].x(), captureRegion[i].y() );
+  }
+  if(min < 0.05) {
+    isOneStepCapturable = true;
   }
 
   // set swing foot trajectory
@@ -101,17 +104,21 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
   }
 
   // calculate input
-  input.duration = swing->getTime();
-  input.cop      = vec2Tovec3(grid->getInput(region[minId]->input_id).cop);
-  input.icp      = state.icp;
-  input.land     = vec2Tovec3(nextLandingPos);
+  if(isOneStepCapturable) {
+    input.duration = swing->getTime();
+    input.icp      = state.icp;
+    input.land     = vec2Tovec3(nextLandingPos);
 
-  if(state.s_suf == FOOT_R) {
-    input.suf = state.rfoot;
-    input.swf = state.lfoot;
-  }else{
-    input.suf = state.lfoot;
-    input.swf = state.rfoot;
+    vec3_t cop = vec2Tovec3(grid->getInput(region[minId]->input_id).cop);
+    if(state.s_suf == FOOT_R) {
+      input.suf = state.rfoot;
+      input.swf = state.lfoot;
+      input.cop = state.rfoot + cop;
+    }else{
+      input.suf = state.lfoot;
+      input.swf = state.rfoot;
+      input.cop = state.lfoot + mirror(cop);
+    }
   }
 
   // if 1-step capturable, return true

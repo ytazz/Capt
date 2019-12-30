@@ -49,6 +49,11 @@ void Planner::plan(){
     elapsed = dt_min / 2;
   }
   s_suf = state.s_suf;
+  if(state.s_suf == FOOT_R) {
+    suf = state.rfoot;
+  }else{
+    suf = state.lfoot;
+  }
 
   calculateGoal();
   runSearch();
@@ -65,13 +70,6 @@ void Planner::calculateStart(){
 }
 
 void Planner::calculateGoal(){
-  vec3_t suf;
-  if(state.s_suf == FOOT_R) {
-    suf = state.rfoot;
-  }else{
-    suf = state.lfoot;
-  }
-
   double distMin       = 100; // set very large value as initial value
   int    currentFootId = 0;
   for(size_t i = 0; i < state.footstep.size(); i++) {
@@ -83,8 +81,8 @@ void Planner::calculateGoal(){
       }
     }
   }
-  g_suf = state.footstep[currentFootId + 1].suf;
-  vec3_t g_foot = state.footstep[currentFootId + 1].pos;
+  g_suf = state.footstep[currentFootId + 2].suf;
+  vec3_t g_foot = state.footstep[currentFootId + 2].pos;
   goal = vec3Tovec2(g_foot);
 }
 
@@ -103,10 +101,14 @@ void Planner::runSearch(){
 
     // set to output
     input.duration = swing->getTime();
+    input.suf      = suf;
     input.cop      = vec2Tovec3(i.cop);
     input.icp      = vec2Tovec3(s.icp);
     input.swf      = vec2Tovec3(s.swf);
     input.land     = vec2Tovec3(i.swf);
+    printf("duration  %1.3lf\n", input.duration );
+    printf("swf  %1.3lf, %1.3lf\n", input.swf.x(), input.swf.y() );
+    printf("land %1.3lf, %1.3lf\n", input.land.x(), input.land.y() );
   }else{ // couldn't found solution or reached goal
   }
 }

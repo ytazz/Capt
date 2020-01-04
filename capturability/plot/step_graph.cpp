@@ -1,10 +1,15 @@
-#include "grid.h"
-#include "loader.h"
 #include "model.h"
 #include "param.h"
-#include "base.h"
+#include "config.h"
+#include "grid.h"
+#include "grid_map.h"
+#include "timer.h"
+#include "tree.h"
+#include "search.h"
 #include "step_plot.h"
-#include <iostream>
+#include "monitor.h"
+#include "planner.h"
+#include <chrono>
 
 using namespace std;
 using namespace Capt;
@@ -14,40 +19,33 @@ int main(int argc, char const *argv[]) {
   Param *param = new Param("data/valkyrie_xy.xml");
   Grid  *grid  = new Grid(param);
 
+  // capturability
   Capturability *capturability = new Capturability(grid);
-  capturability->loadBasin("gpu/Basin.csv");
-  capturability->loadNstep("gpu/Nstep.csv");
+  capturability->loadBasin("cpu/Basin.csv");
+  capturability->loadNstep("cpu/Nstep.csv");
 
-  StepPlot *plot = new StepPlot(model, param, grid);
-  arr2_t    foot_r, foot_l, icp;
+  Tree   *tree   = new Tree(grid, capturability);
+  Search *search = new Search(grid, tree);
 
-  foot_r.resize(3);
-  foot_r[0] << 0.25, -0.5;
-  foot_r[1] << 0.75, -0.5;
-  foot_r[2] << 1.25, -0.5;
+  vec2_t rfoot = vec2_t(0, -0.2);
+  vec2_t lfoot = vec2_t(0, +0.2);
+  vec2_t icp   = vec2_t(0, 0);
+  Foot   s_suf = Foot::FOOT_R;
+  vec2_t goal  = vec2_t(0.3, -0.2);
+  Foot   g_suf = Foot::FOOT_R;
 
-  foot_l.resize(2);
-  foot_l[0] << 0.50, 0.5;
-  foot_l[1] << 1.00, 0.5;
+  Timer timer;
+  timer.start();
+  search->setStart(rfoot, lfoot, icp, s_suf);
+  search->setGoal(goal, g_suf);
+  search->calc();
+  timer.end();
+  timer.print();
 
-  icp.resize(6);
-  icp[0] << 0, 0;
-  icp[1] << 0.25, -0.5;
-  icp[2] << 0.50, +0.5;
-  icp[3] << 0.75, -0.5;
-  icp[4] << 1.00, +0.5;
-  icp[5] << 1.25, -0.5;
-
-  plot->setFootR(foot_r);
-  plot->setFootL(foot_l);
-  plot->setIcp(icp);
-  plot->plot();
-
-  delete model;
-  delete param;
-  delete grid;
-  delete capturability;
-  delete plot;
+  // draw path
+  StepPlot *plt = new StepPlot(model, param, grid);
+  plt->setSequence(search->getSequence() );
+  plt->plot();
 
   return 0;
 }

@@ -3,7 +3,7 @@
 namespace Capt {
 
 Tree::Tree(Grid *grid, Capturability* capturability) :
-  grid(grid), capturability(capturability), epsilon(0.05){
+  grid(grid), capturability(capturability), epsilon(0.01){
   clear();
 }
 

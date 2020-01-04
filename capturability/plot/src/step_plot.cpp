@@ -7,6 +7,7 @@ namespace Capt {
 StepPlot::StepPlot(Model *model, Param *param, Grid *grid)
   : model(model), param(param), grid(grid) {
   p("unset key");
+  p("unset border");
   p("set encoding utf8");
 
   param->read(&x_min, "map_x_min");
@@ -20,15 +21,16 @@ StepPlot::StepPlot(Model *model, Param *param, Grid *grid)
 
   // グラフサイズ設定
   p("set size square");
-  fprintf(p.gp, "set xrange [0:%d]\n", x_num - 1);
-  fprintf(p.gp, "set yrange [0:%d]\n", y_num - 1);
+  fprintf(p.gp, "set xrange [0:%d]\n", x_num);
+  fprintf(p.gp, "set yrange [0:%d]\n", y_num);
 
   // 軸ラベル設定
   p("set xlabel 'y [m]'");
   p("set ylabel 'x [m]'");
-  p("set xlabel font \"Arial,10\"");
-  p("set ylabel font \"Arial,10\"");
-  p("set tics   font \"Arial,10\"");
+  p("set xlabel font \"Arial,15\"");
+  p("set ylabel font \"Arial,15\"");
+  p("set tics   font \"Arial,15\"");
+  p("set key    font \"Arial,15\"");
 
   // 座標軸の目盛り設定
   p("set xtics 1");
@@ -42,20 +44,24 @@ StepPlot::StepPlot(Model *model, Param *param, Grid *grid)
 
   // xy軸の目盛りの値を再設定
   std::string x_tics, y_tics;
-  for (int i = 0; i < x_num; i++) {
+  for (int i = 0; i <= x_num; i++) {
     x_tics += "\"\" " + str(i);
-    if (i != x_num - 1)
+    if (i != x_num)
       x_tics += ", ";
   }
-  for (int i = 0; i < y_num; i++) {
+  for (int i = 0; i <= y_num; i++) {
     y_tics += "\"\" " + str(i);
-    if (i != y_num - 1)
+    if (i != y_num)
       y_tics += ", ";
   }
   fprintf(p.gp, "set xtics add (%s)\n", x_tics.c_str() );
   fprintf(p.gp, "set ytics add (%s)\n", y_tics.c_str() );
-  fprintf(p.gp, "set xtics add (\"%1.1lf\" 0, \"%1.1lf\" %d)\n", y_max, y_min, ( y_num - 1 ) );
-  fprintf(p.gp, "set ytics add (\"%1.1lf\" 0, \"%1.1lf\" %d)\n", x_min, x_max, ( x_num - 1 ) );
+  fprintf(p.gp, "set ytics add (\"0\" 10)\n");
+  fprintf(p.gp, "set ytics add (\"0.5\" 20)\n");
+  fprintf(p.gp, "set ytics add (\"1.0\" 30)\n");
+  fprintf(p.gp, "set xtics add (\"0\" 20)\n");
+  fprintf(p.gp, "set xtics add (\"-0.5\" 30)\n");
+  fprintf(p.gp, "set xtics add (\"0.5\" 10)\n");
 
   // 変数の初期化
   footstep_r.clear();
@@ -148,47 +154,86 @@ void StepPlot::plot(){
   model->read(&foot_r, "foot_r");
   model->read(&foot_l, "foot_l");
 
-  // 描画対象の追加
-  fprintf(p.gp, "plot ");
-  for(size_t i = 0; i < footstep_r.size(); i++) {
-    fprintf(p.gp, "'-' with lines lw 2 lc \"green\",");
-  }
-  for(size_t i = 0; i < footstep_l.size(); i++) {
-    fprintf(p.gp, "'-' with lines linewidth 2 lc \"red\",");
-  }
-  fprintf(p.gp, "'-' with lines  lw 2 lc \"dark-blue\",");
-  fprintf(p.gp, "'-' with points ps 1 lc \"red\"\n");
+  // 描画ファイル(.dat)への書き込み
+  std::string name = "";
+  FILE       *fp   = NULL;
+  for(int i = 0; i < x_num; i++) {
+    name = "dat/axis_x_" + std::to_string(i) + ".dat";
+    fp   = fopen(name.c_str(), "w");
 
-  // 描画
-  // footstep_r
+    vec2_t point[2];
+    point[0] = cartesianToGraph(x_min + x_stp / 2 + x_stp * i, y_min - y_stp / 2);
+    point[1] = cartesianToGraph(x_min + x_stp / 2 + x_stp * i, y_max - y_stp / 2);
+    fprintf(fp, "%f %f\n", point[0].x(), point[0].y() );
+    fprintf(fp, "%f %f\n", point[1].x(), point[1].y() );
+    fclose(fp);
+  }
+  for(int i = 0; i < y_num; i++) {
+    name = "dat/axis_y_" + std::to_string(i) + ".dat";
+    fp   = fopen(name.c_str(), "w");
+
+    vec2_t point[2];
+    point[0] = cartesianToGraph(x_min + x_stp / 2, y_min - y_stp / 2 + y_stp * i);
+    point[1] = cartesianToGraph(x_max + x_stp / 2, y_min - y_stp / 2 + y_stp * i);
+    fprintf(fp, "%f %f\n", point[0].x(), point[0].y() );
+    fprintf(fp, "%f %f\n", point[1].x(), point[1].y() );
+    fclose(fp);
+  }
   for(size_t i = 0; i < footstep_r.size(); i++) {
+    name = "dat/footstep_r_" + std::to_string(i) + ".dat";
+    fp   = fopen(name.c_str(), "w");
     for(size_t j = 0; j < foot_r.size(); j++) {
       vec2_t point = cartesianToGraph(footstep_r[i] + foot_r[j]);
-      fprintf(p.gp, "%f %f\n", point.x(), point.y() );
+      fprintf(fp, "%f %f\n", point.x(), point.y() );
     }
-    fprintf(p.gp, "e\n");
+    fclose(fp);
   }
-  // footstep_l
   for(size_t i = 0; i < footstep_l.size(); i++) {
+    name = "dat/footstep_l_" + std::to_string(i) + ".dat";
+    fp   = fopen(name.c_str(), "w");
     for(size_t j = 0; j < foot_l.size(); j++) {
       vec2_t point = cartesianToGraph(footstep_l[i] + foot_l[j]);
-      fprintf(p.gp, "%f %f\n", point.x(), point.y() );
+      fprintf(fp, "%f %f\n", point.x(), point.y() );
     }
-    fprintf(p.gp, "e\n");
+    fclose(fp);
   }
-  // icp
+  fp = fopen("dat/icp.dat", "w");
   for(size_t i = 0; i < icp.size(); i++) {
     vec2_t point = cartesianToGraph(icp[i]);
-    fprintf(p.gp, "%f %f\n", point.x(), point.y() );
+    fprintf(fp, "%f %f\n", point.x(), point.y() );
   }
-  fprintf(p.gp, "e\n");
-  // cop
+  fclose(fp);
+  fp = fopen("dat/cop.dat", "w");
   for(size_t i = 0; i < cop.size(); i++) {
     vec2_t point = cartesianToGraph(cop[i]);
-    fprintf(p.gp, "%f %f\n", point.x(), point.y() );
+    fprintf(fp, "%f %f\n", point.x(), point.y() );
   }
-  fprintf(p.gp, "e\n");
+  fclose(fp);
 
+  // 描画
+  fprintf(p.gp, "plot ");
+  for(int i = 0; i < x_num; i++) {
+    fprintf(p.gp, "\"dat/axis_x_%d.dat\" with lines lt -1 lw 2 lc \"gray90\" notitle,\\\n", (int)i);
+  }
+  for(int i = 0; i < y_num; i++) {
+    fprintf(p.gp, "\"dat/axis_y_%d.dat\" with lines lt -1 lw 2 lc \"gray90\" notitle,\\\n", (int)i);
+  }
+  for(size_t i = 0; i < footstep_r.size(); i++) {
+    if(i == 0) {
+      fprintf(p.gp, "     \"dat/footstep_r_%d.dat\" with lines lw 2 lc \"green\" title \"right foot\",\\\n", (int)i);
+    }else{
+      fprintf(p.gp, "     \"dat/footstep_r_%d.dat\" with lines lw 2 lc \"green\" notitle,\\\n", (int)i);
+    }
+  }
+  for(size_t i = 0; i < footstep_l.size(); i++) {
+    if(i == 0) {
+      fprintf(p.gp, "     \"dat/footstep_l_%d.dat\" with lines lw 2 lc \"red\" title \"left foot\",\\\n", (int)i);
+    }else{
+      fprintf(p.gp, "     \"dat/footstep_l_%d.dat\" with lines lw 2 lc \"red\" notitle,\\\n", (int)i);
+    }
+  }
+  fprintf(p.gp, "     \"dat/icp.dat\"         with lines  lw 2 lc \"dark-blue\" title \"ICP\",\\\n");
+  fprintf(p.gp, "     \"dat/cop.dat\"         with points ps 1 lc \"red\"       title \"CoP\"\n");
   fflush(p.gp);
 }
 

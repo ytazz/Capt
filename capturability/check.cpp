@@ -15,17 +15,16 @@ using namespace std;
 using namespace Capt;
 
 int main(int argc, char const *argv[]) {
-  Model  *model  = new Model("data/valkyrie.xml");
-  Param  *param  = new Param("data/valkyrie_xy.xml");
-  Config *config = new Config("data/valkyrie_config.xml");
-  Grid   *grid   = new Grid(param);
+  Model *model = new Model("data/valkyrie.xml");
+  Param *param = new Param("data/valkyrie_xy.xml");
+  Grid  *grid  = new Grid(param);
 
   // capturability
   Capturability *capturability = new Capturability(grid);
   capturability->loadBasin("cpu/Basin.csv");
   capturability->loadNstep("cpu/Nstep.csv");
 
-  Planner *planner = new Planner(model, param, config, grid, capturability);
+  Monitor *monitor = new Monitor(model, grid, capturability);
 
   // footstep
   Step step[11];
@@ -66,15 +65,15 @@ int main(int argc, char const *argv[]) {
 
   Timer timer;
   timer.start();
-  planner->set(state);
-  planner->plan();
+  bool safe = monitor->check(state, footstep );
   timer.end();
   timer.print();
+  printf("safe: %d\n", safe);
 
   // draw path
-  StepPlot *plt = new StepPlot(model, param, grid);
-  plt->setSequence(planner->getSequence() );
-  plt->plot();
+  // StepPlot *plt = new StepPlot(model, param, grid);
+  // plt->setSequence(planner->getSequence() );
+  // plt->plot();
 
   return 0;
 }

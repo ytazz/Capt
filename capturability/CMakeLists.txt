@@ -69,6 +69,8 @@ set(PLOT_SOURCES
 
 add_executable(debug debug.cpp ${CAPT_SOURCES} ${PLOT_SOURCES})
 target_link_libraries(debug ${EXPAT_LIBRARIES})
+add_executable(check check.cpp ${CAPT_SOURCES} ${PLOT_SOURCES})
+target_link_libraries(check ${EXPAT_LIBRARIES})
 
 if(${BUILD_CPU})
   add_executable( main_cpu

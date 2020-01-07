@@ -24,7 +24,9 @@ int main(int argc, char const *argv[]) {
   capturability->loadBasin("cpu/Basin.csv");
   capturability->loadNstep("cpu/Nstep.csv");
 
-  Monitor *monitor = new Monitor(model, grid, capturability);
+  Monitor  *monitor  = new Monitor(model, grid, capturability);
+  StepPlot *plt      = new StepPlot(model, param, grid);
+  Pendulum *pendulum = new Pendulum(model);
 
   // footstep
   Step step[11];
@@ -71,9 +73,17 @@ int main(int argc, char const *argv[]) {
   printf("safe: %d\n", safe);
 
   // draw path
-  // StepPlot *plt = new StepPlot(model, param, grid);
-  // plt->setSequence(planner->getSequence() );
-  // plt->plot();
+  EnhancedInput input = monitor->get();
+  pendulum->setIcp(input.icp);
+  pendulum->setCop(input.cop);
+  vec2_t icp_hat = pendulum->getIcp(input.duration);
+  plt->setFootR(vec3Tovec2(input.suf) );
+  plt->setFootL(vec3Tovec2(input.land) );
+  plt->setCop(vec3Tovec2(input.cop) );
+  plt->setIcp(vec3Tovec2(input.icp) );
+  plt->setIcp(icp_hat);
+  plt->plot();
+  printf("%1.3lf, %1.3lf\n", icp_hat.x(), icp_hat.y() );
 
   return 0;
 }

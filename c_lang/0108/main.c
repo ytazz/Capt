@@ -1,10 +1,23 @@
+/*
+   NOTE:
+     positive numbers start with 0
+     negative numbers start with n-1
+
+   ex)
+     +10 (10) -> 01010 (2), 0a (16)
+     -10 (10) -> 10110 (2), f6 (16)
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+// symbol[key] = *
 char symbol[] = "0123456789abcdef";
 
-void append(char* s, const char s_){
+// prepend number
+// ex) 12a4 + b -> b12a4
+void prepend(char* s, const char s_){
   const int size = (int)strlen(s);
   for(int i = size; i > 0; i--) {
     s[i] = s[i - 1];
@@ -12,18 +25,22 @@ void append(char* s, const char s_){
   s[0] = s_;
 }
 
+// get the number of a symbol
 int key(char s){
   return strchr(symbol, s) - symbol;
 }
 
+// calculate complement
+// (complement) = (bit inversion of original number) + 1
 void complement(char* s, int n){
   const int size = (int)strlen(s);
 
-  // reverse
+  // inversion
   for(int i = 0; i < size; i++) {
     int id = key(s[i]);
     s[i] = symbol[n - id - 1];
   }
+
   // add 1
   for(int i = size - 1; i >= 0; i--) {
     int id = key(s[i]);
@@ -67,10 +84,10 @@ void i2a(int x, int n, char* s){
 
   if(x >= 0) {
     while(x > 0) {
-      append(s, symbol[( x % n )]);
+      prepend(s, symbol[( x % n )]);
       x = x / n;
     }
-    append(s, symbol[0]);
+    prepend(s, symbol[0]);
   }else{
     i2a(-x, n, s);
     complement(s, n);

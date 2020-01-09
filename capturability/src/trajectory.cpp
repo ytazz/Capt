@@ -3,7 +3,8 @@
 namespace Capt {
 
 Trajectory::Trajectory(Model *model) : pendulum(model), swing(model){
-  model->read(&h, "step_height");
+  model->read(&h,      "step_height");
+  model->read(&dt_min, "step_time_min");
 }
 
 Trajectory::~Trajectory(){
@@ -15,15 +16,21 @@ void Trajectory::set(EnhancedInput input, Foot suf){
 
   pendulum.setCop(vec3Tovec2(input.cop) );
   pendulum.setIcp(vec3Tovec2(input.icp) );
-  swing.set(input.swf, input.land, 0.0);
+
+  elapsed = input.elapsed;
+  if(elapsed > dt_min / 2) {
+    elapsed = dt_min / 2;
+  }
+
+  swing.set(input.swf, input.land, elapsed);
 }
 
 vec3_t Trajectory::getCop(double elapsed){
-  return vec2Tovec3(pendulum.getCop(elapsed) );
+  return vec2Tovec3(pendulum.getCop(elapsed - this->elapsed) );
 }
 
 vec3_t Trajectory::getIcp(double elapsed){
-  return vec2Tovec3(pendulum.getIcp(elapsed) );
+  return vec2Tovec3(pendulum.getIcp(elapsed - this->elapsed) );
 }
 
 vec3_t Trajectory::getFootR(double elapsed){

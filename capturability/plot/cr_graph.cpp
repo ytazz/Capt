@@ -15,8 +15,8 @@ int main(int argc, char const *argv[]) {
   Grid  *grid  = new Grid(param);
 
   Capturability *capturability = new Capturability(grid);
-  capturability->loadBasin("gpu/Basin.csv");
-  capturability->loadNstep("gpu/Nstep.csv");
+  capturability->loadBasin("cpu/Basin.csv");
+  capturability->loadNstep("cpu/Nstep.csv");
 
   // paper plot for nao
   // double icp_x        = 0.00;
@@ -33,10 +33,10 @@ int main(int argc, char const *argv[]) {
   // double icp_x_offset = 0.1;
   // double icp_y_offset = 0.05;
   // walk val
-  double icp_x = 0.0;
-  double icp_y = 0.2;
-  double swf_x = 0.0;
-  double swf_y = 0.4;
+  double icp_x = 0.032667;
+  double icp_y = 0.359609;
+  double swf_x = 0.049978;
+  double swf_y = 0.449978;
 
   State state;
   Input input;
@@ -46,7 +46,7 @@ int main(int argc, char const *argv[]) {
   // case1
   state.icp << icp_x, icp_y;
   state.swf << swf_x, swf_y;
-  state.elp = 0.0;
+  state.elp = 0.1;
   state     = grid->roundState(state).state;
   int stateId = grid->roundState(state).id;
 

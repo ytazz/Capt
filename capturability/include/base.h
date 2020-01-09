@@ -83,6 +83,7 @@ struct EnhancedState {
 };
 
 struct EnhancedInput {
+  double       elapsed;  // elapsed time from support foot exchange
   double       duration; // remained step duration
   Capt::vec3_t cop;
   Capt::vec3_t icp;
@@ -91,6 +92,7 @@ struct EnhancedInput {
   Capt::vec3_t land;
 
   void operator=(const EnhancedInput &eInput) {
+    this->elapsed  = eInput.elapsed;
     this->duration = eInput.duration;
     this->cop      = eInput.cop;
     this->icp      = eInput.icp;

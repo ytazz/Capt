@@ -30,7 +30,8 @@ private:
   Pendulum pendulum;
   Swing    swing;
 
-  double h;
+  double h, dt_min;
+  double elapsed, planned;
   Foot   suf;
   double time;
 };

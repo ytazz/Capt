@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "swing.h"
+#include "pendulum.h"
 #include "grid.h"
 #include "capturability.h"
 
@@ -21,6 +22,7 @@ private:
   Grid          *grid;
   Capturability *capturability;
   Swing         *swing;
+  Pendulum      *pendulum;
 
   EnhancedState state;
   EnhancedInput input;

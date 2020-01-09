@@ -25,8 +25,8 @@ int main(int argc, char const *argv[]) {
   capturability->loadNstep("cpu/Nstep.csv");
 
   Monitor  *monitor  = new Monitor(model, grid, capturability);
-  StepPlot *plt      = new StepPlot(model, param, grid);
   Pendulum *pendulum = new Pendulum(model);
+  Swing    *swing    = new Swing(model);
 
   // footstep
   Step step[11];
@@ -53,7 +53,7 @@ int main(int argc, char const *argv[]) {
   step[10].pos = vec3_t(2.00, -0.20, 0);
   step[10].suf = Foot::FOOT_R;
   Footstep footstep;
-  for(int i = 0; i < 10; i++) {
+  for(int i = 0; i <= 10; i++) {
     footstep.push_back(step[i]);
   }
 
@@ -65,25 +65,38 @@ int main(int argc, char const *argv[]) {
   state.elapsed  = 0.0;
   state.s_suf    = Foot::FOOT_R;
 
-  Timer timer;
-  timer.start();
-  bool safe = monitor->check(state, footstep );
-  timer.end();
-  timer.print();
-  printf("safe: %d\n", safe);
+  EnhancedInput input;
+  for(int i = 0; i <= 3; i++) {
+    StepPlot *plt = new StepPlot(model, param, grid);
 
-  // draw path
-  EnhancedInput input = monitor->get();
-  pendulum->setIcp(input.icp);
-  pendulum->setCop(input.cop);
-  vec2_t icp_hat = pendulum->getIcp(input.duration);
-  plt->setFootR(vec3Tovec2(input.suf) );
-  plt->setFootL(vec3Tovec2(input.land) );
-  plt->setCop(vec3Tovec2(input.cop) );
-  plt->setIcp(vec3Tovec2(input.icp) );
-  plt->setIcp(icp_hat);
-  plt->plot();
-  printf("%1.3lf, %1.3lf\n", icp_hat.x(), icp_hat.y() );
+    bool safe = monitor->check(state, footstep );
+    printf("safe: %d\n", safe);
+
+    // draw path
+    input = monitor->get();
+    pendulum->setIcp(input.icp);
+    pendulum->setCop(input.cop);
+    vec2_t icp_hat = pendulum->getIcp(0.05);
+    plt->setFootR(vec3Tovec2(input.suf) );
+    plt->setFootL(vec3Tovec2(input.land) );
+    plt->setCop(vec3Tovec2(input.cop) );
+    plt->setIcp(vec3Tovec2(input.icp) );
+    plt->setIcp(icp_hat);
+    swing->set(input.swf, input.land, state.elapsed);
+    vec3_t swf = swing->getTraj(state.elapsed + 0.05);
+    printf("icp_hat %1.3lf, %1.3lf\n", icp_hat.x(), icp_hat.y() );
+    printf("swf     %1.3lf, %1.3lf, %1.3lf\n", swf.x(), swf.y(), swf.z() );
+    plt->setFootL(vec3Tovec2(swf) );
+
+    plt->plot();
+
+    state.rfoot    = vec3_t(0, -0.2, 0);
+    state.lfoot    = swf;
+    state.icp      = vec2Tovec3(icp_hat);
+    state.elapsed += 0.05;
+
+    delete plt;
+  }
 
   return 0;
 }

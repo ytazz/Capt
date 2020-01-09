@@ -8,6 +8,8 @@
 
 namespace Capt {
 
+enum SwingPhase { OFF, SWING, ON, LAND };
+
 class Swing {
 public:
   Swing(Model *model);
@@ -20,14 +22,13 @@ public:
 
 private:
   // Cycloid cycloid;
-  Interp2 swingX;
-  Interp2 swingY;
-  Interp2 swingZ;
+  Interp3 swingUp;
+  Interp3 swingDown;
 
   vec3_t foot, foot_des;
-  double step_time_min, step_time;
-  double step_height;
-  double foot_vel;
+  double dt_min, tau, tau_swing;
+  double h;
+  double v_max;
 };
 
 } // namespace Capt

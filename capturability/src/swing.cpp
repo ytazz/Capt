@@ -6,11 +6,14 @@ Swing::Swing(Model *model) {
   foot     = vec3_t::Zero();
   foot_des = vec3_t::Zero();
 
-  step_time = 0.0;
+  tau = 0.0;
 
-  model->read(&foot_vel, "foot_vel_max");
-  model->read(&step_time_min, "step_time_min");
-  model->read(&step_height, "step_height");
+  model->read(&v_max,  "foot_vel_max");
+  model->read(&dt_min, "step_time_min");
+  model->read(&h,      "step_height");
+
+  swingUp.set(0, h, 0, 0, dt_min / 2);
+  swingDown.set(h, 0, 0, 0, dt_min / 2);
 }
 
 Swing::~Swing() {
@@ -35,26 +38,54 @@ void Swing::set(vec3_t foot, vec3_t foot_des, double elapsed) {
   this->foot_des.y() = foot_des.y();
   this->foot_des.z() = foot_des.z();
 
-  double dist = sqrt( ( foot_des.x() - foot.x() ) * ( foot_des.x() - foot.x() ) +
-                      ( foot_des.y() - foot.y() ) * ( foot_des.y() - foot.y() ) );
-  step_time = max(0, step_time_min / 2 - elapsed) + dist / foot_vel + step_time_min / 2;
-
-  // cycloid.set(foot, foot_des, step_time);
-  swingX.set(foot.x(), foot_des.x(), 0.0, step_time);
-  swingY.set(foot.y(), foot_des.y(), 0.0, step_time);
-  swingZ.set(foot.z(), foot_des.z(), 0.0, step_time);
+  double dist = ( foot_des - foot ).norm();
+  tau       = max(0, dt_min / 2 - elapsed) + dist / v_max + dt_min / 2;
+  tau_swing = dist / v_max;
 }
 
 double Swing::getTime() {
-  return step_time;
+  return tau;
 }
 
+// dt = time from support foot exchange
 vec3_t Swing::getTraj(double dt) {
-  // return cycloid.get(dt);
+  // judge phase
+  SwingPhase phase;
+  if(dt > tau) {
+    phase = LAND;
+  }else if(dt < dt_min / 2) {
+    phase = OFF;
+  }else if(dt < dt_min / 2 + tau_swing) {
+    phase = SWING;
+  }else{
+    phase = ON;
+  }
+
+  // calculate desired swing foot position
   vec3_t pos;
-  pos.x() = swingX.get(dt);
-  pos.y() = swingY.get(dt);
-  pos.z() = swingZ.get(dt);
+  switch (phase) {
+  case OFF:
+    pos.x() = foot.x();
+    pos.y() = foot.y();
+    pos.z() = swingUp.get(dt);
+    break;
+  case SWING:
+    pos.x() = ( foot_des.x() - foot.x() ) * ( dt - dt_min / 2 ) / tau_swing + foot.x();
+    pos.y() = ( foot_des.y() - foot.y() ) * ( dt - dt_min / 2 ) / tau_swing + foot.y();
+    pos.z() = h;
+    break;
+  case ON:
+    pos.x() = foot_des.x();
+    pos.y() = foot_des.y();
+    pos.z() = swingDown.get(dt - tau_swing - dt_min / 2);
+    break;
+  case LAND:
+    pos.x() = foot_des.x();
+    pos.y() = foot_des.y();
+    pos.z() = 0;
+    break;
+  }
+
   return pos;
 }
 

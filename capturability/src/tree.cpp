@@ -12,30 +12,32 @@ Tree::~Tree(){
 
 void Tree::clear(){
   num_node = 0;
+  opened   = 0;
   for(int i = 0; i < MAX_NODE_SIZE; i++) {
     nodes[i].parent   = NULL;
     nodes[i].state_id = 0;
     nodes[i].input_id = 0;
     nodes[i].suf      = FOOT_NONE;
-    nodes[i].pos << 0, 0;
+    nodes[i].pos      = vec2_t(0, 0);
+    nodes[i].step     = 0;
+    nodes[i].err      = 0;
   }
-  opened = 0;
 }
 
-Node* Tree::search(int state_id, Foot s_suf, vec2_t g_foot, Foot g_suf){
+Node* Tree::search(int state_id, Foot s_suf, arr2_t g_foot){
   // set start node
-  nodes[num_node].parent   = NULL;
   nodes[num_node].state_id = state_id;
-  nodes[num_node].input_id = 0;
   nodes[num_node].suf      = s_suf;
-  nodes[num_node].pos << 0.0, 0.0;
   num_node++;
 
   // calculate reaves
   vec2_t swf, pos;
+  Node  *goal = NULL;
+  double min  = 100;
   while(true) {
     // set target node based on breadth first search
     Node *target = &nodes[opened];
+
     // target node expansion
     std::vector<CaptureSet*> region = capturability->getCaptureRegion(target->state_id, 1);
     for(size_t i = 0; i < region.size(); i++) {
@@ -43,6 +45,13 @@ Node* Tree::search(int state_id, Foot s_suf, vec2_t g_foot, Foot g_suf){
       nodes[num_node].parent   = target;
       nodes[num_node].state_id = region[i]->next_id;
       nodes[num_node].input_id = region[i]->input_id;
+      nodes[num_node].step     = target->step + 1;
+      // printf("-----------------------------------------\n");
+      // printf(" %d\n", nodes[num_node].step);
+
+      if(nodes[num_node].step == 4) {
+        return goal;
+      }
 
       // calculate next landing position
       swf = grid->getInput(region[i]->input_id).swf;
@@ -56,10 +65,18 @@ Node* Tree::search(int state_id, Foot s_suf, vec2_t g_foot, Foot g_suf){
         nodes[num_node].suf     = FOOT_R;
       }
 
+      nodes[num_node].err = target->err + ( nodes[num_node].pos - g_foot[nodes[num_node].step] ).norm();
       // determine if next position reach goal
-      if(nodes[num_node].suf == g_suf) {
-        if( ( nodes[num_node].pos - g_foot ).norm() < epsilon) {
-          return &nodes[num_node];
+      // if(nodes[num_node].suf == g_suf) {
+      //   if( ( nodes[num_node].pos - g_foot ).norm() < epsilon) {
+      //     return &nodes[num_node];
+      //   }
+      // }
+
+      if(nodes[num_node].step == 3) {
+        if(nodes[num_node].err < min) {
+          goal = &nodes[num_node];
+          min  = nodes[num_node].err;
         }
       }
 

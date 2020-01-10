@@ -37,26 +37,28 @@ void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){
   s_state_id = grid->roundState(s_state).id;
 }
 
-void Search::setGoal(vec2_t foot, Foot suf){
-  this->g_suf = suf;
+void Search::setReference(arr2_t foot){
+  ref.resize(foot.size() );
 
-  if(s_suf == FOOT_R) {
-    g_foot.x() = +( foot.x() - rfoot.x() );
-    g_foot.y() = +( foot.y() - rfoot.y() );
-  }else{
-    g_foot.x() = +( foot.x() - lfoot.x() );
-    g_foot.y() = -( foot.y() - lfoot.y() );
+  for(size_t i = 0; i < foot.size(); i++) {
+    if(s_suf == FOOT_R) {
+      ref[i].x() = +( foot[i].x() - rfoot.x() );
+      ref[i].y() = +( foot[i].y() - rfoot.y() );
+    }else{
+      ref[i].x() = +( foot[i].x() - lfoot.x() );
+      ref[i].y() = -( foot[i].y() - lfoot.y() );
+    }
   }
 
-  g_foot.x() = round(g_foot.x() / 0.05) * 0.05;
-  g_foot.y() = round(g_foot.y() / 0.05) * 0.05;
+  // g_foot.x() = round(g_foot.x() / 0.05) * 0.05;
+  // g_foot.y() = round(g_foot.y() / 0.05) * 0.05;
 }
 
 bool Search::calc(){
   tree->clear();
   seq.clear();
   region.clear();
-  g_node = tree->search(s_state_id, s_suf, g_foot, g_suf);
+  g_node = tree->search(s_state_id, s_suf, ref);
   if(g_node == NULL) {
     return false;
   }else{

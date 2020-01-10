@@ -51,7 +51,7 @@ private:
   double elapsed;
   // goal
   Foot   g_suf;
-  vec2_t goal;
+  arr2_t goal;
 
   double dt, dt_min;
   int    preview;

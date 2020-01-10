@@ -81,14 +81,17 @@ void Planner::calculateGoal(){
       }
     }
   }
-  g_suf = state.footstep[currentFootId + 2].suf;
-  vec3_t g_foot = state.footstep[currentFootId + 2].pos;
-  goal = vec3Tovec2(g_foot);
+  goal.clear();
+  goal.resize(4);
+  goal[0] = vec3Tovec2(state.footstep[currentFootId + 0].pos);
+  goal[1] = vec3Tovec2(state.footstep[currentFootId + 1].pos);
+  goal[2] = vec3Tovec2(state.footstep[currentFootId + 2].pos);
+  goal[3] = vec3Tovec2(state.footstep[currentFootId + 3].pos);
 }
 
 void Planner::runSearch(){
   search->setStart(rfoot, lfoot, icp, s_suf);
-  search->setGoal(goal, g_suf);
+  search->setReference(goal);
   found = search->calc();
 
   if(found) { // if found solution

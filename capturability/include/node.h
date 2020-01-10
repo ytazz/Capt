@@ -40,6 +40,8 @@ struct Node {
   int    input_id;
   Foot   suf;
   vec2_t pos;
+  int    step;
+  double err;
 
   void operator=(const Node &node) {
     this->parent   = node.parent;
@@ -47,6 +49,8 @@ struct Node {
     this->input_id = node.input_id;
     this->suf      = node.suf;
     this->pos      = node.pos;
+    this->step     = node.step;
+    this->err      = node.err;
   }
 };
 

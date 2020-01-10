@@ -39,7 +39,7 @@ arr3_t Planner::getFootstepL(){
   return search->getFootstepL();
 }
 
-void Planner::plan(){
+bool Planner::plan(){
   rfoot = vec3Tovec2(state.rfoot);
   lfoot = vec3Tovec2(state.lfoot);
   icp   = vec3Tovec2(state.icp);
@@ -56,13 +56,7 @@ void Planner::plan(){
   }
 
   calculateGoal();
-  runSearch();
-}
-
-void Planner::replan(){
-  // calculateStart();
-  calculateGoal();
-  runSearch();
+  return runSearch();
 }
 
 void Planner::calculateStart(){
@@ -89,7 +83,7 @@ void Planner::calculateGoal(){
   goal[3] = vec3Tovec2(state.footstep[currentFootId + 3].pos);
 }
 
-void Planner::runSearch(){
+bool Planner::runSearch(){
   search->setStart(rfoot, lfoot, icp, s_suf);
   search->setReference(goal);
   found = search->calc();
@@ -112,7 +106,10 @@ void Planner::runSearch(){
     printf("duration  %1.3lf\n", input.duration );
     printf("swf  %1.3lf, %1.3lf\n", input.swf.x(), input.swf.y() );
     printf("land %1.3lf, %1.3lf\n", input.land.x(), input.land.y() );
+
+    return true;
   }else{ // couldn't found solution or reached goal
+    return false;
   }
 }
 

@@ -30,22 +30,45 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t g_foot){
   nodes[num_node].suf      = s_suf;
   num_node++;
 
+  // set n in each step
+  int nStepCaptureBasin = -1;
+  for(int i = 4; i > 0; i--) {
+    if(capturability->capturable(state_id, i) ) {
+      nStepCaptureBasin = i;
+    }
+  }
+  if(nStepCaptureBasin < 0) {
+    printf("NOT capturable\n");
+    return NULL;
+  }
+  printf("%d-step capturable \n", nStepCaptureBasin);
+  int n[10];
+  for(int i = 0; i < 10; i++) {
+    int n_ = nStepCaptureBasin - i + 1;
+    if( n_ > 0) {
+      n[i] = n_;
+    }else{
+      n[i] = 1;
+    }
+  }
+
   // calculate reaves
   vec2_t swf, pos;
   Node  *goal = NULL;
   double min  = 100;
   while(true) {
     // set target node based on breadth first search
-    Node *target = &nodes[opened];
+    Node *target  = &nodes[opened];
+    int   numStep = target->step + 1; // 何歩目か
 
     // target node expansion
-    std::vector<CaptureSet*> region = capturability->getCaptureRegion(target->state_id, 1);
+    std::vector<CaptureSet*> region = capturability->getCaptureRegion(target->state_id, n[numStep]);
     for(size_t i = 0; i < region.size(); i++) {
       // set parent
       nodes[num_node].parent   = target;
       nodes[num_node].state_id = region[i]->next_id;
       nodes[num_node].input_id = region[i]->input_id;
-      nodes[num_node].step     = target->step + 1;
+      nodes[num_node].step     = numStep;
       // printf("-----------------------------------------\n");
       // printf(" %d\n", nodes[num_node].step);
 
@@ -81,7 +104,11 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t g_foot){
       }
 
       num_node++;
+      if(num_node > MAX_NODE_SIZE - 100) {
+        return NULL;
+      }
     }
+
     opened++;
   }
   return NULL;

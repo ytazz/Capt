@@ -33,7 +33,7 @@ public:
 private:
   void calculateStart();
   void calculateGoal();
-  bool runSearch();
+  bool runSearch(int preview);
 
   Tree     *tree;
   Search   *search;

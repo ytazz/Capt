@@ -56,7 +56,7 @@ bool Planner::plan(){
   }
 
   calculateGoal();
-  return runSearch();
+  return runSearch(preview);
 }
 
 void Planner::calculateStart(){
@@ -66,7 +66,8 @@ void Planner::calculateStart(){
 void Planner::calculateGoal(){
   double distMin       = 100; // set very large value as initial value
   int    currentFootId = 0;
-  for(size_t i = 0; i < state.footstep.size(); i++) {
+  int    maxFootId     = (int)state.footstep.size() - 1;
+  for(int i = 0; i <= maxFootId; i++) {
     if(state.footstep[i].suf == state.s_suf) {
       double dist = ( state.footstep[i].pos - suf ).norm();
       if(dist < distMin) {
@@ -75,18 +76,31 @@ void Planner::calculateGoal(){
       }
     }
   }
-  goal.clear();
-  goal.resize(4);
-  goal[0] = vec3Tovec2(state.footstep[currentFootId + 0].pos);
-  goal[1] = vec3Tovec2(state.footstep[currentFootId + 1].pos);
-  goal[2] = vec3Tovec2(state.footstep[currentFootId + 2].pos);
-  goal[3] = vec3Tovec2(state.footstep[currentFootId + 3].pos);
+
+  int remainedFootsteps = maxFootId - currentFootId;
+  if(preview <= remainedFootsteps) {
+    goal.clear();
+    goal.resize(preview);
+    for(int i = 0; i < preview; i++) {
+      goal[i] = vec3Tovec2(state.footstep[currentFootId + i].pos);
+      printf("goal: %+1.3lf %+1.3lf\n", goal[i].x(), goal[i].y() );
+    }
+  }else{
+    goal.clear();
+    goal.resize(remainedFootsteps + 1);
+    for(int i = 0; i <= remainedFootsteps; i++) {
+      goal[i] = vec3Tovec2(state.footstep[currentFootId + i].pos);
+      printf("goal: %+1.3lf %+1.3lf\n", goal[i].x(), goal[i].y() );
+    }
+  }
 }
 
-bool Planner::runSearch(){
+bool Planner::runSearch(int preview){
   search->setStart(rfoot, lfoot, icp, s_suf);
   search->setReference(goal);
-  found = search->calc();
+  found = search->calc( (int)goal.size() - 1);
+  printf("\n");
+  printf("\n");
 
   if(found) { // if found solution
     // get state & input
@@ -103,9 +117,9 @@ bool Planner::runSearch(){
     input.icp      = vec2Tovec3(s.icp);
     input.swf      = vec2Tovec3(s.swf);
     input.land     = vec2Tovec3(i.swf);
-    printf("duration  %1.3lf\n", input.duration );
-    printf("swf  %1.3lf, %1.3lf\n", input.swf.x(), input.swf.y() );
-    printf("land %1.3lf, %1.3lf\n", input.land.x(), input.land.y() );
+    // printf("duration  %1.3lf\n", input.duration );
+    // printf("swf  %1.3lf, %1.3lf\n", input.swf.x(), input.swf.y() );
+    // printf("land %1.3lf, %1.3lf\n", input.land.x(), input.land.y() );
 
     return true;
   }else{ // couldn't found solution or reached goal

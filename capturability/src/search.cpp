@@ -54,11 +54,11 @@ void Search::setReference(arr2_t foot){
   // g_foot.y() = round(g_foot.y() / 0.05) * 0.05;
 }
 
-bool Search::calc(){
+bool Search::calc(int preview){
   tree->clear();
   seq.clear();
   region.clear();
-  g_node = tree->search(s_state_id, s_suf, ref);
+  g_node = tree->search(s_state_id, s_suf, ref, preview);
   if(g_node == NULL) {
     return false;
   }else{

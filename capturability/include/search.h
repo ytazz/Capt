@@ -34,7 +34,7 @@ public:
   void setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf);
   void setReference(arr2_t foot);
 
-  bool calc();
+  bool calc(int preview);
 
   Trans getTrans();
   State getState();

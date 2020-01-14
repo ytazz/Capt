@@ -6,6 +6,6 @@
 
   <simulation timestep="0.001"/>
 
-  <local preview="2"/>
+  <local preview="4"/>
 
 </robot>

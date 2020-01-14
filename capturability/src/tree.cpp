@@ -24,7 +24,7 @@ void Tree::clear(){
   }
 }
 
-Node* Tree::search(int state_id, Foot s_suf, arr2_t g_foot){
+Node* Tree::search(int state_id, Foot s_suf, arr2_t g_foot, int preview){
   // set start node
   nodes[num_node].state_id = state_id;
   nodes[num_node].suf      = s_suf;
@@ -72,7 +72,7 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t g_foot){
       // printf("-----------------------------------------\n");
       // printf(" %d\n", nodes[num_node].step);
 
-      if(nodes[num_node].step == 4) {
+      if(nodes[num_node].step > preview) {
         return goal;
       }
 
@@ -96,7 +96,7 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t g_foot){
       //   }
       // }
 
-      if(nodes[num_node].step == 3) {
+      if(nodes[num_node].step == preview) {
         if(nodes[num_node].err < min) {
           goal = &nodes[num_node];
           min  = nodes[num_node].err;
@@ -116,24 +116,15 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t g_foot){
 
 std::vector<CaptData> Tree::getCaptureRegion(int state_id, int input_id, Foot suf, vec2_t p_suf){
   std::vector<CaptData>    region;
-  std::vector<CaptureSet*> set, set_;
+  std::vector<CaptureSet*> set;
 
-  // calculate cop id
-  int cop_id = grid->indexCop(grid->getInput(input_id).cop);
-
-  // get capture region (all cop)
+  // get capture region
   set = capturability->getCaptureRegion(state_id);
 
-  // extract designated capture region
-  for(size_t i = 0; i < set.size(); i++) {
-    if(grid->indexCop(grid->getInput(set[i]->input_id).cop) == cop_id)
-      set_.push_back(set[i]);
-  }
-
   // substitute region variable
-  region.resize(set_.size() );
+  region.resize(set.size() );
   for(size_t i = 0; i < region.size(); i++) {
-    vec2_t swf = grid->getInput(set_[i]->input_id).swf;
+    vec2_t swf = grid->getInput(set[i]->input_id).swf;
     vec3_t pos;
     if(suf == FOOT_R) {
       pos.x() = p_suf.x() + swf.x();
@@ -145,7 +136,7 @@ std::vector<CaptData> Tree::getCaptureRegion(int state_id, int input_id, Foot su
       pos.z() = 0.0;
     }
     region[i].pos   = pos;
-    region[i].nstep = set_[i]->nstep;
+    region[i].nstep = set[i]->nstep;
   }
 
   return region;

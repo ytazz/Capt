@@ -53,7 +53,7 @@ int main(int argc, char const *argv[]) {
   timer.start();
   search->setStart(rfoot, lfoot, icp, s_suf);
   search->setReference(goal);
-  search->calc();
+  search->calc(4);
   timer.end();
   timer.print();
 

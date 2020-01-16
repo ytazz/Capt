@@ -105,6 +105,7 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t g_foot, int preview){
 
       num_node++;
       if(num_node > MAX_NODE_SIZE - 100) {
+        printf("reach max node size\n");
         return NULL;
       }
     }

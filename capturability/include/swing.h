@@ -15,8 +15,8 @@ public:
   Swing(Model *model);
   ~Swing();
 
-  void   set(vec2_t foot, vec2_t foot_des, double elapsed);
-  void   set(vec3_t foot, vec3_t foot_des, double elapsed);
+  void   set(vec2_t foot, vec2_t foot_des, double elapsed = 0);
+  void   set(vec3_t foot, vec3_t foot_des, double elapsed = 0);
   double getTime();
   vec3_t getTraj(double dt);
 

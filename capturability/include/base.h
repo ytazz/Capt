@@ -40,6 +40,9 @@ enum Foot { FOOT_NONE, FOOT_R, FOOT_L };
 struct Step {
   Foot   suf;
   vec3_t pos;
+  vec3_t cop;
+  vec3_t icp;
+  // vec3_t com;
 };
 
 typedef std::vector<Step> Footstep;

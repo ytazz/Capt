@@ -5,6 +5,7 @@
 #include "capturability.h"
 #include "config.h"
 #include "cycloid.h"
+#include "generator.h"
 #include "grid_map.h"
 #include "grid.h"
 #include "input.h"

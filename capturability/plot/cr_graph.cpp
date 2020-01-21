@@ -33,10 +33,10 @@ int main(int argc, char const *argv[]) {
   // double icp_x_offset = 0.1;
   // double icp_y_offset = 0.05;
   // walk val
-  double icp_x = 0.032667;
-  double icp_y = 0.359609;
-  double swf_x = 0.049978;
-  double swf_y = 0.449978;
+  double icp_x = 0.040819;
+  double icp_y = 0.042048;
+  double swf_x = -0.2;
+  double swf_y = 0.3;
 
   State state;
   Input input;
@@ -46,7 +46,7 @@ int main(int argc, char const *argv[]) {
   // case1
   state.icp << icp_x, icp_y;
   state.swf << swf_x, swf_y;
-  state.elp = 0.1;
+  state.elp = 0;
   state     = grid->roundState(state).state;
   int stateId = grid->roundState(state).id;
 

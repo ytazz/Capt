@@ -70,7 +70,7 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
   std::vector<CaptureSet*> region = capturability->getCaptureRegion(state_id, 1);
 
   // shift capture region (world frame coordinate)
-  arr2_t captureRegion;
+  captureRegion.clear();
   captureRegion.resize(region.size() );
   for (size_t i = 0; i < region.size(); i++) {
     vec2_t point = grid->getInput(region[i]->input_id).swf;
@@ -87,11 +87,9 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
   min = 100;
   for(size_t i = 0; i < region.size(); i++) {
     double dist = ( nextLandingPos - captureRegion[i] ).norm();
-    // printf("dist: %1.4lf, min: %1.4lf\n", dist, min);
     if(dist < min) {
       min = dist;
     }
-    // printf("%lf, %lf\n", captureRegion[i].x(), captureRegion[i].y() );
   }
   printf("min %lf\n", min);
   if(min < 0.05) {
@@ -113,10 +111,10 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
     d_swf      = nextLandingPos - lfoot;
     d_swf.y() *= -1;
   }
-  printf("nextLandingPos %1.2lf, %1.2lf\n", nextLandingPos.x(), nextLandingPos.y() );
-  printf("rfoot          %1.2lf, %1.2lf\n", rfoot.x(), rfoot.y() );
-  printf("lfoot          %1.2lf, %1.2lf\n", lfoot.x(), lfoot.y() );
-  printf("d_swf          %1.2lf, %1.2lf\n", d_swf.x(), d_swf.y() );
+  // printf("nextLandingPos %1.2lf, %1.2lf\n", nextLandingPos.x(), nextLandingPos.y() );
+  // printf("rfoot          %1.2lf, %1.2lf\n", rfoot.x(), rfoot.y() );
+  // printf("lfoot          %1.2lf, %1.2lf\n", lfoot.x(), lfoot.y() );
+  // printf("d_swf          %1.2lf, %1.2lf\n", d_swf.x(), d_swf.y() );
 
   // calculate landing foot index
   int swfId = grid->indexSwf(d_swf);
@@ -124,41 +122,44 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
   printf("swfId %d\n", swfId);
 
   // select best icp_hat position & step duration
-  vec2_t icp_hat;
-  vec2_t cop = vec2_t(0, 0);
+  vec2_t icp_hat, icp_hat_;
+  vec2_t cop     = vec2_t(0, 0);
+  vec2_t cop_    = vec2_t(0, 0);
+  vec2_t icp_    = vec2_t(0, 0);
+  vec2_t icp_des = vec3Tovec2(state.footstep[currentFootId + 1].icp);
   min = 100;
   for (size_t i = 0; i < region.size(); i++) {
     Input input = grid->getInput(region[i]->input_id);
     if(grid->indexSwf(input.swf) == swfId) {
-      // input.print();
-      // printf("\n");
-      // State  nextState = grid->getState(region[i]->next_id);
-      // double dist      = ( nextState.icp ).norm();
-      vec2_t cop_ = suf + input.cop;
-      pendulum->setIcp(icp);
+      if(state.s_suf == FOOT_R) {
+        icp_.x() =  s_state.icp.x() + suf.x();
+        icp_.y() =  s_state.icp.y() + suf.y();
+        cop_.x() =  input.cop.x() + suf.x();
+        cop_.y() =  input.cop.y() + suf.y();
+      }else{
+        icp_.x() =  s_state.icp.x() + suf.x();
+        icp_.y() = -s_state.icp.y() + suf.y();
+        cop_.x() =  input.cop.x() + suf.x();
+        cop_.y() = -input.cop.y() + suf.y();
+      }
+      pendulum->setIcp(icp_);
       pendulum->setCop(cop_);
-      vec2_t icp_ = pendulum->getIcp(swing->getTime() );
-      double dist = ( icp_ - nextLandingPos ).norm();
-      printf("dist %1.3lf\n", dist);
+      icp_hat_ = pendulum->getIcp(swing->getTime() );
+
+      double dist = ( icp_hat_ - icp_des ).norm();
+      printf("dist %1.3lf cop %1.3lf, %1.3lf\n", dist, cop_.x(), cop_.y() );
+      printf("icp_hat  %1.3lf, %1.3lf\n", icp_hat_.x(), icp_hat_.y() );
       if(dist < min) {
-        // icp_hat = nextState.icp;
-        cop = input.cop;
-        min = dist;
+        cop     = cop_;
+        icp_hat = icp_hat_;
+        min     = dist;
       }
     }
   }
-  if(state.s_suf == FOOT_R) {
-    icp_hat.x() =  icp_hat.x() + nextLandingPos.x();
-    icp_hat.y() = -icp_hat.y() + nextLandingPos.y();
-  }else{
-    icp_hat.x() =  icp_hat.x() + nextLandingPos.x();
-    icp_hat.y() =  icp_hat.y() + nextLandingPos.y();
-  }
 
   // calculate best cop
-  // vec2_t cop = pendulum->invCop(icp, icp_hat, swing->getTime() );
-  // printf("icp_hat %1.3lf, %1.3lf\n", icp_hat.x(), icp_hat.y() );
-  printf("icp      %1.3lf, %1.3lf\n", icp.x(), icp.y() );
+  printf("icp_des  %1.3lf, %1.3lf\n", icp_des.x(), icp_des.y() );
+  printf("icp_hat  %1.3lf, %1.3lf\n", icp_hat.x(), icp_hat.y() );
   printf("duration %1.3lf\n", swing->getTime() );
   printf("cop      %1.3lf, %1.3lf\n", cop.x(), cop.y() );
 
@@ -166,17 +167,18 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
   if(isOneStepCapturable) {
     input.elapsed  = s_state.elp;
     input.duration = swing->getTime();
-    input.icp      = state.icp;
     input.land     = vec2Tovec3(nextLandingPos);
 
     if(state.s_suf == FOOT_R) {
       input.suf = state.rfoot;
       input.swf = state.lfoot;
-      input.cop = state.rfoot + vec2Tovec3(cop);
+      input.cop = vec2Tovec3(cop);
+      input.icp = vec2Tovec3(s_state.icp) + state.rfoot;
     }else{
       input.suf = state.lfoot;
       input.swf = state.rfoot;
-      input.cop = state.lfoot + mirror(vec2Tovec3(cop) );
+      input.cop = vec2Tovec3(cop);
+      input.icp = vec2Tovec3(mirror(s_state.icp) ) + state.lfoot;
     }
   }
 
@@ -186,6 +188,18 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
 
 EnhancedInput Monitor::get(){
   return input;
+}
+
+std::vector<CaptData> Monitor::getCaptureRegion(){
+  std::vector<CaptData> region;
+
+  region.resize(captureRegion.size() );
+  for(size_t i = 0; i < captureRegion.size(); i++) {
+    region[i].pos   = vec2Tovec3(captureRegion[i]);
+    region[i].nstep = 1;
+  }
+
+  return region;
 }
 
 } // namespace Capt

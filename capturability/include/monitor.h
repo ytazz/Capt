@@ -7,6 +7,7 @@
 #include "pendulum.h"
 #include "grid.h"
 #include "capturability.h"
+#include "tree.h"
 
 namespace Capt {
 
@@ -15,8 +16,9 @@ public:
   Monitor(Model *model, Grid *grid, Capturability *capturability);
   ~Monitor();
 
-  bool          check(EnhancedState state, Footstep footstep);
-  EnhancedInput get();
+  bool                  check(EnhancedState state, Footstep footstep);
+  EnhancedInput         get();
+  std::vector<CaptData> getCaptureRegion();
 
 private:
   Grid          *grid;
@@ -26,6 +28,9 @@ private:
 
   EnhancedState state;
   EnhancedInput input;
+
+  // capture region
+  arr2_t captureRegion;
 
   double dt_min;
 

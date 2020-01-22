@@ -62,9 +62,9 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
   }
 
   // calculate current state id
-  s_state.print();
+  // s_state.print();
   int state_id = grid->roundState(s_state).id;
-  printf("state_id %d\n", state_id);
+  // printf("state_id %d\n", state_id);
 
   // get 1-step capture region (support foot coordinate)
   std::vector<CaptureSet*> region = capturability->getCaptureRegion(state_id, 1);
@@ -91,7 +91,7 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
       min = dist;
     }
   }
-  printf("min %lf\n", min);
+  printf("dist from capture region: %1.3lf\n", min);
   if(min < 0.05) {
     isOneStepCapturable = true;
   }
@@ -118,19 +118,20 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
 
   // calculate landing foot index
   int swfId = grid->indexSwf(d_swf);
-  printf("swf   %1.2lf, %1.2lf\n", d_swf.x(), d_swf.y() );
-  printf("swfId %d\n", swfId);
+  // printf("swf   %1.2lf, %1.2lf\n", d_swf.x(), d_swf.y() );
+  // printf("swfId %d\n", swfId);
 
   // select best icp_hat position & step duration
-  vec2_t icp_hat, icp_hat_;
-  vec2_t cop     = vec2_t(0, 0);
-  vec2_t cop_    = vec2_t(0, 0);
-  vec2_t icp_    = vec2_t(0, 0);
   vec2_t icp_des = vec3Tovec2(state.footstep[currentFootId + 1].icp);
+  vec2_t icp_hat = vec2_t(0, 0);
+  vec2_t cop     = vec2_t(0, 0);
   min = 100;
   for (size_t i = 0; i < region.size(); i++) {
     Input input = grid->getInput(region[i]->input_id);
     if(grid->indexSwf(input.swf) == swfId) {
+      vec2_t cop_     = vec2_t(0, 0);
+      vec2_t icp_     = vec2_t(0, 0);
+      vec2_t icp_hat_ = vec2_t(0, 0);
       if(state.s_suf == FOOT_R) {
         icp_.x() =  s_state.icp.x() + suf.x();
         icp_.y() =  s_state.icp.y() + suf.y();
@@ -147,8 +148,8 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
       icp_hat_ = pendulum->getIcp(swing->getTime() );
 
       double dist = ( icp_hat_ - icp_des ).norm();
-      printf("dist %1.3lf cop %1.3lf, %1.3lf\n", dist, cop_.x(), cop_.y() );
-      printf("icp_hat  %1.3lf, %1.3lf\n", icp_hat_.x(), icp_hat_.y() );
+      // printf("dist from icp des %1.3lf\n", dist );
+      // printf("icp_hat           %1.3lf, %1.3lf\n", icp_hat_.x(), icp_hat_.y() );
       if(dist < min) {
         cop     = cop_;
         icp_hat = icp_hat_;
@@ -158,10 +159,10 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
   }
 
   // calculate best cop
-  printf("icp_des  %1.3lf, %1.3lf\n", icp_des.x(), icp_des.y() );
-  printf("icp_hat  %1.3lf, %1.3lf\n", icp_hat.x(), icp_hat.y() );
-  printf("duration %1.3lf\n", swing->getTime() );
-  printf("cop      %1.3lf, %1.3lf\n", cop.x(), cop.y() );
+  // printf("icp_des  %1.3lf, %1.3lf\n", icp_des.x(), icp_des.y() );
+  // printf("icp_hat  %1.3lf, %1.3lf\n", icp_hat.x(), icp_hat.y() );
+  // printf("duration %1.3lf        \n", swing->getTime() );
+  // printf("cop      %1.3lf, %1.3lf\n", cop.x(), cop.y() );
 
   // calculate input
   if(isOneStepCapturable) {
@@ -180,6 +181,8 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
       input.cop = vec2Tovec3(cop);
       input.icp = vec2Tovec3(mirror(s_state.icp) ) + state.lfoot;
     }
+
+    // input.print();
   }
 
   // if 1-step capturable, return true

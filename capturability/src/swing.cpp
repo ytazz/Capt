@@ -38,8 +38,9 @@ void Swing::set(vec3_t foot, vec3_t foot_des, double elapsed) {
   this->foot_des.y() = foot_des.y();
   this->foot_des.z() = foot_des.z();
 
-  double dist = ( foot_des - foot ).norm();
-  tau       = max(0, dt_min / 2 - elapsed) + dist / v_max + dt_min / 2;
+  double dist = ( vec3Tovec2(foot_des - foot) ).norm();
+  // tau       = max(0, dt_min / 2 - elapsed) + dist / v_max + dt_min / 2;
+  tau       = dist / v_max + dt_min;
   tau_swing = dist / v_max;
 }
 

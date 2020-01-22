@@ -83,6 +83,19 @@ struct EnhancedState {
     this->elapsed  = eState.elapsed;
     this->s_suf    = eState.s_suf;
   }
+
+  void print(){
+    printf("EnhancedState\n");
+    if(s_suf == Foot::FOOT_R) {
+      printf("  support: Right\n");
+    }else{
+      printf("  support: Left\n");
+    }
+    printf("  elapsed: %1.4lf\n", elapsed);
+    printf("  icp    : %1.3lf, %1.3lf, %1.3lf\n", icp.x(), icp.y(), icp.z() );
+    printf("  rfoot  : %1.3lf, %1.3lf, %1.3lf\n", rfoot.x(), rfoot.y(), rfoot.z() );
+    printf("  lfoot  : %1.3lf, %1.3lf, %1.3lf\n", lfoot.x(), lfoot.y(), lfoot.z() );
+  }
 };
 
 struct EnhancedInput {
@@ -102,6 +115,17 @@ struct EnhancedInput {
     this->suf      = eInput.suf;
     this->swf      = eInput.swf;
     this->land     = eInput.land;
+  }
+
+  void print(){
+    printf("EnhancedInput\n");
+    printf("  elapsed : %1.4lf\n", elapsed);
+    printf("  duration: %1.4lf\n", duration);
+    printf("  cop     : %1.3lf, %1.3lf, %1.3lf\n", cop.x(), cop.y(), cop.z() );
+    printf("  icp     : %1.3lf, %1.3lf, %1.3lf\n", icp.x(), icp.y(), icp.z() );
+    printf("  suf     : %1.3lf, %1.3lf, %1.3lf\n", suf.x(), suf.y(), suf.z() );
+    printf("  swf     : %1.3lf, %1.3lf, %1.3lf\n", swf.x(), swf.y(), swf.z() );
+    printf("  land    : %1.3lf, %1.3lf, %1.3lf\n", land.x(), land.y(), land.z() );
   }
 };
 

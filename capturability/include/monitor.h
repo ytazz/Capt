@@ -16,7 +16,7 @@ public:
   Monitor(Model *model, Grid *grid, Capturability *capturability);
   ~Monitor();
 
-  bool                  check(EnhancedState state, Footstep footstep);
+  Status                check(EnhancedState state, Footstep footstep);
   EnhancedInput         get();
   std::vector<CaptData> getCaptureRegion();
 

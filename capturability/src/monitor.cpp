@@ -13,15 +13,14 @@ Monitor::Monitor(Model *model, Grid *grid, Capturability *capturability) :
 Monitor::~Monitor(){
 }
 
-bool Monitor::check(EnhancedState state, Footstep footstep){
+Status Monitor::check(EnhancedState state, Footstep footstep){
   this->state = state;
 
   vec2_t rfoot = vec3Tovec2(state.rfoot);
   vec2_t lfoot = vec3Tovec2(state.lfoot);
   vec2_t icp   = vec3Tovec2(state.icp);
 
-  // calculate next landing position
-  vec2_t nextLandingPos;
+  // set support foot position
   vec2_t suf;
   if(state.s_suf == FOOT_R) {
     suf = rfoot;
@@ -29,6 +28,8 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
     suf = lfoot;
   }
 
+  // calculate next landing position
+  vec2_t nextLandingPos;
   double distMin       = 100; // set very large value as initial value
   int    currentFootId = 0;
   for(size_t i = 0; i < state.footstep.size(); i++) {
@@ -39,6 +40,9 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
         currentFootId = (int)i;
       }
     }
+  }
+  if(currentFootId == ( (int)state.footstep.size() - 1 ) ) {
+    return Status::FINISH;
   }
   nextLandingPos = vec3Tovec2(state.footstep[currentFootId + 1].pos);
 
@@ -94,6 +98,8 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
   printf("dist from capture region: %1.3lf\n", min);
   if(min < 0.05) {
     isOneStepCapturable = true;
+  }else{
+    return Status::FAIL;
   }
 
   // set swing foot trajectory
@@ -186,7 +192,7 @@ bool Monitor::check(EnhancedState state, Footstep footstep){
   }
 
   // if 1-step capturable, return true
-  return isOneStepCapturable;
+  return Status::SUCCESS;
 }
 
 EnhancedInput Monitor::get(){

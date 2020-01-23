@@ -45,6 +45,8 @@ struct Step {
   // vec3_t com;
 };
 
+enum Status { SUCCESS, FAIL, FINISH };
+
 typedef std::vector<Step> Footstep;
 
 struct Sequence {

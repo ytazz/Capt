@@ -39,7 +39,11 @@ arr3_t Planner::getFootstepL(){
   return search->getFootstepL();
 }
 
-bool Planner::plan(){
+void Planner::clear(){
+  search->clear();
+}
+
+Status Planner::plan(){
   rfoot = vec3Tovec2(state.rfoot);
   lfoot = vec3Tovec2(state.lfoot);
   icp   = vec3Tovec2(state.icp);
@@ -55,15 +59,21 @@ bool Planner::plan(){
     suf = state.lfoot;
   }
 
-  calculateGoal();
-  return runSearch(preview);
+  Status status;
+  if(calculateGoal() ) {
+    status = runSearch(preview);
+  }else{
+    status = Status::FINISH;
+  }
+
+  return status;
 }
 
 void Planner::calculateStart(){
 
 }
 
-void Planner::calculateGoal(){
+bool Planner::calculateGoal(){
   double distMin       = 100; // set very large value as initial value
   int    currentFootId = 0;
   int    maxFootId     = (int)state.footstep.size() - 1;
@@ -75,6 +85,9 @@ void Planner::calculateGoal(){
         currentFootId = (int)i;
       }
     }
+  }
+  if(currentFootId == maxFootId ) {
+    return false;
   }
 
   int remainedFootsteps = maxFootId - currentFootId;
@@ -93,15 +106,18 @@ void Planner::calculateGoal(){
       printf("goal: %+1.3lf %+1.3lf\n", goal[i].x(), goal[i].y() );
     }
   }
+
+  return true;
 }
 
-bool Planner::runSearch(int preview){
+Status Planner::runSearch(int preview){
   search->setStart(rfoot, lfoot, icp, s_suf);
   search->setReference(goal);
   found = search->calc( (int)goal.size() - 1);
   printf("\n");
   printf("\n");
 
+  Status status;
   if(found) { // if found solution
     // get state & input
     State s = search->getState();
@@ -121,10 +137,12 @@ bool Planner::runSearch(int preview){
     // printf("swf  %1.3lf, %1.3lf\n", input.swf.x(), input.swf.y() );
     // printf("land %1.3lf, %1.3lf\n", input.land.x(), input.land.y() );
 
-    return true;
+    status = Status::SUCCESS;
   }else{ // couldn't found solution or reached goal
-    return false;
+    status = Status::FAIL;
   }
+
+  return status;
 }
 
 std::vector<CaptData> Planner::getCaptureRegion(){

@@ -28,12 +28,14 @@ public:
   arr3_t                getFootstepL();
   std::vector<CaptData> getCaptureRegion();
 
-  bool plan();
+  void clear();
+
+  Status plan();
 
 private:
-  void calculateStart();
-  void calculateGoal();
-  bool runSearch(int preview);
+  void   calculateStart();
+  bool   calculateGoal();
+  Status runSearch(int preview);
 
   Tree     *tree;
   Search   *search;

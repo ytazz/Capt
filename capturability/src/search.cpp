@@ -10,6 +10,8 @@ Search::~Search() {
 }
 
 void Search::clear(){
+  seq.clear();
+  region.clear();
 }
 
 void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){

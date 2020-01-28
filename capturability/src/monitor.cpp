@@ -95,7 +95,7 @@ Status Monitor::check(EnhancedState state, Footstep footstep){
       min = dist;
     }
   }
-  printf("dist from capture region: %1.3lf\n", min);
+  // printf("dist from capture region: %1.3lf\n", min);
   if(min < 0.01) {
     isOneStepCapturable = true;
   }else{

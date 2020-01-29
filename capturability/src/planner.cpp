@@ -98,14 +98,14 @@ bool Planner::calculateGoal(){
     goal.resize(preview);
     for(int i = 0; i < preview; i++) {
       goal[i] = vec3Tovec2(state.footstep[currentFootId + i].pos);
-      printf("goal: %+1.3lf %+1.3lf\n", goal[i].x(), goal[i].y() );
+      // printf("goal: %+1.3lf %+1.3lf\n", goal[i].x(), goal[i].y() );
     }
   }else{
     goal.clear();
     goal.resize(remainedFootsteps + 1);
     for(int i = 0; i <= remainedFootsteps; i++) {
       goal[i] = vec3Tovec2(state.footstep[currentFootId + i].pos);
-      printf("goal: %+1.3lf %+1.3lf\n", goal[i].x(), goal[i].y() );
+      // printf("goal: %+1.3lf %+1.3lf\n", goal[i].x(), goal[i].y() );
     }
   }
 
@@ -136,10 +136,10 @@ Status Planner::runSearch(int preview){
     input.cop      = vec2Tovec3(i.cop);
     input.icp      = vec2Tovec3(s.icp);
     input.land     = vec2Tovec3(i.swf);
-    printf("elapsed   %1.3lf\n", elapsed );
-    printf("duration  %1.3lf\n", input.duration );
-    printf("swf  %1.3lf, %1.3lf\n", input.swf.x(), input.swf.y() );
-    printf("land %1.3lf, %1.3lf\n", input.land.x(), input.land.y() );
+    // printf("elapsed   %1.3lf\n", elapsed );
+    // printf("duration  %1.3lf\n", input.duration );
+    // printf("swf  %1.3lf, %1.3lf\n", input.swf.x(), input.swf.y() );
+    // printf("land %1.3lf, %1.3lf\n", input.land.x(), input.land.y() );
 
     status = Status::SUCCESS;
   }else{ // couldn't found solution or reached goal

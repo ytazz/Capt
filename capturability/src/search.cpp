@@ -14,7 +14,7 @@ void Search::clear(){
   region.clear();
 }
 
-void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){
+void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, double elapsed, Foot suf){
   this->rfoot = rfoot;
   this->lfoot = lfoot;
   this->s_suf = suf;
@@ -25,6 +25,7 @@ void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){
     s_lfoot.y() = +( lfoot.y() - rfoot.y() );
     s_icp.x()   = +( icp.x() - rfoot.x() );
     s_icp.y()   = +( icp.y() - rfoot.y() );
+    s_elapsed   = elapsed;
     s_state.icp = s_icp;
     s_state.swf = s_lfoot;
   }else{
@@ -32,6 +33,7 @@ void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, Foot suf){
     s_rfoot.y() = -( rfoot.y() - lfoot.y() );
     s_icp.x()   = +( icp.x() - lfoot.x() );
     s_icp.y()   = -( icp.y() - lfoot.y() );
+    s_elapsed   = elapsed;
     s_state.icp = s_icp;
     s_state.swf = s_rfoot;
   }
@@ -135,6 +137,7 @@ void Search::calcSequence(){
       if(i == 0) {
         ini_state.icp = suf_pos + trans.states[0].icp;
         ini_state.swf = suf_pos + trans.states[0].swf;
+        ini_state.elp = trans.states[0].elp;
         ini_input.cop = suf_pos + trans.inputs[0].cop;
         ini_input.swf = suf_pos + trans.inputs[0].swf;
       }
@@ -150,6 +153,7 @@ void Search::calcSequence(){
       if(i == 0) {
         ini_state.icp = suf_pos + mirror(trans.states[0].icp);
         ini_state.swf = suf_pos + mirror(trans.states[0].swf);
+        ini_state.elp = trans.states[0].elp;
         ini_input.cop = suf_pos + mirror(trans.inputs[0].cop);
         ini_input.swf = suf_pos + mirror(trans.inputs[0].swf);
       }

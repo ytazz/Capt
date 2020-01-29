@@ -55,8 +55,10 @@ Status Planner::plan(){
   s_suf = state.s_suf;
   if(state.s_suf == FOOT_R) {
     suf = state.rfoot;
+    swf = state.lfoot;
   }else{
     suf = state.lfoot;
+    swf = state.rfoot;
   }
 
   Status status;
@@ -111,7 +113,7 @@ bool Planner::calculateGoal(){
 }
 
 Status Planner::runSearch(int preview){
-  search->setStart(rfoot, lfoot, icp, s_suf);
+  search->setStart(rfoot, lfoot, icp, elapsed, s_suf);
   search->setReference(goal);
   found = search->calc( (int)goal.size() - 1);
   printf("\n");
@@ -124,18 +126,20 @@ Status Planner::runSearch(int preview){
     Input i = search->getInput();
 
     // calc swing foot trajectory
-    swing->set(s.swf, i.swf, elapsed);
+    swing->set(swf, vec2Tovec3(i.swf), elapsed);
 
     // set to output
+    input.elapsed  = elapsed;
     input.duration = swing->getTime();
     input.suf      = suf;
+    input.swf      = swf;
     input.cop      = vec2Tovec3(i.cop);
     input.icp      = vec2Tovec3(s.icp);
-    input.swf      = vec2Tovec3(s.swf);
     input.land     = vec2Tovec3(i.swf);
-    // printf("duration  %1.3lf\n", input.duration );
-    // printf("swf  %1.3lf, %1.3lf\n", input.swf.x(), input.swf.y() );
-    // printf("land %1.3lf, %1.3lf\n", input.land.x(), input.land.y() );
+    printf("elapsed   %1.3lf\n", elapsed );
+    printf("duration  %1.3lf\n", input.duration );
+    printf("swf  %1.3lf, %1.3lf\n", input.swf.x(), input.swf.y() );
+    printf("land %1.3lf, %1.3lf\n", input.land.x(), input.land.y() );
 
     status = Status::SUCCESS;
   }else{ // couldn't found solution or reached goal

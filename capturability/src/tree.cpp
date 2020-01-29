@@ -13,15 +13,15 @@ Tree::~Tree(){
 void Tree::clear(){
   num_node = 0;
   opened   = 0;
-  for(int i = 0; i < MAX_NODE_SIZE; i++) {
-    nodes[i].parent   = NULL;
-    nodes[i].state_id = 0;
-    nodes[i].input_id = 0;
-    nodes[i].suf      = FOOT_NONE;
-    nodes[i].pos      = vec2_t(0, 0);
-    nodes[i].step     = 0;
-    nodes[i].err      = 0;
-  }
+  // for(int i = 0; i < MAX_NODE_SIZE; i++) {
+  //   nodes[i].parent   = NULL;
+  //   nodes[i].state_id = 0;
+  //   nodes[i].input_id = 0;
+  //   nodes[i].suf      = FOOT_NONE;
+  //   nodes[i].pos      = vec2_t(0, 0);
+  //   nodes[i].step     = 0;
+  //   nodes[i].err      = 0;
+  // }
 }
 
 Node* Tree::search(int state_id, Foot s_suf, arr2_t g_foot, int preview){

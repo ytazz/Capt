@@ -4,7 +4,7 @@
 #include "capturability.h"
 #include "node.h"
 
-#define MAX_NODE_SIZE 1000000
+#define MAX_NODE_SIZE 200000
 
 namespace Capt {
 

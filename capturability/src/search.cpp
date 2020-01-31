@@ -41,16 +41,21 @@ void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, double elapsed, Fo
   s_state_id = grid->roundState(s_state).id;
 }
 
-void Search::setReference(arr2_t foot){
-  ref.resize(foot.size() );
+void Search::setReference(arr2_t posRef, arr2_t icpRef){
+  this->posRef.resize(posRef.size() );
+  this->icpRef.resize(icpRef.size() );
 
-  for(size_t i = 0; i < foot.size(); i++) {
+  for(size_t i = 0; i < posRef.size(); i++) {
     if(s_suf == FOOT_R) {
-      ref[i].x() = +( foot[i].x() - rfoot.x() );
-      ref[i].y() = +( foot[i].y() - rfoot.y() );
+      this->posRef[i].x() = +( posRef[i].x() - rfoot.x() );
+      this->posRef[i].y() = +( posRef[i].y() - rfoot.y() );
+      this->icpRef[i].x() = +( icpRef[i].x() - rfoot.x() );
+      this->icpRef[i].y() = +( icpRef[i].y() - rfoot.y() );
     }else{
-      ref[i].x() = +( foot[i].x() - lfoot.x() );
-      ref[i].y() = -( foot[i].y() - lfoot.y() );
+      this->posRef[i].x() = +( posRef[i].x() - lfoot.x() );
+      this->posRef[i].y() = -( posRef[i].y() - lfoot.y() );
+      this->icpRef[i].x() = +( icpRef[i].x() - lfoot.x() );
+      this->icpRef[i].y() = -( icpRef[i].y() - lfoot.y() );
     }
   }
 
@@ -62,7 +67,7 @@ bool Search::calc(int preview){
   tree->clear();
   seq.clear();
   region.clear();
-  g_node = tree->search(s_state_id, s_suf, ref, preview);
+  g_node = tree->search(s_state_id, s_suf, posRef, icpRef, preview);
   if(g_node == NULL) {
     return false;
   }else{

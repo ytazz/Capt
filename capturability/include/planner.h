@@ -52,7 +52,7 @@ private:
   double elapsed;
   // goal
   Foot   g_suf;
-  arr2_t goal;
+  arr2_t posRef, icpRef;
 
   double dt, dt_min;
   int    preview;

@@ -94,18 +94,24 @@ bool Planner::calculateGoal(){
 
   int remainedFootsteps = maxFootId - currentFootId;
   if(preview <= remainedFootsteps) {
-    goal.clear();
-    goal.resize(preview);
+    posRef.clear();
+    icpRef.clear();
+    posRef.resize(preview);
+    icpRef.resize(preview);
     for(int i = 0; i < preview; i++) {
-      goal[i] = vec3Tovec2(state.footstep[currentFootId + i].pos);
-      // printf("goal: %+1.3lf %+1.3lf\n", goal[i].x(), goal[i].y() );
+      posRef[i] = vec3Tovec2(state.footstep[currentFootId + i].pos);
+      icpRef[i] = vec3Tovec2(state.footstep[currentFootId + i].icp);
+      // printf("posRef: %+1.3lf %+1.3lf\n", posRef[i].x(), posRef[i].y() );
     }
   }else{
-    goal.clear();
-    goal.resize(remainedFootsteps + 1);
+    posRef.clear();
+    icpRef.clear();
+    posRef.resize(remainedFootsteps + 1);
+    icpRef.resize(remainedFootsteps + 1);
     for(int i = 0; i <= remainedFootsteps; i++) {
-      goal[i] = vec3Tovec2(state.footstep[currentFootId + i].pos);
-      // printf("goal: %+1.3lf %+1.3lf\n", goal[i].x(), goal[i].y() );
+      posRef[i] = vec3Tovec2(state.footstep[currentFootId + i].pos);
+      icpRef[i] = vec3Tovec2(state.footstep[currentFootId + i].icp);
+      // printf("posRef: %+1.3lf %+1.3lf\n", posRef[i].x(), posRef[i].y() );
     }
   }
 
@@ -114,8 +120,8 @@ bool Planner::calculateGoal(){
 
 Status Planner::runSearch(int preview){
   search->setStart(rfoot, lfoot, icp, elapsed, s_suf);
-  search->setReference(goal);
-  found = search->calc( (int)goal.size() - 1);
+  search->setReference(posRef, icpRef);
+  found = search->calc( (int)posRef.size() - 1);
   printf("\n");
   printf("\n");
 

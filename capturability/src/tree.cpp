@@ -24,7 +24,7 @@ void Tree::clear(){
   // }
 }
 
-Node* Tree::search(int state_id, Foot s_suf, arr2_t g_foot, int preview){
+Node* Tree::search(int state_id, Foot s_suf, arr2_t posRef, arr2_t icpRef, int preview){
   // set start node
   nodes[num_node].state_id = state_id;
   nodes[num_node].suf      = s_suf;
@@ -53,9 +53,10 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t g_foot, int preview){
   }
 
   // calculate reaves
-  vec2_t swf, pos;
-  Node  *goal = NULL;
-  double min  = 100;
+  vec2_t swf, pos, icp, icp_;
+  Node  *goal   = NULL;
+  double min    = 100;
+  double posErr = 0.0, icpErr = 0.0;
   while(true) {
     // set target node based on breadth first search
     Node *target  = &nodes[opened];
@@ -73,22 +74,31 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t g_foot, int preview){
       // printf(" %d\n", nodes[num_node].step);
 
       if(nodes[num_node].step > preview) {
+        printf("min error %1.3lf\n", min);
         return goal;
       }
 
       // calculate next landing position
       swf = grid->getInput(region[i]->input_id).swf;
+      icp = grid->getState(region[i]->next_id).icp;
       if(target->suf == FOOT_R) {   // if right foot support
         nodes[num_node].pos.x() = target->pos.x() + swf.x();
         nodes[num_node].pos.y() = target->pos.y() + swf.y();
         nodes[num_node].suf     = FOOT_L;
+        icp_.x()                = nodes[num_node].pos.x() + icp.x();
+        icp_.y()                = nodes[num_node].pos.x() - icp.y();
       }else{   // if left foot support
         nodes[num_node].pos.x() = target->pos.x() + swf.x();
         nodes[num_node].pos.y() = target->pos.y() - swf.y();
         nodes[num_node].suf     = FOOT_R;
+        icp_.x()                = nodes[num_node].pos.x() + icp.x();
+        icp_.y()                = nodes[num_node].pos.x() + icp.y();
       }
 
-      nodes[num_node].err = target->err + ( nodes[num_node].pos - g_foot[nodes[num_node].step] ).norm();
+      posErr = ( nodes[num_node].pos - posRef[nodes[num_node].step] ).norm();
+      icpErr = ( icp_ - icpRef[nodes[num_node].step] ).norm();
+
+      nodes[num_node].err = target->err + posErr + icpErr;
       // determine if next position reach goal
       // if(nodes[num_node].suf == g_suf) {
       //   if( ( nodes[num_node].pos - g_foot ).norm() < epsilon) {

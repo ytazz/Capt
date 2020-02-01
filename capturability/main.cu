@@ -131,7 +131,7 @@ int main(void) {
   /* ファイル書き出し */
   mm.saveBasin("gpu/Basin.csv", basin);
   mm.saveNstep("gpu/Nstep.csv", nstep, trans, step);
-  mm.saveStepTime("gpu/StepTime.csv", step_time);
+  // mm.saveStepTime("gpu/StepTime.csv", step_time);
   end_save = std::chrono::system_clock::now();
 
   /* 処理時間 */

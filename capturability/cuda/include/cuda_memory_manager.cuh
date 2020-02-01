@@ -32,6 +32,7 @@ struct Grid {
   int swf_y_num;
   int cop_x_num;
   int cop_y_num;
+  int elp_t_num;
 
   double icp_x_min, icp_x_max, icp_x_stp;
   double icp_y_min, icp_y_max, icp_y_stp;
@@ -39,6 +40,7 @@ struct Grid {
   double swf_y_min, swf_y_max, swf_y_stp;
   double cop_x_min, cop_x_max, cop_x_stp;
   double cop_y_min, cop_y_max, cop_y_stp;
+  double elp_t_min, elp_t_max, elp_t_stp;
 
   void operator=(const Grid &grid);
 };
@@ -46,6 +48,7 @@ struct Grid {
 struct State {
   vec2_t icp;
   vec2_t swf;
+  double elp;
 
   __device__ void operator=(const State &state);
 };

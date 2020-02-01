@@ -97,6 +97,7 @@ __device__ State step(State state, Input input, double step_time, Physics *physi
   State state_;
   state_.icp.set(-input.swf.x + icp.x, input.swf.y - icp.y );
   state_.swf.set(-input.swf.x, input.swf.y );
+  state_.elp = 0;
 
   return state_;
 }
@@ -150,16 +151,20 @@ __device__ bool existState(State state, Grid *grid) {
 __device__ int getStateIndex(State state, Grid *grid) {
   int icp_x_id = 0, icp_y_id = 0;
   int swf_x_id = 0, swf_y_id = 0;
+  int elp_t_id = 0;
 
   icp_x_id = roundValue( ( state.icp.x - grid->icp_x_min ) / grid->icp_x_stp);
   icp_y_id = roundValue( ( state.icp.y - grid->icp_y_min ) / grid->icp_y_stp);
   swf_x_id = roundValue( ( state.swf.x - grid->swf_x_min ) / grid->swf_x_stp);
   swf_y_id = roundValue( ( state.swf.y - grid->swf_y_min ) / grid->swf_y_stp);
+  elp_t_id = 0;
 
   int state_id = 0;
-  state_id = grid->swf_y_num * grid->swf_x_num * grid->icp_y_num * icp_x_id +
-             grid->swf_y_num * grid->swf_x_num * icp_y_id +
-             grid->swf_y_num * swf_x_id + swf_y_id;
+  state_id = grid->elp_t_num * grid->swf_y_num * grid->swf_x_num * grid->icp_y_num * icp_x_id +
+             grid->elp_t_num * grid->swf_y_num * grid->swf_x_num * icp_y_id +
+             grid->elp_t_num * grid->swf_y_num * swf_x_id +
+             grid->elp_t_num * swf_y_id +
+             elp_t_id;
 
   return state_id;
 }
@@ -174,8 +179,12 @@ __global__ void calcStepTime(State *state, Input *input, Grid *grid, double *ste
     int state_id = tid / grid->input_num;
     int input_id = tid % grid->input_num;
 
+    // double tau  = max(0, step_time_min / 2 - state[state_id].elp) + dist / foot_vel_max + step_time_min / 2;
     foot_dist      = state[state_id].swf - input[input_id].swf;
-    step_time[tid] = foot_dist.norm() / physics->v + physics->dt;
+    step_time[tid] = foot_dist.norm() / physics->v + physics->dt / 2;
+    if(physics->dt / 2 - state[state_id].elp > 0) {
+      step_time[tid] += physics->dt / 2 - state[state_id].elp;
+    }
 
     tid += blockDim.x * gridDim.x;
   }
@@ -188,14 +197,14 @@ __global__ void calcBasin(State *state, int *basin, Grid *grid, vec2_t *foot_r, 
   if(enableDoubleSupport) {
     while (tid < grid->state_num) {
       int swf_id = tid % grid->input_num;
-
-      if(inPolygon(state[tid].icp, convex, max_size, swf_id) )
+      // state[tid].elp < 0.001 means landing state, not swing phase
+      if(inPolygon(state[tid].icp, convex, max_size, swf_id) && state[tid].elp < 0.001 )
         basin[tid] = 0;
       tid += blockDim.x * gridDim.x;
     }
   }else{
     while (tid < grid->state_num) {
-      if(inPolygon(state[tid].icp, foot_r, grid->foot_r_num) )
+      if(inPolygon(state[tid].icp, foot_r, grid->foot_r_num) && state[tid].elp < 0.001 )
         basin[tid] = 0;
       tid += blockDim.x * gridDim.x;
     }

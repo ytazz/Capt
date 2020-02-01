@@ -41,11 +41,17 @@ void Grid::operator=(const Grid &grid){
   this->cop_y_max = grid.cop_y_max;
   this->cop_y_stp = grid.cop_y_stp;
   this->cop_y_num = grid.cop_y_num;
+
+  this->elp_t_min = grid.elp_t_min;
+  this->elp_t_max = grid.elp_t_max;
+  this->elp_t_stp = grid.elp_t_stp;
+  this->elp_t_num = grid.elp_t_num;
 }
 
 __device__ void State::operator=(const State &state) {
   this->icp = state.icp;
   this->swf = state.swf;
+  this->elp = state.elp;
 }
 
 __device__ void Input::operator=(const Input &input) {
@@ -96,6 +102,11 @@ __host__ void MemoryManager::set(Capt::Model* model, Capt::Param* param, Capt::G
   param->read(&this->grid.cop_y_max, "cop_y_max");
   param->read(&this->grid.cop_y_stp, "cop_y_stp");
   param->read(&this->grid.cop_y_num, "cop_y_num");
+
+  param->read(&this->grid.elp_t_min, "elp_t_min");
+  param->read(&this->grid.elp_t_max, "elp_t_max");
+  param->read(&this->grid.elp_t_stp, "elp_t_stp");
+  param->read(&this->grid.elp_t_num, "elp_t_num");
 }
 
 __host__ void MemoryManager::initHostState(State *state) {
@@ -104,6 +115,7 @@ __host__ void MemoryManager::initHostState(State *state) {
     state[state_id].icp.y = cgrid->getState(state_id).icp.y();
     state[state_id].swf.x = cgrid->getState(state_id).swf.x();
     state[state_id].swf.y = cgrid->getState(state_id).swf.y();
+    state[state_id].elp   = cgrid->getState(state_id).elp;
   }
 }
 

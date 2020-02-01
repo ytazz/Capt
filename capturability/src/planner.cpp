@@ -122,8 +122,8 @@ Status Planner::runSearch(int preview){
   search->setStart(rfoot, lfoot, icp, elapsed, s_suf);
   search->setReference(posRef, icpRef);
   found = search->calc( (int)posRef.size() - 1);
-  printf("\n");
-  printf("\n");
+  // printf("\n");
+  // printf("\n");
 
   Status status;
   if(found) { // if found solution

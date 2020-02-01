@@ -38,10 +38,10 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t posRef, arr2_t icpRef, int p
     }
   }
   if(nStepCaptureBasin < 0) {
-    printf("NOT capturable\n");
+    // printf("NOT capturable\n");
     return NULL;
   }
-  printf("%d-step capturable \n", nStepCaptureBasin);
+  // printf("%d-step capturable \n", nStepCaptureBasin);
   int n[10];
   for(int i = 0; i < 10; i++) {
     int n_ = nStepCaptureBasin - i + 1;
@@ -74,7 +74,7 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t posRef, arr2_t icpRef, int p
       // printf(" %d\n", nodes[num_node].step);
 
       if(nodes[num_node].step > preview) {
-        printf("min error %1.3lf\n", min);
+        // printf("min error %1.3lf\n", min);
         return goal;
       }
 

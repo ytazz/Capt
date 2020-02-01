@@ -17,9 +17,12 @@ public:
 
   void print();
 
+  double get(); // [milli sec.]
+
 private:
-  std::chrono::system_clock::time_point              start_;
-  std::vector<std::chrono::system_clock::time_point> end_;
+  std::chrono::system_clock::time_point start_;
+  std::chrono::system_clock::time_point end_;
+  int                                   elapsed_;
 };
 
 } // namespace Capt

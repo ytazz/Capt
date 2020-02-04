@@ -67,40 +67,65 @@ bool Search::calc(int preview){
   tree->clear();
   seq.clear();
   region.clear();
+  printf("start\n");
   g_node = tree->search(s_state_id, s_suf, posRef, icpRef, preview);
+  printf("end\n");
   if(g_node == NULL) {
+    printf("null\n");
     return false;
   }else{
+    printf("not null\n");
     calcSequence();
+    printf("end calcSequence()\n");
     if(s_suf == FOOT_R) {
       region = tree->getCaptureRegion(s_state_id, s_input_id, s_suf, rfoot);
     }else{
       region = tree->getCaptureRegion(s_state_id, s_input_id, s_suf, lfoot);
     }
+    printf("end Search::calc\n");
     return true;
   }
 }
 
 Trans Search::getTrans(){
+  printf("Start: Trans Search::getTrans()\n");
   Trans trans;
 
   std::vector<int> input_ids;
   Node            *node = g_node;
+  if(node == NULL) {
+    printf("node null\n");
+  }else{
+    printf("node not null\n");
+  }
+  printf("state_id %d\n", node->state_id);
+  printf("input_id %d\n", node->input_id);
+  printf("step     %d\n", node->step);
   while(node != NULL) {
+    // printf("while\n");
     trans.states.push_back(grid->getState(node->state_id) );
     trans.inputs.push_back(grid->getInput(node->input_id) );
     input_ids.push_back(node->input_id);
 
     node = node->parent;
   }
+  printf("end while\n");
+  printf("trans.states %d\n", (int)trans.states.size() );
+  printf("trans.inputs %d\n", (int)trans.inputs.size() );
+  printf("input_ids    %d\n", (int)input_ids.size() );
   trans.inputs.pop_back();
   input_ids.pop_back();
 
   std::reverse(trans.states.begin(), trans.states.end() );
   std::reverse(trans.inputs.begin(), trans.inputs.end() );
   std::reverse(input_ids.begin(), input_ids.end() );
+  printf("trans.states %d\n", (int)trans.states.size() );
+  printf("trans.inputs %d\n", (int)trans.inputs.size() );
+  printf("input_ids    %d\n", (int)input_ids.size() );
 
   s_input_id = input_ids[0];
+
+  printf("End: Trans Search::getTrans()\n");
 
   return trans;
 }
@@ -114,7 +139,10 @@ Input Search::getInput(){
 }
 
 void Search::calcSequence(){
+  printf("\n");
+  printf("Start: void Search::calcSequence()\n");
   Trans trans = getTrans();
+  printf("1\n");
 
   vec2_t   suf_pos(0, 0);
   vec2_t   swf_pos(0, 0);
@@ -130,6 +158,8 @@ void Search::calcSequence(){
     amari   = 1;
     suf_pos = lfoot;
   }
+  printf("2\n");
+
 
   for(size_t i = 0; i < trans.states.size(); i++) { // right support
     if( ( (int)i % 2 ) == amari) {
@@ -167,6 +197,8 @@ void Search::calcSequence(){
     }
     seq.push_back(seq_);
   }
+  printf("seq size %d\n", (int)seq.size() );
+  printf("End: void Search::calcSequence()\n");
   // seq.erase(seq.begin() );
 }
 

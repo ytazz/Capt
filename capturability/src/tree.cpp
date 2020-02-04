@@ -4,6 +4,15 @@ namespace Capt {
 
 Tree::Tree(Grid *grid, Capturability* capturability) :
   grid(grid), capturability(capturability), epsilon(0.01){
+  for(int i = 0; i < MAX_NODE_SIZE; i++) {
+    nodes[i].parent   = NULL;
+    nodes[i].state_id = 0;
+    nodes[i].input_id = 0;
+    nodes[i].suf      = FOOT_NONE;
+    nodes[i].pos      = vec2_t(0, 0);
+    nodes[i].step     = 0;
+    nodes[i].err      = 0;
+  }
   clear();
 }
 
@@ -11,10 +20,17 @@ Tree::~Tree(){
 }
 
 void Tree::clear(){
-  num_node = 0;
-  opened   = 0;
+  num_node          = 0;
+  opened            = 0;
+  nodes[0].parent   = NULL;
+  nodes[0].state_id = 0;
+  nodes[0].input_id = 0;
+  nodes[0].suf      = FOOT_NONE;
+  nodes[0].pos      = vec2_t(0, 0);
+  nodes[0].step     = 0;
+  nodes[0].err      = 0;
   // for(int i = 0; i < MAX_NODE_SIZE; i++) {
-  //   nodes[i].parent   = NULL;
+  //   nodes[i].parent = NULL;
   //   nodes[i].state_id = 0;
   //   nodes[i].input_id = 0;
   //   nodes[i].suf      = FOOT_NONE;
@@ -41,7 +57,7 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t posRef, arr2_t icpRef, int p
     // printf("NOT capturable\n");
     return NULL;
   }
-  // printf("%d-step capturable \n", nStepCaptureBasin);
+  printf("%d-step capturable \n", nStepCaptureBasin);
   int n[10];
   for(int i = 0; i < 10; i++) {
     int n_ = nStepCaptureBasin - i + 1;
@@ -52,6 +68,8 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t posRef, arr2_t icpRef, int p
     }
   }
 
+  int goalNode = 0;
+
   // calculate reaves
   vec2_t swf, pos, icp, icp_;
   Node  *goal   = NULL;
@@ -59,24 +77,53 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t posRef, arr2_t icpRef, int p
   double posErr = 0.0, icpErr = 0.0;
   while(true) {
     // set target node based on breadth first search
+    if(opened == num_node) {
+      printf("no capture region...\n");
+      return &( nodes[num_node - 1] );
+    }
+
     Node *target  = &nodes[opened];
     int   numStep = target->step + 1; // 何歩目か
 
     // target node expansion
+    if(numStep > preview) {
+      for(int i = 0; i < num_node; i++) {
+        // printf("(parent) %6d, ", ( nodes[i].parent )->state_id);
+        // printf("%6d: ", i);
+        // printf("step %1d, ", nodes[i].step);
+        // printf("state_id %6d, ", nodes[i].state_id);
+        // printf("input_id %6d, ", nodes[i].input_id);
+        // printf("error %1.3lf\n", nodes[i].err);
+      }
+      // printf("min error %1.3lf\n", min);
+      // printf("goal is %d\n", goalNode);
+      // printf("return goal\n");
+      //
+      // Node *node_ = NULL;
+      // node_ = goal;
+      // printf("state_id %d\n", node_->state_id);
+      // printf("input_id %d\n", node_->input_id);
+      // printf("step     %d\n", node_->step);
+      // node_ = node_->parent;
+      // printf("state_id %d\n", node_->state_id);
+      // printf("input_id %d\n", node_->input_id);
+      // printf("step     %d\n", node_->step);
+
+      return goal;
+    }
     std::vector<CaptureSet*> region = capturability->getCaptureRegion(target->state_id, n[numStep]);
+    // printf("parent state_id %6d\n", target->state_id);
     for(size_t i = 0; i < region.size(); i++) {
+
       // set parent
+      // printf("     child  input_id %6d, ", region[i]->input_id);
+      // printf("     child  state_id %6d\n", region[i]->next_id);
       nodes[num_node].parent   = target;
       nodes[num_node].state_id = region[i]->next_id;
       nodes[num_node].input_id = region[i]->input_id;
       nodes[num_node].step     = numStep;
       // printf("-----------------------------------------\n");
       // printf(" %d\n", nodes[num_node].step);
-
-      if(nodes[num_node].step > preview) {
-        // printf("min error %1.3lf\n", min);
-        return goal;
-      }
 
       // calculate next landing position
       swf = grid->getInput(region[i]->input_id).swf;
@@ -106,10 +153,11 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t posRef, arr2_t icpRef, int p
       //   }
       // }
 
-      if(nodes[num_node].step == preview) {
+      if(numStep == preview) {
         if(nodes[num_node].err < min) {
-          goal = &nodes[num_node];
-          min  = nodes[num_node].err;
+          goal     = &nodes[num_node];
+          min      = nodes[num_node].err;
+          goalNode = num_node;
         }
       }
 
@@ -121,6 +169,10 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t posRef, arr2_t icpRef, int p
     }
 
     opened++;
+    if(opened > MAX_NODE_SIZE - 1000) {
+      printf("reach max opened size\n");
+      return NULL;
+    }
   }
   return NULL;
 }

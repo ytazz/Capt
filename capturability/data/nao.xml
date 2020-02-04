@@ -10,17 +10,16 @@
 
   <foot name="foot_r">
     <shape type="polygon">
-      <polygon point="-0.065 -0.025"/>
-      <polygon point="-0.055 -0.035"/>
-      <polygon point="-0.015 -0.025"/>
-      <polygon point="+0.015 -0.035"/>
-      <polygon point="+0.035 -0.035"/>
-      <polygon point="+0.065 -0.015"/>
-      <polygon point="+0.065 +0.025"/>
-      <polygon point="+0.035 +0.035"/>
+      <polygon point="+0.075 +0.000"/>
+      <polygon point="+0.055 +0.025"/>
+      <polygon point="+0.015 +0.035"/>
       <polygon point="-0.015 +0.025"/>
-      <polygon point="-0.065 +0.025"/>
+      <polygon point="-0.035 +0.015"/>
       <polygon point="-0.065 -0.025"/>
+      <polygon point="-0.065 -0.045"/>
+      <polygon point="+0.035 -0.045"/>
+      <polygon point="+0.015 -0.025"/>
+      <polygon point="+0.075 +0.000"/>
     </shape>
   </foot>
 

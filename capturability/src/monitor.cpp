@@ -27,9 +27,9 @@ Status Monitor::check(EnhancedState state, Footstep footstep){
   }else{
     suf = lfoot;
   }
+  supportFoot = state.s_suf;
 
   // calculate next landing position
-  vec2_t nextLandingPos;
   double distMin       = 100; // set very large value as initial value
   int    currentFootId = 0;
   for(size_t i = 0; i < state.footstep.size(); i++) {
@@ -83,6 +83,25 @@ Status Monitor::check(EnhancedState state, Footstep footstep){
     }else{
       captureRegion[i].x() = lfoot.x() + point.x();
       captureRegion[i].y() = lfoot.y() - point.y();
+    }
+  }
+
+  // N-step capture region
+  captData.clear();
+  for(int i = 1; i <= 4; i++) {
+    nstepCaptureRegion =  capturability->getCaptureRegion(state_id, i);
+    for (size_t j = 0; j < nstepCaptureRegion.size(); j++) {
+      vec2_t   swf = grid->getInput(nstepCaptureRegion[j]->input_id).swf;
+      CaptData data;
+      if(state.s_suf == FOOT_R) {
+        data.pos.x() = rfoot.x() + swf.x();
+        data.pos.y() = rfoot.y() + swf.y();
+      }else{
+        data.pos.x() = lfoot.x() + swf.x();
+        data.pos.y() = lfoot.y() - swf.y();
+      }
+      data.nstep = i;
+      captData.push_back(data);
     }
   }
 
@@ -199,16 +218,39 @@ EnhancedInput Monitor::get(){
   return input;
 }
 
-std::vector<CaptData> Monitor::getCaptureRegion(){
-  std::vector<CaptData> region;
+arr3_t Monitor::getFootstepR(){
+  arr3_t footstepR;
 
-  region.resize(captureRegion.size() );
-  for(size_t i = 0; i < captureRegion.size(); i++) {
-    region[i].pos   = vec2Tovec3(captureRegion[i]);
-    region[i].nstep = 1;
+  if(supportFoot == FOOT_L) {
+    footstepR.push_back(vec2Tovec3(nextLandingPos) );
   }
 
-  return region;
+  return footstepR;
+}
+
+arr3_t Monitor::getFootstepL(){
+  arr3_t footstepL;
+
+  if(supportFoot == FOOT_R) {
+    footstepL.push_back(vec2Tovec3(nextLandingPos) );
+  }
+
+  return footstepL;
+}
+
+std::vector<CaptData> Monitor::getCaptureRegion(){
+  // std::vector<CaptData> region;
+
+  // only 1-step capture region
+  // region.resize(captureRegion.size() );
+  // for(size_t i = 0; i < captureRegion.size(); i++) {
+  //   region[i].pos   = vec2Tovec3(captureRegion[i]);
+  //   region[i].nstep = 1;
+  // }
+
+  // N-step capture region
+
+  return captData;
 }
 
 } // namespace Capt

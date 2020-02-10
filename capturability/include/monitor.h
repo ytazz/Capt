@@ -19,6 +19,8 @@ public:
   Status                check(EnhancedState state, Footstep footstep);
   EnhancedInput         get();
   std::vector<CaptData> getCaptureRegion();
+  arr3_t                getFootstepR();
+  arr3_t                getFootstepL();
 
 private:
   Grid          *grid;
@@ -29,8 +31,14 @@ private:
   EnhancedState state;
   EnhancedInput input;
 
+  Foot supportFoot;
+
   // capture region
-  arr2_t captureRegion;
+  arr2_t                   captureRegion;
+  std::vector<CaptureSet*> nstepCaptureRegion;
+  std::vector<CaptData>    captData;
+
+  vec2_t nextLandingPos;
 
   double dt_min;
 

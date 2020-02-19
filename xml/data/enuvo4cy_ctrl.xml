@@ -1,0 +1,670 @@
+﻿<?xml version="1.0"?>
+<enuvo4c_ctrl>
+  <states>
+    <state name="fast" period="5">
+      <servo name="servo0" />
+      <servo name="servo1" />
+      <servo name="servo2" />
+      <servo name="servo3" />
+      <servo name="servo4" />
+      <servo name="servo5" />
+      <servo name="servo6" />
+      <servo name="servo7" />
+      <servo name="servo8" />
+      <servo name="servo9" />
+      <servo name="servo10"/>
+      <servo name="servo11"/>
+      <imu   name="imu0"   />
+      <imu   name="imu1"   />
+      <force6d name="force6d0"/>
+      <force6d name="force6d1"/>
+      <lidar/>
+    </state>
+    <state name="dependent" period="5">
+      <joint name="joint0"  polarity="false" offset=" 90.92-90.0" ratio="1.0" range="-60deg 60deg" origin="  0deg"/>
+      <joint name="joint1"  polarity="true"  offset="-91.02+90.0" ratio="1.0" range="-60deg 60deg" origin="  0deg"/>
+      <joint name="joint2"  polarity="false" offset=" 90.33-90.0" ratio="1.0" range="-60deg 60deg" origin="  0deg"/>
+      <joint name="joint3"  polarity="true"  offset="-88.92+90.0" ratio="1.0" range="-60deg 60deg" origin="  0deg"/>
+      <joint name="joint4"  polarity="false" offset=" 89.53-90.0" ratio="1.0" range="-60deg 60deg" origin="  0deg"/>
+      <joint name="joint5"  polarity="true"  offset="-89.07+90.0" ratio="1.0" range="-60deg 60deg" origin="  0deg"/>
+      <joint name="joint6"  polarity="true"  offset="-89.01+90.0" ratio="1.0" range="-60deg 60deg" origin="  0deg"/>
+      <joint name="joint7"  polarity="false" offset=" 90.58-90.0" ratio="1.0" range="-60deg 60deg" origin="  0deg"/>
+      <joint name="joint8"  polarity="true"  offset="-90.15+90.0" ratio="1.0" range="-60deg 60deg" origin="  0deg"/>
+      <joint name="joint9"  polarity="false" offset=" 90.45-90.0" ratio="1.0" range="-60deg 60deg" origin="  0deg"/>
+      <joint name="joint10" polarity="true"  offset="-89.44+90.0" ratio="1.0" range="-60deg 60deg" origin="  0deg"/>
+      <joint name="joint11" polarity="false" offset=" 90.26-90.0" ratio="1.0" range="-60deg 60deg" origin="  0deg"/>
+      <link name="fk_torso"  type="base" origin="0  0     0.58"/>
+      <link name="ik_torso"  type="base" origin="0  0     0.58"/>
+      <link name="fk_foot_r" type="end"  origin="0 -0.085 0   "/>
+      <link name="ik_foot_r" type="end"  origin="0 -0.085 0   "/>
+      <link name="fk_foot_l" type="end"  origin="0  0.085 0   "/>
+      <link name="ik_foot_l" type="end"  origin="0  0.085 0   "/>
+      <centroid name="fk_centroid" origin = "0 0 0.62" total_mass="5.6" total_inertia="0.28 0.28 0.05"/>
+      <centroid name="ik_centroid" origin = "0 0 0.62" total_mass="5.6" total_inertia="0.28 0.28 0.05"/>
+    </state>
+    <state name="slow" period="50">
+      <vehicle
+        type               ="none"
+        vel_max            ="0.1"
+        auto_vel_max       ="0.1"
+        angvel_max         ="10deg"
+        auto_angvel_max    ="10deg"
+        lookahead_dist_max ="1.0"
+        lookahead_angle_max="30deg"
+      />
+      <location name="location_odometry"/>
+      <location name="location_filtered"/>
+      <location name="location_origin"  />
+    </state>
+    <state name="static">
+      <scene name="scene_fk" model_filename="enuvo4c/enuvo4cy.xml" asm_filename  ="enuvo4c/enuvo4cy_asm.dat"/>
+      <scene name="scene_ik" model_filename="enuvo4c/enuvo4cy.xml" asm_filename  ="enuvo4c/enuvo4cy_asm.dat"/>
+      <environment gravity="9.8"/>
+      <footstep name="footstep0"/>
+      <footstep name="footstep1"/>
+      <joystick/>
+      <map/>
+    </state>
+  </states>
+  
+  <managers>
+    <rendering_manager
+      scene         = "scene_fk"
+      window_pos_x  = "1400"
+      window_pos_y  = "60"
+      window_width  = "1000"
+      window_height = "1200"
+      window_title  = "enuvo4c Controller"
+      console_font_size = "10"
+      console_pos_x     = "0"
+      console_pos_y     = "0"
+      console_width     = "120"
+      console_height    = "60"
+      console_input_row = "58"
+      >
+      <window
+        split      = "1 2"
+        row_ratio  = "100%"
+        col_ratio  = "100% 350"
+        back_color = "dimgray"
+        font_size  = "24">
+        <window
+          split="2 1"
+          row_ratio="50% 50%"
+          margin="5"
+          >
+          <window
+            split="1 2"
+            col_ratio="50% 50%"
+            margin="5"
+            >
+            <import name="viewer1" filename="conf/viewer.xml"/>
+            <import name="viewer2" filename="conf/viewer.xml"/>
+          </window>
+          <import name="viewer3" filename="conf/viewer_navigation.xml"/>
+        </window>
+        <import filename="conf/panel.xml"/>
+      </window>
+      
+      <event window="btn_run"       code="latch_on"  request="start            run"/>
+      <event window="btn_run"       code="latch_off" request="stop             run"/>
+      <event window="btn_enable"    code="latch_on"  request="enable           run"/>
+      <event window="btn_enable"    code="latch_off" request="disable          run"/>
+      <event window="btn_jog_joint" code="clicked"   request="switch_jog_joint run"/>
+      <event window="btn_jog_ik"    code="clicked"   request="switch_jog_ik    run"/>
+      <event window="btn_jog_comik" code="clicked"   request="switch_jog_comik run"/>
+      <event window="btn_control"   code="clicked"   request="switch_control   run"/>
+
+      <console col="0" row="0" width="50" height="2">
+        <item type="state" name="fast"/>
+      </console>
+      <console col="0" row="3" width="50" height="50">
+        <item type="label" name="servo0"/>
+        <item type="data"  name="servo0"/>
+        <item type="data"  name="servo1"/>
+        <item type="data"  name="servo2"/>
+        <item type="data"  name="servo3"/>
+        <item type="data"  name="servo4"/>
+        <item type="data"  name="servo5"/>
+        <item type="data"  name="servo6"/>
+        <item type="data"  name="servo7"/>
+        <item type="data"  name="servo8"/>
+        <item type="data"  name="servo9"/>
+        <item type="data"  name="servo10"/>
+        <item type="data"  name="servo11"/>
+        <item type="empty"/>
+        <item type="label" name="imu0"/>
+        <item type="data"  name="imu0"/>
+        <item type="data"  name="imu1"/>
+        <item type="empty"/>
+        <item type="label" name="force6d0"/>
+        <item type="data"  name="force6d0"/>
+        <item type="data"  name="force6d1"/>
+        <item type="empty"/>
+        <item type="data"  name="fk_torso" />
+        <item type="data"  name="ik_torso" />
+        <item type="data"  name="fk_foot_r"/>
+        <item type="data"  name="ik_foot_r"/>
+        <item type="data"  name="fk_foot_l"/>
+        <item type="data"  name="ik_foot_l"/>
+        <item type="data"  name="fk_centroid"/>
+        <item type="data"  name="ik_centroid"/>
+        <item type="empty"/>
+        <item type="data"  name="vehicle"/>
+        <item type="empty"/>
+        <item type="label" name="location"/>
+        <item type="data"  name="location_odometry"/>
+        <item type="data"  name="location_filtered"/>
+        <item type="empty"/>
+        <item type="label" name="joystick" />
+        <item type="data"  name="joystick" />
+      </console>
+      <console col="50" row="3" width="30" height="50">
+        <item type="label" name="joint0"/>
+        <item type="data"  name="joint0"/>
+        <item type="data"  name="joint1"/>
+        <item type="data"  name="joint2"/>
+        <item type="data"  name="joint3"/>
+        <item type="data"  name="joint4"/>
+        <item type="data"  name="joint5"/>
+        <item type="data"  name="joint6"/>
+        <item type="data"  name="joint7"/>
+        <item type="data"  name="joint8"/>
+        <item type="data"  name="joint9"/>
+        <item type="data"  name="joint10"/>
+        <item type="data"  name="joint11"/>
+        <item type="empty"/>
+      </console>
+      <console col="80" row="3" width="40" height="35">
+        <item type="load" manager="b3m1"   task="read" />
+        <item type="load" manager="b3m1"   task="write"/>
+        <item type="load" manager="b3m2"   task="read" />
+        <item type="load" manager="b3m2"   task="write"/>
+        <item type="load" manager="dmu10"  task="read" />
+        <item type="load" manager="ffs055" task="read" />
+        <item type="load" manager="vssp"   task="read" />
+        <item type="empty"/>
+        <item type="load" manager="joint_manager"          task="read"     />
+        <item type="load" manager="joint_manager"          task="write"    />
+        <item type="load" manager="kinematics_manager"     task="comp_fk"  />
+        <item type="load" manager="kinematics_manager"     task="comp_ik"  />
+        <item type="load" manager="groundforce_controller" task="comp_fcop"/>
+        <item type="load" manager="groundforce_controller" task="comp_icop"/>
+        <item type="load" manager="groundforce_controller" task="control"  />
+        <item type="load" manager="orientation_filter"     task="step"     />
+        <item type="load" manager="footstep_planner"       task="step"     />
+        <item type="load" manager="centroid_planner"       task="step"     />
+        <item type="empty"/>
+        <item type="load" manager="rendering_manager" task="draw_scene"/>
+        <item type="load" manager="rendering_manager" task="draw_text" />
+      </console>
+      <console col="80" row="30" width="40" height="20">
+        <item type="message" message_depth="20"/>
+      </console>
+      
+      <view
+        viewer  ="viewer1"
+        location="location_odometry"
+        >
+        <renderer name="sky_renderer"        />
+        <renderer name="ground_renderer"     />
+        <renderer name="fk_scene_renderer"   />
+        <!--
+        -->
+        <renderer name="fk_centroid_renderer"/>
+        <renderer name="fk_torso_renderer"   />
+        <renderer name="fk_foot_r_renderer"  />
+        <renderer name="fk_foot_l_renderer"  />
+      </view>
+      <view
+        viewer  ="viewer2"
+        location="location_odometry"
+        >
+        <renderer name="sky_renderer"        />
+        <renderer name="ground_renderer"     />
+        <renderer name="ik_scene_renderer"   />
+        <!--
+        -->
+        <renderer name="ik_centroid_renderer"/>
+        <renderer name="ik_torso_renderer"   />
+        <renderer name="ik_foot_r_renderer"  />
+        <renderer name="ik_foot_l_renderer"  />
+      </view>
+    </rendering_manager>
+    <scene_loader   name="fk_scene_loader"   scene="scene_fk"/>
+    <scene_loader   name="ik_scene_loader"   scene="scene_ik"/>
+
+    <joint_manager
+      homing_move_time = "1.0"
+      jog_move_time    = "0.5"
+      >
+      <joint name="joint0"  servo="servo0" />
+      <joint name="joint1"  servo="servo1" />
+      <joint name="joint2"  servo="servo2" />
+      <joint name="joint3"  servo="servo3" />
+      <joint name="joint4"  servo="servo4" />
+      <joint name="joint5"  servo="servo5" />
+      <joint name="joint6"  servo="servo6" />
+      <joint name="joint7"  servo="servo7" />
+      <joint name="joint8"  servo="servo8" />
+      <joint name="joint9"  servo="servo9" />
+      <joint name="joint10" servo="servo10"/>
+      <joint name="joint11" servo="servo11"/>
+    </joint_manager>
+    <kinematics_manager
+      fk                   = "scene_fk"
+      ik                   = "scene_ik"
+      min_contact_force    = "5.0"
+      num_iter_fk          = "1"
+      num_iter_ik          = "3"
+      min_step_size_fk     = "0.0"
+      max_step_size_fk     = "1.0"
+      cutoff_step_size_fk  = "0.1"
+      min_step_size_ik     = "0.0"
+      max_step_size_ik     = "1.0"
+      cutoff_step_size_ik  = "0.01"
+      hasty_step_size      = "true"
+      verbose              = "false"
+      >
+      <link name="torso"  fk="fk_torso"  ik="ik_torso"  path = "enuvo4c/ik_torso" />
+      <link name="foot_r" fk="fk_foot_r" ik="ik_foot_r" path = "enuvo4c/ik_foot_r">
+        <joint name="joint0"  path = "enuvo4c/hinge_rodarm_r1" ikpath="enuvo4c/ik_rodarm_r1"/>
+        <joint name="joint1"  path = "enuvo4c/hinge_rodarm_r2" ikpath="enuvo4c/ik_rodarm_r2"/>
+        <joint name="joint2"  path = "enuvo4c/hinge_rodarm_r3" ikpath="enuvo4c/ik_rodarm_r3"/>
+        <joint name="joint3"  path = "enuvo4c/hinge_rodarm_r4" ikpath="enuvo4c/ik_rodarm_r4"/>
+        <joint name="joint4"  path = "enuvo4c/hinge_rodarm_r5" ikpath="enuvo4c/ik_rodarm_r5"/>
+        <joint name="joint5"  path = "enuvo4c/hinge_rodarm_r6" ikpath="enuvo4c/ik_rodarm_r6"/>
+      </link>
+      <link name="foot_l" fk="fk_foot_l" ik="ik_foot_l" path = "enuvo4c/ik_foot_l">
+        <joint name="joint6"  path = "enuvo4c/hinge_rodarm_l1" ikpath="enuvo4c/ik_rodarm_l1"/>
+        <joint name="joint7"  path = "enuvo4c/hinge_rodarm_l2" ikpath="enuvo4c/ik_rodarm_l2"/>
+        <joint name="joint8"  path = "enuvo4c/hinge_rodarm_l3" ikpath="enuvo4c/ik_rodarm_l3"/>
+        <joint name="joint9"  path = "enuvo4c/hinge_rodarm_l4" ikpath="enuvo4c/ik_rodarm_l4"/>
+        <joint name="joint10" path = "enuvo4c/hinge_rodarm_l5" ikpath="enuvo4c/ik_rodarm_l5"/>
+        <joint name="joint11" path = "enuvo4c/hinge_rodarm_l6" ikpath="enuvo4c/ik_rodarm_l6"/>
+      </link>
+      <centroid fk="fk_centroid" ik="ik_centroid" path = "enuvo4c/ik_com"/>
+      <jog jog="jog0"  label="lbl_jog0" />
+      <jog jog="jog1"  label="lbl_jog1" />
+      <jog jog="jog2"  label="lbl_jog2" />
+      <jog jog="jog3"  label="lbl_jog3" />
+      <jog jog="jog4"  label="lbl_jog4" />
+      <jog jog="jog5"  label="lbl_jog5" />
+      <jog jog="jog6"  label="lbl_jog6" />
+      <jog jog="jog7"  label="lbl_jog7" />
+      <jog jog="jog8"  label="lbl_jog8" />
+      <jog jog="jog9"  label="lbl_jog9" />
+      <jog jog="jog10" label="lbl_jog10"/>
+      <jog jog="jog11" label="lbl_jog11"/>
+      <jog jog="jog12" label="lbl_jog12"/>
+      <jog jog="jog13" label="lbl_jog13"/>
+      <jog jog="jog14" label="lbl_jog14"/>
+      <jog jog="jog15" label="lbl_jog15"/>
+      <jog jog="jog16" label="lbl_jog16"/>
+      <jog jog="jog17" label="lbl_jog17"/>
+      <jog jog="jog18" label="lbl_jog18"/>
+      <jog jog="jog19" label="lbl_jog19"/>
+      <jog jog="jog20" label="lbl_jog20"/>
+      <jog jog="jog21" label="lbl_jog21"/>
+      <jog jog="jog22" label="lbl_jog22"/>
+      <jog jog="jog23" label="lbl_jog23"/>
+    </kinematics_manager>
+    <servo_tester
+      link         = "ik_torso"
+      direction    = "5"
+      amplitude    = "30deg"
+      frequency0   = "1.0"
+      frequency1   = "2.0"
+      chirp_period = "10.0"
+      />
+    <orientation_filter
+      imu  = "imu1"
+      link = "fk_torso"
+      rate_offset           = "0 0 0"
+      rate_filter_depth     = "1"
+      angle_correction_gain = "0.05"
+      />
+    <groundforce_controller
+      weight_trn            ="1.0"
+      weight_rot            ="1.0"
+      regularization_trn    ="0.000001"
+      regularization_rot    ="0.0001"
+      min_contact_duration  ="0.1"
+      moment_ctrl_gain      ="0.0"
+      moment_ctrl_limit     ="10deg"
+      balance_ctrl_gain     ="0.0"
+      balance_ctrl_limit    ="0.01"
+      torso_ctrl_gain_p     ="0.1"
+      torso_ctrl_gain_d     ="0.2"
+      torso_ctrl_tol_p      ="2.0deg"
+      torso_ctrl_tol_d      ="0.05"
+      torso_ctrl_damping    ="10.0"
+      torso_ctrl_limit      ="5deg"
+      >
+      <base     fk="fk_torso"    ik="ik_torso"/>
+      <link     fk="fk_foot_r"   ik="ik_foot_r" force6d="force6d0" friction_trn="0.3" friction_rot="0.3" support="0.1 0.05"/>
+      <link     fk="fk_foot_l"   ik="ik_foot_l" force6d="force6d1" friction_trn="0.3" friction_rot="0.3" support="0.1 0.05"/>
+      <centroid fk="fk_centroid" ik="ik_centroid"/>
+    </groundforce_controller>
+    
+    <footstep_planner
+      joystick   = "joystick"
+      vehicle    = "none"
+      footstep0  = "footstep0"
+      footstep1  = "footstep1"
+      max_stride = "0.15"
+      max_sway   = "0.075"
+      max_turn   = "15deg"
+      stride     = "0.00001"
+      sway       = "0.0"
+      turn       = "0deg"
+      spacing    = "0.16"
+      />
+    <centroid_planner
+      centroid             = "ik_centroid"
+      torso                = "ik_torso"
+      foot0                = "ik_foot_r"
+      foot1                = "ik_foot_l"
+      footstep0            = "footstep0"
+      footstep1            = "footstep1"
+      env                  = "environment"
+      swing_height         = "0.01"
+      swing_profile        = "cycloid"
+      com_height           = "0.62"
+      velocity_coefficient = "1.0 0.5"
+      enable_sync          = "false"
+      period_single        = "0.4"
+      period_double        = "0.25"
+      move_time            = "0.0"
+      move_time_idle       = "1.0"
+      static_walking       = "false"
+      />
+    <b3m
+      name       = "b3m1"
+      port       = "\\.\COM5"
+      baud       = "1500000"
+      diag_cycle = "1"
+      >
+      <device servo="servo0"  id="0"   max_torque="50%" margin="0.15" pgain="42000" dgain="400" igain="1000" static_friction="0" dynamic_friction="0" enable_read="true" read_order="0"/>
+      <device servo="servo1"  id="1"   max_torque="50%" margin="0.15" pgain="42000" dgain="400" igain="1000" static_friction="0" dynamic_friction="0" enable_read="true" read_order="1"/>
+      <device servo="servo2"  id="2"   max_torque="50%" margin="0.15" pgain="42000" dgain="400" igain="1000" static_friction="0" dynamic_friction="0" enable_read="true" read_order="2"/>
+      <device servo="servo3"  id="3"   max_torque="50%" margin="0.15" pgain="42000" dgain="400" igain="1000" static_friction="0" dynamic_friction="0" enable_read="true" read_order="3"/>
+      <device servo="servo4"  id="4"   max_torque="50%" margin="0.15" pgain="42000" dgain="400" igain="1000" static_friction="0" dynamic_friction="0" enable_read="true" read_order="4"/>
+      <device servo="servo5"  id="5"   max_torque="50%" margin="0.15" pgain="42000" dgain="400" igain="1000" static_friction="0" dynamic_friction="0" enable_read="true" read_order="5"/>
+    </b3m>
+    <b3m
+      name       = "b3m2"
+      port       = "\\.\COM6"
+      baud       = "1500000"
+      diag_cycle = "1"
+      >
+      <device servo="servo6"  id="6"   max_torque="50%" margin="0.15" pgain="42000" dgain="400" igain="1000" static_friction="0" dynamic_friction="0"  enable_read="true" read_order="0"/>
+      <device servo="servo7"  id="7"   max_torque="50%" margin="0.15" pgain="42000" dgain="400" igain="1000" static_friction="0" dynamic_friction="0"  enable_read="true" read_order="1"/>
+      <device servo="servo8"  id="8"   max_torque="50%" margin="0.15" pgain="42000" dgain="400" igain="1000" static_friction="0" dynamic_friction="0"  enable_read="true" read_order="2"/>
+      <device servo="servo9"  id="9"   max_torque="50%" margin="0.15" pgain="42000" dgain="400" igain="1000" static_friction="0" dynamic_friction="0"  enable_read="true" read_order="3"/>
+      <device servo="servo10" id="10"  max_torque="50%" margin="0.15" pgain="42000" dgain="400" igain="1000" static_friction="0" dynamic_friction="0"  enable_read="true" read_order="4"/>
+      <device servo="servo11" id="11"  max_torque="50%" margin="0.15" pgain="42000" dgain="400" igain="1000" static_friction="0" dynamic_friction="0"  enable_read="true" read_order="5"/>
+    </b3m>
+    <dmu10>
+      <device
+        port        = "\\.\COM4"
+        baud        = "460800"
+        acc_offset  = " 0  0  0"
+        rate_offset = " 0  0  0"
+        front       = "-1  0  0"
+        left        = " 0  1  0"
+        up          = " 0  0 -1"
+        imu         = "imu1"
+      />
+    </dmu10>
+    <ffs055>
+      <device
+        force6d          = "force6d0"
+        port             = "\\.\COM7"
+        baud             = "460800"
+        front            = "1  0  0"
+        left             = "0 -1  0"
+        up               = "0  0 -1"
+        force_offset     = "-25.7 -1.5 -1.5"
+        moment_offset    = "0 0 0"
+        />
+      <device
+        force6d          = "force6d1"
+        port             = "\\.\COM8"
+        baud             = "460800"
+        front            = "1  0  0"
+        left             = "0 -1  0"
+        up               = "0  0 -1"
+        force_offset     = "-2.9 1.8 1.4"
+        moment_offset    = "0 0 0"
+        />
+    </ffs055>
+    <vssp>
+      <device
+        address         = "192.168.0.10"
+        port            = "10940"
+        interlace       = "10"
+        connect_timeout = "500"
+        lidar           = "lidar"
+        imu             = "imu0"
+        />
+    </vssp>
+    <sdl_joystick>
+      <device/>
+    </sdl_joystick>
+    
+    <vehicle_controller
+      alias               = "vc"
+      imu                 = "imu1"
+      base                = "fk_torso"
+      use_odometry        = "true"
+      trn_from_base       = "true"
+      rot_from_base       = "true"
+      control_mode        = "manual"
+      input_mode          = "velocity"
+      input_joystick      = "joystick"
+      input_steer         = "H1"
+      input_speed         = "V1"
+      input_switch_manual = "L1"
+      input_switch_auto   = "R1"
+      steer_zero          = "0"
+      steer_max           = "-32768"
+      speed_zero          = "0"
+      speed_max           = "-32768"
+      deadband            = "0.1"
+      rate_feedback_gain  = "0.0"
+      />
+    <odometer
+      location = "location_odometry"
+      yaw_only = "true"
+      />
+    <logger name="log_write_binary"            state="fast"             mode="write" format="binary" ext=".dat"/>
+    <logger name="log_write_fast"              state="fast"             mode="write" format="csv"    ext=".csv"/>
+    <logger name="log_write_dependent"         state="dependent"        mode="write" format="csv"    suffix="_dep"    ext=".csv"/>
+    <logger name="log_write_location"          item="location_odometry" mode="write" format="csv"    suffix="_loc"    ext=".csv"/>
+    <logger name="log_write_location_filtered" item="location_filtered" mode="write" format="csv"    suffix="_locfil" ext=".csv"/>
+    
+    <scene_renderer name="fk_scene_renderer" scene="scene_fk"/>
+    <scene_renderer name="ik_scene_renderer" scene="scene_ik"/>
+    
+    <centroid_renderer name="fk_centroid_renderer" centroid="fk_centroid" com_color="cyan" cop_color="magenta" cap_color="green" force_scale="0.01" moment_scale="0.01"/>
+    <centroid_renderer name="ik_centroid_renderer" centroid="ik_centroid" com_color="cyan" cop_color="magenta" cap_color="green" force_scale="0.01" moment_scale="0.01"/>
+    <link_renderer  name="fk_torso_renderer"  link="fk_torso"/>
+    <link_renderer  name="fk_foot_r_renderer" link="fk_foot_r" force_scale="0.01" moment_scale="0.01"/>
+    <link_renderer  name="fk_foot_l_renderer" link="fk_foot_l" force_scale="0.01" moment_scale="0.01"/>
+    <link_renderer  name="ik_torso_renderer"  link="ik_torso"/>
+    <link_renderer  name="ik_foot_r_renderer" link="ik_foot_r" force_scale="0.01" moment_scale="0.01"/>
+    <link_renderer  name="ik_foot_l_renderer" link="ik_foot_l" force_scale="0.01" moment_scale="0.01"/>
+    <location_renderer
+      name       = "location_odometry_renderer"
+      location   = "location_odometry"
+      color      = "blue"
+      point_size = "10"
+      line_width = "3"
+      />
+    <location_renderer
+      name       = "location_filtered_renderer"
+      location   = "location_filtered"
+      color      = "magenta"
+      point_size = "10"
+      line_width = "3"
+      />
+    <sky_renderer
+      slice        = "72"
+      stack        = "18"
+      tile         = "true"
+      solid_color  = "azure*a=0"
+      solid_color2 = "skyblue*a=0"
+      wire_color   = "azure"
+      />
+    <ground_renderer
+      div          = "24"
+      tile         = "true"
+      solid_color  = "honeydew*a=0.5"
+      solid_color2 = "powderblue*a=0.5"
+      wire_color   = "honeydew*a=0"
+      />
+    
+    <request_manager/>
+    <speech_manager/>
+    <timer/>
+  </managers>
+
+  <sequencer name="start">
+    <task request="vssp            start"/>
+    <task request="device_b3m1     start"/>
+    <task request="device_b3m2     start"/>
+    <task request="device_dmu10    start"/>
+    <task request="device_ffs055   start"/>
+    <task request="device_joystick start"/>
+    <task request="control         start"/>
+  </sequencer>
+
+  <sequencer name="stop">
+    <task request="control         stop"/>
+    <task request="device_joystick stop"/>
+    <task request="device_ffs055   stop"/>
+    <task request="device_dmu10    stop"/>
+    <task request="device_b3m2     stop"/>
+    <task request="device_b3m1     stop"/>
+    <task request="vssp            stop"/>
+  </sequencer>
+
+  <sequencer name="enable">
+    <task request="joint_manager      switch homing"/>
+    <task request="joint_manager      reset"        />
+    <task request="kinematics_manager reset"        />
+    <task request="timer              wait   1500"  />
+    <task request="b3m1               enable"       />
+    <task request="b3m2               enable"       />
+    <task request="timer              wait   1500"  />
+  </sequencer>
+  
+  <sequencer name="disable">
+    <task request="footstep_planner       switch off"   />
+    <task request="centroid_planner       switch off"   />
+    <task request="groundforce_controller switch off"   />
+    <task request="joint_manager          switch homing"/>
+    <task request="joint_manager          reset"        />
+    <task request="kinematics_manager     reset"        />
+    <task request="timer                  wait   1500"  />
+    <task request="b3m1                   disable"      />
+    <task request="b3m2                   disable"      />
+    <task request="timer                  wait   1500"  />
+  </sequencer>
+
+  <sequencer name="switch_jog_joint">
+    <task request="footstep_planner       switch off"   />
+    <task request="centroid_planner       switch off"   />
+    <task request="groundforce_controller switch off"   />
+    <task request="joint_manager          switch homing"/>
+    <task request="joint_manager          reset"        />
+    <task request="kinematics_manager     reset"        />
+    <task request="kinematics_manager     switch joint" />
+    <task request="timer                  wait   1500"  />
+    <task request="joint_manager          switch jog"   />
+  </sequencer >
+  
+  <sequencer  name="switch_jog_ik">
+    <task request="footstep_planner       switch off"   />
+    <task request="centroid_planner       switch off"   />
+    <task request="groundforce_controller switch off"   />
+    <task request="joint_manager          switch homing"/>
+    <task request="joint_manager          reset"        />
+    <task request="kinematics_manager     reset"        />
+    <task request="kinematics_manager     switch ik"    />
+    <task request="timer                  wait   1500"  />
+    <task request="joint_manager          switch jog"   />
+  </sequencer >
+
+  <sequencer  name="switch_jog_comik">
+    <task request="footstep_planner       switch off"   />
+    <task request="centroid_planner       switch off"   />
+    <task request="groundforce_controller switch off"   />
+    <task request="joint_manager          switch homing"/>
+    <task request="joint_manager          reset"        />
+    <task request="kinematics_manager     reset"        />
+    <task request="kinematics_manager     switch comik" />
+    <task request="timer                  wait   1500"  />
+    <task request="joint_manager          switch jog"   />
+  </sequencer >
+
+  <sequencer  name="switch_control">
+    <task request="footstep_planner       switch off"    />
+    <task request="centroid_planner       switch off"    />
+    <task request="groundforce_controller switch off"    />
+    <task request="joint_manager          switch homing" />
+    <task request="joint_manager          reset"         />
+    <task request="kinematics_manager     reset"         />
+    <task request="kinematics_manager     switch comik"  />
+    <task request="footstep_planner       switch on"     />
+    <task request="centroid_planner       switch on"     />
+    <task request="groundforce_controller switch on"     />
+    <task request="timer                  wait   1500"   />
+    <task request="joint_manager          switch control"/>
+  </sequencer >
+  
+  <sequencer name="control" period="5">
+    <state name="fast"     />
+    <state name="dependent"/>
+    <task request="joint_manager          read"     />
+    <task request="orientation_filter     step"     />
+    <task request="kinematics_manager     comp_fk"  />
+    <!--
+    -->
+    <task request="groundforce_controller comp_fcop"/>
+    <task request="footstep_planner       step"     />
+    <task request="centroid_planner       step"     />
+    <task request="groundforce_controller comp_icop"/>
+    <task request="groundforce_controller control"  />
+    <task request="servo_tester           step"     />
+    <task request="kinematics_manager     comp_ik"  />
+    <task request="joint_manager          write"    />
+    <task request="log_write_binary       write"    evety="100"/>
+    <task request="log_write_fast         write"    every="100"/>
+    <task request="log_write_dependent    write"    every="100"/>
+  </sequencer>
+
+  <sequencer name="device_b3m1" period="5">
+    <task request="b3m1      read" />
+    <task request="b3m1      write"/>
+  </sequencer>
+  <sequencer name="device_b3m2" period="5">
+    <task request="b3m2      read" />
+    <task request="b3m2      write"/>
+  </sequencer>
+  <sequencer name="device_dmu10" period="5">
+    <task request="dmu10         read" />
+  </sequencer>
+  <sequencer name="device_ffs055" period="5">
+    <task request="ffs055        read" />
+  </sequencer>
+  <sequencer name="device_joystick" period="50">
+    <task request="sdl_joystick  read" />
+  </sequencer>
+ 
+  <sequencer name="rendering" period="100" running="true">
+    <task request="rendering_manager draw_scene"/>
+    <task request="rendering_manager draw_text" />
+  </sequencer>
+</enuvo4c_ctrl>

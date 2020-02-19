@@ -1,0 +1,40 @@
+\documentclass[main]{subfiles}
+\begin{document}
+\section{グリッド}
+\begin{table}[H]
+  \centering
+  \caption{Parameters}
+  \begin{tabular}{ccccc}
+		\hline
+    \textbf{Symbol} & \textbf{Min} & \textbf{Max} & \textbf{Resolution} & \textbf{Unit} \\ \hline \hline
+    $x_\mathrm{icp}$ & -0.60 & 0.60 & * & [m] \\
+    $y_\mathrm{icp}$ & -0.60 & 0.60 & * & [m] \\
+    $x_\mathrm{swf}$ & -0.25 & 0.25 & * & [m] \\
+    $y_\mathrm{swf}$ &  0.20 & 0.50 & * & [m] \\
+    $x_\mathrm{cop}$ & -0.125 & 0.125 & * & [m] \\
+    $y_\mathrm{cop}$ & -0.075 & 0.075 & * & [m] \\
+    \hline
+  \end{tabular}
+\end{table}
+足の頂点\\
++0.125, +0.075\\
++0.125, -0.075\\
+-0.125, -0.075\\
+-0.125, +0.075\\
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 100 mm]{graph/grid/0.1.eps}
+  \caption{Resolution: \SI{0.1}{m}}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 100 mm]{graph/grid/0.05.eps}
+  \caption{Resolution: \SI{0.05}{m}}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 100 mm]{graph/grid/0.025.eps}
+  \caption{Resolution: \SI{0.025}{m}}
+\end{figure}
+%-----------------------------------------------------------------------------%
+\end{document}

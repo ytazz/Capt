@@ -3,7 +3,14 @@
 *.swp
 *.svg
 *.out
+*.user
+*.aux
+*.dvi
+*.log
+*.synctex.gz
+*.o
 
-data/
-build/
 old(temp)/
+build/
+bin/
+/build

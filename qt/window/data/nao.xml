@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<robot name="nao">
+
+  <unit length="m" mass="kg" time="s" angle="deg"/>
+
+  <physics mass="5.65039" com_height="0.3" step_time_min="0.1" foot_vel_max="1.0"/>
+
+  <environment gravity="9.80665" friction="1"/>
+
+  <link name="foot_r">
+    <shape type="polygon" trn="0 0" rot="0">
+      <polygon point="-0.065 -0.025"/>
+      <polygon point="-0.055 -0.035"/>
+      <polygon point="-0.015 -0.025"/>
+      <polygon point="+0.015 -0.035"/>
+      <polygon point="+0.035 -0.035"/>
+      <polygon point="+0.065 -0.015"/>
+      <polygon point="+0.065 +0.025"/>
+      <polygon point="+0.035 +0.035"/>
+      <polygon point="-0.015 +0.025"/>
+      <polygon point="-0.065 +0.025"/>
+      <polygon point="-0.065 -0.025"/>
+    </shape>
+  </link>
+
+  <link name="foot_l">
+    <shape type="reverse"/>
+  </link>
+
+</robot>

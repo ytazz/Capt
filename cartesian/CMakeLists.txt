@@ -4,7 +4,6 @@ project(Capt)
 set(BUILD_GPU     false CACHE BOOL "build programs for GPU")
 set(BUILD_CPU     false CACHE BOOL "build programs for CPU")
 set(BUILD_EXAMPLE false CACHE BOOL "build sample programs")
-set(MAKE_LIBRARY  false CACHE BOOL "make Capt library")
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -O3")
 
@@ -91,12 +90,6 @@ if(${BUILD_GPU})
     ${GPU_SOURCES}
   )
   target_link_libraries(main_gpu ${EXPAT_LIBRARIES})
-endif()
-
-if(${MAKE_LIBRARY})
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -shared -fPIC")
-  add_library(${PROJECT_NAME} SHARED ${CAPT_SOURCES} ${PLOT_SOURCES})
-  target_link_libraries(${PROJECT_NAME} ${EXPAT_LIBRARIES})
 endif()
 
 if(${BUILD_EXAMPLE})

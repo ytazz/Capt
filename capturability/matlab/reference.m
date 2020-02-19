@@ -3,9 +3,7 @@ close all;
 
 %% load .csv file
 data = csvread("simulation.csv",2003,0);
-dataRef = csvread("../reference/simulation.csv",2003,0);
 dataSize = max(size(data(:,1)));
-dataRefSize = max(size(dataRef(:,1)));
 
 %% Color Setting
 % color
@@ -18,7 +16,7 @@ pendulum_color = 'black';
 
 figure('Name',"xy");
 set(gca,'FontSize',12 );
-set(gcf,'renderer','painters');
+% set(gcf,'renderer','painters');
 hold on;
 
 xlabel('x [m]');
@@ -34,11 +32,6 @@ ylabel('y [m]');
 xlim([-0.5 2.5]);
 ylim([-1 1]);
 yticks(-1:0.5:1);
-
-% CoMRef
-plot(dataRef(:,8),dataRef(:,9),'lineWidth', 1,'Color', com_color,'LineStyle','--');
-% ICPRef
-line(dataRef(:,12),dataRef(:,13),'lineWidth', 1,'Color', icp_color,'LineStyle','--');
 
 % CoM
 plot(data(:,8),data(:,9),'lineWidth', 1,'Color', com_color);
@@ -106,14 +99,6 @@ xlim([-0.5 2.5]);
 ylim([-0.5 1.5]);
 yticks(-0.5:0.5:1.5);
 
-% Reference Pendulum foot
-for i=1:1:dataRefSize
-    if(rem(i,50)==0)
-        x = [dataRef(i,8),dataRef(i,4)];
-        z = [1,0];
-        line(x,z,'lineWidth', 0.1,'Color',[0.8 0.8 0.8]);
-    end
-end
 % Pendulum foot
 for i=1:1:dataSize
     if(rem(i,50)==0)

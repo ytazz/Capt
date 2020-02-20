@@ -65,6 +65,9 @@ private:
   double foot_vel_max;
   double step_time_min;
 
+  // 踏み出しできないindexのlist
+  std::vector<int> impossible;
+
   // 解析結果の最大踏み出し歩数
   int max_step;
 };

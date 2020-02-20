@@ -9,6 +9,14 @@ Analysis::Analysis(Model *model, Grid *grid)
   model->read(&foot_vel_max, "foot_vel_max");
   model->read(&step_time_min, "step_time_min");
 
+  // 踏み出し領域から除外する点をindexで設定
+  // 手動で設定する必要がある
+  FILE *fp = fopen("data/valkyrie_exception.csv", "r");
+  int   buf;
+  while (fscanf(fp, "%d", &buf) != EOF) {
+    impossible.push_back(buf);
+  }
+
   printf("*** Analysis ***\n");
   printf("  Initializing ... ");
   fflush(stdout);
@@ -76,10 +84,13 @@ void Analysis::calcBasin(){
         basin[state_id] = 0;
     }
   }else{
+    Polygon polygon;
     for(int state_id = 0; state_id < state_num; state_id++) {
-      Polygon polygon;
-      if(polygon.inPolygon(state[state_id].icp, foot_r) && state[state_id].elp < epsilon )
-        basin[state_id] = 0;
+      if(!inIndexList(grid->indexSwf(state[state_id].swf), impossible ) ) {
+        if(polygon.inPolygon(state[state_id].icp, foot_r) && state[state_id].elp < epsilon ) {
+          basin[state_id] = 0;
+        }
+      }
     }
   }
 }
@@ -114,21 +125,24 @@ bool Analysis::exe(const int n){
   bool found = false;
   if(n > 0) {
     for(int state_id = 0; state_id < state_num; state_id++) {
-      for(int input_id = 0; input_id < input_num; input_id++) {
-        int id = state_id * input_num + input_id;
-        if (trans[id] >= 0) {
-          if (basin[trans[id]] == ( n - 1 ) ) {
-            nstep[id] = n;
-            found     = true;
-            if (basin[state_id] < 0) {
-              basin[state_id] = n;
+      if(!inIndexList(grid->indexSwf(state[state_id].swf), impossible ) ) {
+        for(int input_id = 0; input_id < input_num; input_id++) {
+          if(!inIndexList(grid->indexSwf(input[input_id].swf), impossible ) ) {
+            int id = state_id * input_num + input_id;
+            if (trans[id] >= 0) {
+              if (basin[trans[id]] == ( n - 1 ) ) {
+                nstep[id] = n;
+                found     = true;
+                if (basin[state_id] < 0) {
+                  basin[state_id] = n;
+                }
+              }
             }
           }
         }
       }
     }
   }
-
   return found;
 }
 

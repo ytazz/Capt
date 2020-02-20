@@ -27,6 +27,8 @@ int round(double val);
 vec3_t vec2Tovec3(vec2_t vec2);
 vec2_t vec3Tovec2(vec3_t vec3);
 
+bool inIndexList(int id, std::vector<int> ids);
+
 enum OccupancyType {
   NONE,
   EMPTY,

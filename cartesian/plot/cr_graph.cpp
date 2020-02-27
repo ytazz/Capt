@@ -34,7 +34,7 @@ int main(int argc, char const *argv[]) {
   // double icp_y_offset = 0.05;
   // walk val
   double icp_x = -0.15;
-  double icp_y = -0.05;
+  double icp_y = 0.05;
   double swf_x = -0.1;
   double swf_y = 0.3;
 

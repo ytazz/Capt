@@ -11,14 +11,14 @@ CRPlot::CRPlot(Model *model, Param *param, Grid *grid)
   p("set encoding utf8");
   p("set terminal qt size 600,600");
 
-  param->read(&x_min, "icp_x_min");
-  param->read(&x_max, "icp_x_max");
-  param->read(&x_stp, "icp_x_stp");
-  param->read(&x_num, "icp_x_num");
-  param->read(&y_min, "icp_y_min");
-  param->read(&y_max, "icp_y_max");
-  param->read(&y_stp, "icp_y_stp");
-  param->read(&y_num, "icp_y_num");
+  param->read(&x_min, "map_x_min");
+  param->read(&x_max, "map_x_max");
+  param->read(&x_stp, "map_x_stp");
+  param->read(&x_num, "map_x_num");
+  param->read(&y_min, "map_y_min");
+  param->read(&y_max, "map_y_max");
+  param->read(&y_stp, "map_y_stp");
+  param->read(&y_num, "map_y_num");
 
   c_num = 5;
 

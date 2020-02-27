@@ -2,8 +2,8 @@
 
 namespace Capt {
 
-Generator::Generator(Model *model){
-  swing = new Swing(model);
+Generator::Generator(Model *model, Param *param){
+  swing = new Swing(model, param);
 
   model->read(&omega, "omega");
 }

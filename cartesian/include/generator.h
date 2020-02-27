@@ -10,7 +10,7 @@ namespace Capt {
 
 class Generator {
 public:
-  Generator(Model *model);
+  Generator(Model *model, Param *param);
   ~Generator();
 
   void calc(Footstep *footstep);

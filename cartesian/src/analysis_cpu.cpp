@@ -2,20 +2,12 @@
 
 namespace Capt {
 
-Analysis::Analysis(Model *model, Grid *grid)
-  : model(model), grid(grid),
+Analysis::Analysis(Model *model, Param *param, Grid *grid)
+  : model(model), param(param), grid(grid),
     state_num(grid->getNumState() ), input_num(grid->getNumInput() ), grid_num(grid->getNumGrid() ),
     epsilon(0.001){
-  model->read(&foot_vel_max, "foot_vel_max");
-  model->read(&step_time_min, "step_time_min");
-
-  // 踏み出し領域から除外する点をindexで設定
-  // 手動で設定する必要がある
-  FILE *fp = fopen("data/valkyrie_exception.csv", "r");
-  int   buf;
-  while (fscanf(fp, "%d", &buf) != EOF) {
-    impossible.push_back(buf);
-  }
+  model->read(&v_max, "foot_vel_max");
+  param->read(&z_max, "swf_z_max");
 
   printf("*** Analysis ***\n");
   printf("  Initializing ... ");
@@ -75,19 +67,19 @@ void Analysis::calcBasin(){
 
   if(enableDoubleSupport) {
     for(int state_id = 0; state_id < state_num; state_id++) {
-      model->read(&foot_l, "foot_l_convex", state[state_id].swf);
+      model->read(&foot_l, "foot_l_convex", vec3Tovec2(state[state_id].swf) );
       Polygon polygon;
       polygon.setVertex(foot_r);
       polygon.setVertex(foot_l);
       region = polygon.getConvexHull();
-      if(polygon.inPolygon(state[state_id].icp, region) && state[state_id].elp < epsilon )
+      if(polygon.inPolygon(state[state_id].icp, region) && state[state_id].swf.z() < epsilon )
         basin[state_id] = 0;
     }
   }else{
     Polygon polygon;
     for(int state_id = 0; state_id < state_num; state_id++) {
-      if(!inIndexList(grid->indexSwf(state[state_id].swf), impossible ) ) {
-        if(polygon.inPolygon(state[state_id].icp, foot_r) && state[state_id].elp < epsilon ) {
+      if(grid->isSteppable(vec3Tovec2(state[state_id].swf) ) ) {
+        if(polygon.inPolygon(state[state_id].icp, foot_r) && state[state_id].swf.z() < epsilon ) {
           basin[state_id] = 0;
         }
       }
@@ -103,9 +95,20 @@ void Analysis::calcTrans(){
     for(int input_id = 0; input_id < input_num; input_id++) {
       int id = state_id * input_num + input_id;
 
-      double dist = ( input[input_id].swf - state[state_id].swf ).norm();
-      double tau  = max(0, step_time_min / 2 - state[state_id].elp) +
-                    dist / foot_vel_max + step_time_min / 2;
+      // printf("\n");
+      // state[state_id].print();
+      // input[input_id].print();
+      // printf("\n");
+
+      double dist_x =  input[input_id].swf.x() - state[state_id].swf.x();
+      double dist_y =  input[input_id].swf.y() - state[state_id].swf.y();
+      double dist   = sqrt( dist_x * dist_x + dist_y * dist_y );
+      double tau    = ( 2 * z_max - state[state_id].swf.z() + dist ) / v_max;
+
+      // printf("dist_x %1.3lf\n", dist_x);
+      // printf("dist_y %1.3lf\n", dist_y);
+      // printf("dist   %1.3lf\n", dist  );
+      // printf("tau    %1.3lf\n", tau  );
 
       pendulum.setIcp(state[state_id].icp);
       pendulum.setCop(input[input_id].cop);
@@ -113,8 +116,7 @@ void Analysis::calcTrans(){
 
       State state_;
       state_.icp << -input[input_id].swf.x() + icp.x(), input[input_id].swf.y() - icp.y();
-      state_.swf << -input[input_id].swf.x(), input[input_id].swf.y();
-      state_.elp = 0.0;
+      state_.swf << -input[input_id].swf.x(), input[input_id].swf.y(), 0;
 
       trans[id] = grid->roundState(state_).id;
     }
@@ -125,9 +127,9 @@ bool Analysis::exe(const int n){
   bool found = false;
   if(n > 0) {
     for(int state_id = 0; state_id < state_num; state_id++) {
-      if(!inIndexList(grid->indexSwf(state[state_id].swf), impossible ) ) {
+      if(grid->isSteppable(vec3Tovec2(state[state_id].swf) ) ) {
         for(int input_id = 0; input_id < input_num; input_id++) {
-          if(!inIndexList(grid->indexSwf(input[input_id].swf), impossible ) ) {
+          if(grid->isSteppable(input[input_id].swf ) ) {
             int id = state_id * input_num + input_id;
             if (trans[id] >= 0) {
               if (basin[trans[id]] == ( n - 1 ) ) {

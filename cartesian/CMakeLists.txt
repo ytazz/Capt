@@ -29,25 +29,25 @@ include_directories(${PROJECT_SOURCE_DIR}/plot/include)
 
 set(CAPT_SOURCES
   ${PROJECT_SOURCE_DIR}/src/base.cpp
-  ${PROJECT_SOURCE_DIR}/src/capturability.cpp
+  # ${PROJECT_SOURCE_DIR}/src/capturability.cpp
   ${PROJECT_SOURCE_DIR}/src/config.cpp
-  ${PROJECT_SOURCE_DIR}/src/cycloid.cpp
-  ${PROJECT_SOURCE_DIR}/src/generator.cpp
-  ${PROJECT_SOURCE_DIR}/src/grid_map.cpp
+  # ${PROJECT_SOURCE_DIR}/src/cycloid.cpp
+  # ${PROJECT_SOURCE_DIR}/src/generator.cpp
+  # ${PROJECT_SOURCE_DIR}/src/grid_map.cpp
   ${PROJECT_SOURCE_DIR}/src/grid.cpp
-  ${PROJECT_SOURCE_DIR}/src/interpolation.cpp
+  # ${PROJECT_SOURCE_DIR}/src/interpolation.cpp
   ${PROJECT_SOURCE_DIR}/src/loader.cpp
   ${PROJECT_SOURCE_DIR}/src/model.cpp
-  ${PROJECT_SOURCE_DIR}/src/monitor.cpp
+  # ${PROJECT_SOURCE_DIR}/src/monitor.cpp
   ${PROJECT_SOURCE_DIR}/src/param.cpp
   ${PROJECT_SOURCE_DIR}/src/pendulum.cpp
-  ${PROJECT_SOURCE_DIR}/src/planner.cpp
+  # ${PROJECT_SOURCE_DIR}/src/planner.cpp
   ${PROJECT_SOURCE_DIR}/src/polygon.cpp
-  ${PROJECT_SOURCE_DIR}/src/search.cpp
-  ${PROJECT_SOURCE_DIR}/src/swing.cpp
-  ${PROJECT_SOURCE_DIR}/src/timer.cpp
-  ${PROJECT_SOURCE_DIR}/src/trajectory.cpp
-  ${PROJECT_SOURCE_DIR}/src/tree.cpp
+  # ${PROJECT_SOURCE_DIR}/src/search.cpp
+  # ${PROJECT_SOURCE_DIR}/src/swing.cpp
+  # ${PROJECT_SOURCE_DIR}/src/timer.cpp
+  # ${PROJECT_SOURCE_DIR}/src/trajectory.cpp
+  # ${PROJECT_SOURCE_DIR}/src/tree.cpp
 )
 
 set(CPU_SOURCES
@@ -60,17 +60,17 @@ set(GPU_SOURCES
   ${PROJECT_SOURCE_DIR}/cuda/src/cuda_vector.cu
 )
 
-set(PLOT_SOURCES
-  ${PROJECT_SOURCE_DIR}/plot/src/gnuplot.cpp
-  ${PROJECT_SOURCE_DIR}/plot/src/cr_plot.cpp
-  ${PROJECT_SOURCE_DIR}/plot/src/step_plot.cpp
-  ${PROJECT_SOURCE_DIR}/plot/src/occupancy_plot.cpp
-)
+# set(PLOT_SOURCES
+#   ${PROJECT_SOURCE_DIR}/plot/src/gnuplot.cpp
+#   ${PROJECT_SOURCE_DIR}/plot/src/cr_plot.cpp
+#   ${PROJECT_SOURCE_DIR}/plot/src/step_plot.cpp
+#   ${PROJECT_SOURCE_DIR}/plot/src/occupancy_plot.cpp
+# )
 
 add_executable(debug debug.cpp ${CAPT_SOURCES} ${PLOT_SOURCES})
 target_link_libraries(debug ${EXPAT_LIBRARIES})
-add_executable(check check.cpp ${CAPT_SOURCES} ${PLOT_SOURCES})
-target_link_libraries(check ${EXPAT_LIBRARIES})
+# add_executable(check check.cpp ${CAPT_SOURCES} ${PLOT_SOURCES})
+# target_link_libraries(check ${EXPAT_LIBRARIES})
 
 if(${BUILD_CPU})
   add_executable( main_cpu

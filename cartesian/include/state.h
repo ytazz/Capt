@@ -9,42 +9,38 @@ namespace Capt {
 
 struct State {
   vec2_t icp;
-  vec2_t swf;
-  double elp; // elapsed time
+  vec3_t swf;
 
   State(){
   }
-  State(double icp_x, double icp_y, double swf_x, double swf_y, double elp){
-    set(icp_x, icp_y, swf_x, swf_y, elp);
+  State(double icp_x, double icp_y, double swf_x, double swf_y, double swf_z){
+    set(icp_x, icp_y, swf_x, swf_y, swf_z);
   }
-  State(vec2_t icp, vec2_t swf, double elp){
-    set(icp, swf, elp);
+  State(vec2_t icp, vec3_t swf){
+    set(icp, swf);
   }
 
-  void set(double icp_x, double icp_y, double swf_x, double swf_y, double elp){
+  void set(double icp_x, double icp_y, double swf_x, double swf_y, double swf_z){
     this->icp.x() = icp_x;
     this->icp.y() = icp_y;
     this->swf.x() = swf_x;
     this->swf.y() = swf_y;
-    this->elp     = elp;
+    this->swf.z() = swf_z;
   }
 
-  void set(vec2_t icp, vec2_t swf, double elp){
+  void set(vec2_t icp, vec3_t swf){
     this->icp = icp;
     this->swf = swf;
-    this->elp = elp;
   }
 
   void print() {
     printf("icp = [ %lf, %lf ]\n", icp.x(), icp.y() );
-    printf("swf = [ %lf, %lf ]\n", swf.x(), swf.y() );
-    printf("elp = %1.3lf\n", elp );
+    printf("swf = [ %lf, %lf, %lf ]\n", swf.x(), swf.y(), swf.z() );
   }
 
   void operator=(const State &state) {
     this->icp = state.icp;
     this->swf = state.swf;
-    this->elp = state.elp;
   }
 };
 

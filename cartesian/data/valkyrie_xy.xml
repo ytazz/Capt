@@ -12,17 +12,19 @@
   <swing>
     <x min="-0.40" max="0.40" stp="0.05"/>
     <y min="0"     max="0.40" stp="0.05"/>
-    <!-- <except length="0.2" width="0.1"/> -->
+    <z min="0"     max="0.1" stp="0.05"/>
   </swing>
+
+  <!-- except region-->
+  <except>
+    <x min="-0.25" max="0.25"/>
+    <y min="0" max="0.2"/>
+  </except>
 
   <cop>
     <x min="-0.10" max="0.10" stp="0.05"/>
     <y min="-0.05" max="0.05" stp="0.05"/>
   </cop>
-
-  <elapsed>
-    <t min="0" max="0.1" stp="0.1"/>
-  </elapsed>
 
   <map>
     <x min="-0.6" max="0.6" stp="0.05"/>

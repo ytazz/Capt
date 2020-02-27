@@ -64,15 +64,16 @@ public:
   int indexIcp(vec2_t icp);
   int indexSwf(vec2_t swf);
   int indexCop(vec2_t cop);
-  int indexElapsed(double elapsed);
+
+  bool isSteppable(vec2_t swf);
 
 private:
   void create();
 
-  void setState(double icp_x, double icp_y, double swf_x, double swf_y, double elapsed);
+  void setState(double icp_x, double icp_y, double swf_x, double swf_y, double swf_z);
   void setInput(double cop_x, double cop_y, double swf_x, double swf_y);
 
-  int getStateIndex(int icp_x_id, int icp_y_id, int swf_x_id, int swf_y_id, int elapsed_id);
+  int getStateIndex(int icp_x_id, int icp_y_id, int swf_x_id, int swf_y_id, int swf_z_id);
 
   int max(int val1, int val2);
   int max(int val1, int val2, int val3, int val4);
@@ -87,17 +88,20 @@ private:
   int input_num;
 
   int icp_x_num, icp_y_num;
-  int swf_x_num, swf_y_num;
+  int swf_x_num, swf_y_num, swf_z_num;
   int cop_x_num, cop_y_num;
-  int elp_t_num;
 
   double icp_x[CaptEnum::NUMELEMENT];
   double icp_y[CaptEnum::NUMELEMENT];
   double swf_x[CaptEnum::NUMELEMENT];
   double swf_y[CaptEnum::NUMELEMENT];
+  double swf_z[CaptEnum::NUMELEMENT];
+  double exc_x[CaptEnum::NUMELEMENT];
+  double exc_y[CaptEnum::NUMELEMENT];
   double cop_x[CaptEnum::NUMELEMENT];
   double cop_y[CaptEnum::NUMELEMENT];
-  double elp_t[CaptEnum::NUMELEMENT];
+
+  const double epsilon;
 };
 
 } // namespace Capt

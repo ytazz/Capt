@@ -21,7 +21,7 @@ namespace Capt {
 class Analysis {
 
 public:
-  Analysis(Model *model, Grid *grid);
+  Analysis(Model *model, Param *param, Grid *grid);
   ~Analysis();
 
   // 解析用変数を初期化し、初期値を代入する
@@ -47,6 +47,7 @@ private:
   bool exe(const int n);
 
   Model *model;
+  Param *param;
   Grid  *grid;
 
   State *state;
@@ -62,11 +63,13 @@ private:
   const double epsilon;
 
   // 解析パラメータ
-  double foot_vel_max;
-  double step_time_min;
+  double v_max;
+  // double step_time_min;
+  double z_max;
 
-  // 踏み出しできないindexのlist
-  std::vector<int> impossible;
+  // 踏み出しできない領域
+  double exc_x_min, exc_x_max;
+  double exc_y_min, exc_y_max;
 
   // 解析結果の最大踏み出し歩数
   int max_step;

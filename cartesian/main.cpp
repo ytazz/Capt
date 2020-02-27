@@ -14,7 +14,7 @@ int main(int argc, char const *argv[]) {
   Param *param = new Param("data/valkyrie_xy.xml");
   Grid  *grid  = new Grid(param);
 
-  Analysis analysis(model, grid);
+  Analysis analysis(model, param, grid);
   analysis.exe();
   end_exe = std::chrono::system_clock::now();
 

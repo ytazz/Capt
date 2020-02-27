@@ -31,11 +31,11 @@ set(CAPT_SOURCES
   ${PROJECT_SOURCE_DIR}/src/base.cpp
   ${PROJECT_SOURCE_DIR}/src/capturability.cpp
   ${PROJECT_SOURCE_DIR}/src/config.cpp
-  # ${PROJECT_SOURCE_DIR}/src/cycloid.cpp
+  ${PROJECT_SOURCE_DIR}/src/cycloid.cpp
   # ${PROJECT_SOURCE_DIR}/src/generator.cpp
   # ${PROJECT_SOURCE_DIR}/src/grid_map.cpp
   ${PROJECT_SOURCE_DIR}/src/grid.cpp
-  # ${PROJECT_SOURCE_DIR}/src/interpolation.cpp
+  ${PROJECT_SOURCE_DIR}/src/interpolation.cpp
   ${PROJECT_SOURCE_DIR}/src/loader.cpp
   ${PROJECT_SOURCE_DIR}/src/model.cpp
   # ${PROJECT_SOURCE_DIR}/src/monitor.cpp
@@ -44,7 +44,7 @@ set(CAPT_SOURCES
   # ${PROJECT_SOURCE_DIR}/src/planner.cpp
   ${PROJECT_SOURCE_DIR}/src/polygon.cpp
   # ${PROJECT_SOURCE_DIR}/src/search.cpp
-  # ${PROJECT_SOURCE_DIR}/src/swing.cpp
+  ${PROJECT_SOURCE_DIR}/src/swing.cpp
   # ${PROJECT_SOURCE_DIR}/src/timer.cpp
   # ${PROJECT_SOURCE_DIR}/src/trajectory.cpp
   # ${PROJECT_SOURCE_DIR}/src/tree.cpp

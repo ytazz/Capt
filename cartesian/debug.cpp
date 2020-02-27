@@ -12,12 +12,16 @@ int main(int argc, char const *argv[]) {
   Grid   *grid   = new Grid(param);
   // param->print();
 
-  vec2_t pos(0.2, 0.1);
+  vec3_t pos(0, 0, 0);
+  vec3_t pos_(0.2, 0.1, 0);
 
-  if(grid->isSteppable(pos) ) {
-    printf("ok\n");
-  }else{
-    printf("ng\n");
+  Swing *swing = new Swing(model, param);
+  swing->set(pos, pos_);
+
+  for(int i = 0; i < 100; i++) {
+    double t = 0.01 * i;
+    vec3_t p = swing->getTraj(t);
+    printf("%lf,%lf,%lf,%lf\n", t, p.x(), p.y(), p.z() );
   }
 
   // capturability

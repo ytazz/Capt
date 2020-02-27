@@ -4,31 +4,29 @@
 #include "interpolation.h"
 // #include "cycloid.h"
 #include "model.h"
+#include "param.h"
 #include "base.h"
 
 namespace Capt {
 
-enum SwingPhase { OFF, SWING, ON, LAND };
-
 class Swing {
 public:
-  Swing(Model *model);
+  Swing(Model *model, Param *param);
   ~Swing();
 
-  void   set(vec2_t foot, vec2_t foot_des, double elapsed = 0);
-  void   set(vec3_t foot, vec3_t foot_des, double elapsed = 0);
+  void set(vec2_t foot, vec2_t foot_des);
+  void set(vec3_t foot, vec3_t foot_des);
+
+  // get step time (duration)
   double getTime();
-  vec3_t getTraj(double dt);
+  // get desired swing foot position
+  vec3_t getTraj(double dt); // dt = time from support foot exchange
 
 private:
-  // Cycloid cycloid;
-  Interp3 swingUp;
-  Interp3 swingDown;
-
   vec3_t foot, foot_des;
-  double dt_min, tau, tau_swing;
-  double h;
-  double v_max;
+  double dist, dist_x, dist_y, tau;
+  double v_max, z_max;
+  double dt_min;
 };
 
 } // namespace Capt

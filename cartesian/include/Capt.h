@@ -2,7 +2,7 @@
 #define __CAPT_H__
 
 #include "base.h"
-// #include "capturability.h"
+#include "capturability.h"
 #include "config.h"
 // #include "cycloid.h"
 // #include "generator.h"
@@ -20,7 +20,7 @@
 #include "polygon.h"
 // #include "search.h"
 #include "state.h"
-// #include "swing.h"
+#include "swing.h"
 // #include "timer.h"
 // #include "trajectory.h"
 // #include "tree.h"

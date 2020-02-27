@@ -2,24 +2,23 @@
 
 namespace Capt {
 
-Swing::Swing(Model *model) {
+Swing::Swing(Model *model, Param *param) {
   foot     = vec3_t::Zero();
   foot_des = vec3_t::Zero();
 
   tau = 0.0;
 
-  model->read(&v_max,  "foot_vel_max");
-  model->read(&dt_min, "step_time_min");
-  model->read(&h,      "step_height");
+  model->read(&v_max, "foot_vel_max");
+  param->read(&z_max, "swf_z_max");
 
-  swingUp.set(0, h, 0, 0, dt_min / 2);
-  swingDown.set(h, 0, 0, 0, dt_min / 2);
+  // calculate minimum swing up/down time
+  dt_min = z_max / v_max;
 }
 
 Swing::~Swing() {
 }
 
-void Swing::set(vec2_t foot, vec2_t foot_des, double elapsed) {
+void Swing::set(vec2_t foot, vec2_t foot_des) {
   this->foot.x()     = foot.x();
   this->foot.y()     = foot.y();
   this->foot.z()     = 0.0;
@@ -27,10 +26,10 @@ void Swing::set(vec2_t foot, vec2_t foot_des, double elapsed) {
   this->foot_des.y() = foot_des.y();
   this->foot_des.z() = 0.0;
 
-  set(this->foot, this->foot_des, elapsed);
+  set(this->foot, this->foot_des);
 }
 
-void Swing::set(vec3_t foot, vec3_t foot_des, double elapsed) {
+void Swing::set(vec3_t foot, vec3_t foot_des) {
   this->foot.x()     = foot.x();
   this->foot.y()     = foot.y();
   this->foot.z()     = foot.z();
@@ -38,53 +37,38 @@ void Swing::set(vec3_t foot, vec3_t foot_des, double elapsed) {
   this->foot_des.y() = foot_des.y();
   this->foot_des.z() = foot_des.z();
 
-  double dist = ( vec3Tovec2(foot_des - foot) ).norm();
-  // tau       = max(0, dt_min / 2 - elapsed) + dist / v_max + dt_min / 2;
-  tau       = dist / v_max + dt_min;
-  tau_swing = dist / v_max;
+  dist_x =  foot_des.x() - foot.x();
+  dist_y =  foot_des.y() - foot.y();
+  dist   = sqrt( dist_x * dist_x + dist_y * dist_y );
+
+  tau = ( 2 * z_max + dist ) / v_max;
+  // tau = ( 2 * z_max - foot.z() + dist ) / v_max;
 }
 
 double Swing::getTime() {
   return tau;
 }
 
-// dt = time from support foot exchange
 vec3_t Swing::getTraj(double dt) {
-  // judge phase
-  SwingPhase phase;
-  if(dt > tau) {
-    phase = LAND;
-  }else if(dt < dt_min / 2) {
-    phase = OFF;
-  }else if(dt < dt_min / 2 + tau_swing) {
-    phase = SWING;
-  }else{
-    phase = ON;
-  }
-
-  // calculate desired swing foot position
   vec3_t pos;
-  switch (phase) {
-  case OFF:
+
+  // phase
+  if(dt < dt_min) { // swing up
     pos.x() = foot.x();
     pos.y() = foot.y();
-    pos.z() = swingUp.get(dt);
-    break;
-  case SWING:
-    pos.x() = ( foot_des.x() - foot.x() ) * ( dt - dt_min / 2 ) / tau_swing + foot.x();
-    pos.y() = ( foot_des.y() - foot.y() ) * ( dt - dt_min / 2 ) / tau_swing + foot.y();
-    pos.z() = h;
-    break;
-  case ON:
+    pos.z() = v_max * dt;
+  }else if(dt < tau - dt_min) { // swing
+    pos.x() = foot.x() + v_max * ( dist_x / dist ) * ( dt - dt_min );
+    pos.y() = foot.y() + v_max * ( dist_y / dist ) * ( dt - dt_min );
+    pos.z() = z_max;
+  }else if(dt < tau) {          // swing down
     pos.x() = foot_des.x();
     pos.y() = foot_des.y();
-    pos.z() = swingDown.get(dt - tau_swing - dt_min / 2);
-    break;
-  case LAND:
+    pos.z() = v_max * ( tau - dt );
+  }else{                        // landing
     pos.x() = foot_des.x();
     pos.y() = foot_des.y();
-    pos.z() = 0;
-    break;
+    pos.z() = foot_des.z();
   }
 
   return pos;

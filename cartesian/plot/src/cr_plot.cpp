@@ -152,7 +152,7 @@ void CRPlot::setFootRegion(){
 
 void CRPlot::setState(State state){
   setIcp(state.icp);
-  setSwf(state.swf);
+  setSwf(vec3Tovec2(state.swf) );
 }
 
 void CRPlot::setIcp(vec2_t icp){

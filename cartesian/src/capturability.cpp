@@ -35,7 +35,7 @@ void Capturability::loadBasin(std::string file_name) {
     id++;
   }
 
-  printf("Read success! (%d datas)\n", id);
+  printf("Read success! (%d data)\n", id);
   fclose(fp);
 }
 
@@ -66,7 +66,7 @@ void Capturability::loadNstep(std::string file_name) {
     id++;
   }
 
-  printf("Read success! (%d datas)\n", id);
+  printf("Read success! (%d data)\n", id);
   fclose(fp);
 }
 

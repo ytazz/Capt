@@ -37,6 +37,7 @@ int main(int argc, char const *argv[]) {
   double icp_y = 0.05;
   double swf_x = -0.1;
   double swf_y = 0.3;
+  double swf_z = 0;
 
   State state;
   Input input;
@@ -45,9 +46,9 @@ int main(int argc, char const *argv[]) {
   CRPlot *cr_plot;
   // case1
   state.icp << icp_x, icp_y;
-  state.swf << swf_x, swf_y;
-  state.elp = 0;
-  state     = grid->roundState(state).state;
+  state.swf << swf_x, swf_y, swf_z;
+  state = grid->roundState(state).state;
+  state.print();
   int stateId = grid->roundState(state).id;
 
   int count = 0;

@@ -19,7 +19,6 @@ int main(int argc, char const *argv[]) {
   int       state_id = 0, input_id = 0;
   State     state;
   Input     input;
-  double    tmp1, tmp2;
   GridState gstate;
 
   while (true) {
@@ -39,9 +38,8 @@ int main(int argc, char const *argv[]) {
       std::cin >> state.swf.x();
       std::cout << "swf_yを入力してください ";
       std::cin >> state.swf.y();
-
-      std::cout << "elapsedを入力してください ";
-      std::cin >> state.elp;
+      std::cout << "swf_zを入力してください ";
+      std::cin >> state.swf.z();
 
       gstate = grid->roundState(state);
       gstate.state.print();

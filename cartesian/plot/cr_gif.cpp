@@ -31,6 +31,7 @@ int main(int argc, char const *argv[]) {
   double icp_y = 0.10;
   double swf_x = -0.25;
   double swf_y = 0.4;
+  double swf_z = 0.0;
 
   // N-step capture region
   double icp_x_min, icp_x_max, icp_x_stp;
@@ -48,10 +49,11 @@ int main(int argc, char const *argv[]) {
       state.icp.y() = icp_y;
       state.swf.x() = swf_x;
       state.swf.y() = swf_y;
+      state.swf.z() = swf_z;
       state         = grid->roundState(state).state;
 
       cr_plot->initCaptureMap();
-      cr_plot->setSwf(state.swf);
+      cr_plot->setSwf(vec3Tovec2(state.swf) );
       cr_plot->setIcp(state.icp);
       for(int N = 1; N <= 4; N++) {
         if(capturability->capturable(state, N) ) {

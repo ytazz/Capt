@@ -2,9 +2,9 @@
 
 namespace Capt {
 
-Monitor::Monitor(Model *model, Grid *grid, Capturability *capturability) :
+Monitor::Monitor(Model *model, Param *param, Grid *grid, Capturability *capturability) :
   grid(grid), capturability(capturability){
-  swing    = new Swing(model);
+  swing    = new Swing(model, param);
   pendulum = new Pendulum(model);
 
   model->read(&dt_min, "step_time_min");
@@ -53,16 +53,13 @@ Status Monitor::check(EnhancedState state, Footstep footstep){
     s_state.icp.y() = +( icp.y() - rfoot.y() );
     s_state.swf.x() = +( lfoot.x() - rfoot.x() );
     s_state.swf.y() = +( lfoot.y() - rfoot.y() );
+    s_state.swf.z() = state.lfoot.z();
   }else{
     s_state.icp.x() = +( icp.x() - lfoot.x() );
     s_state.icp.y() = -( icp.y() - lfoot.y() );
     s_state.swf.x() = +( rfoot.x() - lfoot.x() );
     s_state.swf.y() = -( rfoot.y() - lfoot.y() );
-  }
-  if(state.elapsed < dt_min / 2) {
-    s_state.elp = state.elapsed;
-  }else{
-    s_state.elp = dt_min / 2;
+    s_state.swf.z() = state.rfoot.z();
   }
 
   // calculate current state id
@@ -123,9 +120,9 @@ Status Monitor::check(EnhancedState state, Footstep footstep){
 
   // set swing foot trajectory
   if(state.s_suf == FOOT_R) {
-    swing->set(lfoot, nextLandingPos, s_state.elp);
+    swing->set(lfoot, nextLandingPos);
   }else{
-    swing->set(rfoot, nextLandingPos, s_state.elp);
+    swing->set(rfoot, nextLandingPos);
   }
 
   // calculate landing position (support foot coord.)
@@ -191,7 +188,6 @@ Status Monitor::check(EnhancedState state, Footstep footstep){
 
   // calculate input
   if(isOneStepCapturable) {
-    input.elapsed  = s_state.elp;
     input.duration = swing->getTime();
     input.land     = vec2Tovec3(nextLandingPos);
 

@@ -13,7 +13,7 @@ namespace Capt {
 
 class Monitor {
 public:
-  Monitor(Model *model, Grid *grid, Capturability *capturability);
+  Monitor(Model *model, Param *param, Grid *grid, Capturability *capturability);
   ~Monitor();
 
   Status                check(EnhancedState state, Footstep footstep);

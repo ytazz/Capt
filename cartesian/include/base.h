@@ -76,7 +76,6 @@ struct EnhancedState {
   Capt::vec3_t   icp;
   Capt::vec3_t   rfoot;
   Capt::vec3_t   lfoot;
-  double         elapsed;
   Capt::Foot     s_suf;
 
   void operator=(const EnhancedState &eState) {
@@ -84,7 +83,6 @@ struct EnhancedState {
     this->icp      = eState.icp;
     this->rfoot    = eState.rfoot;
     this->lfoot    = eState.lfoot;
-    this->elapsed  = eState.elapsed;
     this->s_suf    = eState.s_suf;
   }
 
@@ -95,7 +93,6 @@ struct EnhancedState {
     }else{
       printf("  support: Left\n");
     }
-    printf("  elapsed: %1.4lf\n", elapsed);
     printf("  icp    : %1.3lf, %1.3lf, %1.3lf\n", icp.x(), icp.y(), icp.z() );
     printf("  rfoot  : %1.3lf, %1.3lf, %1.3lf\n", rfoot.x(), rfoot.y(), rfoot.z() );
     printf("  lfoot  : %1.3lf, %1.3lf, %1.3lf\n", lfoot.x(), lfoot.y(), lfoot.z() );
@@ -103,7 +100,6 @@ struct EnhancedState {
 };
 
 struct EnhancedInput {
-  double       elapsed;  // elapsed time from support foot exchange
   double       duration; // remained step duration
   Capt::vec3_t cop;
   Capt::vec3_t icp;
@@ -112,7 +108,6 @@ struct EnhancedInput {
   Capt::vec3_t land;
 
   void operator=(const EnhancedInput &eInput) {
-    this->elapsed  = eInput.elapsed;
     this->duration = eInput.duration;
     this->cop      = eInput.cop;
     this->icp      = eInput.icp;
@@ -123,7 +118,6 @@ struct EnhancedInput {
 
   void print(){
     printf("EnhancedInput\n");
-    printf("  elapsed : %1.4lf\n", elapsed);
     printf("  duration: %1.4lf\n", duration);
     printf("  cop     : %1.3lf, %1.3lf, %1.3lf\n", cop.x(), cop.y(), cop.z() );
     printf("  icp     : %1.3lf, %1.3lf, %1.3lf\n", icp.x(), icp.y(), icp.z() );

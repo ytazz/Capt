@@ -72,14 +72,4 @@ int round(double value) {
   return integer;
 }
 
-bool inIndexList(int id, std::vector<int> ids){
-  bool flag = false;
-  for(size_t i = 0; i < ids.size(); i++) {
-    if(id == ids[i]) {
-      flag = true;
-    }
-  }
-  return flag;
-}
-
 } // namespace Capt

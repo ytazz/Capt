@@ -7,28 +7,37 @@
 
 namespace Capt {
 
+// Eigen typedefs
 typedef Eigen::Vector2f vec2_t;
 typedef Eigen::Vector2i vec2i_t;
 typedef Eigen::Vector3d vec3_t;
 typedef std::vector<vec2_t> arr2_t;
 typedef std::vector<vec3_t> arr3_t;
 
+// linear algebra
 double dot(vec2_t v1, vec2_t v2);
 double cross(vec2_t v1, vec2_t v2);
 vec2_t normal(vec2_t v);
+
+// coordinate transformation with left and right of support2 foot
+// [ x, y, z ] -> mirror -> [ x, -y, z ]
 vec2_t mirror(vec2_t v);
 vec3_t mirror(vec3_t v);
 
+// math
 double min(double val1, double val2);
 double max(double val1, double val2);
 
+// round to the nearest integer
 int round(double val);
 
-vec3_t vec2Tovec3(vec2_t vec2);
+// vector dimension transformation between R^2 and R^3
+// R^3 to R^2 : [ x, y, z ] -> [ x, y ]
+// R^2 to R^3 : [ x, y ] -> [ x, y, 0 ]
 vec2_t vec3Tovec2(vec3_t vec3);
+vec3_t vec2Tovec3(vec2_t vec2);
 
-bool inIndexList(int id, std::vector<int> ids);
-
+// 不要
 enum OccupancyType {
   NONE,
   EMPTY,
@@ -37,8 +46,16 @@ enum OccupancyType {
   GOAL
 };
 
+// foot enum
 enum Foot { FOOT_NONE, FOOT_R, FOOT_L };
 
+// availability of local planning
+// SUCCESS: planning succeeded successfully
+// FAIL   : couldn't find a solution
+// FINISH : reached the final step
+enum Status { SUCCESS, FAIL, FINISH };
+
+// trajectory decision variables
 struct Step {
   Foot   suf;
   vec3_t pos;
@@ -47,10 +64,9 @@ struct Step {
   // vec3_t com;
 };
 
-enum Status { SUCCESS, FAIL, FINISH };
-
 typedef std::vector<Step> Footstep;
 
+// 不要 stepと同じでは?
 struct Sequence {
   Foot   suf;
   vec3_t pos;

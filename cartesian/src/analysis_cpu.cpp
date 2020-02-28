@@ -4,10 +4,12 @@ namespace Capt {
 
 Analysis::Analysis(Model *model, Param *param, Grid *grid)
   : model(model), param(param), grid(grid),
-    state_num(grid->getNumState() ), input_num(grid->getNumInput() ), grid_num(grid->getNumGrid() ),
-    epsilon(0.001){
+    state_num(grid->getNumState() ), input_num(grid->getNumInput() ), grid_num(grid->getNumGrid() )
+{
   model->read(&v_max, "foot_vel_max");
   param->read(&z_max, "swf_z_max");
+
+  swing = new Swing(model, param);
 
   printf("*** Analysis ***\n");
   printf("  Initializing ... ");
@@ -72,14 +74,14 @@ void Analysis::calcBasin(){
       polygon.setVertex(foot_r);
       polygon.setVertex(foot_l);
       region = polygon.getConvexHull();
-      if(polygon.inPolygon(state[state_id].icp, region) && state[state_id].swf.z() < epsilon )
+      if(polygon.inPolygon(state[state_id].icp, region) && state[state_id].swf.z() < EPSILON )
         basin[state_id] = 0;
     }
   }else{
     Polygon polygon;
     for(int state_id = 0; state_id < state_num; state_id++) {
       if(grid->isSteppable(vec3Tovec2(state[state_id].swf) ) ) {
-        if(polygon.inPolygon(state[state_id].icp, foot_r) && state[state_id].swf.z() < epsilon ) {
+        if(polygon.inPolygon(state[state_id].icp, foot_r) && state[state_id].swf.z() < EPSILON ) {
           basin[state_id] = 0;
         }
       }
@@ -95,24 +97,11 @@ void Analysis::calcTrans(){
     for(int input_id = 0; input_id < input_num; input_id++) {
       int id = state_id * input_num + input_id;
 
-      // printf("\n");
-      // state[state_id].print();
-      // input[input_id].print();
-      // printf("\n");
-
-      double dist_x =  input[input_id].swf.x() - state[state_id].swf.x();
-      double dist_y =  input[input_id].swf.y() - state[state_id].swf.y();
-      double dist   = sqrt( dist_x * dist_x + dist_y * dist_y );
-      double tau    = ( 2 * z_max - state[state_id].swf.z() + dist ) / v_max;
-
-      // printf("dist_x %1.3lf\n", dist_x);
-      // printf("dist_y %1.3lf\n", dist_y);
-      // printf("dist   %1.3lf\n", dist  );
-      // printf("tau    %1.3lf\n", tau  );
+      swing->set(state[state_id].swf, vec2Tovec3(input[input_id].swf) );
 
       pendulum.setIcp(state[state_id].icp);
       pendulum.setCop(input[input_id].cop);
-      icp = pendulum.getIcp(tau);
+      icp = pendulum.getIcp(swing->getTime() );
 
       State state_;
       state_.icp << -input[input_id].swf.x() + icp.x(), input[input_id].swf.y() - icp.y();

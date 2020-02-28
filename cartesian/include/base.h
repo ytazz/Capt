@@ -7,6 +7,8 @@
 
 namespace Capt {
 
+#define EPSILON 0.001
+
 // Eigen typedefs
 typedef Eigen::Vector2f vec2_t;
 typedef Eigen::Vector2i vec2i_t;

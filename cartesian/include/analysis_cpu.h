@@ -31,24 +31,27 @@ public:
   void initBasin();
   void initNstep();
 
-  // 解析前の状態遷移や0-step、copを計算
+  // calculate 0-step viable-capture basin
   void calcBasin();
+  // calculate state transition
   void calcTrans();
 
-  // 解析実行
+  // execute capturability based analysis
   void exe();
 
-  // 解析結果をファイルに保存
+  // save results
   void saveTrans(std::string file_name, bool header = false);
   void saveBasin(std::string file_name, bool header = false);
   void saveNstep(std::string file_name, bool header = false);
 
 private:
+  // execute capturability based analysis of n-step capture input
   bool exe(const int n);
 
   Model *model;
   Param *param;
   Grid  *grid;
+  Swing *swing;
 
   State *state;
   Input *input;
@@ -59,8 +62,6 @@ private:
   const int state_num;
   const int input_num;
   const int grid_num;
-
-  const double epsilon;
 
   // 解析パラメータ
   double v_max;

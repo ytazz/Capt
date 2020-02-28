@@ -418,7 +418,8 @@ int Grid::indexSwf(vec2_t swf){
 
   int swf_x_id = round( ( swf.x() - swf_x[CaptEnum::MIN] ) / swf_x[CaptEnum::STP]);
   int swf_y_id = round( ( swf.y() - swf_y[CaptEnum::MIN] ) / swf_y[CaptEnum::STP]);
-  int swf_z_id = round( ( swf.z() - swf_z[CaptEnum::MIN] ) / swf_z[CaptEnum::STP]);
+  // int swf_z_id = round( ( swf.z() - swf_z[CaptEnum::MIN] ) / swf_z[CaptEnum::STP]);
+  int swf_z_id = 0;
   if(0 <= swf_x_id && swf_x_id < swf_x_num &&
      0 <= swf_y_id && swf_y_id < swf_y_num &&
      0 <= swf_z_id && swf_z_id < swf_z_num ) {

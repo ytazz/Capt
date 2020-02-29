@@ -16,7 +16,12 @@ int main(int argc, char const *argv[]) {
 
   Capturability *capturability = new Capturability(grid);
   capturability->loadBasin("cpu/Basin.csv");
-  capturability->loadNstep("cpu/Nstep.csv");
+  capturability->loadNstep("cpu/1step.csv", 1);
+  capturability->loadNstep("cpu/2step.csv", 2);
+  capturability->loadNstep("cpu/3step.csv", 3);
+  capturability->loadNstep("cpu/4step.csv", 4);
+  capturability->loadNstep("cpu/5step.csv", 5);
+  capturability->loadNstep("cpu/6step.csv", 6);
 
   // paper plot for nao
   // double icp_x        = 0.00;

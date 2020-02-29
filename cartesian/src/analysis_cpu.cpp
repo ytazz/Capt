@@ -170,42 +170,37 @@ void Analysis::saveBasin(std::string file_name, bool header){
   fclose(fp);
 }
 
-void Analysis::saveNstep(std::string file_name, bool header){
+void Analysis::saveNstep(std::string file_name, int n, bool header){
   FILE *fp = fopen(file_name.c_str(), "w");
 
   // Header
   if (header) {
-    // fprintf(fp, "%s,", "state_id");
-    // fprintf(fp, "%s,", "input_id");
+    fprintf(fp, "%s,", "state_id");
+    fprintf(fp, "%s,", "input_id");
     fprintf(fp, "%s,", "trans");
-    fprintf(fp, "%s", "nstep");
+    // fprintf(fp, "%s", "nstep");
     fprintf(fp, "\n");
   }
 
   // Data
-  int num_step[max_step + 1];
-  for(int i = 0; i < max_step + 1; i++) {
-    num_step[i] = 0;
-  }
+  int num = 0;
   for (int state_id = 0; state_id < state_num; state_id++) {
     for (int input_id = 0; input_id < input_num; input_id++) {
       int id = state_id * input_num + input_id;
-      // fprintf(fp, "%d,", state_id);
-      // fprintf(fp, "%d,", input_id);
-      fprintf(fp, "%d,", trans[id]);
-      fprintf(fp, "%d", nstep[id]);
-      fprintf(fp, "\n");
+      if(nstep[id] == n) {
+        fprintf(fp, "%d,", state_id);
+        fprintf(fp, "%d,", input_id);
+        fprintf(fp, "%d", trans[id]);
+        // fprintf(fp, "%d", nstep[id]);
+        fprintf(fp, "\n");
 
-      if(nstep[id] > 0)
-        num_step[nstep[id]]++;
+        num++;
+      }
     }
   }
 
-  printf("*** Result ***\n");
-  printf("  Feasible maximum steps: %d\n", max_step);
-  for(int i = 1; i <= max_step; i++) {
-    printf("  %d-step capture point  : %8d\n", i, num_step[i]);
-  }
+  // printf("  Feasible maximum steps: %d\n", max_step);
+  printf("  %d-step capture point  : %8d\n", n, num);
 
   fclose(fp);
 }

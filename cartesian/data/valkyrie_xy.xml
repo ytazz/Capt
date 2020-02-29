@@ -10,8 +10,8 @@
   </icp>
 
   <swing>
-    <x min="-0.40" max="0.40" stp="0.05"/>
-    <y min="0"     max="0.40" stp="0.05"/>
+    <x min="-0.40" max="0.40" stp="0.025"/>
+    <y min="0"     max="0.40" stp="0.025"/>
     <z min="0"     max="0.1"  stp="0.05"/>
   </swing>
 

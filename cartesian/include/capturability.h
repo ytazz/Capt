@@ -20,7 +20,7 @@ struct CaptureSet {
   int next_id;
   int nstep;
 
-  double step_time;
+  // double step_time;
 
   void operator=(const CaptureSet &capture_set) {
     this->state_id = capture_set.state_id;
@@ -37,9 +37,7 @@ public:
   ~Capturability();
 
   void loadBasin(std::string file_name);
-  void loadNstep(std::string file_name);
-
-  CaptureSet* getCaptureSet(int state_id, int input_id);
+  void loadNstep(std::string file_name, int n);
 
   std::vector<CaptureSet*> getCaptureRegion(const int state_id);
   std::vector<CaptureSet*> getCaptureRegion(const int state_id, const int nstep);

@@ -18,8 +18,14 @@ int main(int argc, char const *argv[]) {
   analysis.exe();
   end_exe = std::chrono::system_clock::now();
 
+  printf("*** Result ***\n");
   analysis.saveBasin("cpu/Basin.csv");
-  analysis.saveNstep("cpu/Nstep.csv");
+  analysis.saveNstep("cpu/1step.csv", 1);
+  analysis.saveNstep("cpu/2step.csv", 2);
+  analysis.saveNstep("cpu/3step.csv", 3);
+  analysis.saveNstep("cpu/4step.csv", 4);
+  analysis.saveNstep("cpu/5step.csv", 5);
+  analysis.saveNstep("cpu/6step.csv", 6);
   end_save = std::chrono::system_clock::now();
 
   int time_exe  = std::chrono::duration_cast<std::chrono::milliseconds>(end_exe - start).count();

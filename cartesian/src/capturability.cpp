@@ -13,6 +13,18 @@ Capturability::Capturability(Grid *grid)
     data_nstep[i] = new CaptureSet[input_num];
   }
 
+  // initialize
+  // for(int state_id = 0; state_id < state_num; state_id++) {
+  //   data_basin[state_id] = -1;
+  //   for(int input_id = 0; input_id < input_num; input_id++) {
+  //     data_nstep[state_id][input_id].state_id = state_id;
+  //     data_nstep[state_id][input_id].input_id = input_id;
+  //     data_nstep[state_id][input_id].next_id  = -1;
+  //     data_nstep[state_id][input_id].nstep    = -1;
+  //   }
+  //   printf("%1.3lf\n", 100 * (double)state_id / state_num);
+  // }
+
   max_step = 0;
 }
 
@@ -39,7 +51,7 @@ void Capturability::loadBasin(std::string file_name) {
   fclose(fp);
 }
 
-void Capturability::loadNstep(std::string file_name) {
+void Capturability::loadNstep(std::string file_name, int n) {
   FILE *fp = fopen(file_name.c_str(), "r");
   if ( fp == NULL) {
     printf("Error: Couldn't find the file \"%s\"\n", file_name.c_str() );
@@ -47,31 +59,25 @@ void Capturability::loadNstep(std::string file_name) {
   }
   int id = 0;
 
-  printf("Find Nstep database.\n");
+  printf("Find %dstep database.\n", n);
 
-  int buf[2];
-  while (fscanf(fp, "%d,%d", &buf[0], &buf[1]) != EOF) {
-    int state_id = id / input_num;
-    int input_id = id % input_num;
+  int state_id;
+  int input_id;
+  int next_id;
+  while (fscanf(fp, "%d,%d,%d", &state_id, &input_id, &next_id) != EOF) {
+    data_nstep[state_id][input_id].state_id = state_id;
+    data_nstep[state_id][input_id].input_id = input_id;
+    data_nstep[state_id][input_id].next_id  = next_id;
+    data_nstep[state_id][input_id].nstep    = n;
 
-    CaptureSet* set = getCaptureSet(state_id, input_id);
-    set->state_id = state_id;
-    set->input_id = input_id;
-    set->next_id  = buf[0];
-    set->nstep    = buf[1];
-
-    if(max_step < set->nstep)
-      max_step = set->nstep;
+    if(max_step < n)
+      max_step = n;
 
     id++;
   }
 
   printf("Read success! (%d data)\n", id);
   fclose(fp);
-}
-
-CaptureSet* Capturability::getCaptureSet(int state_id, int input_id){
-  return &data_nstep[state_id][input_id];
 }
 
 std::vector<CaptureSet*> Capturability::getCaptureRegion(const int state_id) {

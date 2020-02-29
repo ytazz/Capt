@@ -42,7 +42,7 @@ public:
   // save results
   void saveTrans(std::string file_name, bool header = false);
   void saveBasin(std::string file_name, bool header = false);
-  void saveNstep(std::string file_name, bool header = false);
+  void saveNstep(std::string file_name, int n, bool header = false);
 
 private:
   // execute capturability based analysis of n-step capture input

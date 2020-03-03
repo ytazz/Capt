@@ -20,11 +20,15 @@ public:
   // get step duration
   double getDuration();
   // get desired swing foot position
-  vec3_t getTraj(double dt); // dt = time from support foot exchange
+  // dt = elapsed time from set() is called
+  vec3_t getTraj(double dt);
+
+  // swing foot is swinging down or not
+  bool isSwingDown(double dt);
 
 private:
   vec3_t foot, land;
-  double dist, dist_x, dist_y, tau;
+  double dist, dist_x, dist_y, tau, tau_offset;
   double v_max, z_max;
   double dt_min;
 };

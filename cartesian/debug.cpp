@@ -12,16 +12,17 @@ int main(int argc, char const *argv[]) {
   Grid   *grid   = new Grid(param);
   // param->print();
 
-  vec3_t pos(0, 0, 0);
+  vec3_t pos(0, 0, 0.05);
   vec3_t pos_(0.2, 0.1, 0);
 
   Swing *swing = new Swing(model, param);
   swing->set(pos, pos_);
+  printf("%lf\n", swing->getDuration() );
 
-  for(int i = 0; i < 100; i++) {
+  for(int i = 0; i < 50; i++) {
     double t = 0.01 * i;
     vec3_t p = swing->getTraj(t);
-    printf("%lf,%lf,%lf,%lf\n", t, p.x(), p.y(), p.z() );
+    printf("%lf,%lf,%lf,%lf,%d\n", t, p.x(), p.y(), p.z(), swing->isSwingDown(t) );
   }
 
   // capturability

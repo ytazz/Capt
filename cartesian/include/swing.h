@@ -14,8 +14,8 @@ public:
   Swing(Model *model, Param *param);
   ~Swing();
 
-  void set(vec2_t foot, vec2_t foot_des);
-  void set(vec3_t foot, vec3_t foot_des);
+  void set(vec2_t foot, vec2_t land);
+  void set(vec3_t foot, vec3_t land);
 
   // get step time (duration)
   double getTime();
@@ -23,7 +23,7 @@ public:
   vec3_t getTraj(double dt); // dt = time from support foot exchange
 
 private:
-  vec3_t foot, foot_des;
+  vec3_t foot, land;
   double dist, dist_x, dist_y, tau;
   double v_max, z_max;
   double dt_min;

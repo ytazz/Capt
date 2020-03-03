@@ -3,8 +3,8 @@
 namespace Capt {
 
 Swing::Swing(Model *model, Param *param) {
-  foot     = vec3_t::Zero();
-  foot_des = vec3_t::Zero();
+  foot = vec3_t::Zero();
+  land = vec3_t::Zero();
 
   tau = 0.0;
 
@@ -18,27 +18,27 @@ Swing::Swing(Model *model, Param *param) {
 Swing::~Swing() {
 }
 
-void Swing::set(vec2_t foot, vec2_t foot_des) {
-  this->foot.x()     = foot.x();
-  this->foot.y()     = foot.y();
-  this->foot.z()     = 0.0;
-  this->foot_des.x() = foot_des.x();
-  this->foot_des.y() = foot_des.y();
-  this->foot_des.z() = 0.0;
+void Swing::set(vec2_t foot, vec2_t land) {
+  this->foot.x() = foot.x();
+  this->foot.y() = foot.y();
+  this->foot.z() = 0.0;
+  this->land.x() = land.x();
+  this->land.y() = land.y();
+  this->land.z() = 0.0;
 
-  set(this->foot, this->foot_des);
+  set(this->foot, this->land);
 }
 
-void Swing::set(vec3_t foot, vec3_t foot_des) {
-  this->foot.x()     = foot.x();
-  this->foot.y()     = foot.y();
-  this->foot.z()     = foot.z();
-  this->foot_des.x() = foot_des.x();
-  this->foot_des.y() = foot_des.y();
-  this->foot_des.z() = foot_des.z();
+void Swing::set(vec3_t foot, vec3_t land) {
+  this->foot.x() = foot.x();
+  this->foot.y() = foot.y();
+  this->foot.z() = foot.z();
+  this->land.x() = land.x();
+  this->land.y() = land.y();
+  this->land.z() = land.z();
 
-  dist_x =  foot_des.x() - foot.x();
-  dist_y =  foot_des.y() - foot.y();
+  dist_x =  land.x() - foot.x();
+  dist_y =  land.y() - foot.y();
   dist   = sqrt( dist_x * dist_x + dist_y * dist_y );
 
   tau = ( 2 * z_max - foot.z() + dist ) / v_max;
@@ -61,13 +61,13 @@ vec3_t Swing::getTraj(double dt) {
     pos.y() = foot.y() + v_max * ( dist_y / dist ) * ( dt - dt_min );
     pos.z() = z_max;
   }else if(dt < tau) {          // swing down
-    pos.x() = foot_des.x();
-    pos.y() = foot_des.y();
+    pos.x() = land.x();
+    pos.y() = land.y();
     pos.z() = v_max * ( tau - dt );
   }else{                        // landing
-    pos.x() = foot_des.x();
-    pos.y() = foot_des.y();
-    pos.z() = foot_des.z();
+    pos.x() = land.x();
+    pos.y() = land.y();
+    pos.z() = land.z();
   }
 
   return pos;

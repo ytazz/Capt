@@ -2,9 +2,7 @@
 
 namespace Capt {
 
-Trajectory::Trajectory(Model *model) : pendulum(model), swing(model){
-  model->read(&h,      "step_height");
-  model->read(&dt_min, "step_time_min");
+Trajectory::Trajectory(Model *model, Param *param) : pendulum(model), swing(model, param){
 }
 
 Trajectory::~Trajectory(){
@@ -17,35 +15,30 @@ void Trajectory::set(EnhancedInput input, Foot suf){
   pendulum.setCop(vec3Tovec2(input.cop) );
   pendulum.setIcp(vec3Tovec2(input.icp) );
 
-  elapsed = input.elapsed;
-  if(elapsed > dt_min / 2) {
-    elapsed = dt_min / 2;
-  }
-
-  swing.set(input.swf, input.land, elapsed);
+  swing.set(input.swf, input.land);
 }
 
-vec3_t Trajectory::getCop(double elapsed){
-  return vec2Tovec3(pendulum.getCop(elapsed - this->elapsed) );
+vec3_t Trajectory::getCop(double dt){
+  return vec2Tovec3(pendulum.getCop(dt) );
 }
 
-vec3_t Trajectory::getIcp(double elapsed){
-  return vec2Tovec3(pendulum.getIcp(elapsed - this->elapsed) );
+vec3_t Trajectory::getIcp(double dt){
+  return vec2Tovec3(pendulum.getIcp(dt) );
 }
 
-vec3_t Trajectory::getFootR(double elapsed){
+vec3_t Trajectory::getFootR(double dt){
   if(suf == FOOT_R) {
     return input.suf;
   }else{
-    return swing.getTraj(elapsed);
+    return swing.getTraj(dt);
   }
 }
 
-vec3_t Trajectory::getFootL(double elapsed){
+vec3_t Trajectory::getFootL(double dt){
   if(suf == FOOT_L) {
     return input.suf;
   }else{
-    return swing.getTraj(elapsed);
+    return swing.getTraj(dt);
   }
 }
 

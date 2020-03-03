@@ -46,7 +46,7 @@ set(CAPT_SOURCES
   # ${PROJECT_SOURCE_DIR}/src/search.cpp
   ${PROJECT_SOURCE_DIR}/src/swing.cpp
   # ${PROJECT_SOURCE_DIR}/src/timer.cpp
-  # ${PROJECT_SOURCE_DIR}/src/trajectory.cpp
+  ${PROJECT_SOURCE_DIR}/src/trajectory.cpp
   # ${PROJECT_SOURCE_DIR}/src/tree.cpp
 )
 

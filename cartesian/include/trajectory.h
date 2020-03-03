@@ -14,15 +14,15 @@ namespace Capt {
 
 class Trajectory {
 public:
-  Trajectory(Model *model);
+  Trajectory(Model *model, Param *param);
   ~Trajectory();
 
   void set(EnhancedInput input, Foot suf);
 
-  vec3_t getCop(double elapsed);
-  vec3_t getIcp(double elapsed);
-  vec3_t getFootR(double elapsed);
-  vec3_t getFootL(double elapsed);
+  vec3_t getCop(double dt);
+  vec3_t getIcp(double dt);
+  vec3_t getFootR(double dt);
+  vec3_t getFootL(double dt);
 
 private:
   EnhancedInput input;
@@ -31,7 +31,6 @@ private:
   Swing    swing;
 
   double h, dt_min;
-  double elapsed, planned;
   Foot   suf;
   double time;
 };

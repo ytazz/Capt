@@ -44,7 +44,7 @@ void Swing::set(vec3_t foot, vec3_t land) {
   tau = ( 2 * z_max - foot.z() + dist ) / v_max;
 }
 
-double Swing::getTime() {
+double Swing::getDuration() {
   return tau;
 }
 

@@ -101,7 +101,7 @@ void Analysis::calcTrans(){
 
       pendulum.setIcp(state[state_id].icp);
       pendulum.setCop(input[input_id].cop);
-      icp = pendulum.getIcp(swing->getTime() );
+      icp = pendulum.getIcp(swing->getDuration() );
 
       State state_;
       state_.icp << -input[input_id].swf.x() + icp.x(), input[input_id].swf.y() - icp.y();

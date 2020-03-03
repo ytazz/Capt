@@ -134,7 +134,7 @@ Status Planner::runSearch(int preview){
 
     // set to output
     input.elapsed  = elapsed;
-    input.duration = swing->getTime();
+    input.duration = swing->getDuration();
     input.suf      = suf;
     input.swf      = swf;
     input.cop      = vec2Tovec3(i.cop);

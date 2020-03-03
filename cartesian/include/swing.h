@@ -17,8 +17,8 @@ public:
   void set(vec2_t foot, vec2_t land);
   void set(vec3_t foot, vec3_t land);
 
-  // get step time (duration)
-  double getTime();
+  // get step duration
+  double getDuration();
   // get desired swing foot position
   vec3_t getTraj(double dt); // dt = time from support foot exchange
 

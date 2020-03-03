@@ -167,7 +167,7 @@ Status Monitor::check(EnhancedState state, Footstep footstep){
       }
       pendulum->setIcp(icp_);
       pendulum->setCop(cop_);
-      icp_hat_ = pendulum->getIcp(swing->getTime() );
+      icp_hat_ = pendulum->getIcp(swing->getDuration() );
 
       double dist = ( icp_hat_ - icp_des ).norm();
       // printf("dist from icp des %1.3lf\n", dist );
@@ -183,12 +183,12 @@ Status Monitor::check(EnhancedState state, Footstep footstep){
   // calculate best cop
   // printf("icp_des  %1.3lf, %1.3lf\n", icp_des.x(), icp_des.y() );
   // printf("icp_hat  %1.3lf, %1.3lf\n", icp_hat.x(), icp_hat.y() );
-  // printf("duration %1.3lf        \n", swing->getTime() );
+  // printf("duration %1.3lf        \n", swing->getDuration() );
   // printf("cop      %1.3lf, %1.3lf\n", cop.x(), cop.y() );
 
   // calculate input
   if(isOneStepCapturable) {
-    input.duration = swing->getTime();
+    input.duration = swing->getDuration();
     input.land     = vec2Tovec3(nextLandingPos);
 
     if(state.s_suf == FOOT_R) {

@@ -120,9 +120,9 @@ Status Monitor::check(EnhancedState state, Footstep footstep){
 
   // set swing foot trajectory
   if(state.s_suf == FOOT_R) {
-    swing->set(lfoot, nextLandingPos);
+    swing->set(state.lfoot, vec2Tovec3(nextLandingPos) );
   }else{
-    swing->set(rfoot, nextLandingPos);
+    swing->set(state.rfoot, vec2Tovec3(nextLandingPos) );
   }
 
   // calculate landing position (support foot coord.)

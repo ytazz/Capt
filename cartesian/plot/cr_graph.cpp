@@ -14,6 +14,8 @@ int main(int argc, char const *argv[]) {
   Param *param = new Param("data/valkyrie_xy.xml");
   Grid  *grid  = new Grid(param);
 
+  CRPlot *cr_plot = new CRPlot(model, param, grid);
+
   Capturability *capturability = new Capturability(grid);
   capturability->loadBasin("cpu/Basin.csv");
   capturability->loadNstep("cpu/1step.csv", 1);
@@ -23,62 +25,33 @@ int main(int argc, char const *argv[]) {
   capturability->loadNstep("cpu/5step.csv", 5);
   capturability->loadNstep("cpu/6step.csv", 6);
 
-  // paper plot for nao
-  // double icp_x        = 0.00;
-  // double icp_y        = 0.05;
-  // double swf_x        = -0.08;
-  // double swf_y        = 0.10;
-  // double icp_x_offset = 0.05;
-  // double icp_y_offset = 0.02;
-  // paper plot for val
-  // double icp_x        = 0.00;
-  // double icp_y        = 0.0;
-  // double swf_x        = -0.25;
-  // double swf_y        = 0.4;
-  // double icp_x_offset = 0.1;
-  // double icp_y_offset = 0.05;
-  // walk val
   double icp_x = -0.15;
-  double icp_y = 0.05;
+  double icp_y = +0.05;
   double swf_x = -0.1;
-  double swf_y = 0.3;
-  double swf_z = 0;
+  double swf_y = +0.3;
+  double swf_z = +0.0;
 
   State state;
   Input input;
-  // int   cop_id = 6;
 
-  CRPlot *cr_plot;
-  // case1
   state.icp << icp_x, icp_y;
   state.swf << swf_x, swf_y, swf_z;
   state = grid->roundState(state).state;
   state.print();
   int stateId = grid->roundState(state).id;
 
-  int count = 0;
-  // for(int cop_id = 0; cop_id < 15; cop_id++) {
-  cr_plot = new CRPlot(model, param, grid);
   cr_plot->initCaptureMap();
   cr_plot->setState(state);
-  // cr_plot->setCop(grid->getCop(cop_id) );
-  // for(int N = 1; N <= 4; N++) {
-  // if(capturability->capturable(state, N) ) {
+
   std::vector<CaptureSet*> region = capturability->getCaptureRegion(stateId);
-  // printf("%d-step capture points %5d\n", N, (int)region.size() );
-  // count += (int)region.size();
   for(size_t i = 0; i < region.size(); i++) {
     Input input = grid->getInput(region[i]->input_id);
-    // if(grid->indexCop(input.cop) == cop_id)
     cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), region[i]->nstep);
   }
-  // }
-  // }
-  cr_plot->plot();
-  delete cr_plot;
-  // }
 
-  // printf("%d\n", count);
+  cr_plot->plot();
+
+  delete cr_plot;
 
   return 0;
 }

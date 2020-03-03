@@ -27,8 +27,8 @@
   </cop>
 
   <map>
-    <x min="-0.6" max="0.6" stp="0.05"/>
-    <y min="-0.6" max="0.6" stp="0.05"/>
+    <x min="-0.6" max="0.6" stp="0.025"/>
+    <y min="-0.6" max="0.6" stp="0.025"/>
   </map>
 
 </coordinate>

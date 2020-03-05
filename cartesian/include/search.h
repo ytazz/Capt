@@ -31,7 +31,7 @@ public:
   void clear();
 
   // world frame coord.
-  void setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, double elapsed, Foot suf);
+  void setStart(vec3_t rfoot, vec3_t lfoot, vec3_t icp, Foot suf);
   void setReference(arr2_t posRef, arr2_t icpRef);
 
   bool calc(int preview);
@@ -59,8 +59,6 @@ private:
   Foot   s_suf, g_suf;
   State  s_state;
   int    s_state_id, s_input_id;
-  vec2_t s_rfoot, s_lfoot, s_icp; // start
-  double s_elapsed;               // start
   arr2_t posRef, icpRef;          // ref
 
   Node *g_node;

@@ -14,28 +14,24 @@ void Search::clear(){
   region.clear();
 }
 
-void Search::setStart(vec2_t rfoot, vec2_t lfoot, vec2_t icp, double elapsed, Foot suf){
-  this->rfoot = rfoot;
-  this->lfoot = lfoot;
+void Search::setStart(vec3_t rfoot, vec3_t lfoot, vec3_t icp, Foot suf){
+  this->rfoot = vec3Tovec2(rfoot);
+  this->lfoot = vec3Tovec2(lfoot);
   this->s_suf = suf;
 
   // round to support foot coord.
   if(s_suf == FOOT_R) {
-    s_lfoot.x() = +( lfoot.x() - rfoot.x() );
-    s_lfoot.y() = +( lfoot.y() - rfoot.y() );
-    s_icp.x()   = +( icp.x() - rfoot.x() );
-    s_icp.y()   = +( icp.y() - rfoot.y() );
-    s_elapsed   = elapsed;
-    s_state.icp = s_icp;
-    s_state.swf = s_lfoot;
+    s_state.swf.x() = +( lfoot.x() - rfoot.x() );
+    s_state.swf.y() = +( lfoot.y() - rfoot.y() );
+    s_state.swf.z() = +( lfoot.z() );
+    s_state.icp.x() = +( icp.x() - rfoot.x() );
+    s_state.icp.y() = +( icp.y() - rfoot.y() );
   }else{
-    s_rfoot.x() = +( rfoot.x() - lfoot.x() );
-    s_rfoot.y() = -( rfoot.y() - lfoot.y() );
-    s_icp.x()   = +( icp.x() - lfoot.x() );
-    s_icp.y()   = -( icp.y() - lfoot.y() );
-    s_elapsed   = elapsed;
-    s_state.icp = s_icp;
-    s_state.swf = s_rfoot;
+    s_state.swf.x() = +( rfoot.x() - lfoot.x() );
+    s_state.swf.y() = -( rfoot.y() - lfoot.y() );
+    s_state.swf.z() = +( rfoot.z() );
+    s_state.icp.x() = +( icp.x() - lfoot.x() );
+    s_state.icp.y() = -( icp.y() - lfoot.y() );
   }
   s_state    = grid->roundState(s_state).state;
   s_state_id = grid->roundState(s_state).id;
@@ -141,8 +137,7 @@ void Search::calcSequence(){
 
       if(i == 0) {
         ini_state.icp = suf_pos + trans.states[0].icp;
-        ini_state.swf = suf_pos + trans.states[0].swf;
-        ini_state.elp = trans.states[0].elp;
+        ini_state.swf = vec2Tovec3(suf_pos) + trans.states[0].swf;
         ini_input.cop = suf_pos + trans.inputs[0].cop;
         ini_input.swf = suf_pos + trans.inputs[0].swf;
       }
@@ -157,8 +152,7 @@ void Search::calcSequence(){
 
       if(i == 0) {
         ini_state.icp = suf_pos + mirror(trans.states[0].icp);
-        ini_state.swf = suf_pos + mirror(trans.states[0].swf);
-        ini_state.elp = trans.states[0].elp;
+        ini_state.swf = vec2Tovec3(suf_pos) + mirror(trans.states[0].swf);
         ini_input.cop = suf_pos + mirror(trans.inputs[0].cop);
         ini_input.swf = suf_pos + mirror(trans.inputs[0].swf);
       }

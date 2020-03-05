@@ -47,9 +47,8 @@ private:
 
   // start
   Foot   s_suf;
-  vec2_t rfoot, lfoot, icp;
+  vec3_t rfoot, lfoot, icp;
   vec3_t suf, swf;
-  double elapsed;
   // goal
   Foot   g_suf;
   arr2_t posRef, icpRef;

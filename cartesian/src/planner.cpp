@@ -5,7 +5,7 @@ using namespace Capt;
 Planner::Planner(Model *model, Param *param, Config *config, Grid *grid, Capturability *capt){
   tree     = new Tree(grid, capt);
   search   = new Search(grid, tree);
-  swing    = new Swing(model);
+  swing    = new Swing(model, param);
   pendulum = new Pendulum(model);
 
   model->read(&dt_min, "step_time_min");
@@ -44,21 +44,17 @@ void Planner::clear(){
 }
 
 Status Planner::plan(){
-  rfoot = vec3Tovec2(state.rfoot);
-  lfoot = vec3Tovec2(state.lfoot);
-  icp   = vec3Tovec2(state.icp);
-  if(state.elapsed < dt_min / 2) {
-    elapsed = state.elapsed;
-  }else{
-    elapsed = dt_min / 2;
-  }
+  rfoot = state.rfoot;
+  lfoot = state.lfoot;
+  icp   = state.icp;
   s_suf = state.s_suf;
+
   if(state.s_suf == FOOT_R) {
-    suf = state.rfoot;
-    swf = state.lfoot;
+    suf = rfoot;
+    swf = lfoot;
   }else{
-    suf = state.lfoot;
-    swf = state.rfoot;
+    suf = lfoot;
+    swf = rfoot;
   }
 
   Status status;
@@ -119,7 +115,7 @@ bool Planner::calculateGoal(){
 }
 
 Status Planner::runSearch(int preview){
-  search->setStart(rfoot, lfoot, icp, elapsed, s_suf);
+  search->setStart(rfoot, lfoot, icp, s_suf);
   search->setReference(posRef, icpRef);
   found = search->calc( (int)posRef.size() - 1);
 
@@ -130,17 +126,15 @@ Status Planner::runSearch(int preview){
     Input i = search->getInput();
 
     // calc swing foot trajectory
-    swing->set(swf, vec2Tovec3(i.swf), elapsed);
+    swing->set(swf, vec2Tovec3(i.swf) );
 
     // set to output
-    input.elapsed  = elapsed;
     input.duration = swing->getDuration();
     input.suf      = suf;
     input.swf      = swf;
     input.cop      = vec2Tovec3(i.cop);
     input.icp      = vec2Tovec3(s.icp);
     input.land     = vec2Tovec3(i.swf);
-    // printf("elapsed   %1.3lf\n", elapsed );
     // printf("duration  %1.3lf\n", input.duration );
     // printf("swf  %1.3lf, %1.3lf\n", input.swf.x(), input.swf.y() );
     // printf("land %1.3lf, %1.3lf\n", input.land.x(), input.land.y() );

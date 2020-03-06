@@ -142,8 +142,10 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t posRef, arr2_t icpRef, int p
         icp_.y()                = nodes[num_node].pos.x() + icp.y();
       }
 
-      posErr = ( nodes[num_node].pos - posRef[nodes[num_node].step] ).norm();
-      icpErr = ( icp_ - icpRef[nodes[num_node].step] ).norm();
+      // posErr = ( nodes[num_node].pos - posRef[nodes[num_node].step] ).norm();
+      // icpErr = ( icp_ - icpRef[nodes[num_node].step] ).norm();
+      posErr = 0;
+      icpErr = icp.norm();
 
       nodes[num_node].err = target->err + posErr + icpErr;
       // determine if next position reach goal

@@ -169,8 +169,13 @@ std::vector<Sequence> Search::getSequence(){
 }
 
 arr3_t Search::getFootstepR(){
+  int offset = 0;
+  if(s_suf == Foot::FOOT_R) {
+    offset = 1;
+  }
+
   arr3_t footstep_r;
-  for(size_t i = 0; i < seq.size(); i++) {
+  for(size_t i = offset; i < seq.size(); i++) {
     if(seq[i].suf == Foot::FOOT_R) {
       footstep_r.push_back(seq[i].pos);
     }
@@ -179,8 +184,13 @@ arr3_t Search::getFootstepR(){
 }
 
 arr3_t Search::getFootstepL(){
+  int offset = 0;
+  if(s_suf == Foot::FOOT_L) {
+    offset = 1;
+  }
+
   arr3_t footstep_l;
-  for(size_t i = 0; i < seq.size(); i++) {
+  for(size_t i = offset; i < seq.size(); i++) {
     if(seq[i].suf == Foot::FOOT_L) {
       footstep_l.push_back(seq[i].pos);
     }

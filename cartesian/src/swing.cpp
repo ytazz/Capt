@@ -42,8 +42,11 @@ void Swing::set(vec3_t foot, vec3_t land) {
   dist_y =  land.y() - foot.y();
   dist   = sqrt( dist_x * dist_x + dist_y * dist_y );
 
-  tau        = ( 2 * z_max - foot.z() + dist ) / v_max;
+  tau = ( 2 * z_max - foot.z() + dist ) / v_max;
+  // tau        = 0.3;
+  // v_max      = ( 2 * z_max + dist ) / tau;
   tau_offset = foot.z() / v_max;
+  dt_min     = z_max / v_max;
 }
 
 double Swing::getDuration() {

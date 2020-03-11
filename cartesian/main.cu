@@ -96,9 +96,8 @@ int main(void) {
   /* 状態遷移計算 */
   printf("  Calculating .... ");
   fflush(stdout);
-  Cuda::calcStepTime << < BPG, TPB >> > ( dev_state, dev_input, dev_grid, dev_step_time, dev_physics );
   Cuda::calcBasin << < BPG, TPB >> > ( dev_state, dev_basin, dev_grid, dev_foot_r, dev_foot_l, dev_convex );
-  Cuda::calcTrans << < BPG, TPB >> > ( dev_state, dev_input, dev_trans, dev_grid, dev_step_time, dev_physics );
+  Cuda::calcTrans << < BPG, TPB >> > ( dev_state, dev_input, dev_trans, dev_grid, dev_physics );
   printf("Done!\n");
 
   /* 解析実行 */

@@ -30,25 +30,24 @@ struct Grid {
   int icp_y_num;
   int swf_x_num;
   int swf_y_num;
+  int swf_z_num;
   int cop_x_num;
   int cop_y_num;
-  int elp_t_num;
 
   double icp_x_min, icp_x_max, icp_x_stp;
   double icp_y_min, icp_y_max, icp_y_stp;
   double swf_x_min, swf_x_max, swf_x_stp;
   double swf_y_min, swf_y_max, swf_y_stp;
+  double swf_z_min, swf_z_max, swf_z_stp;
   double cop_x_min, cop_x_max, cop_x_stp;
   double cop_y_min, cop_y_max, cop_y_stp;
-  double elp_t_min, elp_t_max, elp_t_stp;
 
   void operator=(const Grid &grid);
 };
 
 struct State {
   vec2_t icp;
-  vec2_t swf;
-  double elp;
+  vec3_t swf;
 
   __device__ void operator=(const State &state);
 };
@@ -62,9 +61,9 @@ struct Input {
 
 struct Physics {
   double g;     // gravity
-  double h;     // com_height
-  double v;     // foot_vel_max
-  double dt;    // step_time_min
+  double h;     // com height
+  double v_max; // max. foot velocity
+  double z_max; // max. step height
   double omega; // LIPM omega
 };
 

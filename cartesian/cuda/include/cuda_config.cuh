@@ -1,6 +1,8 @@
 #ifndef __CUDA_CONFIG_CUH__
 #define __CUDA_CONFIG_CUH__
 
+#define EPSILON 0.001
+
 // Setting for Analysis
 const bool enableDoubleSupport = false;
 

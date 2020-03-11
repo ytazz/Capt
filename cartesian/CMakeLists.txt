@@ -67,8 +67,8 @@ set(PLOT_SOURCES
   ${PROJECT_SOURCE_DIR}/plot/src/occupancy_plot.cpp
 )
 
-add_executable(debug debug.cpp ${CAPT_SOURCES} ${PLOT_SOURCES})
-target_link_libraries(debug ${EXPAT_LIBRARIES})
+# add_executable(debug debug.cpp ${CAPT_SOURCES} ${PLOT_SOURCES})
+# target_link_libraries(debug ${EXPAT_LIBRARIES})
 # add_executable(check check.cpp ${CAPT_SOURCES} ${PLOT_SOURCES})
 # target_link_libraries(check ${EXPAT_LIBRARIES})
 

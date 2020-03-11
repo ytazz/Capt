@@ -32,6 +32,11 @@ void Grid::operator=(const Grid &grid){
   this->swf_y_stp = grid.swf_y_stp;
   this->swf_y_num = grid.swf_y_num;
 
+  this->swf_z_min = grid.swf_z_min;
+  this->swf_z_max = grid.swf_z_max;
+  this->swf_z_stp = grid.swf_z_stp;
+  this->swf_z_num = grid.swf_z_num;
+
   this->cop_x_min = grid.cop_x_min;
   this->cop_x_max = grid.cop_x_max;
   this->cop_x_stp = grid.cop_x_stp;
@@ -41,17 +46,11 @@ void Grid::operator=(const Grid &grid){
   this->cop_y_max = grid.cop_y_max;
   this->cop_y_stp = grid.cop_y_stp;
   this->cop_y_num = grid.cop_y_num;
-
-  this->elp_t_min = grid.elp_t_min;
-  this->elp_t_max = grid.elp_t_max;
-  this->elp_t_stp = grid.elp_t_stp;
-  this->elp_t_num = grid.elp_t_num;
 }
 
 __device__ void State::operator=(const State &state) {
   this->icp = state.icp;
   this->swf = state.swf;
-  this->elp = state.elp;
 }
 
 __device__ void Input::operator=(const Input &input) {
@@ -93,6 +92,11 @@ __host__ void MemoryManager::set(Capt::Model* model, Capt::Param* param, Capt::G
   param->read(&this->grid.swf_y_stp, "swf_y_stp");
   param->read(&this->grid.swf_y_num, "swf_y_num");
 
+  param->read(&this->grid.swf_z_min, "swf_z_min");
+  param->read(&this->grid.swf_z_max, "swf_z_max");
+  param->read(&this->grid.swf_z_stp, "swf_z_stp");
+  param->read(&this->grid.swf_z_num, "swf_z_num");
+
   param->read(&this->grid.cop_x_min, "cop_x_min");
   param->read(&this->grid.cop_x_max, "cop_x_max");
   param->read(&this->grid.cop_x_stp, "cop_x_stp");
@@ -102,11 +106,6 @@ __host__ void MemoryManager::set(Capt::Model* model, Capt::Param* param, Capt::G
   param->read(&this->grid.cop_y_max, "cop_y_max");
   param->read(&this->grid.cop_y_stp, "cop_y_stp");
   param->read(&this->grid.cop_y_num, "cop_y_num");
-
-  param->read(&this->grid.elp_t_min, "elp_t_min");
-  param->read(&this->grid.elp_t_max, "elp_t_max");
-  param->read(&this->grid.elp_t_stp, "elp_t_stp");
-  param->read(&this->grid.elp_t_num, "elp_t_num");
 }
 
 __host__ void MemoryManager::initHostState(State *state) {
@@ -115,7 +114,7 @@ __host__ void MemoryManager::initHostState(State *state) {
     state[state_id].icp.y = cgrid->getState(state_id).icp.y();
     state[state_id].swf.x = cgrid->getState(state_id).swf.x();
     state[state_id].swf.y = cgrid->getState(state_id).swf.y();
-    state[state_id].elp   = cgrid->getState(state_id).elp;
+    state[state_id].swf.z = cgrid->getState(state_id).swf.z();
   }
 }
 
@@ -190,7 +189,10 @@ __host__ void MemoryManager::initHostConvex(vec2_t *convex){
     //  icp_y_id (icp_th_id) = 0
     //  swf_x_id (swf_r_id)  = * (< swf_x_num)
     //  swf_y_id (swf_th_id) = * (< swf_y_num)
-    model->read(&cfoot_l, "foot_l_convex", cgrid->getState(swf_id).swf);
+    Capt::vec2_t foot_l_pos;
+    foot_l_pos.x() = cgrid->getState(swf_id).swf.x();
+    foot_l_pos.y() = cgrid->getState(swf_id).swf.y();
+    model->read(&cfoot_l, "foot_l_convex", foot_l_pos);
 
     Capt::Polygon polygon;
     polygon.setVertex(cfoot_r);
@@ -217,11 +219,11 @@ __host__ void MemoryManager::initHostStepTime(double *step_time){
 }
 
 __host__ void MemoryManager::initHostPhysics(Physics *physics){
-  model->read(&physics->g,  "gravity");
-  model->read(&physics->h,  "com_height");
-  model->read(&physics->v,  "foot_vel_max");
-  model->read(&physics->dt, "step_time_min");
-  physics->omega = sqrt(physics->g / physics->h);
+  model->read(&physics->g,     "gravity");
+  model->read(&physics->h,     "com_height");
+  model->read(&physics->omega, "omega");
+  model->read(&physics->v_max, "foot_vel_max");
+  model->read(&physics->z_max, "swing_height_max");
 }
 
 __host__ void MemoryManager::initDevState(State *dev_state){

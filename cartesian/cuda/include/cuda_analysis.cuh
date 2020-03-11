@@ -20,10 +20,9 @@ __device__ int   roundValue(double value);
 
 /* global function */
 
-__global__ void calcStepTime(State *state, Input *input, Grid *grid, double *step_time, Physics *physics);
+// __global__ void calcStepTime(State *state, Input *input, Grid *grid, double *step_time, Physics *physics);
 __global__ void calcBasin(State *state, int *basin, Grid *grid, vec2_t *foot_r, vec2_t *foot_l, vec2_t *convex);
-__global__ void calcTrans(State *state, Input *input, int *trans, Grid *grid,
-                          double *step_time, Physics *physics);
+__global__ void calcTrans(State *state, Input *input, int *trans, Grid *grid, Physics *physics);
 
 
 __global__ void exeNstep(int N, int *basin, int *nstep, int *trans, Grid *grid);

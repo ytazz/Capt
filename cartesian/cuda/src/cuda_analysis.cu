@@ -96,8 +96,7 @@ __device__ State step(State state, Input input, double step_time, Physics *physi
   // 状態変換
   State state_;
   state_.icp.set(-input.swf.x + icp.x, input.swf.y - icp.y );
-  state_.swf.set(-input.swf.x, input.swf.y );
-  state_.elp = 0;
+  state_.swf.set(-input.swf.x, input.swf.y, 0 );
 
   return state_;
 }
@@ -121,7 +120,7 @@ __device__ int roundValue(double value) {
 
 __device__ bool existState(State state, Grid *grid) {
   bool flag_icp_x = false, flag_icp_y = false;
-  bool flag_swf_x = false, flag_swf_y = false;
+  bool flag_swf_x = false, flag_swf_y = false, flag_swf_z = false;
 
   // icp_x
   if (state.icp.x >= grid->icp_x_min - grid->icp_x_stp / 2.0 &&
@@ -143,52 +142,37 @@ __device__ bool existState(State state, Grid *grid) {
       state.swf.y < grid->swf_y_max + grid->swf_y_stp / 2.0) {
     flag_swf_y = true;
   }
+  // swf_z
+  if (state.swf.z >= grid->swf_z_min - grid->swf_z_stp / 2.0 &&
+      state.swf.z < grid->swf_z_max + grid->swf_z_stp / 2.0) {
+    flag_swf_z = true;
+  }
 
-  bool flag = flag_icp_x * flag_icp_y * flag_swf_x * flag_swf_y;
+  bool flag = flag_icp_x * flag_icp_y * flag_swf_x * flag_swf_y * flag_swf_z;
   return flag;
 }
 
 __device__ int getStateIndex(State state, Grid *grid) {
   int icp_x_id = 0, icp_y_id = 0;
-  int swf_x_id = 0, swf_y_id = 0;
-  int elp_t_id = 0;
+  int swf_x_id = 0, swf_y_id = 0, swf_z_id = 0;
 
   icp_x_id = roundValue( ( state.icp.x - grid->icp_x_min ) / grid->icp_x_stp);
   icp_y_id = roundValue( ( state.icp.y - grid->icp_y_min ) / grid->icp_y_stp);
   swf_x_id = roundValue( ( state.swf.x - grid->swf_x_min ) / grid->swf_x_stp);
   swf_y_id = roundValue( ( state.swf.y - grid->swf_y_min ) / grid->swf_y_stp);
-  elp_t_id = 0;
+  swf_z_id = 0;
 
   int state_id = 0;
-  state_id = grid->elp_t_num * grid->swf_y_num * grid->swf_x_num * grid->icp_y_num * icp_x_id +
-             grid->elp_t_num * grid->swf_y_num * grid->swf_x_num * icp_y_id +
-             grid->elp_t_num * grid->swf_y_num * swf_x_id +
-             grid->elp_t_num * swf_y_id +
-             elp_t_id;
+  state_id = grid->swf_z_num * grid->swf_y_num * grid->swf_x_num * grid->icp_y_num * icp_x_id +
+             grid->swf_z_num * grid->swf_y_num * grid->swf_x_num * icp_y_id +
+             grid->swf_z_num * grid->swf_y_num * swf_x_id +
+             grid->swf_z_num * swf_y_id +
+             swf_z_id;
 
   return state_id;
 }
 
 /* global function */
-
-__global__ void calcStepTime(State *state, Input *input, Grid *grid, double *step_time, Physics *physics){
-  int tid = threadIdx.x + blockIdx.x * blockDim.x;
-
-  vec2_t foot_dist;
-  while (tid < grid->state_num * grid->input_num) {
-    int state_id = tid / grid->input_num;
-    int input_id = tid % grid->input_num;
-
-    // double tau  = max(0, step_time_min / 2 - state[state_id].elp) + dist / foot_vel_max + step_time_min / 2;
-    foot_dist      = state[state_id].swf - input[input_id].swf;
-    step_time[tid] = foot_dist.norm() / physics->v + physics->dt / 2;
-    if(physics->dt / 2 - state[state_id].elp > 0) {
-      step_time[tid] += physics->dt / 2 - state[state_id].elp;
-    }
-
-    tid += blockDim.x * gridDim.x;
-  }
-}
 
 __global__ void calcBasin(State *state, int *basin, Grid *grid, vec2_t *foot_r, vec2_t *foot_l, vec2_t *convex){
   int       tid      = threadIdx.x + blockIdx.x * blockDim.x;
@@ -198,28 +182,32 @@ __global__ void calcBasin(State *state, int *basin, Grid *grid, vec2_t *foot_r, 
     while (tid < grid->state_num) {
       int swf_id = tid % grid->input_num;
       // state[tid].elp < 0.001 means landing state, not swing phase
-      if(inPolygon(state[tid].icp, convex, max_size, swf_id) && state[tid].elp < 0.001 )
+      if(inPolygon(state[tid].icp, convex, max_size, swf_id) && state[tid].swf.z < EPSILON )
         basin[tid] = 0;
       tid += blockDim.x * gridDim.x;
     }
   }else{
     while (tid < grid->state_num) {
-      if(inPolygon(state[tid].icp, foot_r, grid->foot_r_num) && state[tid].elp < 0.001 )
+      if(inPolygon(state[tid].icp, foot_r, grid->foot_r_num) && state[tid].swf.z < EPSILON )
         basin[tid] = 0;
       tid += blockDim.x * gridDim.x;
     }
   }
 }
 
-__global__ void calcTrans(State *state, Input *input, int *trans, Grid *grid,
-                          double *step_time, Physics *physics){
+__global__ void calcTrans(State *state, Input *input, int *trans, Grid *grid, Physics *physics){
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
   while (tid < grid->state_num * grid->input_num) {
     int state_id = tid / grid->input_num;
     int input_id = tid % grid->input_num;
 
-    State state_ = step(state[state_id], input[input_id], step_time[tid], physics);
+    double dist_x = input[input_id].swf.x - state[state_id].swf.x;
+    double dist_y = input[input_id].swf.y - state[state_id].swf.y;
+    double dist   = sqrt( dist_x * dist_x + dist_y * dist_y );
+    double tau    = ( 2 * physics->z_max - state[state_id].swf.z + dist ) / physics->v_max;
+
+    State state_ = step(state[state_id], input[input_id], tau, physics);
     if (existState(state_, grid) )
       trans[tid] = getStateIndex(state_, grid);
     else

@@ -15,11 +15,11 @@ Model::Model(const std::string &name) : Loader(name) {
   unit_mass   = 0.0;
   unit_time   = 0.0;
 
-  mass          = 0.0;
-  com_height    = 0.0;
-  step_time_min = 0.0;
-  foot_vel_max  = 0.0;
-  step_height   = 0.0;
+  mass             = 0.0;
+  com_height       = 0.0;
+  step_time_min    = 0.0;
+  foot_vel_max     = 0.0;
+  swing_height_max = 0.0;
 
   foot_r.clear();
   foot_l.clear();
@@ -122,8 +122,8 @@ void Model::callbackAttribute(const std::string &name,
       step_time_min = std::stof(value);
     if (equalStr(name, "foot_vel_max") )
       foot_vel_max = std::stof(value);
-    if (equalStr(name, "step_height") )
-      step_height = std::stof(value);
+    if (equalStr(name, "swing_height_max") )
+      swing_height_max = std::stof(value);
     break;
   case MODEL_ELE_ENVIRONMENT:
     if (equalStr(name, "gravity") )
@@ -222,8 +222,8 @@ void Model::read(double *val, const std::string &name){
     *val = step_time_min;
   if (equalStr(name, "foot_vel_max") )
     *val = foot_vel_max;
-  if (equalStr(name, "step_height") )
-    *val = step_height;
+  if (equalStr(name, "swing_height_max") )
+    *val = swing_height_max;
   if (equalStr(name, "gravity") )
     *val = gravity;
   if (equalStr(name, "friction") )
@@ -260,11 +260,11 @@ void Model::print() {
   printf("\tmass  : %lf [kg]\n", unit_mass);
   printf("\ttime  : %lf [s]\n", unit_time);
   printf("physics:\n");
-  printf("\tmass         : %lf\n", mass);
-  printf("\tcom_height   : %lf\n", com_height);
-  printf("\tstep_time_min: %lf\n", step_time_min);
-  printf("\tfoot_vel_max : %lf\n", foot_vel_max);
-  printf("\tstep_height  : %lf\n", step_height);
+  printf("\tmass            : %lf\n", mass);
+  printf("\tcom_height      : %lf\n", com_height);
+  printf("\tstep_time_min   : %lf\n", step_time_min);
+  printf("\tfoot_vel_max    : %lf\n", foot_vel_max);
+  printf("\tswing_height_max: %lf\n", swing_height_max);
   printf("environment:\n");
   printf("\tgravity : %lf\n", gravity);
   printf("\tfriction: %lf\n", friction);

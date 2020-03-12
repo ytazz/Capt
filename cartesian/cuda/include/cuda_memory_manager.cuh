@@ -129,7 +129,7 @@ public:
   __host__ void copyDevToHostPhysics(Physics *dev_physics, Physics *physics);
 
   __host__ void saveBasin(std::string file_name, int *basin, bool header = false);
-  __host__ void saveNstep(std::string file_name, int *nstep, int *trans, int max_step, bool header = false);
+  __host__ void saveNstep(std::string file_name, int *nstep, int *trans, int n, bool header = false);
   __host__ void saveStepTime(std::string file_name, double *step_time, bool header = false);
 
 private:

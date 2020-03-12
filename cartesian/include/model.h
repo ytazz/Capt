@@ -53,7 +53,7 @@ private:
 
   std::string robot_name;
   double      unit_length, unit_mass, unit_time;
-  double      mass, com_height, step_time_min, foot_vel_max, step_height;
+  double      mass, com_height, step_time_min, foot_vel_max, swing_height_max;
   double      gravity, friction;
 
   arr2_t foot_r, foot_l;

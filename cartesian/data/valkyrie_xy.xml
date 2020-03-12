@@ -15,7 +15,6 @@
     <z min="0"     max="0.1"  stp="0.05"/>
   </swing>
 
-  <!-- except region-->
   <except>
     <x min="-0.25" max="0.25"/>
     <y min="0"     max="0.2"/>

@@ -378,41 +378,36 @@ __host__ void MemoryManager::saveBasin(std::string file_name, int *basin, bool h
   fclose(fp);
 }
 
-__host__ void MemoryManager::saveNstep(std::string file_name, int *nstep, int *trans, int max_step, bool header){
+__host__ void MemoryManager::saveNstep(std::string file_name, int *nstep, int *trans, int n, bool header){
   FILE *fp = fopen(file_name.c_str(), "w");
 
   // Header
   if (header) {
-    // fprintf(fp, "%s,", "state_id");
-    // fprintf(fp, "%s,", "input_id");
-    fprintf(fp, "%s,", "trans");
-    fprintf(fp, "%s", "nstep");
+    fprintf(fp, "%s,", "state_id");
+    fprintf(fp, "%s,", "input_id");
+    fprintf(fp, "%s", "trans");
+    // fprintf(fp, "%s", "nstep");
     fprintf(fp, "\n");
   }
 
   // Data
-  int num_step[max_step + 1]; // 最大踏み出し歩数を10とする
-  for(int i = 0; i < max_step + 1; i++) {
-    num_step[i] = 0;
-  }
+  int num = 0;
   for (int state_id = 0; state_id < grid.state_num; state_id++) {
     for (int input_id = 0; input_id < grid.input_num; input_id++) {
       int id = state_id * grid.input_num + input_id;
-      // fprintf(fp, "%d,", state_id);
-      // fprintf(fp, "%d,", input_id);
-      fprintf(fp, "%d,", trans[id]);
-      fprintf(fp, "%d", nstep[id]);
-      fprintf(fp, "\n");
-      if(nstep[id] > 0)
-        num_step[nstep[id]]++;
+      if(nstep[id] == n) {
+        fprintf(fp, "%d,", state_id);
+        fprintf(fp, "%d,", input_id);
+        fprintf(fp, "%d", trans[id]);
+        // fprintf(fp, "%d", nstep[id]);
+        fprintf(fp, "\n");
+
+        num++;
+      }
     }
   }
 
-  printf("*** Result ***\n");
-  printf("  Feasible maximum steps: %d\n", max_step);
-  for(int i = 1; i <= max_step; i++) {
-    printf("  %d-step capture point  : %8d\n", i, num_step[i]);
-  }
+  printf("  %d-step capture point  : %8d\n", n, num);
 
   fclose(fp);
 }

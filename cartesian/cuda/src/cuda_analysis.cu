@@ -160,7 +160,7 @@ __device__ int getStateIndex(State state, Grid *grid) {
   icp_y_id = roundValue( ( state.icp.y - grid->icp_y_min ) / grid->icp_y_stp);
   swf_x_id = roundValue( ( state.swf.x - grid->swf_x_min ) / grid->swf_x_stp);
   swf_y_id = roundValue( ( state.swf.y - grid->swf_y_min ) / grid->swf_y_stp);
-  swf_z_id = 0;
+  swf_z_id = roundValue( ( state.swf.z - grid->swf_z_min ) / grid->swf_z_stp);
 
   int state_id = 0;
   state_id = grid->swf_z_num * grid->swf_y_num * grid->swf_x_num * grid->icp_y_num * icp_x_id +

@@ -53,7 +53,7 @@ int main(void) {
   mm.initHostFootR(foot_r);
   mm.initHostFootL(foot_l);
   mm.initHostConvex(convex);
-  mm.initHostStepTime(step_time);
+  // mm.initHostStepTime(step_time);
   mm.initHostPhysics(physics);
   // デバイス側
   Cuda::State   *dev_state;
@@ -128,8 +128,14 @@ int main(void) {
   end_exe = std::chrono::system_clock::now();
 
   /* ファイル書き出し */
+  printf("*** Result ***\n");
   mm.saveBasin("gpu/Basin.csv", basin);
-  mm.saveNstep("gpu/Nstep.csv", nstep, trans, step);
+  mm.saveNstep("gpu/1step.csv", nstep, trans, 1);
+  mm.saveNstep("gpu/2step.csv", nstep, trans, 2);
+  mm.saveNstep("gpu/3step.csv", nstep, trans, 3);
+  mm.saveNstep("gpu/4step.csv", nstep, trans, 4);
+  mm.saveNstep("gpu/5step.csv", nstep, trans, 5);
+  mm.saveNstep("gpu/6step.csv", nstep, trans, 6);
   // mm.saveStepTime("gpu/StepTime.csv", step_time);
   end_save = std::chrono::system_clock::now();
 

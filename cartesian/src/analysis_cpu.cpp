@@ -74,8 +74,10 @@ void Analysis::calcBasin(){
       polygon.setVertex(foot_r);
       polygon.setVertex(foot_l);
       region = polygon.getConvexHull();
-      if(polygon.inPolygon(state[state_id].icp, region) && state[state_id].swf.z() < EPSILON )
-        basin[state_id] = 0;
+      if(grid->isSteppable(vec3Tovec2(state[state_id].swf) ) ) {
+        if(polygon.inPolygon(state[state_id].icp, region) && state[state_id].swf.z() < EPSILON )
+          basin[state_id] = 0;
+      }
     }
   }else{
     Polygon polygon;
@@ -96,18 +98,22 @@ void Analysis::calcTrans(){
   for(int state_id = 0; state_id < state_num; state_id++) {
     for(int input_id = 0; input_id < input_num; input_id++) {
       int id = state_id * input_num + input_id;
+      trans[id] = -1;
+      if(grid->isSteppable(vec3Tovec2(state[state_id].swf) ) ) {
+        if(grid->isSteppable(input[input_id].swf ) ) {
+          swing->set(state[state_id].swf, vec2Tovec3(input[input_id].swf) );
 
-      swing->set(state[state_id].swf, vec2Tovec3(input[input_id].swf) );
+          pendulum.setIcp(state[state_id].icp);
+          pendulum.setCop(input[input_id].cop);
+          icp = pendulum.getIcp(swing->getDuration() );
 
-      pendulum.setIcp(state[state_id].icp);
-      pendulum.setCop(input[input_id].cop);
-      icp = pendulum.getIcp(swing->getDuration() );
+          State state_;
+          state_.icp << -input[input_id].swf.x() + icp.x(), input[input_id].swf.y() - icp.y();
+          state_.swf << -input[input_id].swf.x(), input[input_id].swf.y(), 0;
 
-      State state_;
-      state_.icp << -input[input_id].swf.x() + icp.x(), input[input_id].swf.y() - icp.y();
-      state_.swf << -input[input_id].swf.x(), input[input_id].swf.y(), 0;
-
-      trans[id] = grid->roundState(state_).id;
+          trans[id] = grid->roundState(state_).id;
+        }
+      }
     }
   }
 }
@@ -116,18 +122,14 @@ bool Analysis::exe(const int n){
   bool found = false;
   if(n > 0) {
     for(int state_id = 0; state_id < state_num; state_id++) {
-      if(grid->isSteppable(vec3Tovec2(state[state_id].swf) ) ) {
-        for(int input_id = 0; input_id < input_num; input_id++) {
-          if(grid->isSteppable(input[input_id].swf ) ) {
-            int id = state_id * input_num + input_id;
-            if (trans[id] >= 0) {
-              if (basin[trans[id]] == ( n - 1 ) ) {
-                nstep[id] = n;
-                found     = true;
-                if (basin[state_id] < 0) {
-                  basin[state_id] = n;
-                }
-              }
+      for(int input_id = 0; input_id < input_num; input_id++) {
+        int id = state_id * input_num + input_id;
+        if (trans[id] >= 0) {
+          if (basin[trans[id]] == ( n - 1 ) ) {
+            nstep[id] = n;
+            found     = true;
+            if (basin[state_id] < 0) {
+              basin[state_id] = n;
             }
           }
         }

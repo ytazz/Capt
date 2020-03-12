@@ -41,6 +41,8 @@ struct Grid {
   double swf_z_min, swf_z_max, swf_z_stp;
   double cop_x_min, cop_x_max, cop_x_stp;
   double cop_y_min, cop_y_max, cop_y_stp;
+  double exc_x_min, exc_x_max;
+  double exc_y_min, exc_y_max;
 
   void operator=(const Grid &grid);
 };

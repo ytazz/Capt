@@ -46,6 +46,12 @@ void Grid::operator=(const Grid &grid){
   this->cop_y_max = grid.cop_y_max;
   this->cop_y_stp = grid.cop_y_stp;
   this->cop_y_num = grid.cop_y_num;
+
+  this->exc_x_min = grid.exc_x_min;
+  this->exc_x_max = grid.exc_x_max;
+
+  this->exc_y_min = grid.exc_y_min;
+  this->exc_y_max = grid.exc_y_max;
 }
 
 __device__ void State::operator=(const State &state) {
@@ -106,6 +112,11 @@ __host__ void MemoryManager::set(Capt::Model* model, Capt::Param* param, Capt::G
   param->read(&this->grid.cop_y_max, "cop_y_max");
   param->read(&this->grid.cop_y_stp, "cop_y_stp");
   param->read(&this->grid.cop_y_num, "cop_y_num");
+
+  param->read(&this->grid.exc_x_min, "exc_x_min");
+  param->read(&this->grid.exc_x_max, "exc_x_max");
+  param->read(&this->grid.exc_y_min, "exc_y_min");
+  param->read(&this->grid.exc_y_max, "exc_y_max");
 }
 
 __host__ void MemoryManager::initHostState(State *state) {

@@ -4,6 +4,17 @@ namespace Cuda {
 
 /* device function */
 
+__device__ bool isSteppable(double swf_x, double swf_y, Grid *grid){
+  bool flag_x = true, flag_y = true;
+
+  if(grid->exc_x_min - EPSILON <= swf_x && swf_x <= grid->exc_x_max + EPSILON)
+    flag_x = false;
+  if(grid->exc_y_min - EPSILON <= swf_y && swf_y <= grid->exc_y_max + EPSILON)
+    flag_y = false;
+
+  return ( flag_x || flag_y );
+}
+
 __device__ bool inPolygon(vec2_t point, vec2_t *convex, const int max_size, int swf_id){
   int num_vertex = 0;
   for(int i = 0; i < max_size; i++) {
@@ -181,15 +192,19 @@ __global__ void calcBasin(State *state, int *basin, Grid *grid, vec2_t *foot_r, 
   if(enableDoubleSupport) {
     while (tid < grid->state_num) {
       int swf_id = tid % grid->input_num;
-      // state[tid].elp < 0.001 means landing state, not swing phase
-      if(inPolygon(state[tid].icp, convex, max_size, swf_id) && state[tid].swf.z < EPSILON )
-        basin[tid] = 0;
+      if(isSteppable(state[tid].swf.x, state[tid].swf.y, grid) ) {
+        // state[tid].swf.z < EPSILON means landing state, not swing phase.
+        if(inPolygon(state[tid].icp, convex, max_size, swf_id) && state[tid].swf.z < EPSILON )
+          basin[tid] = 0;
+      }
       tid += blockDim.x * gridDim.x;
     }
   }else{
     while (tid < grid->state_num) {
-      if(inPolygon(state[tid].icp, foot_r, grid->foot_r_num) && state[tid].swf.z < EPSILON )
-        basin[tid] = 0;
+      if(isSteppable(state[tid].swf.x, state[tid].swf.y, grid) ) {
+        if(inPolygon(state[tid].icp, foot_r, grid->foot_r_num) && state[tid].swf.z < EPSILON )
+          basin[tid] = 0;
+      }
       tid += blockDim.x * gridDim.x;
     }
   }
@@ -202,16 +217,20 @@ __global__ void calcTrans(State *state, Input *input, int *trans, Grid *grid, Ph
     int state_id = tid / grid->input_num;
     int input_id = tid % grid->input_num;
 
-    double dist_x = input[input_id].swf.x - state[state_id].swf.x;
-    double dist_y = input[input_id].swf.y - state[state_id].swf.y;
-    double dist   = sqrt( dist_x * dist_x + dist_y * dist_y );
-    double tau    = ( 2 * physics->z_max - state[state_id].swf.z + dist ) / physics->v_max;
+    trans[tid] = -1;
 
-    State state_ = step(state[state_id], input[input_id], tau, physics);
-    if (existState(state_, grid) )
-      trans[tid] = getStateIndex(state_, grid);
-    else
-      trans[tid] = -1;
+    if(isSteppable(state[state_id].swf.x, state[state_id].swf.y, grid) ) {
+      if(isSteppable(input[input_id].swf.x, input[input_id].swf.y, grid) ) {
+        double dist_x = input[input_id].swf.x - state[state_id].swf.x;
+        double dist_y = input[input_id].swf.y - state[state_id].swf.y;
+        double dist   = sqrt( dist_x * dist_x + dist_y * dist_y );
+        double tau    = ( 2 * physics->z_max - state[state_id].swf.z + dist ) / physics->v_max;
+
+        State state_ = step(state[state_id], input[input_id], tau, physics);
+        if (existState(state_, grid) )
+          trans[tid] = getStateIndex(state_, grid);
+      }
+    }
 
     tid += blockDim.x * gridDim.x;
   }

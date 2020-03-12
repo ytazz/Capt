@@ -9,6 +9,8 @@ namespace Cuda {
 
 /* device function */
 
+__device__ bool isSteppable(double swf_x, double swf_y, Grid *grid);
+
 __device__ bool   inPolygon(vec2_t point, vec2_t *convex, const int max_size, int swf_id);
 __device__ bool   inPolygon(vec2_t point, vec2_t *vertex, int num_vertex);
 __device__ vec2_t getClosestPoint(vec2_t point, vec2_t *vertex, int num_vertex);

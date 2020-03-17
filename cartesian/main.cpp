@@ -36,5 +36,12 @@ int main(int argc, char const *argv[]) {
   printf("  save: %7d [ms]\n", time_save);
   printf("  sum : %7d [ms]\n", time_sum);
 
+  // save calculation result
+  FILE *fp = fopen("log.csv", "w");
+  fprintf(fp, "state,input,grid,exe,save,sum\n");
+  fprintf(fp, "%d,%d,%d,", grid->getNumState(), grid->getNumInput(), grid->getNumGrid() );
+  fprintf(fp, "%d,%d,%d\n", time_exe, time_save, time_sum );
+  fclose(fp);
+
   return 0;
 }

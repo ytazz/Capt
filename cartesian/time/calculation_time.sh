@@ -6,8 +6,8 @@ for itr_setting in 1 2 3 4 5 6 7 8 9 10 11 12
 do
 
 unset root
-${root:=./../../time/setting${itr_setting}}
-rm -R ${root}/*.csv
+${root:=./time/setting${itr_setting}}
+rm ${root}/*.csv
 
 echo "${itr_setting}-th setting"
 

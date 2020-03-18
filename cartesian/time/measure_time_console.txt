@@ -1,0 +1,2052 @@
+kuribayashi:~/Capturability/cartesian/build/bin$ ./time/calculation_time.sh
+./time/calculation_time.sh: 9: ./time/calculation_time.sh: ./time/setting1: Permission denied
+rm: './time/setting1/*.csv' を削除できません: そのようなファイルやディレクトリはありません
+1-th setting
+CPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     2412
+  2-step capture point  :     5227
+  3-step capture point  :      578
+  4-step capture point  :       62
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     143 [ms]
+  save:      14 [ms]
+  sum :     157 [ms]
+CPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     2412
+  2-step capture point  :     5227
+  3-step capture point  :      578
+  4-step capture point  :       62
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :      60 [ms]
+  save:      11 [ms]
+  sum :      71 [ms]
+CPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     2412
+  2-step capture point  :     5227
+  3-step capture point  :      578
+  4-step capture point  :       62
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :      90 [ms]
+  save:      18 [ms]
+  sum :     109 [ms]
+CPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     2412
+  2-step capture point  :     5227
+  3-step capture point  :      578
+  4-step capture point  :       62
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     129 [ms]
+  save:      12 [ms]
+  sum :     142 [ms]
+CPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     2412
+  2-step capture point  :     5227
+  3-step capture point  :      578
+  4-step capture point  :       62
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :      55 [ms]
+  save:       9 [ms]
+  sum :      64 [ms]
+GPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     2412
+  2-step capture point  :     5227
+  3-step capture point  :      578
+  4-step capture point  :       62
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     173 [ms]
+  save:       7 [ms]
+  sum :     180 [ms]
+GPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     2412
+  2-step capture point  :     5227
+  3-step capture point  :      578
+  4-step capture point  :       62
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     137 [ms]
+  save:       7 [ms]
+  sum :     145 [ms]
+GPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     2412
+  2-step capture point  :     5227
+  3-step capture point  :      578
+  4-step capture point  :       62
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     151 [ms]
+  save:       7 [ms]
+  sum :     159 [ms]
+GPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     2412
+  2-step capture point  :     5227
+  3-step capture point  :      578
+  4-step capture point  :       62
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     128 [ms]
+  save:       9 [ms]
+  sum :     137 [ms]
+GPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     2412
+  2-step capture point  :     5227
+  3-step capture point  :      578
+  4-step capture point  :       62
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     178 [ms]
+  save:      16 [ms]
+  sum :     195 [ms]
+./time/calculation_time.sh: 9: ./time/calculation_time.sh: ./time/setting2: Permission denied
+rm: './time/setting2/*.csv' を削除できません: そのようなファイルやディレクトリはありません
+2-th setting
+CPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6924
+  2-step capture point  :    15840
+  3-step capture point  :     1426
+  4-step capture point  :      208
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     176 [ms]
+  save:      19 [ms]
+  sum :     196 [ms]
+CPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6924
+  2-step capture point  :    15840
+  3-step capture point  :     1426
+  4-step capture point  :      208
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     110 [ms]
+  save:      19 [ms]
+  sum :     129 [ms]
+CPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6924
+  2-step capture point  :    15840
+  3-step capture point  :     1426
+  4-step capture point  :      208
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     119 [ms]
+  save:      19 [ms]
+  sum :     138 [ms]
+CPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6924
+  2-step capture point  :    15840
+  3-step capture point  :     1426
+  4-step capture point  :      208
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     123 [ms]
+  save:      19 [ms]
+  sum :     143 [ms]
+CPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6924
+  2-step capture point  :    15840
+  3-step capture point  :     1426
+  4-step capture point  :      208
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     120 [ms]
+  save:      18 [ms]
+  sum :     139 [ms]
+GPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6924
+  2-step capture point  :    15840
+  3-step capture point  :     1426
+  4-step capture point  :      208
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     126 [ms]
+  save:      16 [ms]
+  sum :     143 [ms]
+GPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6924
+  2-step capture point  :    15840
+  3-step capture point  :     1426
+  4-step capture point  :      208
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     128 [ms]
+  save:      16 [ms]
+  sum :     145 [ms]
+GPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6924
+  2-step capture point  :    15840
+  3-step capture point  :     1426
+  4-step capture point  :      208
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     152 [ms]
+  save:      16 [ms]
+  sum :     168 [ms]
+GPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6924
+  2-step capture point  :    15840
+  3-step capture point  :     1426
+  4-step capture point  :      208
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     129 [ms]
+  save:      17 [ms]
+  sum :     146 [ms]
+GPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6924
+  2-step capture point  :    15840
+  3-step capture point  :     1426
+  4-step capture point  :      208
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     140 [ms]
+  save:      16 [ms]
+  sum :     157 [ms]
+./time/calculation_time.sh: 9: ./time/calculation_time.sh: ./time/setting3: Permission denied
+rm: './time/setting3/*.csv' を削除できません: そのようなファイルやディレクトリはありません
+3-th setting
+CPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    28861
+  2-step capture point  :    67993
+  3-step capture point  :     3793
+  4-step capture point  :      576
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     417 [ms]
+  save:      74 [ms]
+  sum :     492 [ms]
+CPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    28861
+  2-step capture point  :    67993
+  3-step capture point  :     3793
+  4-step capture point  :      576
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     411 [ms]
+  save:      76 [ms]
+  sum :     488 [ms]
+CPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    28861
+  2-step capture point  :    67993
+  3-step capture point  :     3793
+  4-step capture point  :      576
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     420 [ms]
+  save:      76 [ms]
+  sum :     497 [ms]
+CPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    28861
+  2-step capture point  :    67993
+  3-step capture point  :     3793
+  4-step capture point  :      576
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     424 [ms]
+  save:      81 [ms]
+  sum :     505 [ms]
+CPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    28861
+  2-step capture point  :    67993
+  3-step capture point  :     3793
+  4-step capture point  :      576
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     426 [ms]
+  save:      76 [ms]
+  sum :     503 [ms]
+GPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    28698
+  2-step capture point  :    68177
+  3-step capture point  :     4117
+  4-step capture point  :      731
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     292 [ms]
+  save:      76 [ms]
+  sum :     369 [ms]
+GPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    28698
+  2-step capture point  :    68177
+  3-step capture point  :     4117
+  4-step capture point  :      731
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     287 [ms]
+  save:      68 [ms]
+  sum :     355 [ms]
+GPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    28698
+  2-step capture point  :    68177
+  3-step capture point  :     4117
+  4-step capture point  :      731
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     273 [ms]
+  save:      67 [ms]
+  sum :     341 [ms]
+GPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    28698
+  2-step capture point  :    68177
+  3-step capture point  :     4117
+  4-step capture point  :      731
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     303 [ms]
+  save:      67 [ms]
+  sum :     371 [ms]
+GPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    28698
+  2-step capture point  :    68177
+  3-step capture point  :     4117
+  4-step capture point  :      731
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     304 [ms]
+  save:      68 [ms]
+  sum :     372 [ms]
+./time/calculation_time.sh: 9: ./time/calculation_time.sh: ./time/setting4: Permission denied
+rm: './time/setting4/*.csv' を削除できません: そのようなファイルやディレクトリはありません
+4-th setting
+CPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   420534
+  2-step capture point  :   958746
+  3-step capture point  :    48628
+  4-step capture point  :    18189
+  5-step capture point  :       96
+  6-step capture point  :        0
+*** Time ***
+  exe :    5715 [ms]
+  save:    1000 [ms]
+  sum :    6715 [ms]
+CPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   420534
+  2-step capture point  :   958746
+  3-step capture point  :    48628
+  4-step capture point  :    18189
+  5-step capture point  :       96
+  6-step capture point  :        0
+*** Time ***
+  exe :    5681 [ms]
+  save:     990 [ms]
+  sum :    6672 [ms]
+CPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   420534
+  2-step capture point  :   958746
+  3-step capture point  :    48628
+  4-step capture point  :    18189
+  5-step capture point  :       96
+  6-step capture point  :        0
+*** Time ***
+  exe :    5819 [ms]
+  save:     998 [ms]
+  sum :    6817 [ms]
+CPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   420534
+  2-step capture point  :   958746
+  3-step capture point  :    48628
+  4-step capture point  :    18189
+  5-step capture point  :       96
+  6-step capture point  :        0
+*** Time ***
+  exe :    5657 [ms]
+  save:    1028 [ms]
+  sum :    6686 [ms]
+CPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   420534
+  2-step capture point  :   958746
+  3-step capture point  :    48628
+  4-step capture point  :    18189
+  5-step capture point  :       96
+  6-step capture point  :        0
+*** Time ***
+  exe :    5726 [ms]
+  save:     995 [ms]
+  sum :    6722 [ms]
+GPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   419269
+  2-step capture point  :   961458
+  3-step capture point  :    52824
+  4-step capture point  :    16890
+  5-step capture point  :      196
+  6-step capture point  :        0
+*** Time ***
+  exe :    2711 [ms]
+  save:     902 [ms]
+  sum :    3614 [ms]
+GPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   419269
+  2-step capture point  :   961458
+  3-step capture point  :    52824
+  4-step capture point  :    16890
+  5-step capture point  :      196
+  6-step capture point  :        0
+*** Time ***
+  exe :    2685 [ms]
+  save:     906 [ms]
+  sum :    3591 [ms]
+GPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   419269
+  2-step capture point  :   961458
+  3-step capture point  :    52824
+  4-step capture point  :    16890
+  5-step capture point  :      196
+  6-step capture point  :        0
+*** Time ***
+  exe :    2690 [ms]
+  save:     897 [ms]
+  sum :    3588 [ms]
+GPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   419269
+  2-step capture point  :   961458
+  3-step capture point  :    52824
+  4-step capture point  :    16890
+  5-step capture point  :      196
+  6-step capture point  :        0
+*** Time ***
+  exe :    2720 [ms]
+  save:     911 [ms]
+  sum :    3631 [ms]
+GPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   419269
+  2-step capture point  :   961458
+  3-step capture point  :    52824
+  4-step capture point  :    16890
+  5-step capture point  :      196
+  6-step capture point  :        0
+*** Time ***
+  exe :    2712 [ms]
+  save:     906 [ms]
+  sum :    3618 [ms]
+./time/calculation_time.sh: 9: ./time/calculation_time.sh: ./time/setting5: Permission denied
+rm: './time/setting5/*.csv' を削除できません: そのようなファイルやディレクトリはありません
+5-th setting
+CPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     5914
+  2-step capture point  :     9344
+  3-step capture point  :     1191
+  4-step capture point  :      276
+  5-step capture point  :      184
+  6-step capture point  :        0
+*** Time ***
+  exe :      80 [ms]
+  save:      16 [ms]
+  sum :      97 [ms]
+CPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     5914
+  2-step capture point  :     9344
+  3-step capture point  :     1191
+  4-step capture point  :      276
+  5-step capture point  :      184
+  6-step capture point  :        0
+*** Time ***
+  exe :      95 [ms]
+  save:      18 [ms]
+  sum :     114 [ms]
+CPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     5914
+  2-step capture point  :     9344
+  3-step capture point  :     1191
+  4-step capture point  :      276
+  5-step capture point  :      184
+  6-step capture point  :        0
+*** Time ***
+  exe :     139 [ms]
+  save:      15 [ms]
+  sum :     155 [ms]
+CPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     5914
+  2-step capture point  :     9344
+  3-step capture point  :     1191
+  4-step capture point  :      276
+  5-step capture point  :      184
+  6-step capture point  :        0
+*** Time ***
+  exe :      82 [ms]
+  save:      14 [ms]
+  sum :      96 [ms]
+CPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     5914
+  2-step capture point  :     9344
+  3-step capture point  :     1191
+  4-step capture point  :      276
+  5-step capture point  :      184
+  6-step capture point  :        0
+*** Time ***
+  exe :      92 [ms]
+  save:      16 [ms]
+  sum :     108 [ms]
+GPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6064
+  2-step capture point  :     9475
+  3-step capture point  :     1325
+  4-step capture point  :      276
+  5-step capture point  :      198
+  6-step capture point  :      103
+*** Time ***
+  exe :     146 [ms]
+  save:      15 [ms]
+  sum :     162 [ms]
+GPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6064
+  2-step capture point  :     9475
+  3-step capture point  :     1325
+  4-step capture point  :      276
+  5-step capture point  :      198
+  6-step capture point  :      103
+*** Time ***
+  exe :     134 [ms]
+  save:      13 [ms]
+  sum :     148 [ms]
+GPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6064
+  2-step capture point  :     9475
+  3-step capture point  :     1325
+  4-step capture point  :      276
+  5-step capture point  :      198
+  6-step capture point  :      103
+*** Time ***
+  exe :     163 [ms]
+  save:      13 [ms]
+  sum :     177 [ms]
+GPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6064
+  2-step capture point  :     9475
+  3-step capture point  :     1325
+  4-step capture point  :      276
+  5-step capture point  :      198
+  6-step capture point  :      103
+*** Time ***
+  exe :     170 [ms]
+  save:      13 [ms]
+  sum :     184 [ms]
+GPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :     6064
+  2-step capture point  :     9475
+  3-step capture point  :     1325
+  4-step capture point  :      276
+  5-step capture point  :      198
+  6-step capture point  :      103
+*** Time ***
+  exe :     161 [ms]
+  save:      13 [ms]
+  sum :     175 [ms]
+./time/calculation_time.sh: 9: ./time/calculation_time.sh: ./time/setting6: Permission denied
+rm: './time/setting6/*.csv' を削除できません: そのようなファイルやディレクトリはありません
+6-th setting
+CPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    16509
+  2-step capture point  :    29904
+  3-step capture point  :     4172
+  4-step capture point  :      199
+  5-step capture point  :       83
+  6-step capture point  :        0
+*** Time ***
+  exe :     272 [ms]
+  save:      37 [ms]
+  sum :     309 [ms]
+CPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    16509
+  2-step capture point  :    29904
+  3-step capture point  :     4172
+  4-step capture point  :      199
+  5-step capture point  :       83
+  6-step capture point  :        0
+*** Time ***
+  exe :     240 [ms]
+  save:      37 [ms]
+  sum :     277 [ms]
+CPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    16509
+  2-step capture point  :    29904
+  3-step capture point  :     4172
+  4-step capture point  :      199
+  5-step capture point  :       83
+  6-step capture point  :        0
+*** Time ***
+  exe :     232 [ms]
+  save:      37 [ms]
+  sum :     270 [ms]
+CPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    16509
+  2-step capture point  :    29904
+  3-step capture point  :     4172
+  4-step capture point  :      199
+  5-step capture point  :       83
+  6-step capture point  :        0
+*** Time ***
+  exe :     232 [ms]
+  save:      38 [ms]
+  sum :     270 [ms]
+CPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    16509
+  2-step capture point  :    29904
+  3-step capture point  :     4172
+  4-step capture point  :      199
+  5-step capture point  :       83
+  6-step capture point  :        0
+*** Time ***
+  exe :     234 [ms]
+  save:      37 [ms]
+  sum :     271 [ms]
+GPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    16996
+  2-step capture point  :    34442
+  3-step capture point  :     7781
+  4-step capture point  :     1323
+  5-step capture point  :     1007
+  6-step capture point  :      362
+*** Time ***
+  exe :     188 [ms]
+  save:      36 [ms]
+  sum :     224 [ms]
+GPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    16996
+  2-step capture point  :    34442
+  3-step capture point  :     7781
+  4-step capture point  :     1323
+  5-step capture point  :     1007
+  6-step capture point  :      362
+*** Time ***
+  exe :     185 [ms]
+  save:      36 [ms]
+  sum :     222 [ms]
+GPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    16996
+  2-step capture point  :    34442
+  3-step capture point  :     7781
+  4-step capture point  :     1323
+  5-step capture point  :     1007
+  6-step capture point  :      362
+*** Time ***
+  exe :     186 [ms]
+  save:      36 [ms]
+  sum :     222 [ms]
+GPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    16996
+  2-step capture point  :    34442
+  3-step capture point  :     7781
+  4-step capture point  :     1323
+  5-step capture point  :     1007
+  6-step capture point  :      362
+*** Time ***
+  exe :     184 [ms]
+  save:      35 [ms]
+  sum :     220 [ms]
+GPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    16996
+  2-step capture point  :    34442
+  3-step capture point  :     7781
+  4-step capture point  :     1323
+  5-step capture point  :     1007
+  6-step capture point  :      362
+*** Time ***
+  exe :     186 [ms]
+  save:      36 [ms]
+  sum :     222 [ms]
+./time/calculation_time.sh: 9: ./time/calculation_time.sh: ./time/setting7: Permission denied
+rm: './time/setting7/*.csv' を削除できません: そのようなファイルやディレクトリはありません
+7-th setting
+CPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    69484
+  2-step capture point  :   116249
+  3-step capture point  :    13153
+  4-step capture point  :     3787
+  5-step capture point  :      395
+  6-step capture point  :        0
+*** Time ***
+  exe :     888 [ms]
+  save:     162 [ms]
+  sum :    1050 [ms]
+CPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    69484
+  2-step capture point  :   116249
+  3-step capture point  :    13153
+  4-step capture point  :     3787
+  5-step capture point  :      395
+  6-step capture point  :        0
+*** Time ***
+  exe :     861 [ms]
+  save:     157 [ms]
+  sum :    1018 [ms]
+CPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    69484
+  2-step capture point  :   116249
+  3-step capture point  :    13153
+  4-step capture point  :     3787
+  5-step capture point  :      395
+  6-step capture point  :        0
+*** Time ***
+  exe :     876 [ms]
+  save:     157 [ms]
+  sum :    1034 [ms]
+CPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    69484
+  2-step capture point  :   116249
+  3-step capture point  :    13153
+  4-step capture point  :     3787
+  5-step capture point  :      395
+  6-step capture point  :        0
+*** Time ***
+  exe :     861 [ms]
+  save:     158 [ms]
+  sum :    1020 [ms]
+CPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    69484
+  2-step capture point  :   116249
+  3-step capture point  :    13153
+  4-step capture point  :     3787
+  5-step capture point  :      395
+  6-step capture point  :        0
+*** Time ***
+  exe :     867 [ms]
+  save:     159 [ms]
+  sum :    1026 [ms]
+GPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    72004
+  2-step capture point  :   140102
+  3-step capture point  :    39646
+  4-step capture point  :    13148
+  5-step capture point  :     7344
+  6-step capture point  :     3658
+*** Time ***
+  exe :     645 [ms]
+  save:     166 [ms]
+  sum :     812 [ms]
+GPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    72004
+  2-step capture point  :   140102
+  3-step capture point  :    39646
+  4-step capture point  :    13148
+  5-step capture point  :     7344
+  6-step capture point  :     3658
+*** Time ***
+  exe :     645 [ms]
+  save:     158 [ms]
+  sum :     804 [ms]
+GPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    72004
+  2-step capture point  :   140102
+  3-step capture point  :    39646
+  4-step capture point  :    13148
+  5-step capture point  :     7344
+  6-step capture point  :     3658
+*** Time ***
+  exe :     677 [ms]
+  save:     156 [ms]
+  sum :     834 [ms]
+GPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    72004
+  2-step capture point  :   140102
+  3-step capture point  :    39646
+  4-step capture point  :    13148
+  5-step capture point  :     7344
+  6-step capture point  :     3658
+*** Time ***
+  exe :     642 [ms]
+  save:     157 [ms]
+  sum :     799 [ms]
+GPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    72004
+  2-step capture point  :   140102
+  3-step capture point  :    39646
+  4-step capture point  :    13148
+  5-step capture point  :     7344
+  6-step capture point  :     3658
+*** Time ***
+  exe :     631 [ms]
+  save:     156 [ms]
+  sum :     787 [ms]
+./time/calculation_time.sh: 9: ./time/calculation_time.sh: ./time/setting8: Permission denied
+rm: './time/setting8/*.csv' を削除できません: そのようなファイルやディレクトリはありません
+8-th setting
+CPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :  1042401
+  2-step capture point  :  1728799
+  3-step capture point  :   195284
+  4-step capture point  :    57612
+  5-step capture point  :     2656
+  6-step capture point  :      516
+*** Time ***
+  exe :   11936 [ms]
+  save:    2210 [ms]
+  sum :   14146 [ms]
+CPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :  1042401
+  2-step capture point  :  1728799
+  3-step capture point  :   195284
+  4-step capture point  :    57612
+  5-step capture point  :     2656
+  6-step capture point  :      516
+*** Time ***
+  exe :   11871 [ms]
+  save:    2182 [ms]
+  sum :   14053 [ms]
+CPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :  1042401
+  2-step capture point  :  1728799
+  3-step capture point  :   195284
+  4-step capture point  :    57612
+  5-step capture point  :     2656
+  6-step capture point  :      516
+*** Time ***
+  exe :   11859 [ms]
+  save:    2237 [ms]
+  sum :   14096 [ms]
+CPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :  1042401
+  2-step capture point  :  1728799
+  3-step capture point  :   195284
+  4-step capture point  :    57612
+  5-step capture point  :     2656
+  6-step capture point  :      516
+*** Time ***
+  exe :   11932 [ms]
+  save:    2039 [ms]
+  sum :   13972 [ms]
+CPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :  1042401
+  2-step capture point  :  1728799
+  3-step capture point  :   195284
+  4-step capture point  :    57612
+  5-step capture point  :     2656
+  6-step capture point  :      516
+*** Time ***
+  exe :   11891 [ms]
+  save:    2160 [ms]
+  sum :   14052 [ms]
+GPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... out of memory in /home/kuribayashi/Capturability/cartesian/main.cu at line 79
+GPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... out of memory in /home/kuribayashi/Capturability/cartesian/main.cu at line 79
+GPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... out of memory in /home/kuribayashi/Capturability/cartesian/main.cu at line 79
+GPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... out of memory in /home/kuribayashi/Capturability/cartesian/main.cu at line 79
+GPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... out of memory in /home/kuribayashi/Capturability/cartesian/main.cu at line 79
+./time/calculation_time.sh: 9: ./time/calculation_time.sh: ./time/setting9: Permission denied
+rm: './time/setting9/*.csv' を削除できません: そのようなファイルやディレクトリはありません
+9-th setting
+CPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    45880
+  2-step capture point  :    69602
+  3-step capture point  :     2476
+  4-step capture point  :      346
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     469 [ms]
+  save:      92 [ms]
+  sum :     561 [ms]
+CPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    45880
+  2-step capture point  :    69602
+  3-step capture point  :     2476
+  4-step capture point  :      346
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     546 [ms]
+  save:      86 [ms]
+  sum :     633 [ms]
+CPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    45880
+  2-step capture point  :    69602
+  3-step capture point  :     2476
+  4-step capture point  :      346
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     470 [ms]
+  save:      88 [ms]
+  sum :     559 [ms]
+CPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    45880
+  2-step capture point  :    69602
+  3-step capture point  :     2476
+  4-step capture point  :      346
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     480 [ms]
+  save:      86 [ms]
+  sum :     567 [ms]
+CPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    45880
+  2-step capture point  :    69602
+  3-step capture point  :     2476
+  4-step capture point  :      346
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     474 [ms]
+  save:      86 [ms]
+  sum :     560 [ms]
+GPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    45880
+  2-step capture point  :    69602
+  3-step capture point  :     2476
+  4-step capture point  :      346
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     323 [ms]
+  save:      78 [ms]
+  sum :     401 [ms]
+GPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    45880
+  2-step capture point  :    69602
+  3-step capture point  :     2476
+  4-step capture point  :      346
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     335 [ms]
+  save:      79 [ms]
+  sum :     414 [ms]
+GPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    45880
+  2-step capture point  :    69602
+  3-step capture point  :     2476
+  4-step capture point  :      346
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     306 [ms]
+  save:      79 [ms]
+  sum :     385 [ms]
+GPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    45880
+  2-step capture point  :    69602
+  3-step capture point  :     2476
+  4-step capture point  :      346
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     291 [ms]
+  save:      78 [ms]
+  sum :     370 [ms]
+GPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :    45880
+  2-step capture point  :    69602
+  3-step capture point  :     2476
+  4-step capture point  :      346
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     295 [ms]
+  save:      78 [ms]
+  sum :     374 [ms]
+./time/calculation_time.sh: 9: ./time/calculation_time.sh: ./time/setting10: Permission denied
+rm: './time/setting10/*.csv' を削除できません: そのようなファイルやディレクトリはありません
+10-th setting
+CPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   128150
+  2-step capture point  :   194067
+  3-step capture point  :     6989
+  4-step capture point  :      382
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    1332 [ms]
+  save:     222 [ms]
+  sum :    1554 [ms]
+CPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   128150
+  2-step capture point  :   194067
+  3-step capture point  :     6989
+  4-step capture point  :      382
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    1320 [ms]
+  save:     238 [ms]
+  sum :    1559 [ms]
+CPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   128150
+  2-step capture point  :   194067
+  3-step capture point  :     6989
+  4-step capture point  :      382
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    1301 [ms]
+  save:     222 [ms]
+  sum :    1524 [ms]
+CPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   128150
+  2-step capture point  :   194067
+  3-step capture point  :     6989
+  4-step capture point  :      382
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    1317 [ms]
+  save:     228 [ms]
+  sum :    1546 [ms]
+CPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   128150
+  2-step capture point  :   194067
+  3-step capture point  :     6989
+  4-step capture point  :      382
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    1298 [ms]
+  save:     220 [ms]
+  sum :    1518 [ms]
+GPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   128150
+  2-step capture point  :   189356
+  3-step capture point  :     5042
+  4-step capture point  :      182
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     634 [ms]
+  save:     223 [ms]
+  sum :     858 [ms]
+GPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   128150
+  2-step capture point  :   189356
+  3-step capture point  :     5042
+  4-step capture point  :      182
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     636 [ms]
+  save:     198 [ms]
+  sum :     834 [ms]
+GPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   128150
+  2-step capture point  :   189356
+  3-step capture point  :     5042
+  4-step capture point  :      182
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     652 [ms]
+  save:     200 [ms]
+  sum :     852 [ms]
+GPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   128150
+  2-step capture point  :   189356
+  3-step capture point  :     5042
+  4-step capture point  :      182
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     631 [ms]
+  save:     200 [ms]
+  sum :     832 [ms]
+GPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   128150
+  2-step capture point  :   189356
+  3-step capture point  :     5042
+  4-step capture point  :      182
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :     661 [ms]
+  save:     203 [ms]
+  sum :     864 [ms]
+./time/calculation_time.sh: 9: ./time/calculation_time.sh: ./time/setting11: Permission denied
+rm: './time/setting11/*.csv' を削除できません: そのようなファイルやディレクトリはありません
+11-th setting
+CPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   519085
+  2-step capture point  :   812431
+  3-step capture point  :    28504
+  4-step capture point  :     6460
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    5078 [ms]
+  save:     928 [ms]
+  sum :    6007 [ms]
+CPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   519085
+  2-step capture point  :   812431
+  3-step capture point  :    28504
+  4-step capture point  :     6460
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    5071 [ms]
+  save:     949 [ms]
+  sum :    6020 [ms]
+CPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   519085
+  2-step capture point  :   812431
+  3-step capture point  :    28504
+  4-step capture point  :     6460
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    5080 [ms]
+  save:     933 [ms]
+  sum :    6013 [ms]
+CPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   519085
+  2-step capture point  :   812431
+  3-step capture point  :    28504
+  4-step capture point  :     6460
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    5073 [ms]
+  save:     945 [ms]
+  sum :    6019 [ms]
+CPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   519085
+  2-step capture point  :   812431
+  3-step capture point  :    28504
+  4-step capture point  :     6460
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    5430 [ms]
+  save:     934 [ms]
+  sum :    6365 [ms]
+GPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   519085
+  2-step capture point  :   812431
+  3-step capture point  :    28504
+  4-step capture point  :     6460
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    2426 [ms]
+  save:     846 [ms]
+  sum :    3272 [ms]
+GPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   519085
+  2-step capture point  :   812431
+  3-step capture point  :    28504
+  4-step capture point  :     6460
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    2409 [ms]
+  save:     861 [ms]
+  sum :    3270 [ms]
+GPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   519085
+  2-step capture point  :   812431
+  3-step capture point  :    28504
+  4-step capture point  :     6460
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    2417 [ms]
+  save:     847 [ms]
+  sum :    3265 [ms]
+GPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   519085
+  2-step capture point  :   812431
+  3-step capture point  :    28504
+  4-step capture point  :     6460
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    2435 [ms]
+  save:     852 [ms]
+  sum :    3288 [ms]
+GPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :   519085
+  2-step capture point  :   812431
+  3-step capture point  :    28504
+  4-step capture point  :     6460
+  5-step capture point  :        0
+  6-step capture point  :        0
+*** Time ***
+  exe :    2419 [ms]
+  save:     851 [ms]
+  sum :    3270 [ms]
+./time/calculation_time.sh: 9: ./time/calculation_time.sh: ./time/setting12: Permission denied
+rm: './time/setting12/*.csv' を削除できません: そのようなファイルやディレクトリはありません
+12-th setting
+CPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :  7689666
+  2-step capture point  : 12280130
+  3-step capture point  :   432307
+  4-step capture point  :    99266
+  5-step capture point  :    15948
+  6-step capture point  :     1411
+*** Time ***
+  exe :  317954 [ms]
+  save:  208533 [ms]
+  sum :  526487 [ms]
+CPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :  7689666
+  2-step capture point  : 12280130
+  3-step capture point  :   432307
+  4-step capture point  :    99266
+  5-step capture point  :    15948
+  6-step capture point  :     1411
+*** Time ***
+  exe :  337651 [ms]
+  save:  213520 [ms]
+  sum :  551172 [ms]
+CPU 3-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :  7689666
+  2-step capture point  : 12280130
+  3-step capture point  :   432307
+  4-step capture point  :    99266
+  5-step capture point  :    15948
+  6-step capture point  :     1411
+*** Time ***
+  exe :  373976 [ms]
+  save:  397715 [ms]
+  sum :  771691 [ms]
+CPU 4-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :  7689666
+  2-step capture point  : 12280130
+  3-step capture point  :   432307
+  4-step capture point  :    99266
+  5-step capture point  :    15948
+  6-step capture point  :     1411
+*** Time ***
+  exe :  382562 [ms]
+  save:  210731 [ms]
+  sum :  593294 [ms]
+CPU 5-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... Done!
+  Calculating .... Done!
+  Analysing ...... Done!
+*** Result ***
+  1-step capture point  :  7689666
+  2-step capture point  : 12280130
+  3-step capture point  :   432307
+  4-step capture point  :    99266
+  5-step capture point  :    15948
+  6-step capture point  :     1411
+*** Time ***
+  exe :  384307 [ms]
+  save:  208639 [ms]
+  sum :  592946 [ms]
+GPU 1-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... out of memory in /home/kuribayashi/Capturability/cartesian/main.cu at line 70
+GPU 2-th analysis
+Model File: data/valkyrie.xml
+Param File: data/valkyrie_xy.xml
+*** Analysis ***
+  Initializing ... ^C^C^C^C^C^C^C^C^C^C^C^C^C^C^C

@@ -148,6 +148,13 @@ int main(void) {
   printf("  save: %7d [ms]\n", time_save);
   printf("  sum : %7d [ms]\n", time_sum);
 
+  // save calculation result
+  FILE *fp = fopen("log.csv", "w");
+  fprintf(fp, "state,input,grid,exe,save,sum\n");
+  fprintf(fp, "%d,%d,%d,", state_num, input_num, grid_num );
+  fprintf(fp, "%d,%d,%d\n", time_exe, time_save, time_sum );
+  fclose(fp);
+
   /* メモリの開放 */
   // ホスト側
   delete state;

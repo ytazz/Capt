@@ -4,7 +4,7 @@ namespace Cuda {
 
 /* device function */
 
-__device__ bool isSteppable(double swf_x, double swf_y, Grid *grid){
+__device__ bool isSteppable(float swf_x, float swf_y, Grid *grid){
   bool flag_x = true, flag_y = true;
 
   if(grid->exc_x_min - EPSILON <= swf_x && swf_x <= grid->exc_x_max + EPSILON)
@@ -39,9 +39,9 @@ __device__ bool inPolygon(vec2_t point, vec2_t *convex, const int max_size, int 
 
 __device__ bool inPolygon(vec2_t point, vec2_t *vertex, int num_vertex){
   bool         flag    = false;
-  double       product = 0.0;
+  float        product = 0.0;
   int          sign    = 0, on_line = 0;
-  const double epsilon = 0.00001;
+  const float  epsilon = 0.00001;
 
   for (size_t i = 0; i < num_vertex - 1; i++) {
     product = ( point - vertex[i] ) % ( vertex[i + 1] - vertex[i] );
@@ -90,7 +90,7 @@ __device__ vec2_t getClosestPoint(vec2_t point, vec2_t* vertex, int num_vertex) 
       v3 = point - vertex[i + 1];
       v4 = vertex[i] - vertex[i + 1];
       if ( ( n1 % v1 ) > 0 && ( v2 % v1 ) < 0 && ( n1 % v3 ) < 0 && ( v4 % v3 ) > 0) {
-        double k = v1 * v2 / ( v2.norm() * v2.norm() );
+        float k = v1 * v2 / ( v2.norm() * v2.norm() );
         closest = vertex[i] + k * v2;
       }
     }
@@ -99,7 +99,7 @@ __device__ vec2_t getClosestPoint(vec2_t point, vec2_t* vertex, int num_vertex) 
   return closest;
 }
 
-__device__ State step(State state, Input input, double step_time, Physics *physics) {
+__device__ State step(State state, Input input, float step_time, Physics *physics) {
   // LIPM
   vec2_t icp;
   icp = ( state.icp - input.cop ) * exp(physics->omega * step_time) + input.cop;
@@ -112,10 +112,10 @@ __device__ State step(State state, Input input, double step_time, Physics *physi
   return state_;
 }
 
-__device__ int roundValue(double value) {
+__device__ int roundValue(float value) {
   int integer = (int)value;
 
-  double decimal = value - integer;
+  float decimal = value - integer;
   if(decimal > 0) {
     if (decimal >= 0.5) {
       integer += 1;
@@ -221,10 +221,10 @@ __global__ void calcTrans(State *state, Input *input, int *trans, Grid *grid, Ph
 
     if(isSteppable(state[state_id].swf.x, state[state_id].swf.y, grid) ) {
       if(isSteppable(input[input_id].swf.x, input[input_id].swf.y, grid) ) {
-        double dist_x = input[input_id].swf.x - state[state_id].swf.x;
-        double dist_y = input[input_id].swf.y - state[state_id].swf.y;
-        double dist   = sqrt( dist_x * dist_x + dist_y * dist_y );
-        double tau    = ( 2 * physics->z_max - state[state_id].swf.z + dist ) / physics->v_max;
+        float dist_x = input[input_id].swf.x - state[state_id].swf.x;
+        float dist_y = input[input_id].swf.y - state[state_id].swf.y;
+        float dist   = sqrt( dist_x * dist_x + dist_y * dist_y );
+        float tau    = ( 2 * physics->z_max - state[state_id].swf.z + dist ) / physics->v_max;
 
         State state_ = step(state[state_id], input[input_id], tau, physics);
         if (existState(state_, grid) )

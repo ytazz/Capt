@@ -223,7 +223,7 @@ __host__ void MemoryManager::initHostConvex(vec2_t *convex){
   }
 }
 
-__host__ void MemoryManager::initHostStepTime(double *step_time){
+__host__ void MemoryManager::initHostStepTime(float *step_time){
   for (int id = 0; id < grid.grid_num; id++) {
     step_time[id] = 0.0;
   }
@@ -273,8 +273,8 @@ __host__ void MemoryManager::initDevConvex(vec2_t *dev_convex){
   HANDLE_ERROR(cudaMalloc( (void **)&dev_convex, grid.input_num * ( grid.foot_r_num + grid.foot_l_num ) * sizeof( vec2_t ) ) );
 }
 
-__host__ void MemoryManager::initDevStepTime(double *dev_step_time){
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_step_time, grid.grid_num * sizeof( double ) ) );
+__host__ void MemoryManager::initDevStepTime(float *dev_step_time){
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_step_time, grid.grid_num * sizeof( float ) ) );
 }
 
 __host__ void MemoryManager::initDevPhysics(Physics *dev_physics){
@@ -317,8 +317,8 @@ __host__ void MemoryManager::copyHostToDevConvex(vec2_t *convex, vec2_t *dev_con
   HANDLE_ERROR(cudaMemcpy(dev_convex, convex, grid.input_num * ( grid.foot_r_num + grid.foot_l_num ) * sizeof( vec2_t ), cudaMemcpyHostToDevice ) );
 }
 
-__host__ void MemoryManager::copyHostToDevStepTime(double *step_time, double *dev_step_time){
-  HANDLE_ERROR(cudaMemcpy(dev_step_time, step_time, grid.grid_num * sizeof( double ), cudaMemcpyHostToDevice) );
+__host__ void MemoryManager::copyHostToDevStepTime(float *step_time, float *dev_step_time){
+  HANDLE_ERROR(cudaMemcpy(dev_step_time, step_time, grid.grid_num * sizeof( float ), cudaMemcpyHostToDevice) );
 }
 
 __host__ void MemoryManager::copyHostToDevPhysics(Physics *physics, Physics *dev_physics){
@@ -361,8 +361,8 @@ __host__ void MemoryManager::copyDevToHostConvex(vec2_t *dev_convex, vec2_t *con
   HANDLE_ERROR(cudaMemcpy(convex, dev_convex, grid.input_num * ( grid.foot_r_num + grid.foot_l_num ) * sizeof( vec2_t ), cudaMemcpyDeviceToHost) );
 }
 
-__host__ void MemoryManager::copyDevToHostStepTime(double *dev_step_time, double *step_time){
-  HANDLE_ERROR(cudaMemcpy(step_time, dev_step_time, grid.grid_num * sizeof( double ), cudaMemcpyDeviceToHost) );
+__host__ void MemoryManager::copyDevToHostStepTime(float *dev_step_time, float *step_time){
+  HANDLE_ERROR(cudaMemcpy(step_time, dev_step_time, grid.grid_num * sizeof( float ), cudaMemcpyDeviceToHost) );
 }
 
 __host__ void MemoryManager::copyDevToHostPhysics(Physics *dev_physics, Physics *physics){
@@ -423,7 +423,7 @@ __host__ void MemoryManager::saveNstep(std::string file_name, int *nstep, int *t
   fclose(fp);
 }
 
-__host__ void MemoryManager::saveStepTime(std::string file_name, double *step_time, bool header){
+__host__ void MemoryManager::saveStepTime(std::string file_name, float *step_time, bool header){
   FILE *fp = fopen(file_name.c_str(), "w");
 
   // Header

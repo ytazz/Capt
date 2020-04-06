@@ -10,46 +10,46 @@ namespace Cuda {
 typedef struct Vector2 {
   __device__ void clear();
 
-  __device__ void set(double x, double y);
+  __device__ void set(float x, float y);
 
-  __device__ double norm();
+  __device__ float norm();
 
   __device__ Vector2 normal();
 
   __device__ Vector2 &operator=(const Vector2 &v);
   __device__ Vector2 operator +(const Vector2 &v);
   __device__ Vector2 operator -(const Vector2 &v);
-  __device__ double operator  %(const Vector2 &v);
-  __device__ Vector2 operator *(const double &d);
-  __device__ double operator  *(const Vector2 &v);
-  __device__ Vector2 operator /(const double &d);
+  __device__ float   operator  %(const Vector2 &v);
+  __device__ Vector2 operator *(const float &d);
+  __device__ float   operator  *(const Vector2 &v);
+  __device__ Vector2 operator /(const float &d);
 
-  double x, y;
+  float x, y;
 
 } vec2_t;
 
-__device__ Vector2 operator*(const double &d, const Vector2 &v);
+__device__ Vector2 operator*(const float &d, const Vector2 &v);
 
 typedef struct Vector3 {
   __device__ void clear();
 
-  __device__ void set(double x, double y, double z);
+  __device__ void set(float x, float y, float z);
 
-  __device__ double norm();
+  __device__ float norm();
 
   __device__ Vector3 &operator=(const Vector3 &v);
   __device__ Vector3 operator +(const Vector3 &v);
   __device__ Vector3 operator -(const Vector3 &v);
-  // __device__ double operator  %(const Vector3 &v);
-  __device__ Vector3 operator *(const double &d);
-  __device__ double operator  *(const Vector3 &v);
-  __device__ Vector3 operator /(const double &d);
+  // __device__ float operator  %(const Vector3 &v);
+  __device__ Vector3 operator *(const float   &d);
+  __device__ float   operator  *(const Vector3 &v);
+  __device__ Vector3 operator /(const float &d);
 
-  double x, y, z;
+  float x, y, z;
 
 } vec3_t;
 
-__device__ Vector3 operator*(const double &d, const Vector3 &v);
+__device__ Vector3 operator*(const float &d, const Vector3 &v);
 
 } // namespace Cuda
 

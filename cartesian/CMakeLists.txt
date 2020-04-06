@@ -41,18 +41,18 @@ set(CAPT_SOURCES
   ${PROJECT_SOURCE_DIR}/src/monitor.cpp
   ${PROJECT_SOURCE_DIR}/src/param.cpp
   ${PROJECT_SOURCE_DIR}/src/pendulum.cpp
-  ${PROJECT_SOURCE_DIR}/src/planner.cpp
+  # ${PROJECT_SOURCE_DIR}/src/planner.cpp
   ${PROJECT_SOURCE_DIR}/src/polygon.cpp
-  ${PROJECT_SOURCE_DIR}/src/search.cpp
+  # ${PROJECT_SOURCE_DIR}/src/search.cpp
   ${PROJECT_SOURCE_DIR}/src/swing.cpp
   ${PROJECT_SOURCE_DIR}/src/timer.cpp
   ${PROJECT_SOURCE_DIR}/src/trajectory.cpp
-  ${PROJECT_SOURCE_DIR}/src/tree.cpp
+  # ${PROJECT_SOURCE_DIR}/src/tree.cpp
 )
 
-set(CPU_SOURCES
-  ${PROJECT_SOURCE_DIR}/src/analysis_cpu.cpp
-)
+#set(CPU_SOURCES
+#  ${PROJECT_SOURCE_DIR}/src/analysis_cpu.cpp
+#)
 
 set(GPU_SOURCES
   ${PROJECT_SOURCE_DIR}/cuda/src/cuda_analysis.cu
@@ -63,8 +63,8 @@ set(GPU_SOURCES
 set(PLOT_SOURCES
   ${PROJECT_SOURCE_DIR}/plot/src/gnuplot.cpp
   ${PROJECT_SOURCE_DIR}/plot/src/cr_plot.cpp
-  ${PROJECT_SOURCE_DIR}/plot/src/step_plot.cpp
-  ${PROJECT_SOURCE_DIR}/plot/src/occupancy_plot.cpp
+  # ${PROJECT_SOURCE_DIR}/plot/src/step_plot.cpp
+  # ${PROJECT_SOURCE_DIR}/plot/src/occupancy_plot.cpp
 )
 
 # add_executable(debug debug.cpp ${CAPT_SOURCES} ${PLOT_SOURCES})
@@ -77,7 +77,7 @@ if(${BUILD_CPU})
     main.cpp
     ${CAPT_SOURCES}
     ${PLOT_SOURCES}
-    ${CPU_SOURCES}
+    #${CPU_SOURCES}
   )
   target_link_libraries(main_cpu ${EXPAT_LIBRARIES})
 endif()

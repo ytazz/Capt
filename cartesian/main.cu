@@ -42,7 +42,7 @@ int main(void) {
   Cuda::vec2_t  *foot_r    = (Cuda::vec2_t*)malloc(sizeof( Cuda::vec2_t ) * foot_r_num );
   Cuda::vec2_t  *foot_l    = (Cuda::vec2_t*)malloc(sizeof( Cuda::vec2_t ) * foot_l_num );
   Cuda::vec2_t  *convex    = (Cuda::vec2_t*)malloc(sizeof( Cuda::vec2_t ) * num_swf * num_vertex );
-  double        *step_time = (double*)malloc(sizeof( double ) * grid_num );
+  float         *step_time = (float*)malloc(sizeof( float ) * grid_num );
   Cuda::Physics *physics   = (Cuda::Physics*)malloc(sizeof( Cuda::Physics ) );
   mm.initHostState(state);
   mm.initHostTrans(trans);
@@ -65,7 +65,7 @@ int main(void) {
   Cuda::vec2_t  *dev_foot_r;
   Cuda::vec2_t  *dev_foot_l;
   Cuda::vec2_t  *dev_convex;
-  double        *dev_step_time;
+  float         *dev_step_time;
   Cuda::Physics *dev_physics;
   HANDLE_ERROR(cudaMalloc( (void **)&dev_state, state_num * sizeof( Cuda::State ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_input, input_num * sizeof( Cuda::Input ) ) );
@@ -76,7 +76,7 @@ int main(void) {
   HANDLE_ERROR(cudaMalloc( (void **)&dev_foot_r, foot_r_num * sizeof( Cuda::vec2_t ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_foot_l, foot_l_num * sizeof( Cuda::vec2_t ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_convex, num_swf * num_vertex * sizeof( Cuda::vec2_t ) ) );
-  HANDLE_ERROR(cudaMalloc( (void **)&dev_step_time, grid_num * sizeof( double ) ) );
+  HANDLE_ERROR(cudaMalloc( (void **)&dev_step_time, grid_num * sizeof( float ) ) );
   HANDLE_ERROR(cudaMalloc( (void **)&dev_physics, sizeof( Cuda::Physics ) ) );
   // ホスト側からデバイス側にコピー
   mm.copyHostToDevState(state, dev_state);

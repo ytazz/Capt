@@ -28,7 +28,7 @@ public:
   void callbackAttribute(const std::string &name, const std::string &value) override;
 
   void read(int *val, const std::string &name);
-  void read(double *val, const std::string &name);
+  void read(float *val, const std::string &name);
 
   void print();
 
@@ -36,13 +36,13 @@ private:
   ConfigEnum::Element element;
 
   // unit
-  double unit_length; // [m]
-  double unit_mass;   // [kg]
-  double unit_time;   // [s]
-  double unit_angle;  // [rad]
+  float unit_length; // [m]
+  float unit_mass;   // [kg]
+  float unit_time;   // [s]
+  float unit_angle;  // [rad]
 
   // parameter
-  double timestep;
+  float  timestep;
   int    preview;
 };
 

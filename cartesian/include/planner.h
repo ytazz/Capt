@@ -53,7 +53,7 @@ private:
   Foot   g_suf;
   arr2_t posRef, icpRef;
 
-  double dt, dt_min;
+  float  dt, dt_min;
   int    preview;
 
   bool found;

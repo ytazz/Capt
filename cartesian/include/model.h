@@ -38,7 +38,7 @@ public:
 
   void read(std::string *val, const std::string &name);
   void read(int *val, const std::string &name);
-  void read(double *val, const std::string &name);
+  void read(float *val, const std::string &name);
   void read(arr2_t *val, const std::string &name);
   void read(arr2_t *val, const std::string &name, vec2_t offset);
 
@@ -52,9 +52,9 @@ private:
   Polygon polygon;
 
   std::string robot_name;
-  double      unit_length, unit_mass, unit_time;
-  double      mass, com_height, step_time_min, foot_vel_max, swing_height_max;
-  double      gravity, friction;
+  float       unit_length, unit_mass, unit_time;
+  float       mass, com_height, step_time_min, foot_vel_max, swing_height_max;
+  float       gravity, friction;
 
   arr2_t foot_r, foot_l;
   arr2_t foot_r_convex, foot_l_convex;

@@ -18,19 +18,19 @@ public:
   void set(vec3_t foot, vec3_t land);
 
   // get step duration
-  double getDuration();
+  float getDuration();
   // get desired swing foot position
   // dt = elapsed time from set() is called
-  vec3_t getTraj(double dt);
+  vec3_t getTraj(float dt);
 
   // swing foot is swinging down or not
-  bool isSwingDown(double dt);
+  bool isSwingDown(float dt);
 
 private:
   vec3_t foot, land;
-  double dist, dist_x, dist_y, tau, tau_offset;
-  double v_max, z_max;
-  double dt_min;
+  float  dist, dist_x, dist_y, tau, tau_offset;
+  float  v_max, z_max;
+  float  dt_min;
 };
 
 } // namespace Capt

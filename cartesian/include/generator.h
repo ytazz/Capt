@@ -18,7 +18,7 @@ public:
 private:
   Swing *swing;
 
-  double omega;
+  float  omega;
 };
 
 } // namespace Capt

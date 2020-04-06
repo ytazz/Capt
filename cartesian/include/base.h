@@ -12,13 +12,13 @@ namespace Capt {
 // Eigen typedefs
 typedef Eigen::Vector2f vec2_t;
 typedef Eigen::Vector2i vec2i_t;
-typedef Eigen::Vector3d vec3_t;
+typedef Eigen::Vector3f vec3_t;
 typedef std::vector<vec2_t> arr2_t;
 typedef std::vector<vec3_t> arr3_t;
 
 // linear algebra
-double dot(vec2_t v1, vec2_t v2);
-double cross(vec2_t v1, vec2_t v2);
+float dot(vec2_t v1, vec2_t v2);
+float cross(vec2_t v1, vec2_t v2);
 vec2_t normal(vec2_t v);
 
 // coordinate transformation with left and right of support2 foot
@@ -26,12 +26,8 @@ vec2_t normal(vec2_t v);
 vec2_t mirror(vec2_t v);
 vec3_t mirror(vec3_t v);
 
-// math
-double min(double val1, double val2);
-double max(double val1, double val2);
-
 // round to the nearest integer
-int round(double val);
+int round(float val);
 
 // vector dimension transformation between R^2 and R^3
 // R^3 to R^2 : [ x, y, z ] -> [ x, y ]
@@ -79,13 +75,13 @@ struct Sequence {
     this->suf     = suf;
     this->pos.x() = pos.x();
     this->pos.y() = pos.y();
-    this->pos.z() = 0.0;
+    this->pos.z() = 0.0f;
     this->icp.x() = icp.x();
     this->icp.y() = icp.y();
-    this->icp.z() = 0.0;
+    this->icp.z() = 0.0f;
     this->cop.x() = cop.x();
     this->cop.y() = cop.y();
-    this->cop.z() = 0.0;
+    this->cop.z() = 0.0f;
   }
 };
 

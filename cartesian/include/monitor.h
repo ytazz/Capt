@@ -17,33 +17,13 @@ public:
   ~Monitor();
 
   Status                check(EnhancedState state, Footstep footstep);
-  EnhancedInput         get();
-  std::vector<CaptData> getCaptureRegion();
-  arr3_t                getFootstepR();
-  arr3_t                getFootstepL();
+  //std::vector<CaptData> getCaptureRegion();
 
 private:
   Grid          *grid;
   Capturability *capturability;
-  Swing         *swing;
-  Pendulum      *pendulum;
 
-  EnhancedState state;
-  EnhancedInput input;
-
-  Foot supportFoot;
-
-  // capture region
-  arr2_t                   captureRegion;
-  std::vector<CaptureSet*> nstepCaptureRegion;
-  std::vector<CaptData>    captData;
-
-  vec2_t nextLandingPos;
-
-  double dt_min;
-
-  double min;
-  int    minId;
+  //std::vector<CaptureRegion> region_1step;
 };
 
 } // namespace Capt

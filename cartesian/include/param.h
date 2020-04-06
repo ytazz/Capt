@@ -36,7 +36,7 @@ public:
 
   void read(std::string *val, const std::string &name);
   void read(int *val, const std::string &name);
-  void read(double *val, const std::string &name);
+  void read(float *val, const std::string &name);
 
   void print();
 
@@ -48,7 +48,7 @@ private:
   CaptEnum::Axis         axis;
 
   // unit
-  double unit_length;
+  float unit_length;
   // number
   int icp_x_num;
   int icp_y_num;
@@ -60,18 +60,18 @@ private:
   int map_x_num;
   int map_y_num;
   // cartesian
-  double icp_x_min, icp_x_max, icp_x_stp;
-  double icp_y_min, icp_y_max, icp_y_stp;
-  double swf_x_min, swf_x_max, swf_x_stp;
-  double swf_y_min, swf_y_max, swf_y_stp;
-  double swf_z_min, swf_z_max, swf_z_stp;
-  double cop_x_min, cop_x_max, cop_x_stp;
-  double cop_y_min, cop_y_max, cop_y_stp;
-  double map_x_min, map_x_max, map_x_stp;
-  double map_y_min, map_y_max, map_y_stp;
+  float icp_x_min, icp_x_max, icp_x_stp;
+  float icp_y_min, icp_y_max, icp_y_stp;
+  float swf_x_min, swf_x_max, swf_x_stp;
+  float swf_y_min, swf_y_max, swf_y_stp;
+  float swf_z_min, swf_z_max, swf_z_stp;
+  float cop_x_min, cop_x_max, cop_x_stp;
+  float cop_y_min, cop_y_max, cop_y_stp;
+  float map_x_min, map_x_max, map_x_stp;
+  float map_y_min, map_y_max, map_y_stp;
   // except region
-  double exc_x_min, exc_x_max;
-  double exc_y_min, exc_y_max;
+  float exc_x_min, exc_x_max;
+  float exc_y_min, exc_y_max;
 };
 
 } // namespace Capt

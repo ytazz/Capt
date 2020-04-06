@@ -9,7 +9,7 @@
 namespace Capt {
 
 struct CaptData {
-  vec3_t pos;
+  vec2_t pos;
   int    nstep;
 };
 
@@ -31,7 +31,7 @@ private:
 
   int          num_node, opened;
   Node         nodes[MAX_NODE_SIZE];
-  const double epsilon;
+  const float  epsilon;
 };
 
 } // namespace Capt

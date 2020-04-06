@@ -36,8 +36,8 @@ private:
 
   OccupancyPlot *plt;
 
-  double x_min, x_max, x_stp;
-  double y_min, y_max, y_stp;
+  float x_min, x_max, x_stp;
+  float y_min, y_max, y_stp;
   int    x_num, y_num;
 
   std::vector<std::vector<Cell> > grid;

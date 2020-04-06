@@ -97,7 +97,7 @@ void Config::read(int *val, const std::string &name) {
     *val = preview;
 }
 
-void Config::read(double *val, const std::string &name){
+void Config::read(float *val, const std::string &name){
   if (equalStr(name, "timestep") )
     *val = timestep;
 }

@@ -274,7 +274,7 @@ void Param::read(int *val, const std::string &name) {
     *val = map_y_num;
 }
 
-void Param::read(double *val, const std::string &name){
+void Param::read(float *val, const std::string &name){
   if (equalStr(name, "icp_x_min") )
     *val = icp_x_min;
   if (equalStr(name, "icp_x_max") )
@@ -351,7 +351,7 @@ void Param::read(double *val, const std::string &name){
 
 void Param::calcNum() {
   using namespace CaptEnum;
-  double epsilon = 0.00001;
+  float epsilon = 0.00001;
   if (coordinate == COORD_CARTESIAN) {
   // icp
   if(icp_x_stp > epsilon)

@@ -14,27 +14,24 @@ void Search::clear(){
   region.clear();
 }
 
-void Search::setStart(vec3_t rfoot, vec3_t lfoot, vec3_t icp, Foot suf){
+void Search::setStart(vec3_t rfoot, vec3_t lfoot, vec3_t icp, Foot s_suf){
   this->rfoot = vec3Tovec2(rfoot);
   this->lfoot = vec3Tovec2(lfoot);
-  this->s_suf = suf;
+  this->s_suf = s_suf;
+
+  vec3_t suf = (s_suf == FOOT_R ? rfoot : lfoot);
+  vec3_t swf = (s_suf == FOOT_R ? lfoot : rfoot);
+  float sign = (s_suf == FOOT_R ? 1.0f : -1.0f);
 
   // round to support foot coord.
-  if(s_suf == FOOT_R) {
-    s_state.swf.x() = +( lfoot.x() - rfoot.x() );
-    s_state.swf.y() = +( lfoot.y() - rfoot.y() );
-    s_state.swf.z() = +( lfoot.z() );
-    s_state.icp.x() = +( icp.x() - rfoot.x() );
-    s_state.icp.y() = +( icp.y() - rfoot.y() );
-  }else{
-    s_state.swf.x() = +( rfoot.x() - lfoot.x() );
-    s_state.swf.y() = -( rfoot.y() - lfoot.y() );
-    s_state.swf.z() = +( rfoot.z() );
-    s_state.icp.x() = +( icp.x() - lfoot.x() );
-    s_state.icp.y() = -( icp.y() - lfoot.y() );
-  }
-  s_state    = grid->roundState(s_state).state;
-  s_state_id = grid->roundState(s_state).id;
+  st.swf.x() =      ( swf.x() - suf.x() );
+  st.swf.y() = sign*( swf.y() - suf.y() );
+  st.swf.z() =      ( swf.z() );
+  st.icp.x() =      ( icp.x() - suf.x() );
+  st.icp.y() = sign*( icp.y() - suf.y() );
+
+  st       = grid->roundState(st).state;
+  state_id = grid->roundState(st).id;
 }
 
 void Search::setReference(arr2_t posRef, arr2_t icpRef){
@@ -42,17 +39,10 @@ void Search::setReference(arr2_t posRef, arr2_t icpRef){
   this->icpRef.resize(icpRef.size() );
 
   for(size_t i = 0; i < posRef.size(); i++) {
-    if(s_suf == FOOT_R) {
-      this->posRef[i].x() = +( posRef[i].x() - rfoot.x() );
-      this->posRef[i].y() = +( posRef[i].y() - rfoot.y() );
-      this->icpRef[i].x() = +( icpRef[i].x() - rfoot.x() );
-      this->icpRef[i].y() = +( icpRef[i].y() - rfoot.y() );
-    }else{
-      this->posRef[i].x() = +( posRef[i].x() - lfoot.x() );
-      this->posRef[i].y() = -( posRef[i].y() - lfoot.y() );
-      this->icpRef[i].x() = +( icpRef[i].x() - lfoot.x() );
-      this->icpRef[i].y() = -( icpRef[i].y() - lfoot.y() );
-    }
+    this->posRef[i].x() =      ( posRef[i].x() - suf.x() );
+    this->posRef[i].y() = sign*( posRef[i].y() - suf.y() );
+    this->icpRef[i].x() =      ( icpRef[i].x() - suf.x() );
+    this->icpRef[i].y() = sign*( icpRef[i].y() - suf.y() );
   }
 
   // g_foot.x() = round(g_foot.x() / 0.05) * 0.05;
@@ -63,18 +53,15 @@ bool Search::calc(int preview){
   tree->clear();
   seq.clear();
   region.clear();
-  g_node = tree->search(s_state_id, s_suf, posRef, icpRef, preview);
-  if(g_node == NULL) {
+
+  g_node = tree->search(state_id, s_suf, posRef, icpRef, preview);
+  if(g_node == NULL)
     return false;
-  }else{
-    calcSequence();
-    if(s_suf == FOOT_R) {
-      region = tree->getCaptureRegion(s_state_id, s_input_id, s_suf, rfoot);
-    }else{
-      region = tree->getCaptureRegion(s_state_id, s_input_id, s_suf, lfoot);
-    }
-    return true;
-  }
+
+  calcSequence();
+  region = tree->getCaptureRegion(s_state_id, s_input_id, s_suf, suf);
+
+  return true;
 }
 
 Trans Search::getTrans(){
@@ -103,10 +90,6 @@ Trans Search::getTrans(){
 
 State Search::getState(){
   return ini_state;
-}
-
-Input Search::getInput(){
-  return ini_input;
 }
 
 void Search::calcSequence(){

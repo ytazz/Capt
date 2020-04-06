@@ -213,7 +213,7 @@ void Model::read(int *val, const std::string &name){
     *val = (int)foot_l_convex.size();
 }
 
-void Model::read(double *val, const std::string &name){
+void Model::read(float *val, const std::string &name){
   if (equalStr(name, "mass") )
     *val = mass;
   if (equalStr(name, "com_height") )

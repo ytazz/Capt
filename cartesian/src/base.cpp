@@ -2,11 +2,11 @@
 
 namespace Capt {
 
-double dot(vec2_t v1, vec2_t v2){
+float dot(vec2_t v1, vec2_t v2){
   return v1.x() * v2.x() + v1.y() * v2.y();
 }
 
-double cross(vec2_t v1, vec2_t v2){
+float cross(vec2_t v1, vec2_t v2){
   return v1.x() * v2.y() - v1.y() * v2.x();
 }
 
@@ -26,46 +26,25 @@ vec3_t mirror(vec3_t v){
   return v;
 }
 
-double min(double val1, double val2){
-  if(val1 < val2)
-    return val1;
-  else
-    return val2;
-}
-
-double max(double val1, double val2){
-  if(val1 > val2)
-    return val1;
-  else
-    return val2;
-}
-
 vec3_t vec2Tovec3(vec2_t vec2){
-  vec3_t vec3;
-  vec3.x() = vec2.x();
-  vec3.y() = vec2.y();
-  vec3.z() = 0.0;
-  return vec3;
+  return vec3_t(vec2.x(), vec2.y(), 0.0);
 }
 
 vec2_t vec3Tovec2(vec3_t vec3){
-  vec2_t vec2;
-  vec2.x() = vec3.x();
-  vec2.y() = vec3.y();
-  return vec2;
+  return vec2_t(vec3.x(), vec3.y());
 }
 
-int round(double value) {
+int round(float value) {
   int integer = (int)value;
 
-  double decimal = value - integer;
-  if(decimal > 0) {
-    if (decimal >= 0.5) {
-      integer += 1;
+  float decimal = value - integer;
+  if(decimal > 0.0f) {
+    if (decimal >= 0.5f) {
+      integer++;
     }
   }else{
-    if (decimal <= -0.5) {
-      integer -= 1;
+    if (decimal <= -0.5f) {
+      integer--;
     }
   }
 

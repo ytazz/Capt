@@ -112,7 +112,7 @@ vec2_t Polygon::getClosestPoint(vec2_t point, arr2_t vertex) {
       v3 = point - vertex[i + 1];
       v4 = vertex[i] - vertex[i + 1];
       if ( cross(n1, v1) > 0 && cross(v2, v1) < 0 && cross(n1, v3 ) < 0 && cross(v4, v3 ) > 0) {
-        double k = dot(v1, v2) / ( v2.norm() * v2.norm() );
+        float k = dot(v1, v2) / ( v2.norm() * v2.norm() );
         closest = vertex[i] + k * v2;
       }
     }
@@ -122,10 +122,10 @@ vec2_t Polygon::getClosestPoint(vec2_t point, arr2_t vertex) {
 }
 
 bool Polygon::inPolygon(vec2_t point, arr2_t vertex_) {
-  bool        flag    = false;
-  double      product = 0.0;
-  int         sign    = 0, on_line = 0;
-  const double epsilon = 0.00001;
+  float product = 0.0f;
+  int   sign    = 0;
+  int   on_line = 0;
+  const float epsilon = 0.00001f;
 
   for (size_t i = 0; i < vertex_.size() - 1; i++) {
     product = cross( ( point - vertex_[i] ), ( vertex_[i + 1] - vertex_[i] ) );
@@ -138,12 +138,7 @@ bool Polygon::inPolygon(vec2_t point, arr2_t vertex_) {
     }
   }
 
-  if (sign == int(vertex_.size() - 1 - on_line) ||
-      sign == -int(vertex_.size() - 1 - on_line) ) {
-    flag = true;
-  }
-
-  return flag;
+  return ( std::abs(sign) + on_line == (int)vertex_.size() - 1 );
 }
 
 void Polygon::printVertex(std::string str) {

@@ -49,15 +49,15 @@ void Swing::set(vec3_t foot, vec3_t land) {
   dt_min     = z_max / v_max;
 }
 
-double Swing::getDuration() {
+float Swing::getDuration() {
   return tau;
 }
 
-vec3_t Swing::getTraj(double dt) {
+vec3_t Swing::getTraj(float dt) {
   // elapsed time from support foot exchange
-  double elapsed = tau_offset + dt;
+  float elapsed = tau_offset + dt;
   // remaining time until the foot lands on the ground
-  double remained = tau - dt;
+  float remained = tau - dt;
 
   // calculate swing foot position at current phase
   vec3_t pos;
@@ -86,11 +86,11 @@ vec3_t Swing::getTraj(double dt) {
   return pos;
 }
 
-bool Swing::isSwingDown(double dt){
+bool Swing::isSwingDown(float dt){
   bool flag = false;
 
   // remaining time until the foot lands on the ground
-  double remained = tau - dt;
+  float remained = tau - dt;
 
   // judge swing down phase or not
   if(remained <= dt_min) {

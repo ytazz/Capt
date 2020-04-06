@@ -29,15 +29,6 @@ void Tree::clear(){
   nodes[0].pos      = vec2_t(0, 0);
   nodes[0].step     = 0;
   nodes[0].err      = 0;
-  // for(int i = 0; i < MAX_NODE_SIZE; i++) {
-  //   nodes[i].parent = NULL;
-  //   nodes[i].state_id = 0;
-  //   nodes[i].input_id = 0;
-  //   nodes[i].suf      = FOOT_NONE;
-  //   nodes[i].pos      = vec2_t(0, 0);
-  //   nodes[i].step     = 0;
-  //   nodes[i].err      = 0;
-  // }
 }
 
 Node* Tree::search(int state_id, Foot s_suf, arr2_t posRef, arr2_t icpRef, int preview){
@@ -47,17 +38,13 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t posRef, arr2_t icpRef, int p
   num_node++;
 
   // set n in each step
-  int nStepCaptureBasin = -1;
-  for(int i = 4; i > 0; i--) {
-    if(capturability->capturable(state_id, i) ) {
-      nStepCaptureBasin = i;
-    }
-  }
+  int nStepCaptureBasin = capturability->isCapturable(state_id, -1);
   if(nStepCaptureBasin < 0) {
-    // printf("NOT capturable\n");
+    printf("NOT capturable\n");
     return NULL;
   }
   printf("%d-step capturable \n", nStepCaptureBasin);
+
   int n[10];
   for(int i = 0; i < 10; i++) {
     int n_ = nStepCaptureBasin - i + 1;
@@ -70,11 +57,12 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t posRef, arr2_t icpRef, int p
 
   int goalNode = 0;
 
-  // calculate reaves
+  // calculate leaves
   vec2_t swf, pos, icp, icp_;
   Node  *goal   = NULL;
-  double min    = 100;
-  double posErr = 0.0, icpErr = 0.0;
+  float  min    = 100;
+  float  posErr = 0.0, icpErr = 0.0;
+
   while(true) {
     // set target node based on breadth first search
     if(opened == num_node) {
@@ -86,31 +74,9 @@ Node* Tree::search(int state_id, Foot s_suf, arr2_t posRef, arr2_t icpRef, int p
     int   numStep = target->step + 1; // 何歩目か
 
     // target node expansion
-    if(numStep > preview) {
-      for(int i = 0; i < num_node; i++) {
-        // printf("(parent) %6d, ", ( nodes[i].parent )->state_id);
-        // printf("%6d: ", i);
-        // printf("step %1d, ", nodes[i].step);
-        // printf("state_id %6d, ", nodes[i].state_id);
-        // printf("input_id %6d, ", nodes[i].input_id);
-        // printf("error %1.3lf\n", nodes[i].err);
-      }
-      // printf("min error %1.3lf\n", min);
-      // printf("goal is %d\n", goalNode);
-      // printf("return goal\n");
-      //
-      // Node *node_ = NULL;
-      // node_ = goal;
-      // printf("state_id %d\n", node_->state_id);
-      // printf("input_id %d\n", node_->input_id);
-      // printf("step     %d\n", node_->step);
-      // node_ = node_->parent;
-      // printf("state_id %d\n", node_->state_id);
-      // printf("input_id %d\n", node_->input_id);
-      // printf("step     %d\n", node_->step);
-
+    if(numStep > preview)
       return goal;
-    }
+
     std::vector<CaptureSet*> region = capturability->getCaptureRegion(target->state_id, n[numStep]);
     // printf("parent state_id %6d\n", target->state_id);
     for(size_t i = 0; i < region.size(); i++) {
@@ -190,17 +156,7 @@ std::vector<CaptData> Tree::getCaptureRegion(int state_id, int input_id, Foot su
   region.resize(set.size() );
   for(size_t i = 0; i < region.size(); i++) {
     vec2_t swf = grid->getInput(set[i]->input_id).swf;
-    vec3_t pos;
-    if(suf == FOOT_R) {
-      pos.x() = p_suf.x() + swf.x();
-      pos.y() = p_suf.y() + swf.y();
-      pos.z() = 0.0;
-    }else{
-      pos.x() = p_suf.x() + swf.x();
-      pos.y() = p_suf.y() - swf.y();
-      pos.z() = 0.0;
-    }
-    region[i].pos   = pos;
+    region[i].pos   = p_suf + vec2_t(swf.x(), (suf == FOOT_R ? 1.0 : -1.0)*swf.y());;
     region[i].nstep = set[i]->nstep;
   }
 

@@ -72,12 +72,12 @@ void Planner::calculateStart(){
 }
 
 bool Planner::calculateGoal(){
-  double distMin       = 100; // set very large value as initial value
+  float  distMin       = 100; // set very large value as initial value
   int    currentFootId = 0;
   int    maxFootId     = (int)state.footstep.size() - 1;
   for(int i = 0; i <= maxFootId; i++) {
     if(state.footstep[i].suf == state.s_suf) {
-      double dist = ( state.footstep[i].pos - suf ).norm();
+      float dist = ( state.footstep[i].pos - suf ).norm();
       if(dist < distMin) {
         distMin       = dist;
         currentFootId = (int)i;

@@ -9,44 +9,61 @@
 using namespace std;
 using namespace Capt;
 
+double icp_x = +0.0;
+double icp_y = +0.1;
+double swf_x = +0.0;
+double swf_y = +0.25;
+double swf_z = +0.0;
+
+const int nmax = 5;
+
 int main(int argc, char const *argv[]) {
   Model *model = new Model("data/valkyrie.xml");
   Param *param = new Param("data/valkyrie_xy.xml");
   Grid  *grid  = new Grid(param);
+  Swing *swing = new Swing(model, param);
 
   CRPlot *cr_plot = new CRPlot(model, param, grid);
 
-  Capturability *capturability = new Capturability(grid);
-  capturability->loadBasin("cpu/Basin.csv");
-  capturability->loadNstep("cpu/1step.csv", 1);
-  capturability->loadNstep("cpu/2step.csv", 2);
-  capturability->loadNstep("cpu/3step.csv", 3);
-  capturability->loadNstep("cpu/4step.csv", 4);
-  capturability->loadNstep("cpu/5step.csv", 5);
-  capturability->loadNstep("cpu/6step.csv", 6);
+  Capturability *cap = new Capturability(model, param, grid, swing);
+  cap->loadTrans("cpu/trans0.bin", 0, true);
+  cap->loadTrans("cpu/trans1.bin", 1, true);
+  cap->loadTrans("cpu/trans2.bin", 2, true);
+  cap->loadTrans("cpu/trans3.bin", 3, true);
+  cap->loadTrans("cpu/trans4.bin", 4, true);
+  cap->loadTrans("cpu/trans5.bin", 5, true);
+  printf("load done\n");
 
-  double icp_x = -0.15;
-  double icp_y = +0.05;
-  double swf_x = -0.1;
-  double swf_y = +0.3;
-  double swf_z = +0.0;
+  // retrieve state from commandline arguments
+  if(argc == 6){
+    icp_x = atof(argv[1]);
+    icp_y = atof(argv[2]);
+    swf_x = atof(argv[3]);
+    swf_y = atof(argv[4]);
+    swf_z = atof(argv[5]);
+  }
 
-  State state;
-  Input input;
+  State st;
+  st.icp << icp_x, icp_y;
+  st.swf << swf_x, swf_y, swf_z;
+  int state_id = grid->roundState(st);
+  st = grid->state[state_id];
+  st.print();
 
-  state.icp << icp_x, icp_y;
-  state.swf << swf_x, swf_y, swf_z;
-  state = grid->roundState(state).state;
-  state.print();
-  int stateId = grid->roundState(state).id;
+  cr_plot->setState(st);
 
-  cr_plot->initCaptureMap();
-  cr_plot->setState(state);
+  printf("get cap regions\n");
+  std::vector<CaptureBasin> basin;
+  basin.resize(nmax+1);
+  for(int n = 0; n <= nmax; n++){
+    cap->getCaptureBasin(st, n, basin[n]);
+    printf("%d-step cap regions: %d\n", n, (int)basin[n].size());
 
-  std::vector<CaptureSet*> region = capturability->getCaptureRegion(stateId);
-  for(size_t i = 0; i < region.size(); i++) {
-    Input input = grid->getInput(region[i]->input_id);
-    cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), region[i]->nstep);
+    for(CaptureState& ct : basin[n]){
+      State stnext = grid->state[ct.state_id];
+      Input in     = cap->calcInput(st, stnext);
+      cr_plot->setCaptureInput(in, n);
+    }
   }
 
   cr_plot->plot();

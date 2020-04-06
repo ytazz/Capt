@@ -32,14 +32,14 @@ int main(int argc, char const *argv[]) {
   // double swf_x = -0.08;
   // double swf_y = 0.10;
   // val
-  double icp_x = 0.00;
-  double icp_y = 0.10;
-  double swf_x = -0.25;
-  double swf_y = 0.4;
-  double swf_z = 0.0;
+  float icp_x = 0.00;
+  float icp_y = 0.10;
+  float swf_x = -0.25;
+  float swf_y = 0.4;
+  float swf_z = 0.0;
 
   // N-step capture region
-  double icp_x_min, icp_x_max, icp_x_stp;
+  float  icp_x_min, icp_x_max, icp_x_stp;
   int    icp_x_num;
   param->read(&icp_x_min, "icp_x_min");
   param->read(&icp_x_max, "icp_x_max");
@@ -65,7 +65,7 @@ int main(int argc, char const *argv[]) {
           std::vector<CaptureSet*> region = capturability->getCaptureRegion(state, N);
           for(size_t i = 0; i < region.size(); i++) {
             Input input = grid->getInput(region[i]->input_id);
-            cr_plot->setCaptureMap(input.swf.x(), input.swf.y(), N);
+            cr_plot->setCaptureMap(input.cop.x(), input.cop.y(), input.swf.x(), input.swf.y(), N);
           }
         }
       }

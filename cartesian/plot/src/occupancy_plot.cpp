@@ -72,7 +72,7 @@ OccupancyPlot::OccupancyPlot(Param *param)
 OccupancyPlot::~OccupancyPlot() {
 }
 
-std::string OccupancyPlot::str(double val){
+std::string OccupancyPlot::str(float val){
   return std::to_string(val);
 }
 
@@ -106,7 +106,7 @@ void OccupancyPlot::initOccupancy(){
   }
 }
 
-void OccupancyPlot::setOccupancy(double x, double y, OccupancyType type){
+void OccupancyPlot::setOccupancy(float x, float y, OccupancyType type){
   // IDの算出
   int i = round( ( x - x_min ) / x_stp);
   int j = round( ( y - y_min ) / y_stp);
@@ -185,17 +185,11 @@ void OccupancyPlot::plot(){
 }
 
 vec2_t OccupancyPlot::cartesianToGraph(vec2_t point){
-  vec2_t p;
-  double x = ( y_max - point.y() ) / y_stp;
-  double y = ( point.x() - x_min ) / x_stp;
-  p << x, y;
-  return p;
+  return vec2_t(( y_max - point.y() ) / y_stp, ( point.x() - x_min ) / x_stp);
 }
 
-vec2_t OccupancyPlot::cartesianToGraph(double x, double y){
-  vec2_t p;
-  p << x, y;
-  return cartesianToGraph(p);
+vec2_t OccupancyPlot::cartesianToGraph(float x, float y){
+  return cartesianToGraph(vec2_t(x, y));
 }
 
 }

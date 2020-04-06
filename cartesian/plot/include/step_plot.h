@@ -52,14 +52,14 @@ private:
   Param *param;
   Grid  *grid;
 
-  std::string str(double val);
+  std::string str(float val);
   std::string str(int val);
 
   vec2_t cartesianToGraph(vec2_t point);
-  vec2_t cartesianToGraph(double x, double y);
+  vec2_t cartesianToGraph(float x, float y);
 
-  double x_min, x_max, x_stp;
-  double y_min, y_max, y_stp;
+  float  x_min, x_max, x_stp;
+  float  y_min, y_max, y_stp;
   int    x_num;
   int    y_num;
 

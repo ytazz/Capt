@@ -37,13 +37,8 @@ public:
   void setIcp(vec2_t icp);
   void setSwf(vec2_t swf);
 
-  // 現在の入力を設定
-  void setInput(Input input);
-  void setCop(vec2_t cop);
-
   // Capture Regionのデータを格納するCapture Map
-  void initCaptureMap();
-  void setCaptureMap(double x, double y, int n_step);
+  void setCaptureInput(Input in, int nstep);
 
   void plot();
 
@@ -52,23 +47,30 @@ private:
   Param *param;
   Grid  *grid;
 
-  std::string str(double val);
+  std::string str(float val);
   std::string str(int val);
 
   vec2_t cartesianToGraph(vec2_t point);
-  vec2_t cartesianToGraph(double x, double y);
+  vec2_t cartesianToGraph(float x, float y);
 
-  double x_min, x_max, x_stp;
-  double y_min, y_max, y_stp;
-  double swf_x_min, swf_x_max;
-  double swf_y_min, swf_y_max;
+  float  swf_x_min, swf_x_max, swf_x_stp;
+  float  swf_y_min, swf_y_max, swf_y_stp;
+  int    swf_x_num, swf_y_num;
 
-  int x_num;
-  int y_num;
-  int swf_x_num, swf_y_num;
+  float  cop_x_min, cop_x_max, cop_x_stp;
+  float  cop_y_min, cop_y_max, cop_y_stp;
+  int    cop_x_num, cop_y_num;
+
+  float  map_x_min, map_x_max;
+  float  map_y_min, map_y_max;
+
+  float  exc_x_min, exc_x_max;
+  float  exc_y_min, exc_y_max;
+
   int c_num;    // number of color
 
-  std::vector<std::vector<int> > capture_map;
+  std::vector< std::pair<Input, int> > cap_input;
+
 };
 }
 

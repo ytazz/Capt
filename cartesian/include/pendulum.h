@@ -22,19 +22,19 @@ public:
   void setCop(const vec2_t cop);
   void setCop(const vec3_t cop);
 
-  vec2_t getCop(float dt);
-  vec2_t getCom(float dt);
-  vec2_t getComVel(float dt);
-  vec2_t getIcp(float dt);
-  vec2_t getIcpVel(float dt);
+  vec2_t getCop   (float t);
+  vec2_t getCom   (float t);
+  vec2_t getComVel(float t);
+  vec2_t getIcp   (float t);
+  vec2_t getIcpVel(float t);
 
   // inverse time
   //   - icp: icp_before_move
   //   - hat_icp: icp_after_move
   // calculate equivalent cop
-  vec2_t invCop(vec2_t icp, vec2_t hat_icp, float dt);
+  //vec2_t invCop(vec2_t icp, vec2_t hat_icp, float dt);
   // calculate equivalent icp(0)
-  vec2_t invIcp(vec2_t cop, vec2_t hat_icp, float dt);
+  //vec2_t invIcp(vec2_t cop, vec2_t hat_icp, float dt);
 
 private:
   vec2_t com, com_vel;

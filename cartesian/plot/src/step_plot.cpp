@@ -1,5 +1,7 @@
 #include "step_plot.h"
 
+#if 0
+
 using namespace std;
 
 namespace Capt {
@@ -246,3 +248,4 @@ vec2_t StepPlot::cartesianToGraph(float x, float y){
 }
 
 }
+#endif

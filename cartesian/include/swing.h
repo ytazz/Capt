@@ -11,26 +11,28 @@ namespace Capt {
 
 class Swing {
 public:
-  Swing(Model *model, Param *param);
+  Swing(Model *model);
   ~Swing();
 
-  void set(vec2_t foot, vec2_t land);
+  // set swing foot position and landing position
+  // set() should not be called after swing foot starts descending
   void set(vec3_t foot, vec3_t land);
 
   // get step duration
   float getDuration();
-  // get desired swing foot position
-  // dt = elapsed time from set() is called
-  vec3_t getTraj(float dt);
+
+  // get swing foot position
+  // t is elapsed time after set() is called
+  vec3_t getTraj(float t);
 
   // swing foot is swinging down or not
-  bool isSwingDown(float dt);
+  //bool isSwingDown(float dt);
 
 private:
   vec3_t foot, land;
-  float  dist, dist_x, dist_y, tau, tau_offset;
+  float  dist, dist_x, dist_y;
+  float  tau_ascend, tau_travel, tau_descend;
   float  v_max, z_max;
-  float  dt_min;
 };
 
 } // namespace Capt

@@ -2,6 +2,7 @@
 
 namespace Capt {
 
+#if 0
 Search::Search(Grid *grid, Tree *tree) :
   grid(grid), tree(tree){
 }
@@ -185,4 +186,5 @@ std::vector<CaptData> Search::getCaptureRegion(){
   return region;
 }
 
+#endif
 } // namespace Capt

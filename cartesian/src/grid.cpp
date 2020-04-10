@@ -72,14 +72,19 @@ Grid::~Grid() {
 //  return vec2_t(res.x()*round(vec.x()/res.x()), res.y()*round(vec.y()/res.y()));
 //}
 
-int Grid::roundState(State state_) {
-  int icp_x_id = icp_x.round(state_.icp.x());
-  int icp_y_id = icp_y.round(state_.icp.y());
-  int swf_x_id = swf_x.round(state_.swf.x());
-  int swf_y_id = swf_y.round(state_.swf.y());
-  int swf_z_id = swf_z.round(state_.swf.z());
-
-  return getStateIndex(getIcpIndex(icp_x_id, icp_y_id), getSwfIndex(swf_x_id, swf_y_id, swf_z_id));
+int Grid::roundIcp(vec2_t icp){
+  int icp_x_id = icp_x.round(icp.x());
+  int icp_y_id = icp_y.round(icp.y());
+  return getIcpIndex(icp_x_id, icp_y_id);
+}
+int Grid::roundSwf(vec3_t swf){
+  int swf_x_id = swf_x.round(swf.x());
+  int swf_y_id = swf_y.round(swf.y());
+  int swf_z_id = swf_z.round(swf.z());
+  return getSwfIndex(swf_x_id, swf_y_id, swf_z_id);
+}
+int Grid::roundState(State st) {
+  return getStateIndex(roundIcp(st.icp), roundSwf(st.swf));
 }
 
 //int Grid::getStateIndex(State state_) {

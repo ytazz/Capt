@@ -43,34 +43,34 @@ void Pendulum::setCop(const vec3_t cop) {
   this->cop << cop.x(), cop.y();
 }
 
-vec2_t Pendulum::getCop(float dt) {
+vec2_t Pendulum::getCop(float t) {
   return this->cop;
 }
 
-vec2_t Pendulum::getCom(float dt) {
+vec2_t Pendulum::getCom(float t) {
   vec2_t com_;
-  com_ = cop + ( com - cop ) * cosh(omega * dt) + com_vel * sinh(omega * dt) / omega;
+  com_ = cop + ( com - cop ) * cosh(omega * t) + com_vel * sinh(omega * t) / omega;
   return com_;
 }
 
-vec2_t Pendulum::getComVel(float dt) {
+vec2_t Pendulum::getComVel(float t) {
   vec2_t com_vel_;
-  com_vel_ = ( com - cop ) * omega * sinh(omega * dt) + com_vel * cosh(omega * dt);
+  com_vel_ = ( com - cop ) * omega * sinh(omega * t) + com_vel * cosh(omega * t);
   return com_vel_;
 }
 
-vec2_t Pendulum::getIcp(float dt) {
+vec2_t Pendulum::getIcp(float t) {
   vec2_t icp_;
-  icp_ = ( icp - cop ) * exp(omega * dt) + cop;
+  icp_ = ( icp - cop ) * exp(omega * t) + cop;
   return icp_;
 }
 
-vec2_t Pendulum::getIcpVel(float dt) {
+vec2_t Pendulum::getIcpVel(float t) {
   vec2_t icp_vel_;
-  icp_vel_ = omega * ( icp - cop ) * exp(omega * dt);
+  icp_vel_ = omega * ( icp - cop ) * exp(omega * t);
   return icp_vel_;
 }
-
+/*
 vec2_t Pendulum::invCop(vec2_t icp, vec2_t hat_icp, float dt){
   vec2_t cop_;
   cop_ = ( hat_icp - icp * exp(omega * dt) ) / ( 1 - exp(omega * dt) );
@@ -82,5 +82,5 @@ vec2_t Pendulum::invIcp(vec2_t cop, vec2_t hat_icp, float dt){
   icp_ = cop + ( hat_icp - cop ) / exp(omega * dt);
   return icp_;
 }
-
+*/
 } // namespace Capt

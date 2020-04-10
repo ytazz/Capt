@@ -8,12 +8,16 @@
 
 namespace Capt {
 
+/*
+ calculates cop and icp sequence for given footstep
+
+*/
 class Generator {
 public:
-  Generator(Model *model, Param *param);
+  Generator(Model *model);
   ~Generator();
 
-  void calc(Footstep *footstep);
+  void calc(Footstep& footstep);
 
 private:
   Swing *swing;

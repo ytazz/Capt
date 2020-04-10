@@ -51,55 +51,32 @@ enum Foot { FOOT_NONE, FOOT_R, FOOT_L };
 // SUCCESS: planning succeeded successfully
 // FAIL   : couldn't find a solution
 // FINISH : reached the final step
-enum Status { SUCCESS, FAIL, FINISH };
+enum Status { SUCCESS, MODIFIED, FAIL };
 
 // trajectory decision variables
 struct Step {
-  Foot   suf;
+  Foot   s_suf;
   vec3_t pos;
   vec3_t cop;
   vec3_t icp;
   // vec3_t com;
 };
-
-typedef std::vector<Step> Footstep;
-
-// 不要 stepと同じでは?
-struct Sequence {
-  Foot   suf;
-  vec3_t pos;
-  vec3_t icp;
-  vec3_t cop;
-
-  void substitute(Foot suf, vec2_t pos, vec2_t icp, vec2_t cop){
-    this->suf     = suf;
-    this->pos.x() = pos.x();
-    this->pos.y() = pos.y();
-    this->pos.z() = 0.0f;
-    this->icp.x() = icp.x();
-    this->icp.y() = icp.y();
-    this->icp.z() = 0.0f;
-    this->cop.x() = cop.x();
-    this->cop.y() = cop.y();
-    this->cop.z() = 0.0f;
-  }
+struct Footstep : public std::vector<Step>{
+  int cur;  //< current footstep index
 };
 
 struct EnhancedState {
-  Capt::Footstep footstep;
-  Capt::vec3_t   icp;
-  Capt::vec3_t   rfoot;
-  Capt::vec3_t   lfoot;
-  Capt::Foot     s_suf;
+  Footstep footstep;
+  vec3_t   suf;
+  vec3_t   swf;
+  vec3_t   icp;
+  //Capt::vec3_t   rfoot;
+  //Capt::vec3_t   lfoot;
+  Foot     s_suf;
 
-  void operator=(const EnhancedState &eState) {
-    this->footstep = eState.footstep;
-    this->icp      = eState.icp;
-    this->rfoot    = eState.rfoot;
-    this->lfoot    = eState.lfoot;
-    this->s_suf    = eState.s_suf;
-  }
+  void updateFootstepIndex();  //< update current footstep index based on support foot position
 
+  /*
   void print(){
     printf("EnhancedState\n");
     if(s_suf == Foot::FOOT_R) {
@@ -111,34 +88,37 @@ struct EnhancedState {
     printf("  rfoot  : %1.3lf, %1.3lf, %1.3lf\n", rfoot.x(), rfoot.y(), rfoot.z() );
     printf("  lfoot  : %1.3lf, %1.3lf, %1.3lf\n", lfoot.x(), lfoot.y(), lfoot.z() );
   }
+  */
 };
 
 struct EnhancedInput {
   double       duration; // remained step duration
   Capt::vec3_t cop;
   Capt::vec3_t icp;
-  Capt::vec3_t suf;
-  Capt::vec3_t swf;
+  //Capt::vec3_t suf;
+  //Capt::vec3_t swf;
   Capt::vec3_t land;
-
+  /*
   void operator=(const EnhancedInput &eInput) {
     this->duration = eInput.duration;
     this->cop      = eInput.cop;
-    this->icp      = eInput.icp;
-    this->suf      = eInput.suf;
-    this->swf      = eInput.swf;
+    //this->icp      = eInput.icp;
+    //this->suf      = eInput.suf;
+    //this->swf      = eInput.swf;
     this->land     = eInput.land;
   }
-
+  */
+  /*
   void print(){
     printf("EnhancedInput\n");
     printf("  duration: %1.4lf\n", duration);
     printf("  cop     : %1.3lf, %1.3lf, %1.3lf\n", cop.x(), cop.y(), cop.z() );
-    printf("  icp     : %1.3lf, %1.3lf, %1.3lf\n", icp.x(), icp.y(), icp.z() );
-    printf("  suf     : %1.3lf, %1.3lf, %1.3lf\n", suf.x(), suf.y(), suf.z() );
-    printf("  swf     : %1.3lf, %1.3lf, %1.3lf\n", swf.x(), swf.y(), swf.z() );
+    //printf("  icp     : %1.3lf, %1.3lf, %1.3lf\n", icp.x(), icp.y(), icp.z() );
+    //printf("  suf     : %1.3lf, %1.3lf, %1.3lf\n", suf.x(), suf.y(), suf.z() );
+    //printf("  swf     : %1.3lf, %1.3lf, %1.3lf\n", swf.x(), swf.y(), swf.z() );
     printf("  land    : %1.3lf, %1.3lf, %1.3lf\n", land.x(), land.y(), land.z() );
   }
+  */
 };
 
 } // namespace Capt

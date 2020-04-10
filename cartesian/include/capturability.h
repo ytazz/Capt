@@ -35,43 +35,49 @@ struct CaptureRange{
 //  void add(const CaptureRange& r);
 //};
 struct CaptureState{
-  int state_id;
+  //int state_id;
+  int swf_id;
+  int icp_id;
   int nstep;
 
   CaptureState(){}
-  CaptureState(int _state_id, int _nstep){
-    state_id = _state_id;
-    nstep    = _nstep;
+  CaptureState(int _swf_id, int _icp_id, int _nstep){
+    //state_id = _state_id;
+    swf_id = _swf_id;
+    icp_id = _icp_id;
+    nstep  = _nstep;
   }
 };
 struct CaptureBasin : public std::vector< CaptureState >{
-
+  std::vector< std::pair<int, int> > swf_index;
 };
 
 struct CaptureTransition{
   uint16_t swf_id;
   uint8_t  icp_x_id_min, icp_x_id_max;
   uint8_t  icp_y_id_min, icp_y_id_max;
-  uint32_t next_id;
+  uint16_t next_swf_id;
+  uint8_t  next_icp_id;
 
   CaptureTransition(){}
-  CaptureTransition(int _swf_id, int _icp_x_id_min, int _icp_x_id_max, int _icp_y_id_min, int _icp_y_id_max, int _next_id){
+  CaptureTransition(int _swf_id, int _icp_x_id_min, int _icp_x_id_max, int _icp_y_id_min, int _icp_y_id_max, int _next_swf_id, int _next_icp_id){
     swf_id       = (uint16_t)_swf_id;
     icp_x_id_min = (uint8_t )_icp_x_id_min;
     icp_x_id_max = (uint8_t )_icp_x_id_max;
     icp_y_id_min = (uint8_t )_icp_y_id_min;
     icp_y_id_max = (uint8_t )_icp_y_id_max;
-    next_id      = (uint32_t)_next_id;
+    next_swf_id  = (uint16_t)_next_swf_id;
+    next_icp_id  = (uint8_t )_next_icp_id;
   }
 };
 
 struct CaptureTransitions : public std::vector< CaptureTransition >{
-
+  std::vector< std::pair<int,int> > swf_index;   //< index range for each swf_id
 };
 
 class Capturability {
 public:
-  Capturability(Model* model, Param* param, Grid* grid, Swing* swing);
+  Capturability(Model* model, Param* param);
   ~Capturability();
 
   Model*    model;
@@ -85,7 +91,7 @@ public:
 
   bool isSteppable(vec2_t swf);
   bool isInsideSupport(vec2_t cop);
-  Input calcInput(State& st, State& stnext);
+  Input calcInput(const State& st, const State& stnext);
 
   void analyze();
   void saveBasin(std::string file_name, int n, bool binary);
@@ -96,7 +102,15 @@ public:
   void getCaptureBasin (State st, int nstep, CaptureBasin& basin);
   //void getCaptureRegion(int state_id, int nstep, std::vector<CaptureRegion>& region);
 
-  bool isCapturable(int state_id, int nstep);
+  // checks is given state is capturable
+  // if nstep is -1, then all N is checked and capturable N is stored in nstep
+  // otherwise N specified by nstep is checked
+  bool isCapturable(int swf_id, int icp_id, int& nstep);
+
+  bool isCapturableTransition(int swf_id, int icp_x_id, int icp_y_id, int next_id, int& nstep);
+
+  void findNearest(int swf_id, int icp_x_id, int icp_y_id, int next_swf_id, int next_icp_id, int& mod_swf_id, int& mod_icp_id);
+  //void findNearest(const State& st, const State& stnext, int& next_swf_id, int& next_icp_id);
 
 private:
   // 踏み出しできない領域

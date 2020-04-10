@@ -4,8 +4,8 @@ using namespace std;
 
 namespace Capt {
 
-CRPlot::CRPlot(Model *model, Param *param, Grid *grid)
-  : model(model), param(param), grid(grid) {
+CRPlot::CRPlot(Model *model, Param *param)
+  : model(model), param(param){
   // ファイル形式の確認
   // p("unset key");
   p("set encoding utf8");

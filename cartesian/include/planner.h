@@ -16,6 +16,7 @@
 
 namespace Capt {
 
+#if 0
 class Planner {
 public:
   Planner(Model *model, Param *param, Config *config, Grid *grid, Capturability *capt);
@@ -58,6 +59,7 @@ private:
 
   bool found;
 };
+#endif
 
 } // namespace Capt
 

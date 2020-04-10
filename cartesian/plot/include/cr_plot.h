@@ -3,7 +3,6 @@
 
 #include "gnuplot.h"
 
-#include "analysis_cpu.h"
 #include "capturability.h"
 #include "grid.h"
 #include "input.h"
@@ -23,7 +22,7 @@ class CRPlot : public Gnuplot {
   Gnuplot p;
 
 public:
-  CRPlot(Model *model, Param *param, Grid *grid);
+  CRPlot(Model *model, Param *param);
   ~CRPlot();
 
   // 出力ファイル形式を選択(.gif .eps .svg)

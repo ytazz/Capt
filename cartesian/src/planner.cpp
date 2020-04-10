@@ -2,6 +2,7 @@
 
 using namespace Capt;
 
+#if 0
 Planner::Planner(Model *model, Param *param, Config *config, Grid *grid, Capturability *capt){
   tree     = new Tree(grid, capt);
   search   = new Search(grid, tree);
@@ -150,3 +151,4 @@ Status Planner::runSearch(int preview){
 std::vector<CaptData> Planner::getCaptureRegion(){
   return search->getCaptureRegion();
 }
+#endif

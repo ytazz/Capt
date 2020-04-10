@@ -35,7 +35,9 @@ public:
   //int getStateIndex(State state_);
 
   //vec2_t  roundVec(vec2_t vec, vec2_t res);
-  int     roundState(State state_);
+  int  roundIcp(vec2_t icp);
+  int  roundSwf(vec3_t swf);
+  int  roundState(State st);
 
   //int indexIcp(vec2_t icp);
   //int indexSwf(vec2_t swf);

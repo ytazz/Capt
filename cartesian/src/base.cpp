@@ -51,4 +51,20 @@ int round(float value) {
   return integer;
 }
 
+const float inf = std::numeric_limits<float>::max();
+void EnhancedState::updateFootstepIndex(){
+  float distMin = inf;
+  footstep.cur = 0;
+  for(size_t i = 0; i < footstep.size(); i++) {
+    if(footstep[i].s_suf == s_suf) {
+      float dist = vec3Tovec2(footstep[i].pos - suf).norm();
+      if(dist < distMin) {
+        distMin = dist;
+        footstep.cur = (int)i;
+      }
+    }
+  }
+}
+
+
 } // namespace Capt

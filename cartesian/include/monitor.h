@@ -13,14 +13,13 @@ namespace Capt {
 
 class Monitor {
 public:
-  Monitor(Model *model, Param *param, Grid *grid, Capturability *capturability);
+  Monitor(Capturability *capturability);
   ~Monitor();
 
-  Status                check(EnhancedState state, Footstep footstep);
+  Status check(const EnhancedState& state, EnhancedInput& input);
   //std::vector<CaptData> getCaptureRegion();
 
 private:
-  Grid          *grid;
   Capturability *capturability;
 
   //std::vector<CaptureRegion> region_1step;

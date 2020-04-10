@@ -12,6 +12,7 @@
 
 namespace Capt {
 
+#if 0
 struct Trans {
   int                size;
   std::vector<State> states;
@@ -70,6 +71,7 @@ private:
   State ini_state;
   Input ini_input;
 };
+#endif
 
 } // namespace Capt
 

@@ -18,20 +18,18 @@ double swf_z = +0.0;
 const int nmax = 5;
 
 int main(int argc, char const *argv[]) {
-  Model *model = new Model("data/valkyrie.xml");
-  Param *param = new Param("data/valkyrie_xy.xml");
-  Grid  *grid  = new Grid(param);
-  Swing *swing = new Swing(model, param);
+  Model *model = new Model("/home/dl-box/Capturability/cartesian/data/valkyrie.xml");
+  Param *param = new Param("/home/dl-box/Capturability/cartesian/data/valkyrie_xy.xml");
 
-  CRPlot *cr_plot = new CRPlot(model, param, grid);
+  CRPlot *cr_plot = new CRPlot(model, param);
 
-  Capturability *cap = new Capturability(model, param, grid, swing);
-  cap->loadTrans("cpu/trans0.bin", 0, true);
-  cap->loadTrans("cpu/trans1.bin", 1, true);
-  cap->loadTrans("cpu/trans2.bin", 2, true);
-  cap->loadTrans("cpu/trans3.bin", 3, true);
-  cap->loadTrans("cpu/trans4.bin", 4, true);
-  cap->loadTrans("cpu/trans5.bin", 5, true);
+  Capturability *cap = new Capturability(model, param);
+  cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans0.bin", 0, true);
+  cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans1.bin", 1, true);
+  cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans2.bin", 2, true);
+  cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans3.bin", 3, true);
+  cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans4.bin", 4, true);
+  cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans5.bin", 5, true);
   printf("load done\n");
 
   // retrieve state from commandline arguments
@@ -43,11 +41,11 @@ int main(int argc, char const *argv[]) {
     swf_z = atof(argv[5]);
   }
 
-  State st;
+  State st, stnext;
   st.icp << icp_x, icp_y;
   st.swf << swf_x, swf_y, swf_z;
-  int state_id = grid->roundState(st);
-  st = grid->state[state_id];
+  int state_id = cap->grid->roundState(st);
+  st = cap->grid->state[state_id];
   st.print();
 
   cr_plot->setState(st);
@@ -59,8 +57,9 @@ int main(int argc, char const *argv[]) {
     cap->getCaptureBasin(st, n, basin[n]);
     printf("%d-step cap regions: %d\n", n, (int)basin[n].size());
 
-    for(CaptureState& ct : basin[n]){
-      State stnext = grid->state[ct.state_id];
+    for(CaptureState& cs : basin[n]){
+      stnext.swf = cap->grid->swf[cs.swf_id];
+      stnext.icp = cap->grid->icp[cs.icp_id];
       Input in     = cap->calcInput(st, stnext);
       cr_plot->setCaptureInput(in, n);
     }

@@ -14,25 +14,26 @@ namespace Capt {
 
 class Trajectory {
 public:
-  Trajectory(Model *model, Param *param);
+  Trajectory(Pendulum* pendulum, Swing* swing);
   ~Trajectory();
 
-  void set(EnhancedInput input, Foot suf);
+  void set(const EnhancedState& state, const EnhancedInput& input);
 
-  vec3_t getCop(double dt);
-  vec3_t getIcp(double dt);
-  vec3_t getFootR(double dt);
-  vec3_t getFootL(double dt);
+  vec3_t getCop  (float t);
+  vec3_t getIcp  (float t);
+  vec3_t getFootR(float t);
+  vec3_t getFootL(float t);
 
 private:
+  EnhancedState state;
   EnhancedInput input;
 
-  Pendulum pendulum;
-  Swing    swing;
+  Pendulum* pendulum;
+  Swing*    swing;
 
-  double h, dt_min;
-  Foot   suf;
-  double time;
+  //float  h, dt_min;
+  //Foot   suf;
+  //float  time;
 };
 
 } // namespace Capt

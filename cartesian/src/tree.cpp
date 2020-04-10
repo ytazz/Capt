@@ -2,6 +2,7 @@
 
 namespace Capt {
 
+#if 0
 Tree::Tree(Grid *grid, Capturability* capturability) :
   grid(grid), capturability(capturability), epsilon(0.01){
   for(int i = 0; i < MAX_NODE_SIZE; i++) {
@@ -162,5 +163,6 @@ std::vector<CaptData> Tree::getCaptureRegion(int state_id, int input_id, Foot su
 
   return region;
 }
+#endif
 
 } // namespace Capt

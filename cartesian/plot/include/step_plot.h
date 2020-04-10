@@ -1,6 +1,8 @@
 #ifndef __CR_PLOT_H__
 #define __CR_PLOT_H__
 
+#if 0
+
 #include "gnuplot.h"
 
 #include "capturability.h"
@@ -68,6 +70,9 @@ private:
   arr2_t icp;
   arr2_t cop;
 };
+
 }
+
+#endif
 
 #endif // __CR_PLOT_H__

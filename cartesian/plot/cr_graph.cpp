@@ -24,12 +24,17 @@ int main(int argc, char const *argv[]) {
   CRPlot *cr_plot = new CRPlot(model, param);
 
   Capturability *cap = new Capturability(model, param);
-  cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans0.bin", 0, true);
-  cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans1.bin", 1, true);
-  cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans2.bin", 2, true);
-  cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans3.bin", 3, true);
-  cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans4.bin", 4, true);
-  cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans5.bin", 5, true);
+  cap->loadBasin("/home/dl-box/Capturability/cartesian/cpu/basin0.bin", 0, true);
+  cap->loadBasin("/home/dl-box/Capturability/cartesian/cpu/basin1.bin", 1, true);
+  cap->loadBasin("/home/dl-box/Capturability/cartesian/cpu/basin2.bin", 2, true);
+  cap->loadBasin("/home/dl-box/Capturability/cartesian/cpu/basin3.bin", 3, true);
+  cap->loadBasin("/home/dl-box/Capturability/cartesian/cpu/basin4.bin", 4, true);
+  //cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans0.bin", 0, true);
+  //cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans1.bin", 1, true);
+  //cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans2.bin", 2, true);
+  //cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans3.bin", 3, true);
+  //cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans4.bin", 4, true);
+  //cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans5.bin", 5, true);
   printf("load done\n");
 
   // retrieve state from commandline arguments
@@ -42,27 +47,20 @@ int main(int argc, char const *argv[]) {
   }
 
   State st, stnext;
-  st.icp << icp_x, icp_y;
-  st.swf << swf_x, swf_y, swf_z;
-  int state_id = cap->grid->roundState(st);
-  st = cap->grid->state[state_id];
-  st.print();
+  st.icp = vec2_t(icp_x, icp_y);
+  st.swf = vec3_t(swf_x, swf_y, swf_z);
 
   cr_plot->setState(st);
 
   printf("get cap regions\n");
-  std::vector<CaptureBasin> basin;
-  basin.resize(nmax+1);
-  for(int n = 0; n <= nmax; n++){
-    cap->getCaptureBasin(st, n, basin[n]);
-    printf("%d-step cap regions: %d\n", n, (int)basin[n].size());
-
-    for(CaptureState& cs : basin[n]){
-      stnext.swf = cap->grid->swf[cs.swf_id];
-      stnext.icp = cap->grid->icp[cs.icp_id];
-      Input in     = cap->calcInput(st, stnext);
-      cr_plot->setCaptureInput(in, n);
-    }
+  CaptureBasin basin;
+  cap->getCaptureBasin(st, -1, basin);
+  printf("get done\n");
+  for(CaptureState& cs : basin){
+    stnext.swf = cap->grid->xyz[cs.swf_id];
+    stnext.icp = cap->grid->xy [cs.icp_id];
+    Input in   = cap->calcInput(st, stnext);
+    cr_plot->setCaptureInput(in, cs.nstep);
   }
 
   cr_plot->plot();

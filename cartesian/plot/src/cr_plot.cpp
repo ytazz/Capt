@@ -13,12 +13,8 @@ CRPlot::CRPlot(Model *model, Param *param)
 
   param->read(&swf_x_min, "swf_x_min");
   param->read(&swf_x_max, "swf_x_max");
-  param->read(&swf_x_stp, "swf_x_stp");
-  param->read(&swf_x_num, "swf_x_num");
   param->read(&swf_y_min, "swf_y_min");
   param->read(&swf_y_max, "swf_y_max");
-  param->read(&swf_y_stp, "swf_y_stp");
-  param->read(&swf_y_num, "swf_y_num");
 
   param->read(&cop_x_min, "cop_x_min");
   param->read(&cop_x_max, "cop_x_max");

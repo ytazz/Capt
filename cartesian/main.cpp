@@ -37,12 +37,12 @@ int main(int argc, char const *argv[]) {
   //cap.saveTrans("cpu/3trans.csv", 3, false);
   //cap.saveTrans("cpu/4trans.csv", 4, false);
   //cap.saveTrans("cpu/5trans.csv", 5, false);
-  cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans0.bin", 0, true);
-  cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans1.bin", 1, true);
-  cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans2.bin", 2, true);
-  cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans3.bin", 3, true);
-  cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans4.bin", 4, true);
-  cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans5.bin", 5, true);
+  //cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans0.bin", 0, true);
+  //cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans1.bin", 1, true);
+  //cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans2.bin", 2, true);
+  //cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans3.bin", 3, true);
+  //cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans4.bin", 4, true);
+  //cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans5.bin", 5, true);
 
   end_save = std::chrono::system_clock::now();
 
@@ -57,7 +57,6 @@ int main(int argc, char const *argv[]) {
   // save calculation result
   FILE *fp = fopen("log.csv", "w");
   fprintf(fp, "state,exe,save,sum\n");
-  fprintf(fp, "%d,", cap.grid->getNumState() );
   fprintf(fp, "%d,%d,%d\n", time_exe, time_save, time_sum );
   fclose(fp);
 

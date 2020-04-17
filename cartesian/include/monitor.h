@@ -3,11 +3,7 @@
 
 #include <iostream>
 #include <vector>
-#include "swing.h"
-#include "pendulum.h"
-#include "grid.h"
 #include "capturability.h"
-#include "tree.h"
 
 namespace Capt {
 
@@ -17,12 +13,9 @@ public:
   ~Monitor();
 
   Status check(const EnhancedState& state, EnhancedInput& input);
-  //std::vector<CaptData> getCaptureRegion();
 
 private:
-  Capturability *capturability;
-
-  //std::vector<CaptureRegion> region_1step;
+  Capturability *cap;
 };
 
 } // namespace Capt

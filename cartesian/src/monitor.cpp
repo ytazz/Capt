@@ -4,7 +4,7 @@
 
 namespace Capt {
 
-Monitor::Monitor(Capturability *capturability) : capturability(capturability){
+Monitor::Monitor(Capturability *capturability) : cap(capturability){
 
 }
 
@@ -33,11 +33,8 @@ Status Monitor::check(const EnhancedState& state, EnhancedInput& input){
   stnext.swf.y() = sign_next*(swf_next.y() - suf_next.y());
   stnext.swf.z() = swf_next.z();
 
-  int swf_id      = capturability->grid->roundSwf(st.swf);
-  int icp_x_id    = capturability->grid->icp_x.round(st.icp.x());
-  int icp_y_id    = capturability->grid->icp_y.round(st.icp.y());
-  int next_swf_id = capturability->grid->roundSwf(stnext.swf);
-  int next_icp_id = capturability->grid->roundIcp(stnext.icp);
+  int next_swf_id = cap->grid->xyz.toIndex(cap->grid->xyz.round(stnext.swf));
+  int next_icp_id = cap->grid->xy .toIndex(cap->grid->xy .round(stnext.icp));
   printf("next state id: %d,%d\n", next_swf_id, next_icp_id);
 
   bool next_ok;
@@ -45,7 +42,7 @@ Status Monitor::check(const EnhancedState& state, EnhancedInput& input){
 
   // check if next state is in capture basin
   int nstep = -1;
-  if(capturability->isCapturable(next_swf_id, next_icp_id, nstep)){
+  if(cap->isCapturable(next_swf_id, next_icp_id, nstep)){
     printf("next state is %d-step capturable\n", nstep);
     next_ok = true;
   }
@@ -55,9 +52,10 @@ Status Monitor::check(const EnhancedState& state, EnhancedInput& input){
   }
 
   // calculate cop
-  Input in  = capturability->calcInput(st, stnext);
+  Input in  = cap->calcInput(st, stnext);
   // check if cop is inside support region
-  if( capturability->isInsideSupport(in.cop) ){
+  printf("cop(local): %f,%f\n", in.cop.x(), in.cop.y());
+  if( cap->isInsideSupport(in.cop) ){
     printf("cop is inside support\n");
     cop_ok = true;
   }
@@ -72,19 +70,17 @@ Status Monitor::check(const EnhancedState& state, EnhancedInput& input){
   }
 
   // find modified next state that can be transitioned from current state and is capturable
-  int mod_swf_id;
-  int mod_icp_id;
-  capturability->findNearest(swf_id, icp_x_id, icp_y_id, next_swf_id, next_icp_id, mod_swf_id, mod_icp_id);
-  if(mod_swf_id == -1){
+  CaptureState cs;
+  if(!cap->findNearest(st, stnext, cs)){
     printf("no capturable state found\n");
     return Status::FAIL;
   }
-  printf("modified next state: %d,%d\n", mod_swf_id, mod_icp_id);
+  printf("modified next state: %d,%d  %d-step capturable transition\n", cs.swf_id, cs.icp_id, cs.nstep);
 
   State stmod;
-  stmod.swf = capturability->grid->swf[mod_swf_id];
-  stmod.icp = capturability->grid->icp[mod_icp_id];
-  in = capturability->calcInput(st, stmod);
+  stmod.swf = cap->grid->xyz[cs.swf_id];
+  stmod.icp = cap->grid->xy [cs.icp_id];
+  in = cap->calcInput(st, stmod);
   input.land = state.suf  + vec3_t(in.swf.x(), sign*in.swf.y(), 0.0f);
   input.cop  = state.suf  + vec3_t(in.cop.x(), sign*in.cop.y(), 0.0f);
   input.icp  = input.land + vec3_t(stmod.icp.x(), sign_next*stmod.icp.y(), 0.0f);

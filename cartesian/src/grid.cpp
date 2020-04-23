@@ -3,20 +3,25 @@
 namespace Capt {
 
 void Grid1D::init(){
-  //printf("grid1d init: min %f  max %f  stp %f\n", min, max, stp);
   num = Capt::round((max - min)/stp) + 1;
   val.resize(num);
   for(int i = 0; i < num; i++)
     val[i] = min + stp*i;
+
+  printf("grid1d init: min %f  max %f  stp %f  num %d\n", min, max, stp, num);
 }
 
 int Grid1D::round(float v){
-  return std::min(std::max(0, Capt::round((v - min)/stp)), num);
+  return std::min(std::max(0, Capt::round((v - min)/stp)), num-1);
 }
 
 void Grid1D::indexRange(float fmin, float fmax, int& imin, int& imax){
-  imin = std::min(std::max(0, (int)ceil((fmin - min)/stp)), num);
-  imax = std::min(std::max(0, (int)ceil((fmax - min)/stp)), num);
+  imin = std::min(std::max(0, (int)ceil((fmin - min)/stp)), num-1);
+  imax = std::min(std::max(0, (int)ceil((fmax - min)/stp)), num-1);
+}
+
+int Grid2D::num(){
+  return axis[0]->num*axis[1]->num;
 }
 
 int Grid2D::toIndex(Index2D idx2){
@@ -40,6 +45,10 @@ vec2_t Grid2D::operator[](int idx){
 
 vec2_t Grid2D::operator[](Index2D idx2){
   return vec2_t(axis[0]->val[idx2[0]], axis[1]->val[idx2[1]]);
+}
+
+int Grid3D::num(){
+  return axis[0]->num*axis[1]->num*axis[2]->num;
 }
 
 int Grid3D::toIndex(Index3D idx3){

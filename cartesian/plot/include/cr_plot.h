@@ -52,19 +52,17 @@ private:
   vec2_t cartesianToGraph(vec2_t point);
   vec2_t cartesianToGraph(float x, float y);
 
-  float  swf_x_min, swf_x_max, swf_x_stp;
-  float  swf_y_min, swf_y_max, swf_y_stp;
-  int    swf_x_num, swf_y_num;
+  float  swf_x_min, swf_x_max;
+  float  swf_y_min, swf_y_max;
 
-  float  cop_x_min, cop_x_max, cop_x_stp;
-  float  cop_y_min, cop_y_max, cop_y_stp;
-  int    cop_x_num, cop_y_num;
-
-  float  map_x_min, map_x_max;
-  float  map_y_min, map_y_max;
+  float  cop_x_min, cop_x_max;
+  float  cop_y_min, cop_y_max;
 
   float  exc_x_min, exc_x_max;
   float  exc_y_min, exc_y_max;
+
+  float  grid_x_min, grid_x_max;
+  float  grid_y_min, grid_y_max;
 
   int c_num;    // number of color
 

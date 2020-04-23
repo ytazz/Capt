@@ -24,17 +24,29 @@ int main(int argc, char const *argv[]) {
   CRPlot *cr_plot = new CRPlot(model, param);
 
   Capturability *cap = new Capturability(model, param);
-  cap->loadBasin("/home/dl-box/Capturability/cartesian/cpu/basin0.bin", 0, true);
-  cap->loadBasin("/home/dl-box/Capturability/cartesian/cpu/basin1.bin", 1, true);
-  cap->loadBasin("/home/dl-box/Capturability/cartesian/cpu/basin2.bin", 2, true);
-  cap->loadBasin("/home/dl-box/Capturability/cartesian/cpu/basin3.bin", 3, true);
-  cap->loadBasin("/home/dl-box/Capturability/cartesian/cpu/basin4.bin", 4, true);
-  //cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans0.bin", 0, true);
-  //cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans1.bin", 1, true);
-  //cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans2.bin", 2, true);
-  //cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans3.bin", 3, true);
-  //cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans4.bin", 4, true);
-  //cap->loadTrans("/home/dl-box/Capturability/cartesian/cpu/trans5.bin", 5, true);
+  string path = "/home/dl-box/Capturability/cartesian/cpu/";
+  stringstream ss;
+  for(int n = 0; n < nmax; n++){
+    ss.str("");
+    ss << path << "basin" << n << ".bin";
+    cap->loadBasin(ss.str(), n, true);
+
+    ss.str("");
+    ss << path << "trans" << n << ".bin";
+    cap->loadTrans(ss.str(), n, true);
+
+    ss.str("");
+    ss << path << "index" << n << ".bin";
+    cap->loadTransIndex(ss.str(), n, true);
+  }
+  ss.str("");
+  ss << path << "duration_map.bin";
+  cap->loadDurationMap(ss.str(), true);
+
+  ss.str("");
+  ss << path << "icp_map.bin";
+  cap->loadIcpMap(ss.str(), true);
+
   printf("load done\n");
 
   // retrieve state from commandline arguments
@@ -55,7 +67,7 @@ int main(int argc, char const *argv[]) {
   printf("get cap regions\n");
   CaptureBasin basin;
   cap->getCaptureBasin(st, -1, basin);
-  printf("get done\n");
+  printf("get done: %d\n", basin.size());
   for(CaptureState& cs : basin){
     stnext.swf = cap->grid->xyz[cs.swf_id];
     stnext.icp = cap->grid->xy [cs.icp_id];

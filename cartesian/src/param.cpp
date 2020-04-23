@@ -15,6 +15,9 @@ Param::Param(const std::string &name) : Loader(name) {
   cop_x_min = cop_x_max = 0.0;
   cop_y_min = cop_y_max = 0.0;
 
+  icp_x_min = icp_x_max = 0.0;
+  icp_y_min = icp_y_max = 0.0;
+
   grid_x_min = grid_x_max = grid_x_stp = 0.0;
   grid_y_min = grid_y_max = grid_y_stp = 0.0;
   grid_z_min = grid_z_max = grid_z_stp = 0.0;
@@ -33,6 +36,7 @@ void Param::callbackElement(const std::string &name, const bool is_start) {
     if (equalStr(name, "swing" )) element = SWING;
     if (equalStr(name, "except")) element = EXCEPT;
     if (equalStr(name, "cop"   )) element = COP;
+    if (equalStr(name, "icp"   )) element = ICP;
     if (equalStr(name, "grid"  )) element = GRID;
     if (equalStr(name, "x"     )) axis    = AXIS_X;
     if (equalStr(name, "y"     )) axis    = AXIS_Y;
@@ -79,6 +83,16 @@ void Param::callbackAttribute(const std::string &name, const std::string &value)
         if (equalStr(name, "max") ) cop_y_max = std::stof(value);
       }
       break;
+    case ICP:
+        if (axis == AXIS_X) {
+          if (equalStr(name, "min") ) icp_x_min = std::stof(value);
+          if (equalStr(name, "max") ) icp_x_max = std::stof(value);
+        }
+        if (axis == AXIS_Y) {
+          if (equalStr(name, "min") ) icp_y_min = std::stof(value);
+          if (equalStr(name, "max") ) icp_y_max = std::stof(value);
+        }
+        break;
     case GRID:
       if (axis == AXIS_X) {
         if (equalStr(name, "min") ) grid_x_min = std::stof(value);
@@ -123,6 +137,11 @@ void Param::read(float *val, const std::string &name){
   if (equalStr(name, "cop_x_max") ) *val = cop_x_max;
   if (equalStr(name, "cop_y_min") ) *val = cop_y_min;
   if (equalStr(name, "cop_y_max") ) *val = cop_y_max;
+
+  if (equalStr(name, "icp_x_min") ) *val = icp_x_min;
+  if (equalStr(name, "icp_x_max") ) *val = icp_x_max;
+  if (equalStr(name, "icp_y_min") ) *val = icp_y_min;
+  if (equalStr(name, "icp_y_max") ) *val = icp_y_max;
 
   if (equalStr(name, "grid_x_min") ) *val = grid_x_min;
   if (equalStr(name, "grid_x_max") ) *val = grid_x_max;

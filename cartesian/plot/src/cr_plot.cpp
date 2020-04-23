@@ -21,15 +21,15 @@ CRPlot::CRPlot(Model *model, Param *param)
   param->read(&cop_y_min, "cop_y_min");
   param->read(&cop_y_max, "cop_y_max");
 
-  param->read(&map_x_min, "map_x_min");
-  param->read(&map_x_max, "map_x_max");
-  param->read(&map_y_min, "map_y_min");
-  param->read(&map_y_max, "map_y_max");
-
   param->read(&exc_x_min, "exc_x_min");
   param->read(&exc_x_max, "exc_x_max");
   param->read(&exc_y_min, "exc_y_min");
   param->read(&exc_y_max, "exc_y_max");
+
+  param->read(&grid_x_min, "grid_x_min");
+  param->read(&grid_x_max, "grid_x_max");
+  param->read(&grid_y_min, "grid_y_min");
+  param->read(&grid_y_max, "grid_y_max");
 
   c_num = 5;
 
@@ -52,9 +52,8 @@ CRPlot::CRPlot(Model *model, Param *param)
   p("set mytics 2");
   p("set xtics scale 0,0.001");
   p("set ytics scale 0,0.001");
-  fprintf(p.gp, "set xrange [%f:%f]\n", -map_y_max, -map_y_min);
-  fprintf(p.gp, "set yrange [%f:%f]\n", map_x_min, map_x_max);
-  printf("%f %f %f %f \n", map_x_min, map_x_max, map_y_min, map_y_max);
+  fprintf(p.gp, "set xrange [%f:%f]\n", -grid_y_max, -grid_y_min);
+  fprintf(p.gp, "set yrange [%f:%f]\n",  grid_x_min,  grid_x_max);
 
   // カラーバーの設定
   // p("set palette gray negative");

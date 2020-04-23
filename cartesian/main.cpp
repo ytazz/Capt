@@ -5,6 +5,8 @@
 using namespace std;
 using namespace Capt;
 
+const int nmax = 10;
+
 int main(int argc, char const *argv[]) {
   // 時間計測用変数
   std::chrono::system_clock::time_point start, end_exe, end_save;
@@ -18,31 +20,36 @@ int main(int argc, char const *argv[]) {
   end_exe = std::chrono::system_clock::now();
 
   printf("*** Result ***\n");
-  cap.saveBasin("/home/dl-box/Capturability/cartesian/cpu/basin0.csv", 0, false);
-  cap.saveBasin("/home/dl-box/Capturability/cartesian/cpu/basin1.csv", 1, false);
-  cap.saveBasin("/home/dl-box/Capturability/cartesian/cpu/basin2.csv", 2, false);
-  cap.saveBasin("/home/dl-box/Capturability/cartesian/cpu/basin3.csv", 3, false);
-  cap.saveBasin("/home/dl-box/Capturability/cartesian/cpu/basin4.csv", 4, false);
-  cap.saveBasin("/home/dl-box/Capturability/cartesian/cpu/basin5.csv", 5, false);
-  cap.saveBasin("/home/dl-box/Capturability/cartesian/cpu/basin0.bin", 0, true);
-  cap.saveBasin("/home/dl-box/Capturability/cartesian/cpu/basin1.bin", 1, true);
-  cap.saveBasin("/home/dl-box/Capturability/cartesian/cpu/basin2.bin", 2, true);
-  cap.saveBasin("/home/dl-box/Capturability/cartesian/cpu/basin3.bin", 3, true);
-  cap.saveBasin("/home/dl-box/Capturability/cartesian/cpu/basin4.bin", 4, true);
-  cap.saveBasin("/home/dl-box/Capturability/cartesian/cpu/basin5.bin", 5, true);
+  string path  = "/home/dl-box/Capturability/cartesian/cpu/";
+  stringstream ss;
+  for(int n = 0; n < cap.cap_basin.size(); n++){
+    ss.str("");
+    ss << path << "basin" << n << ".csv";
+    cap.saveBasin(ss.str(), n, false);
 
-  //cap.saveTrans("cpu/0trans.csv", 0, false);
-  //cap.saveTrans("cpu/1trans.csv", 1, false);
-  //cap.saveTrans("cpu/2trans.csv", 2, false);
-  //cap.saveTrans("cpu/3trans.csv", 3, false);
-  //cap.saveTrans("cpu/4trans.csv", 4, false);
-  //cap.saveTrans("cpu/5trans.csv", 5, false);
-  //cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans0.bin", 0, true);
-  //cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans1.bin", 1, true);
-  //cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans2.bin", 2, true);
-  //cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans3.bin", 3, true);
-  //cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans4.bin", 4, true);
-  //cap.saveTrans("/home/dl-box/Capturability/cartesian/cpu/trans5.bin", 5, true);
+    ss.str("");
+    ss << path << "basin" << n << ".bin";
+    cap.saveBasin(ss.str(), n, true );
+
+    ss.str("");
+    ss << path << "trans" << n << ".bin";
+    cap.saveTrans(ss.str(), n, true );
+
+    ss.str("");
+    ss << path << "index" << n << ".bin";
+    cap.saveTransIndex(ss.str(), n, true );
+  }
+  ss.str("");
+  ss << path << "duration_map.bin";
+  cap.saveDurationMap(ss.str(), true);
+
+  ss.str("");
+  ss << path << "icp_map.bin";
+  cap.saveIcpMap(ss.str(), true);
+
+  ss.str("");
+  ss << path << "mu_map.bin";
+  cap.saveMuMap(ss.str(), true);
 
   end_save = std::chrono::system_clock::now();
 

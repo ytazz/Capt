@@ -41,6 +41,7 @@ struct Index3D : std::array<int, 3>{
 struct Grid2D{
   Grid1D* axis[2];
 
+  int     num      ();
   int     toIndex  (Index2D idx2);
   void    fromIndex(int idx, Index2D& idx2);
   Index2D round(vec2_t v);
@@ -51,6 +52,7 @@ struct Grid2D{
 struct Grid3D{
   Grid1D* axis[3];
 
+  int     num      ();
   int     toIndex  (Index3D idx3);
   void    fromIndex(int idx, Index3D& idx3);
   Index3D round(vec3_t v);

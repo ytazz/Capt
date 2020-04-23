@@ -3,14 +3,14 @@
 namespace Capt {
 
 GridMap::GridMap(Param *param){
-  param->read(&x_min, "map_x_min");
-  param->read(&x_max, "map_x_max");
-  param->read(&x_stp, "map_x_stp");
-  param->read(&x_num, "map_x_num");
-  param->read(&y_min, "map_y_min");
-  param->read(&y_max, "map_y_max");
-  param->read(&y_stp, "map_y_stp");
-  param->read(&y_num, "map_y_num");
+  //param->read(&x_min, "map_x_min");
+  //param->read(&x_max, "map_x_max");
+  //param->read(&x_stp, "map_x_stp");
+  //param->read(&x_num, "map_x_num");
+  //param->read(&y_min, "map_y_min");
+  //param->read(&y_max, "map_y_max");
+  //param->read(&y_stp, "map_y_stp");
+  //param->read(&y_num, "map_y_num");
 
   grid.clear();
   grid.resize(x_num);

@@ -11,14 +11,14 @@ OccupancyPlot::OccupancyPlot(Param *param)
   p("set encoding utf8");
   // p("set terminal qt size 600,600");
 
-  param->read(&x_min, "map_x_min");
-  param->read(&x_max, "map_x_max");
-  param->read(&x_stp, "map_x_stp");
-  param->read(&x_num, "map_x_num");
-  param->read(&y_min, "map_y_min");
-  param->read(&y_max, "map_y_max");
-  param->read(&y_stp, "map_y_stp");
-  param->read(&y_num, "map_y_num");
+  //param->read(&x_min, "map_x_min");
+  //param->read(&x_max, "map_x_max");
+  //param->read(&x_stp, "map_x_stp");
+  //param->read(&x_num, "map_x_num");
+  //param->read(&y_min, "map_y_min");
+  //param->read(&y_max, "map_y_max");
+  //param->read(&y_stp, "map_y_stp");
+  //param->read(&y_num, "map_y_num");
 
   // グラフサイズ設定
   p("set size square");

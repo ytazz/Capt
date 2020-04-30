@@ -33,9 +33,13 @@ Status Monitor::check(const EnhancedState& state, EnhancedInput& input){
   stnext.swf.y() = sign_next*(swf_next.y() - suf_next.y());
   stnext.swf.z() = swf_next.z();
 
-  int next_swf_id = cap->grid->xyz.toIndex(cap->grid->xyz.round(stnext.swf));
+  int next_swf_id = cap->xyz_to_swf[cap->grid->xyz.toIndex(cap->grid->xyz.round(stnext.swf))];
   int next_icp_id = cap->grid->xy .toIndex(cap->grid->xy .round(stnext.icp));
   printf("next state id: %d,%d\n", next_swf_id, next_icp_id);
+  if(next_swf_id == -1){
+    printf("next swf is invalid\n");
+    return Status::FAIL;
+  }
 
   bool next_ok;
   bool cop_ok;
@@ -55,7 +59,7 @@ Status Monitor::check(const EnhancedState& state, EnhancedInput& input){
   Input in  = cap->calcInput(st, stnext);
   // check if cop is inside support region
   printf("cop(local): %f,%f\n", in.cop.x(), in.cop.y());
-  if( cap->isInsideSupport(in.cop) ){
+  if( cap->isInsideSupport(in.cop, 0.01) ){
     printf("cop is inside support\n");
     cop_ok = true;
   }
@@ -78,7 +82,7 @@ Status Monitor::check(const EnhancedState& state, EnhancedInput& input){
   printf("modified next state: %d,%d  %d-step capturable transition\n", cs.swf_id, cs.icp_id, cs.nstep);
 
   State stmod;
-  stmod.swf = cap->grid->xyz[cs.swf_id];
+  stmod.swf = cap->grid->xyz[cap->swf_to_xyz[cs.swf_id]];
   stmod.icp = cap->grid->xy [cs.icp_id];
   in = cap->calcInput(st, stmod);
   input.land = state.suf  + vec3_t(in.swf.x(), sign*in.swf.y(), 0.0f);

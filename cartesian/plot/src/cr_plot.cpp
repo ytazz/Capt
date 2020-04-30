@@ -31,7 +31,7 @@ CRPlot::CRPlot(Model *model, Param *param)
   param->read(&grid_y_min, "grid_y_min");
   param->read(&grid_y_max, "grid_y_max");
 
-  c_num = 5;
+  c_num = 5+1;
 
   // グラフサイズ設定
   p("set size square");
@@ -52,12 +52,13 @@ CRPlot::CRPlot(Model *model, Param *param)
   p("set mytics 2");
   p("set xtics scale 0,0.001");
   p("set ytics scale 0,0.001");
-  fprintf(p.gp, "set xrange [%f:%f]\n", -grid_y_max, -grid_y_min);
-  fprintf(p.gp, "set yrange [%f:%f]\n",  grid_x_min,  grid_x_max);
+  double margin = 0.05;
+  fprintf(p.gp, "set xrange [%f:%f]\n", -swf_y_max - margin,  swf_y_max + margin);
+  fprintf(p.gp, "set yrange [%f:%f]\n", -swf_x_max - margin,  swf_x_max + margin);
 
   // カラーバーの設定
-  // p("set palette gray negative");
-  fprintf(p.gp, "set palette defined ( 0 '#ffffff', 1 '#cbfeff', 2 '#68fefe', 3 '#0097ff', 4 '#0000ff')\n");
+  fprintf(p.gp, "set palette gray negative\n");
+  //fprintf(p.gp, "set palette defined ( 0 '#ffffff', 1 '#cbfeff', 2 '#68fefe', 3 '#0097ff', 4 '#0000ff')\n");
   fprintf(p.gp, "set cbrange[0:%d]\n", c_num);
   fprintf(p.gp, "set cbtics 0.5\n");
   fprintf(p.gp, "set palette maxcolors %d\n", c_num);
@@ -165,8 +166,8 @@ void CRPlot::plot(){
   fclose(fp);
 
   // 描画
-  fprintf(p.gp, "plot \"dat/data.dat\" using ($5 == 0 ? 1/0 : $1):($5 == 0 ? 1/0 : $2):($5) with points palette pt 5 ps 0.5 notitle,\\\n");
-  fprintf(p.gp, "     \"dat/data.dat\" using ($5 == 0 ? 1/0 : $3):($5 == 0 ? 1/0 : $4):($5) with points palette pt 5 ps 0.5 notitle,\\\n");
+  fprintf(p.gp, "plot \"dat/data.dat\" using ($1):($2):($5+1) with points palette pt 5 ps 0.75 notitle,\\\n");
+  fprintf(p.gp, "     \"dat/data.dat\" using ($3):($4):($5+1) with points palette pt 5 ps 0.75 notitle,\\\n");
   fprintf(p.gp, "     \"dat/foot_region.dat\" with lines  lw 1 lc \"dark-blue\" notitle,\\\n");
   fprintf(p.gp, "     \"dat/foot_r.dat\"      with lines  lw 1 lc \"black\"     notitle,\\\n");
   fprintf(p.gp, "     \"dat/foot_l.dat\"      with lines  lt 0 dt 1 lw 2 lc \"black\" notitle,\\\n");

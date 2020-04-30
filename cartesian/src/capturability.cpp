@@ -3,7 +3,6 @@
 #include <limits>
 #include <map>
 #include <set>
-//#include <unordered_map>
 using namespace std;
 
 namespace Capt {
@@ -12,6 +11,16 @@ const int nmax = 10;
 
 const float inf = numeric_limits<float>::max();
 const float eps = 1.0e-5f;
+
+CaptureState::CaptureState(int _swf_id, int _icp_id, int _nstep, Capturability* cap){
+  swf_id = _swf_id;
+  icp_id = _icp_id;
+  nstep  = _nstep;
+
+  vec3_t swf = cap->grid->xyz[cap->swf_to_xyz[swf_id]];
+  vec2_t icp = cap->grid->xy [icp_id];
+  swf_to_icp_id = cap->grid->xy.toIndex(cap->grid->xy.round(vec2_t(icp.x() - swf.x(), icp.y() - swf.y())));
+}
 
 Capturability::Capturability(Model* model, Param* param) {
   this->model    = model;
@@ -46,9 +55,6 @@ Capturability::Capturability(Model* model, Param* param) {
   param->read(&icp_y.max, "icp_y_max");
 
   cap_basin.resize(nmax);
-  cap_trans.resize(nmax);
-  for(int n = 0; n < nmax; n++)
-    cap_trans[n].swf_index.resize(grid->xyz.num());
 
   step_weight = 1.0f;
   swf_weight  = 1.0f;
@@ -67,11 +73,11 @@ bool Capturability::isSteppable(vec2_t swf){
             (exc_y.min + eps <= swf.y() && swf.y() <= exc_y.max - eps) );
 }
 
-bool Capturability::isInsideSupport(vec2_t cop){
-  return (cop.x() >= cop_x.min - eps &&
-          cop.x() <= cop_x.max + eps &&
-          cop.y() >= cop_y.min - eps &&
-          cop.y() <= cop_y.max + eps );
+bool Capturability::isInsideSupport(vec2_t cop, float margin){
+  return (cop.x() >= cop_x.min - margin &&
+          cop.x() <= cop_x.max + margin &&
+          cop.y() >= cop_y.min - margin &&
+          cop.y() <= cop_y.max + margin );
 }
 
 Input Capturability::calcInput(const State& st, const State& stnext){
@@ -86,59 +92,28 @@ Input Capturability::calcInput(const State& st, const State& stnext){
 }
 
 void Capturability::calcFeasibleIcpRange(int swf_id, const CaptureState& csnext, pair<vec2_t, vec2_t>& icp_range){
-  //printf("calc feasible icp range:\n");
-  //printf("next_swf_id %d  next_icp_id %d\n", next_swf_id, next_icp_id);
-  //State stnext;
-  //stnext.swf = grid->xyz[next_swf_id];
-  //stnext.icp = grid->xy [next_icp_id];
-
-  //printf("calc feasible icp range:\n");
-  Index3D idx3;
-  //idx3[0] = grid->x.round(stnext.icp.x() - stnext.swf.x());
-  //idx3[1] = grid->y.round(stnext.icp.y() - stnext.swf.y());
-  idx3[0] = csnext.swf_to_icp_idx2[0];
-  idx3[1] = csnext.swf_to_icp_idx2[1];
-
-  //printf(" get duration map\n");
-  //vec3_t swfrel(swf.x() + stnext.swf.x(), swf.y() - stnext.swf.y(), swf.z());
-  //idx3[2] = duration_map[grid->xyz.toIndex(grid->xyz.round(swfrel))];
-  idx3[2] = duration_map[swf_id][csnext.swf_id];
-
-  //printf(" get icp map\n");
-  icp_range = icp_map[grid->xyt.toIndex(idx3)];
-}
-
-pair<vec2_t, vec2_t> Capturability::calcFeasibleNextIcpRange(vec3_t swf, vec2_t icp, int next_swf_id){
-  State stnext;
-  stnext.swf = grid->xyz[next_swf_id];
-
-  Index3D idx3;
-  idx3[0] = grid->x.round(icp.x());
-  idx3[1] = grid->y.round(icp.y());
-
-  vec3_t swfrel(swf.x() + stnext.swf.x(), swf.y() - stnext.swf.y(), swf.z());
-  idx3[2] = duration_map[grid->xyz.toIndex(grid->xyz.round(swfrel))];
-
-  pair<vec2_t, vec2_t> mu_range = mu_map[grid->xyt.toIndex(idx3)];
-  pair<vec2_t, vec2_t> icp_range;
-  icp_range.first  = mu_range.first  + vec2_t(stnext.swf.x(), stnext.swf.y());
-  icp_range.second = mu_range.second + vec2_t(stnext.swf.x(), stnext.swf.y());
-  return icp_range;
+  int tau_id = duration_map[swf_to_xyz.size()*swf_id + csnext.swf_id];
+  icp_range = icp_map[grid->xy.num()*tau_id + csnext.swf_to_icp_id];
 }
 
 void Capturability::calcDurationMap(){
   printf(" calc duration map\n");
-  {
-    duration_map.resize(grid->x.num*grid->y.num*grid->z.num);
-    for(int x_id = 0; x_id < grid->x.num; x_id++)
-    for(int y_id = 0; y_id < grid->y.num; y_id++)
-    for(int z_id = 0; z_id < grid->z.num; z_id++) {
-      //printf("%d %d %d\n", x_id, y_id, z_id);
-      swing->set(vec3_t(grid->x.val[x_id], grid->y.val[y_id], grid->z.val[z_id]), vec3_t(0.0, 0.0, 0.0));
-      duration_map[grid->xyz.toIndex(Index3D(x_id, y_id, z_id))] = grid->t.round(swing->getDuration());
+
+  vec3_t swf0, swf1;
+  int nswf = (int)swf_to_xyz.size();
+  duration_map.resize(nswf*nswf);
+  for(int i = 0; i < nswf; i++){
+    swf0 = grid->xyz[swf_to_xyz[i]];
+
+    for(int j = 0; j < nswf; j++){
+      swf1 = grid->xyz[swf_to_xyz[j]];
+
+      swing->set(swf0, vec3_t(-swf1.x(), swf1.y(), 0.0f));
+      duration_map[nswf*i + j] = grid->t.round(swing->getDuration());
     }
   }
-  printf(" done: %d entries\n", (int)duration_map.size());
+
+  printf(" done: %d x %d entries\n", nswf, nswf);
 }
 
 void Capturability::calcIcpMap(){
@@ -155,9 +130,9 @@ void Capturability::calcIcpMap(){
     vec2_t mu;
     vec2_t icp_min, icp_min0, icp_min1;
     vec2_t icp_max, icp_max0, icp_max1;
+    for(int t_id = 0; t_id < grid->t.num; t_id++)
     for(int x_id = 0; x_id < grid->x.num; x_id++)
-    for(int y_id = 0; y_id < grid->y.num; y_id++)
-    for(int t_id = 0; t_id < grid->t.num; t_id++) {
+    for(int y_id = 0; y_id < grid->y.num; y_id++) {
       tau           = grid->t.val[t_id];
       tau_min       = std::max(tau - grid->t.stp, grid->t.min);
       tau_max       = std::min(tau + grid->t.stp, grid->t.max);
@@ -185,7 +160,7 @@ void Capturability::calcIcpMap(){
       icp_max.y() = std::min(icp_max.y(), icp_max0.y());
       icp_max.y() = std::min(icp_max.y(), icp_max1.y());
 
-      int idx = grid->xyt.toIndex(Index3D(x_id, y_id, t_id));
+      int idx = grid->xy.num()*t_id + grid->xy.toIndex(Index2D(x_id, y_id));
       icp_map[idx].first  = icp_min;
       icp_map[idx].second = icp_max;
       //printf("icp min: %f,%f\n", icp_map[idx].first .x(), icp_map[idx].first .y());
@@ -194,7 +169,7 @@ void Capturability::calcIcpMap(){
   }
   printf(" done: %d entries\n", (int)icp_map.size());
 }
-
+/*
 void Capturability::calcMuMap(){
   vec2_t cop_min(cop_x.min, cop_y.min);
   vec2_t cop_max(cop_x.max, cop_y.max);
@@ -226,28 +201,34 @@ void Capturability::calcMuMap(){
   }
   printf(" done: %d entries\n", (int)icp_map.size());
 }
-
+*/
 void Capturability::analyze(){
   printf(" Analysing ...... \n");
   printf(" grid size: x %d  y %d  z %d  t %d\n", grid->x.num, grid->y.num, grid->z.num, grid->t.num);
 
   printf(" enum valid stepping positions\n");
   {
-    swf_id_valid.clear();
+    swf_to_xyz.clear();
+    xyz_to_swf.clear();
+
     Index3D idx3;
     for(idx3[0] = 0; idx3[0] < grid->x.num; idx3[0]++)
     for(idx3[1] = 0; idx3[1] < grid->y.num; idx3[1]++)
     for(idx3[2] = 0; idx3[2] < grid->z.num; idx3[2]++) {
       // [x,y] in valid stepping range and z is zero
       if( isSteppable(vec2_t(grid->x.val[idx3[0]], grid->y.val[idx3[1]])) )
-        swf_id_valid.push_back(grid->xyz.toIndex(idx3));
+        swf_to_xyz.push_back(grid->xyz.toIndex(idx3));
     }
+
+    xyz_to_swf.resize(grid->xyz.num(), -1);
+    for(int swf_id = 0; swf_id < (int)swf_to_xyz.size(); swf_id++)
+      xyz_to_swf[swf_to_xyz[swf_id]] = swf_id;
   }
-  printf(" done: %d entries\n", (int)swf_id_valid.size());
+  printf(" done: %d entries\n", (int)swf_to_xyz.size());
 
   calcDurationMap();
   calcIcpMap();
-  calcMuMap();
+  //calcMuMap();
 
   // (swf_id, icp_id) -> nstep
   typedef map< pair<int,int>, int> NstepMap;
@@ -257,9 +238,9 @@ void Capturability::analyze(){
   int  icp_x_id_min, icp_x_id_max;
   int  icp_y_id_min, icp_y_id_max;
 
-  for(int swf_id : swf_id_valid) {
+  for(int swf_id = 0; swf_id < (int)swf_to_xyz.size(); swf_id++) {
     Index3D swf_idx3;
-    grid->xyz.fromIndex(swf_id, swf_idx3);
+    grid->xyz.fromIndex(swf_to_xyz[swf_id], swf_idx3);
 
     // z should be zero
     if(swf_idx3[2] != 0)
@@ -271,7 +252,7 @@ void Capturability::analyze(){
     for(int icp_x_id = icp_x_id_min; icp_x_id < icp_x_id_max; icp_x_id++)
     for(int icp_y_id = icp_y_id_min; icp_y_id < icp_y_id_max; icp_y_id++){
       int icp_id = grid->xy.toIndex(Index2D(icp_x_id, icp_y_id));
-      cap_basin[0].push_back(CaptureState(swf_id, icp_id, 0));
+      cap_basin[0].push_back(CaptureState(swf_id, icp_id, 0, this));
       nstep_map[make_pair(swf_id, icp_id)] = 0;
     }
   }
@@ -286,31 +267,17 @@ void Capturability::analyze(){
     bool added = false;
 
     // enumerate possible current swing foot pos
-    for(int swf_id : swf_id_valid){
-      // register index to cap_trans for this swf_id
-      cap_trans[n].swf_index[swf_id] = cap_trans[n].size();
+    for(int swf_id = 0; swf_id < (int)swf_to_xyz.size(); swf_id++){
 
-      //printf("swf_id: %d\n", swf_id);
-      st.swf = grid->xyz[swf_id];
-
-      //printf("enumerating valid icp_id\n");
       icp_id_valid.clear();
-      // enumerate states in (N-1)-step capture basin as next state
-      for(int basin_id = 0; basin_id < cap_basin[n-1].size(); basin_id++){
+      for(int basin_id = 0; basin_id < (int)cap_basin[n-1].size(); basin_id++){
         CaptureState& csnext = cap_basin[n-1][basin_id];
 
-        //printf("next_swf_id: %d  next_icp_id: %d\n", csnext.swf_id, csnext.icp_id);
-        calcFeasibleIcpRange(st.swf, csnext.swf_id, csnext.icp_id, icp_range);
+        calcFeasibleIcpRange(swf_id, csnext, icp_range);
 
         grid->x.indexRange(icp_range.first.x(), icp_range.second.x(), icp_x_id_min, icp_x_id_max);
         grid->y.indexRange(icp_range.first.y(), icp_range.second.y(), icp_y_id_min, icp_y_id_max);
 
-        //if( icp_x_id_min < icp_x_id_max &&
-        //    icp_y_id_min < icp_y_id_max )
-        cap_trans[n].push_back(CaptureTransition(icp_x_id_min, icp_x_id_max, icp_y_id_min, icp_y_id_max));
-        //cap_trans[n].push_back(CaptureTransition(swf_id, icp_x_id_min, icp_x_id_max, icp_y_id_min, icp_y_id_max, csnext.swf_id, csnext.icp_id));
-        //printf("icp range: %f-%f  %f-%f\n", icp_range.first.x(), icp_range.second.x(), icp_range.first.y(), icp_range.second.y());
-        //printf("icp index range: %d-%d  %d-%d\n", icp_x_id_min, icp_x_id_max, icp_y_id_min, icp_y_id_max);
         Index2D idx2;
         for(idx2[0] = icp_x_id_min; idx2[0] < icp_x_id_max; idx2[0]++)
         for(idx2[1] = icp_y_id_min; idx2[1] < icp_y_id_max; idx2[1]++){
@@ -320,17 +287,16 @@ void Capturability::analyze(){
       }
 
       Index3D swf_idx3;
-      grid->xyz.fromIndex(swf_id, swf_idx3);
+      grid->xyz.fromIndex(swf_to_xyz[swf_id], swf_idx3);
 
       if(swf_idx3[2] != 0)
         continue;
       //printf("storing valid icp_id to capture basin\n");
       //printf("swf_id %d  icp_id %d\n", swf_id, icp_id);
       for(int icp_id : icp_id_valid){
-        bool found = false;
         NstepMap::iterator it = nstep_map.find(make_pair(swf_id, icp_id));
         if(it == nstep_map.end()){
-          cap_basin[n].push_back(CaptureState(swf_id, icp_id, n));
+          cap_basin[n].push_back(CaptureState(swf_id, icp_id, n, this));
           nstep_map[make_pair(swf_id, icp_id)] = n;
           added = true;
         }
@@ -341,328 +307,104 @@ void Capturability::analyze(){
       break;
 
     printf("  %d\n", (int)cap_basin[n].size());
-    printf("  %d\n", (int)cap_trans[n].size());
+    //printf("  %d\n", (int)cap_trans[n].size());
 
     n++;
   }
   printf("Done!\n");
 }
 
-void Capturability::saveBasin(string filename, int n, bool binary){
-  FILE *fp = fopen(filename.c_str(), binary ? "wb" : "w");
-
-  // Data
-  if(binary){
-    fwrite(&cap_basin[n][0], sizeof(CaptureState), cap_basin[n].size(), fp);
-  }
-  else{
-    for(CaptureState& cs : cap_basin[n]){
-      fprintf(fp, "%d,%d,%d\n", cs.swf_id, cs.icp_id, cs.nstep);
-    }
-    //for(CaptureState& cs : cap_basin[n]){
-    //  fprintf(fp, "%d,%f,%f,%f,%f\n", cs.swf_id, cs.icp_min.x(), cs.icp_min.y(), cs.icp_max.x(), cs.icp_max.y());
-    //}
-  }
+template<class T>
+void saveArray(const string& filename, const vector<T>& arr){
+  FILE* fp = fopen(filename.c_str(), "wb");
+  fwrite(&arr[0], sizeof(T), arr.size(), fp);
   fclose(fp);
 }
 
-void Capturability::saveDurationMap(string filename, bool binary){
-  FILE *fp = fopen(filename.c_str(), binary ? "wb" : "w");
+template<class T>
+bool loadArray(const string& filename, vector<T>& arr){
+  FILE* fp = fopen(filename.c_str(), "rb");
+  if(!fp)
+    return false;
+  fseek(fp, 0, SEEK_END);
+  int sz = ftell(fp);
+  fseek(fp, 0, SEEK_SET);
 
-  // Data
-  if(binary){
-    fwrite(&duration_map[0], sizeof(int), duration_map.size(), fp);
-  }
-  else{
-
-  }
+  int nelem = sz/(sizeof(T));
+  arr.resize(nelem);
+  fread(&arr[0], sizeof(T), arr.size(), fp);
   fclose(fp);
+  return true;
 }
 
-void Capturability::saveIcpMap(string filename, bool binary){
-  FILE *fp = fopen(filename.c_str(), binary ? "wb" : "w");
-
-  // Data
-  if(binary){
-    fwrite(&icp_map[0], sizeof(pair<vec2_t,vec2_t>), icp_map.size(), fp);
+void Capturability::save(const string& basename){
+  stringstream ss;
+  for(int n = 0; n < (int)cap_basin.size(); n++){
+    ss.str("");
+    ss << basename << "basin" << n << ".bin";
+    saveArray(ss.str(), cap_basin[n]);
   }
-  else{
-
-  }
-  fclose(fp);
+  saveArray(basename + "swf_to_xyz.bin"  , swf_to_xyz  );
+  saveArray(basename + "xyz_to_swf.bin"  , xyz_to_swf  );
+  saveArray(basename + "duration_map.bin", duration_map);
+  saveArray(basename + "icp_map.bin"     , icp_map     );
 }
 
-void Capturability::saveMuMap(string filename, bool binary){
-  FILE *fp = fopen(filename.c_str(), binary ? "wb" : "w");
+void Capturability::load(const string& basename) {
+  stringstream ss;
+  for(int n = 0; n < nmax; n++){
+    ss.str("");
+    ss << basename << "basin" << n << ".bin";
+    loadArray(ss.str(), cap_basin[n]);
 
-  // Data
-  if(binary){
-    fwrite(&mu_map[0], sizeof(pair<vec2_t,vec2_t>), mu_map.size(), fp);
-  }
-  else{
+    // create index
+    cap_basin[n].swf_index.resize(grid->xyz.num());
+    fill(cap_basin[n].swf_index.begin(), cap_basin[n].swf_index.end(), make_pair(-1, -1));
 
-  }
-  fclose(fp);
-}
+    int swf_id   = -1;
+    int idxBegin = 0;
+    int i;
+    for(i = 0; i < (int)cap_basin[n].size(); i++){
+      CaptureState& cs = cap_basin[n][i];
+      if(cs.swf_id != swf_id){
+        if(swf_id != -1)
+          cap_basin[n].swf_index[swf_id] = make_pair(idxBegin, i);
 
-void Capturability::saveTrans(std::string filename, int n, bool binary){
-  FILE *fp = fopen(filename.c_str(), binary ? "wb" : "w");
-
-  // Data
-  if(binary){
-    fwrite(&cap_trans[n][0], sizeof(CaptureTransition), cap_trans[n].size(), fp);
-  }
-  else{
-    for(CaptureTransition& tr : cap_trans[n]){
-      //fprintf(fp, "%d,%d,%d,%d,%d,%d,%d\n",
-      //  tr.swf_id, tr.icp_x_id_min, tr.icp_x_id_max, tr.icp_y_id_min, tr.icp_y_id_max, tr.next_swf_id, tr.next_icp_id);
-      //fprintf(fp, "%d,%f,%f,%f,%f,%d\n",
-      //  tr.swf_id, tr.icp_min.x(), tr.icp_min.y(), tr.icp_max.x(), tr.icp_max.y(), tr.next_id);
+        swf_id   = cs.swf_id;
+        idxBegin = i;
+      }
+      cap_basin[n].swf_index[swf_id] = make_pair(idxBegin, i);
     }
   }
-  fclose(fp);
-}
-
-void Capturability::saveTransIndex(std::string filename, int n, bool binary){
-  FILE *fp = fopen(filename.c_str(), binary ? "wb" : "w");
-
-  // Data
-  if(binary){
-    fwrite(&cap_trans[n].swf_index[0], sizeof(int), cap_trans[n].swf_index.size(), fp);
-  }
-  else{
-
-  }
-  fclose(fp);
-}
-
-void Capturability::loadBasin(string filename, int n, bool binary) {
-  FILE *fp = fopen(filename.c_str(), (binary ? "rb" : "r"));
-  if ( fp == NULL) {
-    printf("Error: Couldn't find the file \"%s\"\n", filename.c_str() );
-    exit(EXIT_FAILURE);
-  }
-  printf("Found database.\n");
-
-  if(binary){
-    fseek(fp, 0, SEEK_END);
-    int sz = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-
-    int nelem = sz/(sizeof(CaptureState));
-    cap_basin[n].resize(nelem);
-
-    size_t nread = fread(&cap_basin[n][0], sizeof(CaptureState), cap_basin[n].size(), fp);
-  }
-  else{
-    CaptureState cs;
-    //while (fscanf(fp, "%d,%f,%f,%f,%f", &cs.swf_id, &cs.icp_min.x(), &cs.icp_min.y(), &cs.icp_max.x(), &cs.icp_max.y()) != EOF) {
-    //  cap_basin[n].push_back(cs);
-    //}
-    while (fscanf(fp, "%d,%d,%d", &cs.swf_id, &cs.icp_id, &cs.nstep) != EOF) {
-      cap_basin[n].push_back(cs);
-    }
-  }
-  fclose(fp);
-
-  // create index
-  cap_basin[n].swf_index.resize(grid->x.num*grid->y.num*grid->z.num);
-  fill(cap_basin[n].swf_index.begin(), cap_basin[n].swf_index.end(), make_pair(-1, -1));
-
-  int swf_id   = -1;
-  int idxBegin = 0;
-  int i;
-  for(i = 0; i < cap_basin[n].size(); i++){
-    CaptureState& cs = cap_basin[n][i];
-    if(cs.swf_id != swf_id){
-      if(swf_id != -1)
-        cap_basin[n].swf_index[swf_id] = make_pair(idxBegin, i);
-
-      swf_id   = cs.swf_id;
-      idxBegin = i;
-    }
-    cap_basin[n].swf_index[swf_id] = make_pair(idxBegin, i);
-  }
-
-  printf("Read success! (%d data)\n", (int)cap_basin[n].size());
-}
-
-void Capturability::loadDurationMap(string filename, bool binary) {
-  FILE *fp = fopen(filename.c_str(), (binary ? "rb" : "r"));
-  if ( fp == NULL) {
-    printf("Error: Couldn't find the file \"%s\"\n", filename.c_str() );
-    exit(EXIT_FAILURE);
-  }
-  printf("Found database.\n");
-
-  if(binary){
-    fseek(fp, 0, SEEK_END);
-    int sz = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-
-    int nelem = sz/(sizeof(int));
-    duration_map.resize(nelem);
-
-    size_t nread = fread(&duration_map[0], sizeof(int), duration_map.size(), fp);
-  }
-  else{
-
-  }
-  fclose(fp);
-}
-
-void Capturability::loadIcpMap(string filename, bool binary) {
-  FILE *fp = fopen(filename.c_str(), (binary ? "rb" : "r"));
-  if ( fp == NULL) {
-    printf("Error: Couldn't find the file \"%s\"\n", filename.c_str() );
-    exit(EXIT_FAILURE);
-  }
-  printf("Found database.\n");
-
-  if(binary){
-    fseek(fp, 0, SEEK_END);
-    int sz = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-
-    int nelem = sz/(sizeof(pair<vec2_t,vec2_t>));
-    icp_map.resize(nelem);
-
-    size_t nread = fread(&icp_map[0], sizeof(pair<vec2_t,vec2_t>), icp_map.size(), fp);
-  }
-  else{
-
-  }
-  fclose(fp);
-}
-
-void Capturability::loadMuMap(string filename, bool binary) {
-  FILE *fp = fopen(filename.c_str(), (binary ? "rb" : "r"));
-  if ( fp == NULL) {
-    printf("Error: Couldn't find the file \"%s\"\n", filename.c_str() );
-    exit(EXIT_FAILURE);
-  }
-  printf("Found database.\n");
-
-  if(binary){
-    fseek(fp, 0, SEEK_END);
-    int sz = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-
-    int nelem = sz/(sizeof(pair<vec2_t,vec2_t>));
-    mu_map.resize(nelem);
-
-    size_t nread = fread(&mu_map[0], sizeof(pair<vec2_t,vec2_t>), mu_map.size(), fp);
-  }
-  else{
-
-  }
-  fclose(fp);
-}
-
-void Capturability::loadTrans(std::string filename, int n, bool binary) {
-  FILE *fp = fopen(filename.c_str(), (binary ? "rb" : "r"));
-  if ( fp == NULL) {
-    printf("Error: Couldn't find the file \"%s\"\n", filename.c_str() );
-    exit(EXIT_FAILURE);
-  }
-  printf("Found database.\n");
-
-  CaptureTransition tr;
-  if(binary){
-    fseek(fp, 0, SEEK_END);
-    int sz = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-
-    int nelem = sz/(sizeof(CaptureTransition));
-    cap_trans[n].resize(nelem);
-    size_t nread = fread(&cap_trans[n][0], sizeof(CaptureTransition), cap_trans[n].size(), fp);
-  }
-  else{
-    //while (fscanf(fp, "%d,%f,%f,%f,%f,%d",
-    //  &tr.swf_id, &tr.icp_min.x(), &tr.icp_min.y(), &tr.icp_max.x(), &tr.icp_max.y(), &tr.next_id) != EOF) {
-    //  cap_trans[n].push_back(tr);
-    //}
-    //while (fscanf(fp, "%d,%d,%d,%d,%d,%d,%d",
-    //  &tr.swf_id, &tr.icp_x_id_min, &tr.icp_x_id_max, &tr.icp_y_id_min, &tr.icp_y_id_max, &tr.next_swf_id, &tr.next_icp_id) != EOF) {
-    //  cap_trans[n].push_back(tr);
-    //}
-  }
-  fclose(fp);
-
-  // create index
-  /*
-  cap_trans[n].swf_index.resize(grid->swf_num);
-  fill(cap_trans[n].swf_index.begin(), cap_trans[n].swf_index.end(), std::make_pair(-1, -1));
-
-  int swf_id   = -1;
-  int idxBegin = 0;
-  int i;
-  for(i = 0; i < cap_trans[n].size(); i++){
-    CaptureTransition& ct = cap_trans[n][i];
-    if(ct.swf_id != swf_id){
-      if(swf_id != -1)
-        cap_trans[n].swf_index[swf_id] = std::make_pair(idxBegin, i);
-
-      swf_id   = ct.swf_id;
-      idxBegin = i;
-    }
-    cap_trans[n].swf_index[swf_id] = std::make_pair(idxBegin, i);
-  }
-  */
-  printf("Read success! (%d data)\n", (int)cap_trans[n].size());
-}
-
-void Capturability::loadTransIndex(std::string filename, int n, bool binary) {
-  FILE *fp = fopen(filename.c_str(), (binary ? "rb" : "r"));
-  if ( fp == NULL) {
-    printf("Error: Couldn't find the file \"%s\"\n", filename.c_str() );
-    exit(EXIT_FAILURE);
-  }
-  printf("Found database.\n");
-
-  if(binary){
-    fseek(fp, 0, SEEK_END);
-    int sz = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-
-    int nelem = sz/(sizeof(int));
-    cap_trans[n].swf_index.resize(nelem);
-    size_t nread = fread(&cap_trans[n].swf_index[0], sizeof(int), cap_trans[n].swf_index.size(), fp);
-  }
-  else{
-  }
-  fclose(fp);
-
-  printf("Read success! (%d data)\n", (int)cap_trans[n].size());
+  loadArray(basename + "swf_to_xyz.bin"  , swf_to_xyz  );
+  loadArray(basename + "xyz_to_swf.bin"  , xyz_to_swf  );
+  loadArray(basename + "duration_map.bin", duration_map);
+  loadArray(basename + "icp_map.bin"     , icp_map     );
 }
 
 void Capturability::getCaptureBasin(State st, int nstep, CaptureBasin& basin){
   basin.clear();
 
   Index3D swf_idx3 = grid->xyz.round(st.swf);
-  Index2D icp_idx2 = grid->xy .round(st.icp);
-  int swf_id = grid->xyz.toIndex(swf_idx3);
+  int swf_id = xyz_to_swf[grid->xyz.toIndex(swf_idx3)];
+  if(swf_id == -1)
+    return;
+
+  pair<vec2_t, vec2_t> icp_range;
 
   for(int n = 0; n < nmax; n++){
     //printf("n: %d\n", n);
     if(nstep != -1 && nstep != n)
       continue;
-    if(cap_basin.size() < n+1 || cap_basin[n].empty())
-      continue;
-    if(cap_trans.size() < n+2 || cap_trans[n+1].empty())
+    if((int)cap_basin.size() < n+1 || cap_basin[n].empty())
       continue;
 
-    for(int basin_id = 0; basin_id < cap_basin[n].size(); basin_id++){
-      int idx = cap_trans[n+1].swf_index[swf_id];
-      //printf("idx %d  basin_id %d\n", idx, basin_id);
-      CaptureTransition& ct = cap_trans[n+1][idx + basin_id];
-      if( ct.icp_x_id_min <= icp_idx2[0] && icp_idx2[0] < ct.icp_x_id_max &&
-          ct.icp_y_id_min <= icp_idx2[1] && icp_idx2[1] < ct.icp_y_id_max )
-        basin.push_back(cap_basin[n][basin_id]);
-      //pair<vec2_t, vec2_t> icp_range = calcFeasibleIcpRange(st.swf, csnext.swf_id, csnext.icp_id);
-      //if( icp_range.first.x() <= st.icp.x() && st.icp.x() <= icp_range.second.x() &&
-      //    icp_range.first.y() <= st.icp.y() && st.icp.y() <= icp_range.second.y() )
-      //    basin.push_back(csnext);
+    for(int basin_id = 0; basin_id < (int)cap_basin[n].size(); basin_id++){
+      CaptureState& csnext = cap_basin[n][basin_id];
+      calcFeasibleIcpRange(swf_id, csnext, icp_range);
+      if( icp_range.first.x() <= st.icp.x() && st.icp.x() <= icp_range.second.x() &&
+          icp_range.first.y() <= st.icp.y() && st.icp.y() <= icp_range.second.y() )
+          basin.push_back(csnext);
     }
   }
 }
@@ -690,34 +432,42 @@ bool Capturability::isCapturable(int swf_id, int icp_id, int& nstep) {
 
 bool Capturability::findNearest(const State& st, const State& stnext, CaptureState& cs){
   float d_min = inf;
+  float d_swf = 0.0f;
+  float d_icp = 0.0f;
+  float d     = 0.0f;
+  int swf_id_prev;
   int ntested = 0;
   int ncomped = 0;
-  //int icp_x_id_min, icp_x_id_max;
-  //int icp_y_id_min, icp_y_id_max;
 
   Index3D swf_idx3 = grid->xyz.round(st.swf);
-  Index2D icp_idx2 = grid->xy .round(st.icp);
-  int swf_id = grid->xyz.toIndex(swf_idx3);
-
-  pair<vec2_t,vec2_t> icp_range;
+  int swf_id = xyz_to_swf[grid->xyz.toIndex(swf_idx3)];
+  if(swf_id == -1)
+    return false;
 
   for(int n = 0; n < nmax; n++){
     if(step_weight*n >= d_min)
       continue;
-    if(cap_basin.size() < n+1 || cap_basin[n].empty())
-      continue;
-    if(cap_trans.size() < n+2 || cap_trans[n+1].empty())
+    if((int)cap_basin.size() < n+1 || cap_basin[n].empty())
       continue;
 
-    for(int basin_id = 0; basin_id < cap_basin[n].size(); basin_id++){
+    swf_id_prev = -1;
+    int tau_id = -1;
+    for(int basin_id = 0; basin_id < (int)cap_basin[n].size(); basin_id++){
       CaptureState& csnext = cap_basin[n][basin_id];
-      calcFeasibleIcpRange(st.swf, csnext.swf_id, csnext.icp_id, icp_range);
+      if(csnext.swf_id != swf_id_prev){
+        d_swf  = (grid->xyz[swf_to_xyz[csnext.swf_id]] - stnext.swf).squaredNorm();
+        tau_id = duration_map[swf_to_xyz.size()*swf_id + csnext.swf_id];
+        swf_id_prev = csnext.swf_id;
+      }
+      if(step_weight*n + swf_weight*d_swf >= d_min)
+        continue;
+
+      pair<vec2_t,vec2_t>& icp_range = icp_map[grid->xy.num()*tau_id + csnext.swf_to_icp_id];
 
       if( icp_range.first.x() <= st.icp.x() && st.icp.x() < icp_range.second.x() &&
           icp_range.first.y() <= st.icp.y() && st.icp.y() < icp_range.second.y() ){
-        float d_swf = (grid->xyz[csnext.swf_id] - stnext.swf).norm();
-        float d_icp = (grid->xy [csnext.icp_id] - stnext.icp).norm();
-        float d = step_weight*n + swf_weight*d_swf + icp_weight*d_icp;
+        d_icp = (grid->xy[csnext.icp_id] - stnext.icp).squaredNorm();
+        d     = step_weight*n + swf_weight*d_swf + icp_weight*d_icp;
         if( d < d_min ){
           cs    = csnext;
           d_min = d;
@@ -726,59 +476,9 @@ bool Capturability::findNearest(const State& st, const State& stnext, CaptureSta
       }
       ntested++;
     }
-    /*
-    for(int basin_id = 0; basin_id < cap_basin[n].size(); basin_id++){
-      int idx = cap_trans[n+1].swf_index[swf_id];
-      CaptureState& csnext = cap_basin[n][basin_id];
-      //printf("idx %d  basin_id %d\n", idx, basin_id);
-      CaptureTransition& ct = cap_trans[n+1][idx + basin_id];
-      if( ct.icp_x_id_min <= icp_idx2[0] && icp_idx2[0] < ct.icp_x_id_max &&
-          ct.icp_y_id_min <= icp_idx2[1] && icp_idx2[1] < ct.icp_y_id_max ){
-        float d_swf = (grid->xyz[csnext.swf_id] - stnext.swf).norm();
-        float d_icp = (grid->xy [csnext.icp_id] - stnext.icp).norm();
-        float d = step_weight*n + swf_weight*d_swf + icp_weight*d_icp;
-        if( d < d_min ){
-          cs    = csnext;
-          d_min = d;
-        }
-        ncomped++;
-      }
-      ntested++;
-    }
-    */
-    /*
-    for(swf_id : swf_id_valid){
-      pair<int,int> idx = cap_basin[n].swf_index[swf_id];
-      if(idx.first < idx.second){
-        pair<vec2_t,vec2_t> icp_range = calcFeasibleNextIcpRange(st.swf, st.icp, swf_id);
-        grid->x.indexRange(icp_range.first.x(), icp_range.second.x(), icp_x_id_min, icp_x_id_max);
-        grid->y.indexRange(icp_range.first.y(), icp_range.second.y(), icp_y_id_min, icp_y_id_max);
-      }
-      for(int i = idx.first; i < idx.second; i++){
-        CaptureState& csnext = cap_basin[n][i];
-        //pair<vec2_t, vec2_t> icp_range = calcFeasibleIcpRange(st.swf, csnext.swf_id, csnext.icp_id);
-        //if( icp_range.first.x() <= st.icp.x() && st.icp.x() <= icp_range.second.x() &&
-        //    icp_range.first.y() <= st.icp.y() && st.icp.y() <= icp_range.second.y() ){
-        Index2D icp_idx2;
-        grid->xy.fromIndex(csnext.icp_id, icp_idx2);
-        if( (icp_x_id_min <= icp_idx2[0] && icp_idx2[0] < icp_x_id_max) &&
-            (icp_y_id_min <= icp_idx2[1] && icp_idx2[1] < icp_y_id_max) ){
-          float d_swf = (grid->xyz[csnext.swf_id] - stnext.swf).norm();
-          float d_icp = (grid->xy [csnext.icp_id] - stnext.icp).norm();
-          float d = step_weight*n + swf_weight*d_swf + icp_weight*d_icp;
-          if( d < d_min ){
-            cs    = csnext;
-            d_min = d;
-          }
-          ncomped++;
-        }
-        ntested++;
-      }
-    }
-    */
   }
   //printf("d_swf_min: %f  d_icp_min: %f\n", d_swf_min, d_icp_min);
-  printf("ntested: %d  ncomped %d\n", ntested, ncomped);
+  //printf("nswf: %d  ntested: %d  ncomped %d\n", nswf, ntested, ncomped);
   printf("d_min: %f\n", d_min);
 
   return d_min != inf;

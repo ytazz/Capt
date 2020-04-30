@@ -20,37 +20,7 @@ int main(int argc, char const *argv[]) {
   end_exe = std::chrono::system_clock::now();
 
   printf("*** Result ***\n");
-  string path  = "/home/dl-box/Capturability/cartesian/cpu/";
-  stringstream ss;
-  for(int n = 0; n < cap.cap_basin.size(); n++){
-    ss.str("");
-    ss << path << "basin" << n << ".csv";
-    cap.saveBasin(ss.str(), n, false);
-
-    ss.str("");
-    ss << path << "basin" << n << ".bin";
-    cap.saveBasin(ss.str(), n, true );
-
-    ss.str("");
-    ss << path << "trans" << n << ".bin";
-    cap.saveTrans(ss.str(), n, true );
-
-    ss.str("");
-    ss << path << "index" << n << ".bin";
-    cap.saveTransIndex(ss.str(), n, true );
-  }
-  ss.str("");
-  ss << path << "duration_map.bin";
-  cap.saveDurationMap(ss.str(), true);
-
-  ss.str("");
-  ss << path << "icp_map.bin";
-  cap.saveIcpMap(ss.str(), true);
-
-  ss.str("");
-  ss << path << "mu_map.bin";
-  cap.saveMuMap(ss.str(), true);
-
+  cap.save("/home/dl-box/Capturability/cartesian/cpu/");
   end_save = std::chrono::system_clock::now();
 
   printf("*** Time ***\n");

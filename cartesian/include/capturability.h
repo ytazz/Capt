@@ -14,24 +14,23 @@
 
 namespace Capt {
 
+class Capturability;
+
 struct CaptureState{
   int      swf_id;
   int      icp_id;
-  Index2D  swf_to_icp_idx2;
+  //Index2D  swf_to_icp_idx2;
+  int      swf_to_icp_id;
   int      nstep;
 
   CaptureState(){}
-  CaptureState(int _swf_id, int _icp_id, int _nstep){
-    swf_id = _swf_id;
-    icp_id = _icp_id;
-    nstep  = _nstep;
-  }
+  CaptureState(int _swf_id, int _icp_id, int _nstep, Capturability* cap);
 };
 
 struct CaptureBasin : public std::vector< CaptureState >{
   std::vector< std::pair<int, int> > swf_index;
 };
-
+/*
 struct CaptureTransition{
   uint8_t icp_x_id_min, icp_x_id_max;
   uint8_t icp_y_id_min, icp_y_id_max;
@@ -48,7 +47,7 @@ struct CaptureTransition{
 struct CaptureTransitions : public std::vector< CaptureTransition >{
   vector<int>  swf_index;
 };
-
+*/
 class Capturability {
 public:
   Capturability(Model* model, Param* param);
@@ -60,19 +59,19 @@ public:
   Swing*    swing;
 
   std::vector< CaptureBasin >               cap_basin;
-  std::vector< CaptureTransitions >         cap_trans;
+  //std::vector< CaptureTransitions >         cap_trans;
   std::vector< int >                        duration_map;      //< [swf_id0, swf_id1]   (stepping) -> t  (step duration)
   std::vector< std::pair<vec2_t, vec2_t> >  icp_map;           //< [x,y,t] (relative icp, step duration) -> allowable icp range
-  std::vector< std::pair<vec2_t, vec2_t> >  mu_map;
-  std::vector< int >                        swf_id_valid;      //< array of valid swf_id in [x,y,z]
-  std::vector< int >                        valid_swf_id_map;  //< [x,y,z] -> index to swf_id_valid or -1
+  //std::vector< std::pair<vec2_t, vec2_t> >  mu_map;
+  std::vector< int >                        swf_to_xyz;    //< array of valid swf_id in [x,y,z]
+  std::vector< int >                        xyz_to_swf;    //< [x,y,z] -> index to swf_id_valid or -1
 
   float  step_weight;
   float  swf_weight;
   float  icp_weight;
 
   bool isSteppable(vec2_t swf);
-  bool isInsideSupport(vec2_t cop);
+  bool isInsideSupport(vec2_t cop, float margin = 1.0e-5f);
   //bool isFeasibleTransition(int swf_id, vec2_t icp, int next_swf_id, int next_icp_id);
   void calcFeasibleIcpRange(int swf, const CaptureState& csnext, std::pair<vec2_t, vec2_t>& icp_range);
   //std::pair<vec2_t, vec2_t>  calcFeasibleNextIcpRange(vec3_t swf, vec2_t icp, int next_swf_id);
@@ -80,20 +79,20 @@ public:
 
   void calcDurationMap();
   void calcIcpMap();
-  void calcMuMap();
+  //void calcMuMap();
   void analyze();
-  void saveBasin      (std::string filename, int n, bool binary);
-  void saveDurationMap(std::string filename, bool binary);
-  void saveIcpMap     (std::string filename, bool binary);
-  void saveMuMap      (std::string filename, bool binary);
-  void saveTrans      (std::string filename, int n, bool binary);
-  void saveTransIndex (std::string filename, int n, bool binary);
-  void loadBasin      (std::string filename, int n, bool binary);
-  void loadDurationMap(std::string filename, bool binary);
-  void loadIcpMap     (std::string filename, bool binary);
-  void loadMuMap      (std::string filename, bool binary);
-  void loadTrans      (std::string filename, int n, bool binary);
-  void loadTransIndex (std::string filename, int n, bool binary);
+  void save(const std::string& basename);
+  void load(const std::string& basename);
+  //void saveDurationMap(std::string filename, bool binary);
+  //void saveIcpMap     (std::string filename, bool binary);
+  //void saveMuMap      (std::string filename, bool binary);
+  //void saveTrans      (std::string filename, int n, bool binary);
+  //void saveTransIndex (std::string filename, int n, bool binary);
+  //void loadDurationMap(std::string filename, bool binary);
+  //void loadIcpMap     (std::string filename, bool binary);
+  //void loadMuMap      (std::string filename, bool binary);
+  //void loadTrans      (std::string filename, int n, bool binary);
+  //void loadTransIndex (std::string filename, int n, bool binary);
 
   void getCaptureBasin (State st, int nstep, CaptureBasin& basin);
   //void getCaptureRegion(int state_id, int nstep, std::vector<CaptureRegion>& region);

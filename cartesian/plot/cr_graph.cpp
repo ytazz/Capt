@@ -24,29 +24,7 @@ int main(int argc, char const *argv[]) {
   CRPlot *cr_plot = new CRPlot(model, param);
 
   Capturability *cap = new Capturability(model, param);
-  string path = "/home/dl-box/Capturability/cartesian/cpu/";
-  stringstream ss;
-  for(int n = 0; n < nmax; n++){
-    ss.str("");
-    ss << path << "basin" << n << ".bin";
-    cap->loadBasin(ss.str(), n, true);
-
-    ss.str("");
-    ss << path << "trans" << n << ".bin";
-    cap->loadTrans(ss.str(), n, true);
-
-    ss.str("");
-    ss << path << "index" << n << ".bin";
-    cap->loadTransIndex(ss.str(), n, true);
-  }
-  ss.str("");
-  ss << path << "duration_map.bin";
-  cap->loadDurationMap(ss.str(), true);
-
-  ss.str("");
-  ss << path << "icp_map.bin";
-  cap->loadIcpMap(ss.str(), true);
-
+  cap->load("/home/dl-box/Capturability/cartesian/cpu/");
   printf("load done\n");
 
   // retrieve state from commandline arguments
@@ -69,7 +47,7 @@ int main(int argc, char const *argv[]) {
   cap->getCaptureBasin(st, -1, basin);
   printf("get done: %d\n", basin.size());
   for(CaptureState& cs : basin){
-    stnext.swf = cap->grid->xyz[cs.swf_id];
+    stnext.swf = cap->grid->xyz[cap->swf_to_xyz[cs.swf_id]];
     stnext.icp = cap->grid->xy [cs.icp_id];
     Input in   = cap->calcInput(st, stnext);
     cr_plot->setCaptureInput(in, cs.nstep);

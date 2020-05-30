@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<param>
+  <swing>
+    <x     min="-0.40" max="0.40"/>
+    <y     min=" 0.00" max="0.40"/>
+    <z     min=" 0.00" max="0.05"/>
+    <theta min="-1.00" max="1.00"/>
+  </swing>
+
+  <except>
+    <x min="-0.25" max="0.25"/>
+    <y min="-0.15" max="0.15"/>
+  </except>
+
+  <cop>
+    <x min="-0.100" max="0.100"/>
+    <y min="-0.050" max="0.050"/>
+  </cop>
+
+  <icp>
+    <x min="-0.3" max="0.3"/>
+    <y min="-0.1" max="0.3"/>
+  </icp>
+
+  <grid>
+    <x     min="-0.80" max="0.80" stp="0.025"/>
+    <y     min="-0.80" max="0.80" stp="0.025"/>
+    <z     min=" 0.00" max="0.05" stp="0.025"/>
+    <theta min="-1.00" max="1.00" stp="0.050"/>
+    <t     min=" 0.00" max="1.00" stp="0.025"/>
+  </grid>
+
+</param>

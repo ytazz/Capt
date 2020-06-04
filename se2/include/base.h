@@ -10,9 +10,10 @@ namespace Capt {
 #define EPSILON 0.001
 
 // Eigen typedefs
-typedef Eigen::Vector2f vec2_t;
 typedef Eigen::Vector2i vec2i_t;
+typedef Eigen::Vector2f vec2_t;
 typedef Eigen::Vector3f vec3_t;
+typedef Eigen::Vector4f vec4_t;
 typedef std::vector<vec2_t> arr2_t;
 typedef std::vector<vec3_t> arr3_t;
 
@@ -35,6 +36,7 @@ int round(float val);
 vec2_t vec3Tovec2(vec3_t vec3);
 vec3_t vec2Tovec3(vec2_t vec2);
 
+/*
 // 不要
 enum OccupancyType {
   NONE,
@@ -43,6 +45,7 @@ enum OccupancyType {
   CLOSED,
   GOAL
 };
+*/
 
 // foot enum
 enum Foot { FOOT_NONE, FOOT_R, FOOT_L };

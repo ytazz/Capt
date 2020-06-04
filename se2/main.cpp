@@ -1,3 +1,5 @@
+﻿#define _CRT_SECURE_NO_WARNINGS
+
 #include "capturability.h"
 #include <iostream>
 #include <chrono>
@@ -24,9 +26,9 @@ int main(int argc, char const *argv[]) {
   end_save = std::chrono::system_clock::now();
 
   printf("*** Time ***\n");
-  int time_exe  = std::chrono::duration_cast<std::chrono::milliseconds>(end_exe - start).count();
-  int time_save = std::chrono::duration_cast<std::chrono::milliseconds>(end_save - end_exe).count();
-  int time_sum  = std::chrono::duration_cast<std::chrono::milliseconds>(end_save - start).count();
+  int time_exe  = (int)std::chrono::duration_cast<std::chrono::milliseconds>(end_exe - start).count();
+  int time_save = (int)std::chrono::duration_cast<std::chrono::milliseconds>(end_save - end_exe).count();
+  int time_sum  = (int)std::chrono::duration_cast<std::chrono::milliseconds>(end_save - start).count();
   printf("  exe : %7d [ms]\n", time_exe);
   printf("  save: %7d [ms]\n", time_save);
   printf("  sum : %7d [ms]\n", time_sum);

@@ -14,15 +14,15 @@ int main(int argc, char const *argv[]) {
   std::chrono::system_clock::time_point start, end_exe, end_save;
   start = std::chrono::system_clock::now();
 
-  Model *model = new Model("/home/dl-box/Capturability/cartesian/data/valkyrie.xml");
-  Param *param = new Param("/home/dl-box/Capturability/cartesian/data/valkyrie_xy.xml");
+  Model *model = new Model("../data/valkyrie.xml");
+  Param *param = new Param("../data/valkyrie_xy.xml");
 
   Capturability cap(model, param);
   cap.analyze();
   end_exe = std::chrono::system_clock::now();
 
   printf("*** Result ***\n");
-  cap.save("/home/dl-box/Capturability/cartesian/cpu/");
+  cap.save("../data/");
   end_save = std::chrono::system_clock::now();
 
   printf("*** Time ***\n");

@@ -16,6 +16,14 @@ else()
 	endif()
 endif()
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON) 
+set(CONF_FILES
+	${PROJECT_SOURCE_DIR}/data/valkyrie.xml
+	${PROJECT_SOURCE_DIR}/data/valkyrie_xy.xml
+)
+source_group("conf" FILES ${CONF_FILES})
+
+
 #set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -O3")
 
 #set(CUDA_SEPARABLE_COMPILATION ON)
@@ -66,6 +74,7 @@ add_executable( main_cpu
 main.cpp
 ${CAPT_SOURCES}
 ${CAPT_HEADERS}
+${CONF_FILES}
 )
 
 set_target_properties(main_cpu PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})

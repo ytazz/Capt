@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "loader.h"
 #include <math.h>

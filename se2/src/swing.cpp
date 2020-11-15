@@ -1,4 +1,4 @@
-#include "swing.h"
+﻿#include "swing.h"
 
 namespace Capt {
 

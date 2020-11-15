@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 //#include "interpolation.h"
 // #include "cycloid.h"

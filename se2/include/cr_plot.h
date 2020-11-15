@@ -1,4 +1,4 @@
-#ifndef __CR_PLOT_H__
+﻿#ifndef __CR_PLOT_H__
 #define __CR_PLOT_H__
 
 #include "gnuplot.h"

@@ -1,5 +1,4 @@
-#ifndef __PARAM_H__
-#define __PARAM_H__
+#pragma once
 
 #include "loader.h"
 #include <math.h>
@@ -54,5 +53,3 @@ private:
 };
 
 } // namespace Capt
-
-#endif // __PARAM_H__

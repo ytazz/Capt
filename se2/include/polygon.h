@@ -1,5 +1,4 @@
-#ifndef __POLYGON_H__
-#define __POLYGON_H__
+#pragma once
 
 #include "base.h"
 #include <string>
@@ -49,5 +48,3 @@ private:
 };
 
 } // namespace Capt
-
-#endif // __POLYGON_H__

@@ -1,5 +1,4 @@
-#ifndef __INPUT_H__
-#define __INPUT_H__
+#pragma once
 
 #include "base.h"
 #include <iostream>
@@ -43,5 +42,3 @@ struct Input {
 };
 
 } // namespace Capt
-
-#endif // __INPUT_H__

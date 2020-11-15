@@ -1,5 +1,4 @@
-#ifndef __XML_LOADER__
-#define __XML_LOADER__
+#pragma once
 
 #include "base.h"
 #include <eigen3/Eigen/Core>
@@ -42,5 +41,3 @@ protected:
 };
 
 } // namespace Capt
-
-#endif // __XML_LOADER__

@@ -1,5 +1,4 @@
-#ifndef __STATE_H__
-#define __STATE_H__
+#pragma once
 
 #include "base.h"
 #include <iostream>
@@ -45,5 +44,3 @@ struct State {
 };
 
 } // namespace Capt
-
-#endif // __STATE_H__

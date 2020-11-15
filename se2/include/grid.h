@@ -1,5 +1,4 @@
-#ifndef __GRID_H__
-#define __GRID_H__
+#pragma once
 
 #include "param.h"
 #include "state.h"
@@ -96,14 +95,13 @@ public:
   Grid1D x;
   Grid1D y;
   Grid1D z;
-  Grid1D theta;
+  Grid1D r;
   Grid1D t;
 
   Grid2D xy;
   Grid3D xyz;
   Grid3D xyt;
+  Grid4D xyzr;
 };
 
 } // namespace Capt
-
-#endif // __GRID_H__

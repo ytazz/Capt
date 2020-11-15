@@ -4,18 +4,30 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <vector>
+#include <cmath>
+
+#include <sbxml.h>
 
 namespace Capt {
 
-#define EPSILON 0.001
-
 // Eigen typedefs
+typedef float           real_t;
 typedef Eigen::Vector2i vec2i_t;
 typedef Eigen::Vector2f vec2_t;
 typedef Eigen::Vector3f vec3_t;
 typedef Eigen::Vector4f vec4_t;
 typedef std::vector<vec2_t> arr2_t;
 typedef std::vector<vec3_t> arr3_t;
+
+//#define EPSILON 0.001
+const real_t pi = 3.14159265358979f;
+
+//
+inline real_t wrapradian(real_t theta){
+	while(theta >  pi) theta -= 2*pi;
+	while(theta < -pi) theta += 2*pi;
+	return theta;
+}
 
 // linear algebra
 float dot(vec2_t v1, vec2_t v2);
@@ -35,17 +47,6 @@ int round(float val);
 // R^2 to R^3 : [ x, y ] -> [ x, y, 0 ]
 vec2_t vec3Tovec2(vec3_t vec3);
 vec3_t vec2Tovec3(vec2_t vec2);
-
-/*
-// 不要
-enum OccupancyType {
-  NONE,
-  EMPTY,
-  EXIST,
-  CLOSED,
-  GOAL
-};
-*/
 
 // foot enum
 enum Foot { FOOT_NONE, FOOT_R, FOOT_L };

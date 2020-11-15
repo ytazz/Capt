@@ -25,6 +25,8 @@ endif()
 
 find_package(EXPAT REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(Springhead)
+find_package(Scenebuilder)
 
 include_directories(${EXPAT_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIR})
@@ -72,5 +74,7 @@ set_target_properties(main_cpu PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${BIN
 set_target_properties(main_cpu PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY    ${BIN_DIR})
 
 target_link_libraries(main_cpu ${EXPAT_LIBRARIES})
+target_link_libraries(main_cpu Springhead::Springhead)
+target_link_libraries(main_cpu Scenebuilder)
 
 file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dat)

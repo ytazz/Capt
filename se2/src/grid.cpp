@@ -3,34 +3,34 @@
 namespace Capt {
 
 void Grid1D::init(){
-  num = Capt::round((max - min)/stp) + 1;
-  val.resize(num);
-  for(int i = 0; i < num; i++)
-    val[i] = min + stp*i;
+	num = Capt::round((max - min)/stp) + 1;
+	val.resize(num);
+	for(int i = 0; i < num; i++)
+		val[i] = min + stp*i;
 
-  printf("grid1d init: min %f  max %f  stp %f  num %d\n", min, max, stp, num);
+	printf("grid1d init: min %f  max %f  stp %f  num %d\n", min, max, stp, num);
 }
 
-int Grid1D::round(float v){
-  return std::min(std::max(0, Capt::round((v - min)/stp)), num-1);
+int Grid1D::round(real_t v){
+	return std::min(std::max(0, Capt::round((v - min)/stp)), num-1);
 }
 
-void Grid1D::indexRange(float fmin, float fmax, int& imin, int& imax){
-  imin = std::min(std::max(0, (int)ceil((fmin - min)/stp)), num-1);
-  imax = std::min(std::max(0, (int)ceil((fmax - min)/stp)), num-1);
+void Grid1D::indexRange(real_t fmin, real_t fmax, int& imin, int& imax){
+	  imin = std::min(std::max(0, (int)ceil((fmin - min)/stp)), num-1);
+	  imax = std::min(std::max(0, (int)ceil((fmax - min)/stp)), num-1);
 }
 
 int Grid2D::num(){
-  return axis[0]->num*axis[1]->num;
+	return axis[0]->num*axis[1]->num;
 }
 
 int Grid2D::toIndex(Index2D idx2){
-  return axis[0]->num*idx2[1] + idx2[0];
+	return axis[0]->num*idx2[1] + idx2[0];
 }
 
 void Grid2D::fromIndex(int idx, Index2D& idx2){
-  idx2[0] = idx%axis[0]->num; idx/=axis[0]->num;
-  idx2[1] = idx;
+	idx2[0] = idx%axis[0]->num; idx/=axis[0]->num;
+	idx2[1] = idx;
 }
 
 Index2D Grid2D::round(vec2_t v){
@@ -75,43 +75,56 @@ vec3_t Grid3D::operator[](Index3D idx3){
   return vec3_t(axis[0]->val[idx3[0]], axis[1]->val[idx3[1]], axis[2]->val[idx3[2]]);
 }
 
-Grid::Grid(Param *param) : param(param) {
-  //state.clear();
+Grid::Grid(){
 
-  param->read(&x.min, "grid_x_min");
-  param->read(&x.max, "grid_x_max");
-  param->read(&x.stp, "grid_x_stp");
-
-  param->read(&y.min, "grid_y_min");
-  param->read(&y.max, "grid_y_max");
-  param->read(&y.stp, "grid_y_stp");
-
-  param->read(&z.min, "grid_z_min");
-  param->read(&z.max, "grid_z_max");
-  param->read(&z.stp, "grid_z_stp");
-
-  param->read(&t.min, "grid_t_min");
-  param->read(&t.max, "grid_t_max");
-  param->read(&t.stp, "grid_t_stp");
-
-  x.init();
-  y.init();
-  z.init();
-  t.init();
-
-  xy.axis[0] = &x;
-  xy.axis[1] = &y;
-
-  xyz.axis[0] = &x;
-  xyz.axis[1] = &y;
-  xyz.axis[2] = &z;
-
-  xyt.axis[0] = &x;
-  xyt.axis[1] = &y;
-  xyt.axis[2] = &t;
 }
 
 Grid::~Grid() {
+}
+
+void Grid::Read(Scenebuilder::XMLNode* node){
+	node->Get(x.min, ".x_min");
+	node->Get(x.max, ".x_max");
+	node->Get(x.stp, ".x_stp");
+
+	node->Get(y.min, ".y_min");
+	node->Get(y.max, ".y_max");
+	node->Get(y.stp, ".y_stp");
+
+	node->Get(z.min, ".z_min");
+	node->Get(z.max, ".z_max");
+	node->Get(z.stp, ".z_stp");
+
+	node->Get(r.min, ".r_min");
+	node->Get(r.max, ".r_max");
+	node->Get(r.stp, ".r_stp");
+
+	node->Get(t.min, ".t_min");
+	node->Get(t.max, ".t_max");
+	node->Get(t.stp, ".t_stp");
+
+	x.init();
+	y.init();
+	z.init();
+	r.init();
+	t.init();
+
+	xy.axis[0] = &x;
+	xy.axis[1] = &y;
+
+	xyz.axis[0] = &x;
+	xyz.axis[1] = &y;
+	xyz.axis[2] = &z;
+
+	xyzr.axis[0] = &x;
+	xyzr.axis[1] = &y;
+	xyzr.axis[2] = &z;
+	xyzr.axis[3] = &r;
+
+	xyt.axis[0] = &x;
+	xyt.axis[1] = &y;
+	xyt.axis[2] = &t;
+
 }
 
 } // namespace Capt

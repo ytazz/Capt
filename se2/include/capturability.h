@@ -1,7 +1,7 @@
 ﻿#pragma once
 
+#include "base.h"
 #include "model.h"
-#include "param.h"
 #include "grid.h"
 #include "swing.h"
 #include "input.h"
@@ -11,9 +11,6 @@
 #include <stdio.h>
 #include <vector>
 #include <utility>
-
-#include <sbxml.h>
-using namespace Scenebuilder;
 
 namespace Capt {
 
@@ -82,9 +79,9 @@ public:
 
 	bool findNearest(const State& st, const State& stnext, CaptureState& cs);
 
-	void Read(XMLNode* node);
+	void Read(Scenebuilder::XMLNode* node);
 
-	Capturability(Model* model, Param* param);
+	 Capturability(Model* model);
 	~Capturability();
 
 };

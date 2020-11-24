@@ -20,6 +20,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CONF_FILES
 	${PROJECT_SOURCE_DIR}/data/valkyrie.xml
 	${PROJECT_SOURCE_DIR}/data/valkyrie_xy.xml
+	${PROJECT_SOURCE_DIR}/bin/conf/capt.xml
 )
 source_group("conf" FILES ${CONF_FILES})
 
@@ -45,7 +46,7 @@ set(CAPT_HEADERS
   ${PROJECT_SOURCE_DIR}/include/capturability.h
   ${PROJECT_SOURCE_DIR}/include/grid.h
   ${PROJECT_SOURCE_DIR}/include/input.h
-  ${PROJECT_SOURCE_DIR}/include/loader.h
+#${PROJECT_SOURCE_DIR}/include/loader.h
   ${PROJECT_SOURCE_DIR}/include/model.h
 #  ${PROJECT_SOURCE_DIR}/include/monitor.h
   ${PROJECT_SOURCE_DIR}/include/param.h
@@ -60,7 +61,7 @@ set(CAPT_SOURCES
   ${PROJECT_SOURCE_DIR}/src/base.cpp
   ${PROJECT_SOURCE_DIR}/src/capturability.cpp
   ${PROJECT_SOURCE_DIR}/src/grid.cpp
-  ${PROJECT_SOURCE_DIR}/src/loader.cpp
+#  ${PROJECT_SOURCE_DIR}/src/loader.cpp
   ${PROJECT_SOURCE_DIR}/src/model.cpp
 #  ${PROJECT_SOURCE_DIR}/src/monitor.cpp
   ${PROJECT_SOURCE_DIR}/src/param.cpp

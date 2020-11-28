@@ -14,21 +14,22 @@ int main(int argc, char const *argv[]) {
   std::chrono::system_clock::time_point start, end_exe, end_save;
   start = std::chrono::system_clock::now();
 
-  Model *model = new Model("../data/valkyrie.xml");
-  Param *param = new Param("../data/valkyrie_xy.xml");
-
-  Capturability cap(model, param);
-  cap.analyze();
+  Scenebuilder::XML xml;
+  xml.Load("conf/capt.xml");
+  
+  Capturability cap;
+  cap.Read(xml.GetRootNode());
+  cap.Analyze();
   end_exe = std::chrono::system_clock::now();
 
   printf("*** Result ***\n");
-  cap.save("../data/");
+  cap.Save("../data/");
   end_save = std::chrono::system_clock::now();
 
   printf("*** Time ***\n");
-  int time_exe  = (int)std::chrono::duration_cast<std::chrono::milliseconds>(end_exe - start).count();
+  int time_exe  = (int)std::chrono::duration_cast<std::chrono::milliseconds>(end_exe  - start  ).count();
   int time_save = (int)std::chrono::duration_cast<std::chrono::milliseconds>(end_save - end_exe).count();
-  int time_sum  = (int)std::chrono::duration_cast<std::chrono::milliseconds>(end_save - start).count();
+  int time_sum  = (int)std::chrono::duration_cast<std::chrono::milliseconds>(end_save - start  ).count();
   printf("  exe : %7d [ms]\n", time_exe);
   printf("  save: %7d [ms]\n", time_save);
   printf("  sum : %7d [ms]\n", time_sum);

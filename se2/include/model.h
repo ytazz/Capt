@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "loader.h"
 #include "polygon.h"
 #include "base.h"
 #include <iostream>
@@ -26,8 +25,7 @@ enum ShapeElement {
   SHAPE_REVERSE
 };
 
-class Model : public Loader {
-
+class Model{
 public:
   explicit Model(const std::string &name);
   virtual ~Model();

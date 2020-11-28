@@ -17,9 +17,12 @@ struct Grid1D{
 	int     num;
 	std::vector<real_t> val;
 
-	void init ();
-	int  round(real_t v);
-	void indexRange(real_t fmin, real_t fmax, int& imin, int& imax);
+	void  Init ();
+	void  Read (Scenebuilder::XMLNode* node);
+	int   Round(real_t v);
+	void  IndexRange(real_t fmin, real_t fmax, int& imin, int& imax);
+
+	Grid1D();
 };
 
 struct Index2D : std::array<int, 2>{
@@ -52,10 +55,10 @@ struct Index4D : std::array<int, 4>{
 struct Grid2D{
 	Grid1D* axis[2];
 
-	int     num      ();
-	int     toIndex  (Index2D idx2);
-	void    fromIndex(int idx, Index2D& idx2);
-	Index2D round(vec2_t v);
+	int      Num      ();
+	int      ToIndex  (Index2D idx2);
+	void     FromIndex(int idx, Index2D& idx2);
+	Index2D  Round    (vec2_t v);
 
 	vec2_t operator[](int idx);
 	vec2_t operator[](Index2D idx2);
@@ -64,10 +67,10 @@ struct Grid2D{
 struct Grid3D{
 	Grid1D* axis[3];
 
-	int     num      ();
-	int     toIndex  (Index3D idx3);
-	void    fromIndex(int idx, Index3D& idx3);
-	Index3D round(vec3_t v);
+	int      Num      ();
+	int      ToIndex  (Index3D idx3);
+	void     FromIndex(int idx, Index3D& idx3);
+	Index3D  Round    (vec3_t v);
 
 	vec3_t operator[](int idx);
 	vec3_t operator[](Index3D idx3);
@@ -76,10 +79,10 @@ struct Grid3D{
 struct Grid4D{
 	Grid1D* axis[4];
 
-	int     num      ();
-	int     toIndex  (Index4D idx4);
-	void    fromIndex(int idx, Index4D& idx4);
-	Index4D round(vec4_t v);
+	int      Num      ();
+	int      ToIndex  (Index4D idx4);
+	void     FromIndex(int idx, Index4D& idx4);
+	Index4D  Round    (vec4_t v);
 
 	vec4_t operator[](int idx);
 	vec4_t operator[](Index4D idx4);

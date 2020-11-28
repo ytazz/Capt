@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-//#include "interpolation.h"
-// #include "cycloid.h"
-#include "model.h"
 #include "param.h"
 #include "base.h"
 
@@ -20,21 +17,21 @@ public:
 public:
 	// set swing foot position and landing position
 	// set() should not be called after swing foot starts descending
-	void set(vec3_t _p_swg, real_t _r_swg, vec3_t _p_land, real_t _r_land);
+	void Set(vec3_t _p_swg, real_t _r_swg, vec3_t _p_land, real_t _r_land);
 
 	// get step duration
-	real_t getDuration();
+	real_t GetDuration();
 
 	// get swing foot position
 	// t is elapsed time after set() is called
-	void  getTraj(real_t t, vec3_t& p, real_t& r);
+	void  GetTraj(real_t t, vec3_t& p, real_t& r);
 
 	// swing foot is swinging down or not
 	//bool isSwingDown(float dt);
 
 	void Read(Scenebuilder::XMLNode* node);
 
- 	 Swing(Model *model);
+ 	 Swing();
 	~Swing();
 };
 

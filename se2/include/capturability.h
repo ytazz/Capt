@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "base.h"
-#include "model.h"
 #include "grid.h"
 #include "swing.h"
 #include "input.h"
@@ -43,9 +42,7 @@ public:
 	Grid1D icp_y;
 
 	float g, h, T;
-  
-	Model*    model;
-	Param*    param;
+ 
 	Grid*     grid;
 	Swing*    swing;
 
@@ -59,29 +56,29 @@ public:
 	float  swg_weight;
 	float  icp_weight;
 
-	bool isSteppable(vec2_t p_swg, real_t r_swg);
-	bool isInsideSupport(vec2_t cop, float margin = 1.0e-5f);
-	void calcFeasibleIcpRange(int swg, const CaptureState& csnext, std::pair<vec2_t, vec2_t>& icp_range);
-	Input calcInput(const State& st, const State& stnext);
+	bool  IsSteppable(vec2_t p_swg, real_t r_swg);
+	bool  IsInsideSupport(vec2_t cop, float margin = 1.0e-5f);
+	void  CalcFeasibleIcpRange(int swg, const CaptureState& csnext, std::pair<vec2_t, vec2_t>& icp_range);
+	Input CalcInput(const State& st, const State& stnext);
 
-	void calcDurationMap();
-	void calcIcpMap();
-	void analyze();
-	void save(const std::string& basename);
-	void load(const std::string& basename);
+	void  CalcDurationMap();
+	void  CalcIcpMap();
+	void  Analyze();
+	void  Save(const std::string& basename);
+	void  Load(const std::string& basename);
 
-	void getCaptureBasin (State st, int nstep, CaptureBasin& basin);
+	void  GetCaptureBasin (State st, int nstep, CaptureBasin& basin);
 
 	// checks is given state is capturable
 	// if nstep is -1, then all N is checked and capturable N is stored in nstep
 	// otherwise N specified by nstep is checked
-	bool isCapturable(int swg_id, int icp_id, int& nstep);
+	bool  IsCapturable(int swg_id, int icp_id, int& nstep);
 
-	bool findNearest(const State& st, const State& stnext, CaptureState& cs);
+	bool  FindNearest(const State& st, const State& stnext, CaptureState& cs);
 
-	void Read(Scenebuilder::XMLNode* node);
+	void  Read(Scenebuilder::XMLNode* node);
 
-	 Capturability(Model* model);
+	 Capturability();
 	~Capturability();
 
 };

@@ -2,7 +2,7 @@
 
 namespace Capt {
 
-Swing::Swing(Model *model) {
+Swing::Swing() {
 	p_swg  = vec3_t::Zero();
 	p_land = vec3_t::Zero();
 	r_swg  = 0.0f;
@@ -23,7 +23,7 @@ void Swing::Read(Scenebuilder::XMLNode* node){
 Swing::~Swing() {
 }
 
-void Swing::set(vec3_t _p_swg, real_t _r_swg, vec3_t _p_land, real_t _r_land){
+void Swing::Set(vec3_t _p_swg, real_t _r_swg, vec3_t _p_land, real_t _r_land){
   p_swg  = _p_swg ;
   r_swg  = _r_swg ;
   p_land = _p_land;
@@ -45,11 +45,11 @@ void Swing::set(vec3_t _p_swg, real_t _r_swg, vec3_t _p_land, real_t _r_land){
   //tau_offset = foot.z() / v_max;
 }
 
-float Swing::getDuration() {
+float Swing::GetDuration() {
   return tau_ascend + std::max(tau_travel, tau_turn) + tau_descend;
 }
 
-void Swing::getTraj(real_t t, vec3_t& p, real_t& r) {
+void Swing::GetTraj(real_t t, vec3_t& p, real_t& r) {
   // ascending
   if(0 <= t && t < tau_ascend) {
     p.x() = p_swg.x();

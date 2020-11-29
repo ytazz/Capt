@@ -1,0 +1,17 @@
+﻿cmake_minimum_required(VERSION 3.0)
+
+include_directories(${PROJECT_SOURCE_DIR}/include)
+
+add_executable( capt_plot
+	main.cpp
+	${CONF_FILES}
+)
+
+set_target_properties(capt_plot PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+set_target_properties(capt_plot PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG   ${BIN_INSTALL_DIR})
+set_target_properties(capt_plot PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${BIN_INSTALL_DIR})
+set_target_properties(capt_plot PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY    ${BIN_DIR})
+
+target_link_libraries(capt_plot capt_lib)
+
+file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dat)

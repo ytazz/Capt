@@ -21,7 +21,8 @@ CaptureState::CaptureState(int _swg_id, int _icp_id, int _nstep, Capturability* 
 
 	vec4_t swg = cap->grid->xyzr[cap->swg_to_xyzr[swg_id]];
 	vec2_t icp = cap->grid->xy  [icp_id];
-	swg_to_icp_id = cap->grid->xy.ToIndex(cap->grid->xy.Round(vec2_t(icp.x() - swg.x(), icp.y() - swg.y())));
+	vec2_t mu  = Eigen::Rotation2D<real_t>(swg[3])*vec2_t(icp.x() - swg.x(), -1.0*(icp.y() - swg.y()));
+	mu_id = cap->grid->xy.ToIndex(cap->grid->xy.Round(mu));
 }
 
 Capturability::Capturability() {
@@ -59,8 +60,11 @@ void Capturability::Read(Scenebuilder::XMLNode* node){
 	icp_x.Read(node->GetNode("icp_x"));
 	icp_y.Read(node->GetNode("icp_y"));
 
-	grid->Read(node->GetNode("grid"));
+	// grid
+	grid ->Read(node->GetNode("grid"));
 
+	// swing
+	swing->Read(node->GetNode("swing"));
 }
 
 bool Capturability::IsSteppable(vec2_t p_swg, real_t r_swg){
@@ -102,7 +106,7 @@ Input Capturability::CalcInput(const State& st, const State& stnext){
 
 void Capturability::CalcFeasibleIcpRange(int swg_id, const CaptureState& csnext, pair<vec2_t, vec2_t>& icp_range){
   int tau_id = duration_map[swg_to_xyzr.size()*swg_id + csnext.swg_id];
-  icp_range = icp_map[grid->xy.Num()*tau_id + csnext.swg_to_icp_id];
+  icp_range = icp_map[grid->xy.Num()*tau_id + csnext.mu_id];
 }
 
 void Capturability::CalcDurationMap(){
@@ -132,55 +136,55 @@ void Capturability::CalcDurationMap(){
 }
 
 void Capturability::CalcIcpMap(){
-  vec2_t cop_min(cop_x.min, cop_y.min);
-  vec2_t cop_max(cop_x.max, cop_y.max);
+	vec2_t cop_min(cop_x.min, cop_y.min);
+	vec2_t cop_max(cop_x.max, cop_y.max);
 
-  printf(" calc icp map\n");
-  {
-    icp_map.resize(grid->x.num*grid->y.num*grid->t.num);
+	printf(" calc icp map\n");
+	
+	icp_map.resize(grid->x.num*grid->y.num*grid->t.num);
 
-    float  tau, tau_min, tau_max;
-    float  alpha_min, alpha_max;
-    float  alpha_min_inv, alpha_max_inv;
-    vec2_t mu;
-    vec2_t icp_min, icp_min0, icp_min1;
-    vec2_t icp_max, icp_max0, icp_max1;
-    for(int t_id = 0; t_id < grid->t.num; t_id++)
-    for(int x_id = 0; x_id < grid->x.num; x_id++)
-    for(int y_id = 0; y_id < grid->y.num; y_id++) {
-      tau           = grid->t.val[t_id];
-      tau_min       = std::max(tau - grid->t.stp, grid->t.min);
-      tau_max       = std::min(tau + grid->t.stp, grid->t.max);
-      alpha_min     = exp(tau_min/T);
-      alpha_max     = exp(tau_max/T);
-      alpha_min_inv = 1.0f/alpha_min;
-      alpha_max_inv = 1.0f/alpha_max;
-      mu            = vec2_t(grid->x.val[x_id], -1.0f*grid->y.val[y_id]);
+	float  tau, tau_min, tau_max;
+	float  alpha_min, alpha_max;
+	float  alpha_min_inv, alpha_max_inv;
+	vec2_t mu;
+	vec2_t icp_min, icp_min0, icp_min1;
+	vec2_t icp_max, icp_max0, icp_max1;
+	for(int t_id = 0; t_id < grid->t.num; t_id++)
+	for(int x_id = 0; x_id < grid->x.num; x_id++)
+	for(int y_id = 0; y_id < grid->y.num; y_id++) {
+		tau           = grid->t.val[t_id];
+		tau_min       = std::max(tau - grid->t.stp, grid->t.min);
+		tau_max       = std::min(tau + grid->t.stp, grid->t.max);
+		alpha_min     = exp(tau_min/T);
+		alpha_max     = exp(tau_max/T);
+		alpha_min_inv = 1.0f/alpha_min;
+		alpha_max_inv = 1.0f/alpha_max;
+		mu            = vec2_t(grid->x.val[x_id], grid->y.val[y_id]);
 
-      icp_min0 = (1.0f - alpha_min_inv)*cop_min + (alpha_min_inv)*mu;
-      icp_max0 = (1.0f - alpha_min_inv)*cop_max + (alpha_min_inv)*mu;
-      icp_min1 = (1.0f - alpha_max_inv)*cop_min + (alpha_max_inv)*mu;
-      icp_max1 = (1.0f - alpha_max_inv)*cop_max + (alpha_max_inv)*mu;
+		icp_min0 = (1.0f - alpha_min_inv)*cop_min + (alpha_min_inv)*mu;
+		icp_max0 = (1.0f - alpha_min_inv)*cop_max + (alpha_min_inv)*mu;
+		icp_min1 = (1.0f - alpha_max_inv)*cop_min + (alpha_max_inv)*mu;
+		icp_max1 = (1.0f - alpha_max_inv)*cop_max + (alpha_max_inv)*mu;
 
-      icp_min.x() = icp_x.min;
-      icp_max.x() = icp_x.max;
-      icp_min.y() = icp_y.min;
-      icp_max.y() = icp_y.max;
-      icp_min.x() = std::max(icp_min.x(), icp_min0.x());
-      icp_min.x() = std::max(icp_min.x(), icp_min1.x());
-      icp_min.y() = std::max(icp_min.y(), icp_min0.y());
-      icp_min.y() = std::max(icp_min.y(), icp_min1.y());
-      icp_max.x() = std::min(icp_max.x(), icp_max0.x());
-      icp_max.x() = std::min(icp_max.x(), icp_max1.x());
-      icp_max.y() = std::min(icp_max.y(), icp_max0.y());
-      icp_max.y() = std::min(icp_max.y(), icp_max1.y());
+		icp_min.x() = icp_x.min;
+		icp_max.x() = icp_x.max;
+		icp_min.y() = icp_y.min;
+		icp_max.y() = icp_y.max;
+		icp_min.x() = std::max(icp_min.x(), icp_min0.x());
+		icp_min.x() = std::max(icp_min.x(), icp_min1.x());
+		icp_min.y() = std::max(icp_min.y(), icp_min0.y());
+		icp_min.y() = std::max(icp_min.y(), icp_min1.y());
+		icp_max.x() = std::min(icp_max.x(), icp_max0.x());
+		icp_max.x() = std::min(icp_max.x(), icp_max1.x());
+		icp_max.y() = std::min(icp_max.y(), icp_max0.y());
+		icp_max.y() = std::min(icp_max.y(), icp_max1.y());
 
-      int idx = grid->xy.Num()*t_id + grid->xy.ToIndex(Index2D(x_id, y_id));
-      icp_map[idx].first  = icp_min;
-      icp_map[idx].second = icp_max;
-    }
-  }
-  printf(" done: %d entries\n", (int)icp_map.size());
+		int idx = grid->xy.Num()*t_id + grid->xy.ToIndex(Index2D(x_id, y_id));
+		icp_map[idx].first  = icp_min;
+		icp_map[idx].second = icp_max;
+	}
+	
+	printf(" done: %d entries\n", (int)icp_map.size());
 }
 
 void Capturability::Analyze(){
@@ -250,6 +254,8 @@ void Capturability::Analyze(){
 		// enumerate possible current swing foot pos
 		for(int swg_id = 0; swg_id < (int)swg_to_xyzr.size(); swg_id++){
 
+			DSTR << "swg_id: " << swg_id << endl;
+
 			icp_id_valid.clear();
 			for(int basin_id = 0; basin_id < (int)cap_basin[n-1].size(); basin_id++){
 				CaptureState& csnext = cap_basin[n-1][basin_id];
@@ -266,6 +272,8 @@ void Capturability::Analyze(){
 					icp_id_valid.insert(icp_id);
 				}
 			}
+
+			DSTR << "icp valid: " << icp_id_valid.size() << endl;
 
 			Index4D swg_idx4;
 			grid->xyzr.FromIndex(swg_to_xyzr[swg_id], swg_idx4);
@@ -445,7 +453,7 @@ bool Capturability::FindNearest(const State& st, const State& stnext, CaptureSta
 			if(step_weight*n + swg_weight*d_swg >= d_min)
 				continue;
 
-			pair<vec2_t,vec2_t>& icp_range = icp_map[grid->xy.Num()*tau_id + csnext.swg_to_icp_id];
+			pair<vec2_t,vec2_t>& icp_range = icp_map[grid->xy.Num()*tau_id + csnext.mu_id];
 
 			if( icp_range.first.x() <= st.icp.x() && st.icp.x() < icp_range.second.x() &&
 				icp_range.first.y() <= st.icp.y() && st.icp.y() < icp_range.second.y() ){

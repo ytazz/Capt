@@ -12,6 +12,9 @@ Swing::Swing() {
 	tau_travel  = 0.0f;
 	tau_descend = 0.0f;
 
+	v_const = 1.0f;
+	w_const = 1.0f;
+	z_max   = 0.0f;
 }
 
 void Swing::Read(Scenebuilder::XMLNode* node){

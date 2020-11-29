@@ -16,17 +16,18 @@ namespace Capt {
 class Capturability;
 
 struct CaptureState{
-  int      swg_id;
-  int      icp_id;
-  int      swg_to_icp_id;
-  int      nstep;
+	int      swg_id;
+	int      icp_id;
+	int      mu_id;
+	//int      swg_to_icp_id;
+	int      nstep;
 
-  CaptureState(){}
-  CaptureState(int _swg_id, int _icp_id, int _nstep, Capturability* cap);
+	CaptureState(){}
+	CaptureState(int _swg_id, int _icp_id, int _nstep, Capturability* cap);
 };
 
 struct CaptureBasin : public std::vector< CaptureState >{
-  std::vector< std::pair<int, int> > swg_index;
+	std::vector< std::pair<int, int> > swg_index;
 };
 
 class Capturability {

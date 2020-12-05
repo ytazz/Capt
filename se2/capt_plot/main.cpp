@@ -1,61 +1,41 @@
-﻿#include "grid.h"
-#include "loader.h"
-#include "model.h"
-#include "param.h"
-#include "base.h"
-#include "cr_plot.h"
+﻿#include "plot.h"
 #include <iostream>
 
 using namespace std;
 using namespace Capt;
 
-double icp_x = +0.0;
-double icp_y = +0.1;
-double swf_x = +0.0;
-double swf_y = +0.25;
-double swf_z = +0.0;
-
 const int nmax = 5;
 
 int main(int argc, char const *argv[]) {
-  Model *model = new Model("/home/dl-box/Capturability/cartesian/data/valkyrie.xml");
-  Param *param = new Param("/home/dl-box/Capturability/cartesian/data/valkyrie_xy.xml");
+	Scenebuilder::XML xmlCapt;
+	xmlCapt.Load("conf/capt.xml");
 
-  CRPlot *cr_plot = new CRPlot(model, param);
+	Scenebuilder::XML xmlPlot;
+	xmlPlot.Load("conf/plot.xml");
 
-  Capturability *cap = new Capturability(model, param);
-  cap->load("/home/dl-box/Capturability/cartesian/cpu/");
-  printf("load done\n");
+	Capturability cap;
+	Plot          plot;
+	
+	cap .Read(xmlCapt.GetRootNode());
+	plot.Read(xmlPlot.GetRootNode());
 
-  // retrieve state from commandline arguments
-  if(argc == 6){
-    icp_x = atof(argv[1]);
-    icp_y = atof(argv[2]);
-    swf_x = atof(argv[3]);
-    swf_y = atof(argv[4]);
-    swf_z = atof(argv[5]);
-  }
+	cap.Load("data");
+	printf("load done\n");
 
-  State st, stnext;
-  st.icp = vec2_t(icp_x, icp_y);
-  st.swf = vec3_t(swf_x, swf_y, swf_z);
+	printf("get cap regions\n");
+	CaptureBasin basin;
+	cap.GetCaptureBasin(plot.st, -1, basin);
+	printf("get done: %d\n", basin.size());
 
-  cr_plot->setState(st);
+	for(CaptureState& cs : basin){
+		State stnext;
+		stnext.swg = cap.grid->xyzr[cap.swg_to_xyzr[cs.swg_id]];
+		stnext.icp = cap.grid->xy  [cs.icp_id];
+		Input in   = cap.CalcInput(plot.st, stnext);
+		plot.SetCaptureInput(in, cs.nstep);
+	}
 
-  printf("get cap regions\n");
-  CaptureBasin basin;
-  cap->getCaptureBasin(st, -1, basin);
-  printf("get done: %d\n", basin.size());
-  for(CaptureState& cs : basin){
-    stnext.swf = cap->grid->xyz[cap->swf_to_xyz[cs.swf_id]];
-    stnext.icp = cap->grid->xy [cs.icp_id];
-    Input in   = cap->calcInput(st, stnext);
-    cr_plot->setCaptureInput(in, cs.nstep);
-  }
+	plot.Print();
 
-  cr_plot->plot();
-
-  delete cr_plot;
-
-  return 0;
+	return 0;
 }

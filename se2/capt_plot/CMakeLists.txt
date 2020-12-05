@@ -1,5 +1,14 @@
 ﻿cmake_minimum_required(VERSION 3.0)
 
+find_package(Eigen3 REQUIRED)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON) 
+set(CONF_FILES
+	${PROJECT_SOURCE_DIR}/bin/conf/plot.xml
+)
+source_group("conf" FILES ${CONF_FILES})
+
+include_directories(${EIGEN3_INCLUDE_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 add_executable( capt_plot

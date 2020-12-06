@@ -19,7 +19,11 @@ void Plot::Read(Scenebuilder::XMLNode* node){
 	node->Get(st.icp[1], ".icp_y");
 }
 
-void Plot::PrintFootRegion(){
+void Plot::SetCaptureInput(Input in, int nstep){
+	cap_input.push_back(make_pair(in, nstep));
+}
+
+void Plot::PrintLandingRegion(const string& filename){
 	vec2_t vertex[9];
 	vertex[0] << cap->swg_x.min, cap->swg_y.min;
 	vertex[1] << cap->exc_x.min, cap->swg_y.min;
@@ -34,57 +38,46 @@ void Plot::PrintFootRegion(){
 	for(int i = 0; i < 9; i++)
 		vertex[i] = CartesianToGraph(vertex[i]);
 
-	FILE *fp = fopen("data/foot_region.dat", "w");
+	FILE *fp = fopen(filename.c_str(), "w");
 	for(int i = 0; i < 9; i++) {
-		fprintf(fp, "%lf %lf\n", vertex[i].x(), vertex[i].y() );
+		fprintf(fp, "%f %f\n", vertex[i].x(), vertex[i].y() );
 	}
 	fclose(fp);
 }
 
-void Plot::PrintState(State state){
-	PrintIcp(state.icp);
-	PrintSwg(state.swg);
-}
-
-void Plot::PrintIcp(vec2_t icp){
+void Plot::PrintIcp(const string& filename, const vec2_t& icp){
 	vec2_t point = CartesianToGraph(icp);
-	FILE  *fp    = fopen("data/icp.dat", "w");
-	fprintf(fp, "%lf %lf\n", point.x(), point.y() );
+	FILE  *fp    = fopen(filename.c_str(), "w");
+	fprintf(fp, "%f %f\n", point.x(), point.y() );
 	fclose(fp);
 }
 
-void Plot::PrintSwg(vec4_t swg){
-	arr2_t foot_r, foot_l;
+void Plot::PrintFoot(const string& filename, const vec4_t& pose){
+	vec2_t pt[4];
+	pt[0] = vec2_t(cap->cop_x.min, cap->cop_y.min);
+	pt[1] = vec2_t(cap->cop_x.max, cap->cop_y.min);
+	pt[2] = vec2_t(cap->cop_x.max, cap->cop_y.max);
+	pt[3] = vec2_t(cap->cop_x.min, cap->cop_y.max);
 
 	FILE *fp;
-	fp = fopen("data/foot_r.dat", "w");
+	fp = fopen(filename.c_str(), "w");
 	vec2_t point;
-	for (size_t i = 0; i < foot_r.size(); i++) {
-		// グラフ座標に合わせる
-		point = CartesianToGraph(foot_r[i]);
-		fprintf(fp, "%lf %lf\n", point.x(), point.y() );
-	}
-	fclose(fp);
-
-	fp = fopen("data/foot_l.dat", "w");
-	for (size_t i = 0; i < foot_l.size(); i++) {
-		// グラフ座標に合わせる
-		point = CartesianToGraph(foot_l[i]);
-		fprintf(fp, "%lf %lf\n", point.x(), point.y() );
+	for (size_t i = 0; i <= 4; i++) {
+		point = CartesianToGraph(vec2_t(pose[0], pose[1]) + Eigen::Rotation2D<real_t>(pose[3])*pt[i%4]);
+		fprintf(fp, "%f %f\n", point.x(), point.y());
 	}
 	fclose(fp);
 }
 
-void Plot::SetCaptureInput(Input in, int nstep){
-	cap_input.push_back(make_pair(in, nstep));
-}
-
-void Plot::Print(){
-	PrintFootRegion();
+void Plot::Print(const string& basename){
+	PrintLandingRegion(basename + "landing.dat");
+	PrintFoot(basename + "sup.dat", vec4_t(0.0, 0.0, 0.0, 0.0));
+	PrintFoot(basename + "swg.dat", st.swg                    );
+	PrintIcp (basename + "icp.dat", st.icp                    );
 
 	// mapをグラフ上の対応する点に変換
 	FILE *fp;
-	fp = fopen("data/data.dat", "w");
+	fp = fopen((basename + "data.dat").c_str(), "w");
 
 	for(int i = 0; i < (int)cap_input.size(); i++){
 		vec2_t cop  = CartesianToGraph(cap_input[i].first.cop .x(), cap_input[i].first.cop .y());

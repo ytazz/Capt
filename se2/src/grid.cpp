@@ -115,7 +115,7 @@ void Grid4D::FromIndex(int idx, Index4D& idx4){
 }
 
 Index4D Grid4D::Round(vec4_t v){
-  return Index4D(axis[0]->Round(v[0]), axis[1]->Round(v[1]), axis[2]->Round(v[2]), axis[3]->Round(v[4]));
+  return Index4D(axis[0]->Round(v[0]), axis[1]->Round(v[1]), axis[2]->Round(v[2]), axis[3]->Round(v[3]));
 }
 
 vec4_t Grid4D::operator[](int idx){

@@ -24,11 +24,10 @@ public:
 	// Capture Regionのデータを格納するCapture Map
 	void SetCaptureInput(Input in, int nstep);
 
-	void PrintFootRegion();
-	void PrintState     (State state);
-	void PrintIcp       (vec2_t icp);
-	void PrintSwg       (vec4_t swg);
-	void Print();
+	void PrintLandingRegion(const string& filename);
+	void PrintIcp          (const string& filename, const vec2_t& icp );
+	void PrintFoot         (const string& filename, const vec4_t& pose);
+	void Print             (const string& basename);
 
 	void Read(Scenebuilder::XMLNode* node);
 

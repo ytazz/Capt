@@ -23,7 +23,7 @@ int main(int argc, char const *argv[]) {
 	end_exe = std::chrono::system_clock::now();
 
 	printf("*** Result ***\n");
-	cap.Save("../data/");
+	cap.Save("data/");
 	end_save = std::chrono::system_clock::now();
 
 	printf("*** Time ***\n");

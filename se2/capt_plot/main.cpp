@@ -15,11 +15,13 @@ int main(int argc, char const *argv[]) {
 
 	Capturability cap;
 	Plot          plot;
+
+	plot.cap = &cap;
 	
 	cap .Read(xmlCapt.GetRootNode());
 	plot.Read(xmlPlot.GetRootNode());
 
-	cap.Load("data");
+	cap.Load("data/");
 	printf("load done\n");
 
 	printf("get cap regions\n");
@@ -35,7 +37,7 @@ int main(int argc, char const *argv[]) {
 		plot.SetCaptureInput(in, cs.nstep);
 	}
 
-	plot.Print();
+	plot.Print("data/");
 
 	return 0;
 }

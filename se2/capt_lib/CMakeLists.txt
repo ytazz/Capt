@@ -15,7 +15,6 @@ set(CAPT_HEADERS
   ${PROJECT_SOURCE_DIR}/include/grid.h
   ${PROJECT_SOURCE_DIR}/include/input.h
   ${PROJECT_SOURCE_DIR}/include/plot.h
-  ${PROJECT_SOURCE_DIR}/include/polygon.h
   ${PROJECT_SOURCE_DIR}/include/state.h
   ${PROJECT_SOURCE_DIR}/include/swing.h
 )
@@ -25,7 +24,6 @@ set(CAPT_SOURCES
   ${PROJECT_SOURCE_DIR}/src/capturability.cpp
   ${PROJECT_SOURCE_DIR}/src/grid.cpp
   ${PROJECT_SOURCE_DIR}/src/plot.cpp
-  ${PROJECT_SOURCE_DIR}/src/polygon.cpp
   ${PROJECT_SOURCE_DIR}/src/swing.cpp
 )
 

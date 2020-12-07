@@ -36,3 +36,14 @@ target_link_libraries(capt_lib ${EXPAT_LIBRARIES})
 target_link_libraries(capt_lib Springhead::Springhead)
 target_link_libraries(capt_lib Scenebuilder)
 
+install(TARGETS capt_lib
+  EXPORT   captExport
+  LIBRARY       DESTINATION  lib
+  INCLUDES      DESTINATION  include
+)
+install(FILES ${CAPT_HEADERS}        DESTINATION include/Capt)
+
+install(EXPORT captExport
+  FILE         captConfig.cmake
+  DESTINATION  cmake
+)

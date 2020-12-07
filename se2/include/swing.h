@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "param.h"
 #include "base.h"
 
 namespace Capt {

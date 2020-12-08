@@ -19,4 +19,5 @@ endif()
 add_subdirectory(capt_lib)
 add_subdirectory(capt_gen)
 add_subdirectory(capt_plot)
+add_subdirectory(capt_sim )
 

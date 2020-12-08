@@ -22,5 +22,3 @@ set_target_properties(capt_plot PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${BI
 set_target_properties(capt_plot PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY    ${BIN_DIR})
 
 target_link_libraries(capt_plot capt_lib)
-
-file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dat)

@@ -22,5 +22,3 @@ set_target_properties(capt_gen PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${BIN
 set_target_properties(capt_gen PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY    ${BIN_DIR})
 
 target_link_libraries(capt_gen capt_lib)
-
-file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dat)

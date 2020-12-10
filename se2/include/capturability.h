@@ -34,6 +34,7 @@ class Capturability {
 public:
 	Grid1D swg_x;  //< steppable region
 	Grid1D swg_y;
+	Grid1D swg_z;
 	Grid1D swg_r;
 	Grid1D exc_x;  //< unsteppable region
 	Grid1D exc_y;

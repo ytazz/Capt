@@ -153,18 +153,18 @@ void Grid::Read(Scenebuilder::XMLNode* node){
 	xy.axis[0] = &x;
 	xy.axis[1] = &y;
 
-	xyz.axis[0] = &x;
-	xyz.axis[1] = &y;
-	xyz.axis[2] = &z;
+	//xyz.axis[0] = &x;
+	//xyz.axis[1] = &y;
+	//xyz.axis[2] = &z;
 
 	xyzr.axis[0] = &x;
 	xyzr.axis[1] = &y;
 	xyzr.axis[2] = &z;
 	xyzr.axis[3] = &r;
 
-	xyt.axis[0] = &x;
-	xyt.axis[1] = &y;
-	xyt.axis[2] = &t;
+	//xyt.axis[0] = &x;
+	//xyt.axis[1] = &y;
+	//xyt.axis[2] = &t;
 
 }
 

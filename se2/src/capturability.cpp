@@ -50,6 +50,8 @@ void Capturability::Read(Scenebuilder::XMLNode* node){
 	// exc
 	swg_x.Read(node->GetNode("swg_x"));
 	swg_y.Read(node->GetNode("swg_y"));
+	swg_z.Read(node->GetNode("swg_z"));
+	swg_r.Read(node->GetNode("swg_r"));
 	// exc
 	exc_x.Read(node->GetNode("exc_x"));
 	exc_y.Read(node->GetNode("exc_y"));
@@ -348,7 +350,7 @@ void Capturability::Load(const string& basename) {
 		LoadArray(ss.str(), cap_basin[n]);
 
 		// create index
-		cap_basin[n].swg_index.resize(grid->xyz.Num());
+		cap_basin[n].swg_index.resize(grid->xyzr.Num());
 		fill(cap_basin[n].swg_index.begin(), cap_basin[n].swg_index.end(), make_pair(-1, -1));
 
 		int swg_id   = -1;

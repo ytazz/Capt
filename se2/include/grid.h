@@ -97,8 +97,8 @@ public:
 	Grid1D t;
 
 	Grid2D xy;
-	Grid3D xyz;
-	Grid3D xyt;
+	//Grid3D xyz;
+	//Grid3D xyt;
 	Grid4D xyzr;
 
 public:

@@ -4,8 +4,6 @@
 using namespace std;
 using namespace Capt;
 
-const int nmax = 5;
-
 int main(int argc, char const *argv[]) {
 	Scenebuilder::XML xmlCapt;
 	xmlCapt.Load("conf/capt.xml");
@@ -26,7 +24,7 @@ int main(int argc, char const *argv[]) {
 
 	printf("get cap regions\n");
 	CaptureBasin basin;
-	cap.GetCaptureBasin(plot.st, -1, basin);
+	cap.GetCaptureBasin(plot.st, 0, plot.nmax, basin);
 	printf("get done: %d\n", basin.size());
 
 	for(CaptureState& cs : basin){

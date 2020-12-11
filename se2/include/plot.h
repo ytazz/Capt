@@ -10,6 +10,8 @@ namespace Capt {
 class Plot{
 public:
 	State  st;
+	int    nmax;
+	int    angle_div;
 
 	Capturability* cap;
 

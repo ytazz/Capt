@@ -1,12 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <plot
-  swg_x="0.00"
-  swg_y="0.25"
-  swg_z="0.00"
-  swg_r="0.00"
-  icp_x="0.00"
-  icp_y="0.10"
+  swg_x    ="0.00"
+  swg_y    ="0.25"
+  swg_z    ="0.00"
+  swg_r    ="0.00"
+  icp_x    ="0.05"
+  icp_y    ="-0.05"
+  nmax     ="2"
+  angle_div="32"
   >
   
 </plot>

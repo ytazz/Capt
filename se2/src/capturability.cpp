@@ -47,14 +47,18 @@ void Capturability::Read(Scenebuilder::XMLNode* node){
 	node->Get(h, ".com_height");
 	T = sqrt(h/g);
 
+	node->Get(swg_near , ".swg_near" );
+	node->Get(swg_far  , ".swg_far"  );
+	node->Get(swg_angle, ".swg_angle");
+	
 	// exc
-	swg_x.Read(node->GetNode("swg_x"));
-	swg_y.Read(node->GetNode("swg_y"));
-	swg_z.Read(node->GetNode("swg_z"));
-	swg_r.Read(node->GetNode("swg_r"));
+	//swg_x.Read(node->GetNode("swg_x"));
+	//swg_y.Read(node->GetNode("swg_y"));
+	//swg_z.Read(node->GetNode("swg_z"));
+	//swg_r.Read(node->GetNode("swg_r"));
 	// exc
-	exc_x.Read(node->GetNode("exc_x"));
-	exc_y.Read(node->GetNode("exc_y"));
+	//exc_x.Read(node->GetNode("exc_x"));
+	//exc_y.Read(node->GetNode("exc_y"));
 	// cop
 	cop_x.Read(node->GetNode("cop_x"));
 	cop_y.Read(node->GetNode("cop_y"));
@@ -70,13 +74,19 @@ void Capturability::Read(Scenebuilder::XMLNode* node){
 }
 
 bool Capturability::IsSteppable(vec2_t p_swg, real_t r_swg){
-  // steppable if swg is inside swing region and outside the exc region
-  return  ( (swg_x.min - eps <= p_swg.x() && p_swg.x() <= swg_x.max + eps) &&
-            (swg_y.min - eps <= p_swg.y() && p_swg.y() <= swg_y.max + eps) &&
-	        (swg_r.min - eps <= r_swg     && r_swg     <= swg_r.max + eps))
-             &&
-         !( (exc_x.min + eps <= p_swg.x() && p_swg.x() <= exc_x.max - eps) &&
-            (exc_y.min + eps <= p_swg.y() && p_swg.y() <= exc_y.max - eps) );
+	real_t dist  = p_swg.norm();
+	real_t angle = atan2(p_swg[1], p_swg[0]);
+	return ( swg_near           - eps <= dist          && dist          < swg_far          + eps &&
+		     pi/2.0 - swg_angle - eps <= angle - r_swg && angle - r_swg < pi/2 + swg_angle + eps );
+	/*
+	// steppable if swg is inside swing region and outside the exc region
+	return  ( (swg_x.min - eps <= p_swg.x() && p_swg.x() <= swg_x.max + eps) &&
+			(swg_y.min - eps <= p_swg.y() && p_swg.y() <= swg_y.max + eps) &&
+			(swg_r.min - eps <= r_swg     && r_swg     <= swg_r.max + eps))
+				&&
+			!( (exc_x.min + eps <= p_swg.x() && p_swg.x() <= exc_x.max - eps) &&
+			(exc_y.min + eps <= p_swg.y() && p_swg.y() <= exc_y.max - eps) );
+    */
 }
 
 bool Capturability::IsInsideSupport(vec2_t cop, float margin){
@@ -204,8 +214,10 @@ void Capturability::Analyze(){
 		for(idx4[2] = 0; idx4[2] < grid->z.num; idx4[2]++) 
 		for(idx4[3] = 0; idx4[3] < grid->r.num; idx4[3]++) {
 			// [x,y] in valid stepping range and z is zero
-			if( IsSteppable( vec2_t(grid->x.val[idx4[0]], grid->y.val[idx4[1]]), grid->r.val[idx4[3]]) )
+			if( IsSteppable( vec2_t(grid->x.val[idx4[0]], grid->y.val[idx4[1]]), grid->r.val[idx4[3]]) ){
+				//DSTR << grid->x.val[idx4[0]] << " " << grid->y.val[idx4[1]] << " " << grid->r.val[idx4[3]] << endl;
 				swg_to_xyzr.push_back(grid->xyzr.ToIndex(idx4));
+			}
 		}
 
 		xyzr_to_swg.resize(grid->xyzr.Num(), -1);
@@ -375,7 +387,7 @@ void Capturability::Load(const string& basename) {
 	LoadArray(basename + "icp_map.bin"     , icp_map     );
 }
 
-void Capturability::GetCaptureBasin(State st, int nstep, CaptureBasin& basin){
+void Capturability::GetCaptureBasin(State st, int nstepMin, int nstepMax, CaptureBasin& basin){
 	basin.clear();
 
 	Index4D swg_idx4 = grid->xyzr.Round(st.swg);
@@ -385,10 +397,8 @@ void Capturability::GetCaptureBasin(State st, int nstep, CaptureBasin& basin){
 
 	pair<vec2_t, vec2_t> icp_range;
 
-	for(int n = 0; n < nmax; n++){
+	for(int n = nstepMin; n <= nstepMax; n++){
 		//printf("n: %d\n", n);
-		if(nstep != -1 && nstep != n)
-			continue;
 		if((int)cap_basin.size() < n+1 || cap_basin[n].empty())
 			continue;
 

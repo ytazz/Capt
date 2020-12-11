@@ -32,12 +32,15 @@ struct CaptureBasin : public std::vector< CaptureState >{
 
 class Capturability {
 public:
-	Grid1D swg_x;  //< steppable region
-	Grid1D swg_y;
-	Grid1D swg_z;
-	Grid1D swg_r;
-	Grid1D exc_x;  //< unsteppable region
-	Grid1D exc_y;
+	real_t swg_near ;
+	real_t swg_far  ;
+	real_t swg_angle;
+	//Grid1D swg_x;  //< steppable region
+	//Grid1D swg_y;
+	//Grid1D swg_z;
+	//Grid1D swg_r;
+	//Grid1D exc_x;  //< unsteppable region
+	//Grid1D exc_y;
 	Grid1D cop_x;  //< cop support region
 	Grid1D cop_y;
 	Grid1D icp_x;  //< cop support region
@@ -69,7 +72,7 @@ public:
 	void  Save(const std::string& basename);
 	void  Load(const std::string& basename);
 
-	void  GetCaptureBasin (State st, int nstep, CaptureBasin& basin);
+	void  GetCaptureBasin (State st, int nstepMin, int nstepMax, CaptureBasin& basin);
 
 	// checks is given state is capturable
 	// if nstep is -1, then all N is checked and capturable N is stored in nstep

@@ -11,12 +11,14 @@ Plot::~Plot() {
 }
 
 void Plot::Read(Scenebuilder::XMLNode* node){
-	node->Get(st.swg[0], ".swg_x");
-	node->Get(st.swg[1], ".swg_y");
-	node->Get(st.swg[2], ".swg_z");
-	node->Get(st.swg[3], ".swg_r");
-	node->Get(st.icp[0], ".icp_x");
-	node->Get(st.icp[1], ".icp_y");
+	node->Get(st.swg[0], ".swg_x"    );
+	node->Get(st.swg[1], ".swg_y"    );
+	node->Get(st.swg[2], ".swg_z"    );
+	node->Get(st.swg[3], ".swg_r"    );
+	node->Get(st.icp[0], ".icp_x"    );
+	node->Get(st.icp[1], ".icp_y"    );
+	node->Get(nmax     , ".nmax"     );
+	node->Get(angle_div, ".angle_div");
 }
 
 void Plot::SetCaptureInput(Input in, int nstep){
@@ -24,7 +26,23 @@ void Plot::SetCaptureInput(Input in, int nstep){
 }
 
 void Plot::PrintLandingRegion(const string& filename){
-	vec2_t vertex[9];
+	vector<vec2_t> vertex;
+
+	real_t dangle = 2.0*cap->swg_angle/(real_t)angle_div;
+	real_t angle  = pi/2.0 - cap->swg_angle;
+	real_t dist   = cap->swg_near;
+	int    i = 0;
+	for( ; i <= angle_div; i++){
+		vertex.push_back(dist*vec2_t(cos(angle), sin(angle)));
+		angle += dangle;
+	}
+	dist = cap->swg_far;
+	for( ; i >= 0; i--){
+		vertex.push_back(dist*vec2_t(cos(angle), sin(angle)));
+		angle -= dangle;
+	}
+	vertex.push_back(vertex.front());
+	/*
 	vertex[0] << cap->swg_x.min, cap->swg_y.min;
 	vertex[1] << cap->exc_x.min, cap->swg_y.min;
 	vertex[2] << cap->exc_x.min, cap->exc_y.max;
@@ -34,12 +52,12 @@ void Plot::PrintLandingRegion(const string& filename){
 	vertex[6] << cap->swg_x.max, cap->swg_y.max;
 	vertex[7] << cap->swg_x.min, cap->swg_y.max;
 	vertex[8] << cap->swg_x.min, cap->swg_y.min;
-	
-	for(int i = 0; i < 9; i++)
+	*/
+	for(int i = 0; i < vertex.size(); i++)
 		vertex[i] = CartesianToGraph(vertex[i]);
 
 	FILE *fp = fopen(filename.c_str(), "w");
-	for(int i = 0; i < 9; i++) {
+	for(int i = 0; i < vertex.size(); i++) {
 		fprintf(fp, "%f %f\n", vertex[i].x(), vertex[i].y() );
 	}
 	fclose(fp);

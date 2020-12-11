@@ -41,8 +41,8 @@ set cbtics scale 0,0.001
 set cblabel "N-step capture point"
 
 # 描画
-plot "data.dat" using ($1):($2):($5+1) with points palette pt 5 ps 0.75 notitle,\
-     "data.dat" using ($3):($4):($5+1) with points palette pt 5 ps 0.75 notitle,\
+plot "data.dat" using ($1):($2):($5+1) with points palette pt 5 ps 0.5 notitle,\
+     "data.dat" using ($3):($4):($5+1) with points palette pt 5 ps 0.5 notitle,\
      "landing.dat" with lines  lw 1 lc "dark-blue" notitle,\
      "sup.dat"     with lines  lw 1 lc "black"     notitle,\
      "swg.dat"     with lines  lt 0 dt 1 lw 2 lc "black" notitle,\

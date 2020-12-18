@@ -1,4 +1,7 @@
-﻿#include "plot.h"
+﻿#include "capturability.h"
+#include "swing.h"
+#include "footstep.h"
+
 #include <iostream>
 #include <sbtimer.h>
 
@@ -21,30 +24,25 @@ real_t        dt;
 real_t        elapsed;
 int           phase;
 
-// capturability
-Swing         *swing;
-Capturability *cap;
-real_t        omega;
-real_t        h;
-real_t        v_max;
-real_t        z_max;
-
-vec3_t        comPos;
-vec3_t        comVel;
-vec3_t        comAcc;
-vec3_t        cop;
-vec3_t        icp;
-vec3_t        force;
-
-int           s_sup;
-vec3_t        supPos;
-real_t        supOri;
-vec3_t        swgPos;
-real_t        swgOri;
-vec3_t        landPos;
-real_t        landOri;
-real_t        duration;
-Footstep      footstep;
+Swing*          swing;
+Capturability*  cap;
+			    
+vec3_t          comPos;
+vec3_t          comVel;
+vec3_t          comAcc;
+vec3_t          cop;
+vec3_t          icp;
+vec3_t          force;
+			    
+int             s_sup;
+vec3_t          supPos;
+real_t          supOri;
+vec3_t          swgPos;
+real_t          swgOri;
+vec3_t          landPos;
+real_t          landOri;
+real_t          duration;
+Footstep        footstep;
 
 Scenebuilder::Timer  timer;
 int cnt;
@@ -68,12 +66,12 @@ void Init(){
     t       = 0.0;
     elapsed = 0.0;
 
-    comPos = vec3_t(0.0f,  0.0f, h   );
-    comVel = vec3_t(0.0f,  0.0f, 0.0f);
-    comAcc = vec3_t(0.0f,  0.0f, 0.0f);
-    cop    = vec3_t(0.0f,  0.0f, 0.0f);
-    icp    = vec3_t(0.0f,  0.0f, 0.0f);
-    force  = vec3_t(0.0f,  0.0f, 0.0f);
+    comPos = vec3_t(0.0f,  0.0f, cap->h);
+    comVel = vec3_t(0.0f,  0.0f, 0.0f  );
+    comAcc = vec3_t(0.0f,  0.0f, 0.0f  );
+    cop    = vec3_t(0.0f,  0.0f, 0.0f  );
+    icp    = vec3_t(0.0f,  0.0f, 0.0f  );
+    force  = vec3_t(0.0f,  0.0f, 0.0f  );
 
 	supPos = vec3_t(0.0f, +0.2f, 0.0f);
 	supOri = 0.0;
@@ -85,14 +83,13 @@ void Init(){
 void Control(){
     switch(phase){
 	case Phase::Init:
-		if(t > 1.0) {
+		if(t > 1.0)
 			phase = Phase::Wait;
-		}
 		break;
 	case Phase::Wait:
-		if(t > 2.0) {
-			real_t initIcpX = footstep[1].icp.x();
-			real_t initIcpY = footstep[1].icp.y();
+		if(t > 2.0){
+			real_t initIcpX = footstep.steps[1].icp.x();
+			real_t initIcpY = footstep.steps[1].icp.y();
 			cop    = vec3_t(initIcpX, initIcpY, 0.0f);
 			icp    = vec3_t(initIcpX, initIcpY, 0.0f);
 			comPos = vec3_t(initIcpX, initIcpY, 0.0f);
@@ -118,14 +115,14 @@ void Control(){
 		//printf("nearest footstep: %d\n", state.footstep.cur);
 		footstep.cur++;
 
-		if(footstep.cur == (int)footstep.size() - 1){
+		if(footstep.cur == (int)footstep.steps.size() - 1){
 			printf("end of footstep reached\n");
 			phase = Phase::Stop;
 			break;
 		}
 
 		// determine next landing position
-		landPos = (footstep[footstep.cur + 1].pos - footstep[footstep.cur].pos) + supPos;
+		landPos = (footstep.steps[footstep.cur + 1].pos - footstep.steps[footstep.cur].pos) + supPos;
 		//input.icp  = (state.footstep[state.footstep.cur + 1].icp - state.footstep[state.footstep.cur].pos) + state.su@;
 		
 		// update swing trajectory and detemine step duration
@@ -144,7 +141,7 @@ void Control(){
 	case Phase::Ssp:
 		cnt++;
 		// do not check too frequently, do not check right before landing
-		if(cnt % 10 == 0 && duration - elapsed > z_max/v_max) {
+		if(cnt % 10 == 0 && swing->IsDescending(elapsed)){
 			// support foot
 			printf("------ SSP (%c) ------\n", s_sup == Capt::Foot::Right ? 'R' : 'L');
 			//printf("elapsed: %f\n", elapsed);
@@ -219,23 +216,20 @@ void Control(){
 	}*/
 	
     // simulation step
-	if(phase == Phase::Ssp || phase == Phase::Dsp)
-    	Step();
+	if(phase == Phase::Ssp || phase == Phase::Dsp){
+    	comPos       += comVel * dt;
+		comPos.z()    = cap->h;
+		comVel       += comAcc * dt;
+		comVel.z()    = 0.0;
+		comAcc        = (1.0/(cap->T*cap->T))*(comPos - cop) + force;
+		comAcc.z()    = 0.0;
+		icp           = comPos + cap->T*comVel;
+		icp.z()       = 0.0;	
+	}
 	
     t       += dt;
     elapsed += dt;
 
-}
-
-void Step(){
-	comPos       += comVel * dt;
-	comPos.z()    = h;
-	comVel       += comAcc * dt;
-	comVel.z()    = 0.0;
-	comAcc        = (omega*omega)*(comPos - cop);
-	comAcc.z()    = 0.0;
-	icp           = comPos + comVel/omega;
-	icp.z()       = 0.0;
 }
 
 int main(int argc, char const *argv[]) {

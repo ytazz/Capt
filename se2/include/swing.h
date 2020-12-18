@@ -25,8 +25,7 @@ public:
 	// t is elapsed time after set() is called
 	void  GetTraj(real_t t, vec3_t& p, real_t& r);
 
-	// swing foot is swinging down or not
-	//bool isSwingDown(float dt);
+	bool IsDescending(real_t t);
 
 	void Read(Scenebuilder::XMLNode* node);
 

@@ -1,5 +1,4 @@
-﻿#ifndef __BASE_H__
-#define __BASE_H__
+﻿#pragma once
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -54,19 +53,4 @@ struct Foot{
 	};
 };
 
-// trajectory decision variables
-struct Step {
-	Foot   s_suf;
-	vec3_t pos;
-	real_t ori;
-	vec3_t cop;
-	vec3_t icp;
-};
-
-struct Footstep : public std::vector<Step>{
-	int cur;  //< current footstep index
-};
-
 } // namespace Capt
-
-#endif // __BASE_H__

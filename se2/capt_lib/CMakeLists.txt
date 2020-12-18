@@ -12,6 +12,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 set(CAPT_HEADERS
   ${PROJECT_SOURCE_DIR}/include/base.h
   ${PROJECT_SOURCE_DIR}/include/capturability.h
+  ${PROJECT_SOURCE_DIR}/include/footstep.h
   ${PROJECT_SOURCE_DIR}/include/grid.h
   ${PROJECT_SOURCE_DIR}/include/input.h
   ${PROJECT_SOURCE_DIR}/include/plot.h
@@ -22,6 +23,7 @@ set(CAPT_HEADERS
 set(CAPT_SOURCES
   ${PROJECT_SOURCE_DIR}/src/base.cpp
   ${PROJECT_SOURCE_DIR}/src/capturability.cpp
+  ${PROJECT_SOURCE_DIR}/src/footstep.cpp
   ${PROJECT_SOURCE_DIR}/src/grid.cpp
   ${PROJECT_SOURCE_DIR}/src/plot.cpp
   ${PROJECT_SOURCE_DIR}/src/swing.cpp

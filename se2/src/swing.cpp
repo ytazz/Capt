@@ -48,6 +48,10 @@ float Swing::GetDuration() {
 	return tau_ascend + std::max(tau_travel, tau_turn) + tau_descend;
 }
 
+bool Swing::IsDescending(real_t t){
+	return t > GetDuration() - tau_descend;
+}
+
 void Swing::GetTraj(real_t t, vec3_t& p, real_t& r) {
 	// ascending
 	if(0 <= t && t < tau_ascend) {

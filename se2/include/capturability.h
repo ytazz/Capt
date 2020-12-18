@@ -61,10 +61,12 @@ public:
 	float  swg_weight;
 	float  icp_weight;
 
-	bool  IsSteppable(vec2_t p_swg, real_t r_swg);
-	bool  IsInsideSupport(vec2_t cop, float margin = 1.0e-5f);
+	bool  IsSteppable         (vec2_t p_swg, real_t r_swg);
+	bool  IsInsideSupport     (vec2_t cop, float margin = 1.0e-5f);
 	void  CalcFeasibleIcpRange(int swg, const CaptureState& csnext, std::pair<vec2_t, vec2_t>& icp_range);
-	Input CalcInput(const State& st, const State& stnext);
+	State CalcNextState       (const State& st, const Input& in    );
+	Input CalcInput           (const State& st, const State& stnext);
+	bool  Check               (const State& st, Input& in, bool& modified);
 
 	void  CalcDurationMap();
 	void  CalcIcpMap();

@@ -12,7 +12,7 @@ Grid1D::Grid1D(){
 }
 
 void Grid1D::Init(){
-	num = Capt::round((max - min)/stp) + 1;
+	num = Capt::Round((max - min)/stp) + 1;
 	val.resize(num);
 	for(int i = 0; i < num; i++)
 		val[i] = min + stp*i;
@@ -27,7 +27,7 @@ void Grid1D::Read(Scenebuilder::XMLNode* node){
 }
 
 int Grid1D::Round(real_t v){
-	return std::min(std::max(0, Capt::round((v - min)/stp)), num-1);
+	return std::min(std::max(0, Capt::Round((v - min)/stp)), num-1);
 }
 
 void Grid1D::IndexRange(real_t fmin, real_t fmax, int& imin, int& imax){

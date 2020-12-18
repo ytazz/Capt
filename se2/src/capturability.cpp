@@ -96,6 +96,32 @@ bool Capturability::IsInsideSupport(vec2_t cop, float margin){
           cop.y() <= cop_y.max + margin );
 }
 
+State Capturability::CalcNextState(const State& st, const Input& in){
+	State stnext;
+
+	vec3_t p_swg (st.swg[0], st.swg[1], st.swg[2]);
+	real_t r_swg  = st.swg[3];
+	vec2_t p_land(in.land[0], in.land[1]);
+	real_t r_land = in.land[2];
+	Eigen::Rotation2D<real_t> R(r_land);
+	
+	swing->Set(p_swg, r_swg, vec3_t(p_land[0], p_land[1], 0.0f), r_land);
+	real_t tau   = swing->GetDuration();
+	real_t alpha = exp(tau/T);
+
+	vec2_t tmp = R.inverse()*p_land;
+	stnext.swg[0] = -tmp[0];
+	stnext.swg[1] =  tmp[1];
+	stnext.swg[2] =  0.0f;
+	stnext.swg[3] =  r_land;
+
+	tmp = R.inverse()*(alpha*(st.icp - in.cop) + in.cop - p_land);
+	stnext.icp[0] =  tmp[0];
+	stnext.icp[1] = -tmp[1];
+	
+	return stnext;
+}
+
 Input Capturability::CalcInput(const State& st, const State& stnext){
 	Input in;
 
@@ -117,8 +143,8 @@ Input Capturability::CalcInput(const State& st, const State& stnext){
 }
 
 void Capturability::CalcFeasibleIcpRange(int swg_id, const CaptureState& csnext, pair<vec2_t, vec2_t>& icp_range){
-  int tau_id = duration_map[swg_to_xyzr.size()*swg_id + csnext.swg_id];
-  icp_range = icp_map[grid->xy.Num()*tau_id + csnext.mu_id];
+	int tau_id = duration_map[swg_to_xyzr.size()*swg_id + csnext.swg_id];
+	icp_range = icp_map[grid->xy.Num()*tau_id + csnext.mu_id];
 }
 
 void Capturability::CalcDurationMap(){
@@ -317,25 +343,27 @@ void Capturability::Analyze(){
 
 template<class T>
 void SaveArray(const string& filename, const vector<T>& arr){
-  FILE* fp = fopen(filename.c_str(), "wb");
-  fwrite(&arr[0], sizeof(T), arr.size(), fp);
-  fclose(fp);
+	FILE* fp = fopen(filename.c_str(), "wb");
+	fwrite(&arr[0], sizeof(T), arr.size(), fp);
+	fclose(fp);
 }
 
 template<class T>
 bool LoadArray(const string& filename, vector<T>& arr){
-  FILE* fp = fopen(filename.c_str(), "rb");
-  if(!fp)
-    return false;
-  fseek(fp, 0, SEEK_END);
-  int sz = ftell(fp);
-  fseek(fp, 0, SEEK_SET);
+	FILE* fp = fopen(filename.c_str(), "rb");
+	if(!fp)
+		return false;
+	
+	fseek(fp, 0, SEEK_END);
+	int sz = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
 
-  int nelem = sz/(sizeof(T));
-  arr.resize(nelem);
-  fread(&arr[0], sizeof(T), arr.size(), fp);
-  fclose(fp);
-  return true;
+	int nelem = sz/(sizeof(T));
+	arr.resize(nelem);
+	fread(&arr[0], sizeof(T), arr.size(), fp);
+	fclose(fp);
+	
+	return true;
 }
 
 void Capturability::Save(const string& basename){
@@ -483,6 +511,66 @@ bool Capturability::FindNearest(const State& st, const State& stnext, CaptureSta
 	printf("d_min: %f\n", d_min);
 
 	return d_min != inf;
+}
+
+bool Capturability::Check(const State& st, Input& in, bool& modified){
+	State stnext = CalcNextState(st, in);
+
+	int next_swg_id = xyzr_to_swg[grid->xyzr.ToIndex(grid->xyzr.Round(stnext.swg))];
+	int next_icp_id = grid->xy.ToIndex(grid->xy.Round(stnext.icp));
+	printf("next state id: %d,%d\n", next_swg_id, next_icp_id);
+	
+	if(next_swg_id == -1){
+		printf("next swg is invalid\n");
+		return false;
+	}
+
+	// check if next state is in capture basin
+	int nstep = -1;
+	if(IsCapturable(next_swg_id, next_icp_id, nstep)){
+		printf("next state is %d-step capturable\n", nstep);
+		modified = false;
+		return true;
+	}
+	else{
+		printf("next state is not capturable\n");
+	}
+	/*
+	bool next_ok;
+	bool cop_ok;
+	// calculate cop
+	Input in  = CalcInput(st, stnext);
+	// check if cop is inside support region
+	printf("cop(local): %f,%f\n", in.cop.x(), in.cop.y());
+	if( isInsideSupport(in.cop, 0.01) ){
+		printf("cop is inside support\n");
+		cop_ok = true;
+	}
+	else{
+		printf("cop is outside support\n");
+		cop_ok = false;
+	}
+	if(next_ok && cop_ok){
+		input.cop = state.suf + vec3_t(in.cop.x(), sign*in.cop.y(), 0.0f);
+		return true;
+	}
+	*/
+	
+	// find modified next state that can be transitioned from current state and is capturable
+	CaptureState cs;
+	if(!FindNearest(st, stnext, cs)){
+		printf("no capturable state found\n");
+		return false;
+	}
+	printf("modified next state: %d,%d  %d-step capturable transition\n", cs.swg_id, cs.icp_id, cs.nstep);
+
+	State stmod;
+	stmod.swg = grid->xyzr[swg_to_xyzr[cs.swg_id]];
+	stmod.icp = grid->xy  [cs.icp_id];
+	in = CalcInput(st, stmod);
+	
+	modified = true;
+	return true;
 }
 
 } // namespace Capt

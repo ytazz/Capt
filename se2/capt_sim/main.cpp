@@ -24,8 +24,9 @@ real_t        dt;
 real_t        elapsed;
 int           phase;
 
-Swing*          swing;
-Capturability*  cap;
+Swing           swing;
+Capturability   cap;
+Footstep        footstep;
 			    
 vec3_t          comPos;
 vec3_t          comVel;
@@ -42,40 +43,40 @@ real_t          swgOri;
 vec3_t          landPos;
 real_t          landOri;
 real_t          duration;
-Footstep        footstep;
 
 Scenebuilder::Timer  timer;
 int cnt;
 
-FILE *fpTime;
-
 void Init(){
+	Scenebuilder::XML xmlCapt;
+	xmlCapt.Load("conf/capt.xml");
+
+	Scenebuilder::XML xmlSim;
+	xmlSim.Load("conf/sim.xml");
+
 	dt = 0.001;
 
-    swing = new Capt::Swing();
-    cap   = new Capt::Capturability();
+	cap     .Read(xmlCapt.GetRootNode());
+	swing   .Read(xmlCapt.GetRootNode()->GetNode("swing"   ));
+	footstep.Read(xmlSim .GetRootNode()->GetNode("footstep"));
 
-    cap->step_weight = 0.0f;
-    cap->swg_weight  = 1.0f;
-    cap->icp_weight  = 10.0f;
-
-    cap->Load("data/");
+	cap.Load("data/");
     printf("load done\n");
     
     phase   = Phase::Init;
     t       = 0.0;
     elapsed = 0.0;
 
-    comPos = vec3_t(0.0f,  0.0f, cap->h);
-    comVel = vec3_t(0.0f,  0.0f, 0.0f  );
-    comAcc = vec3_t(0.0f,  0.0f, 0.0f  );
-    cop    = vec3_t(0.0f,  0.0f, 0.0f  );
-    icp    = vec3_t(0.0f,  0.0f, 0.0f  );
-    force  = vec3_t(0.0f,  0.0f, 0.0f  );
+    comPos = vec3_t(0.0, 0.0, cap.h);
+    comVel = vec3_t(0.0, 0.0, 0.0  );
+    comAcc = vec3_t(0.0, 0.0, 0.0  );
+    cop    = vec3_t(0.0, 0.0, 0.0  );
+    icp    = vec3_t(0.0, 0.0, 0.0  );
+    force  = vec3_t(0.0, 0.0, 0.0  );
 
-	supPos = vec3_t(0.0f, +0.2f, 0.0f);
+	supPos = vec3_t(0.0,  0.2, 0.0);
 	supOri = 0.0;
-    swgPos = vec3_t(0.0f, -0.2f, 0.0f);
+    swgPos = vec3_t(0.0, -0.2, 0.0);
 	swgOri = 0.0;
 
 }
@@ -88,11 +89,11 @@ void Control(){
 		break;
 	case Phase::Wait:
 		if(t > 2.0){
-			real_t initIcpX = footstep.steps[1].icp.x();
-			real_t initIcpY = footstep.steps[1].icp.y();
-			cop    = vec3_t(initIcpX, initIcpY, 0.0f);
-			icp    = vec3_t(initIcpX, initIcpY, 0.0f);
-			comPos = vec3_t(initIcpX, initIcpY, 0.0f);
+			real_t initIcpX = footstep.steps[1].icp.x;
+			real_t initIcpY = footstep.steps[1].icp.y;
+			cop    = vec3_t(initIcpX, initIcpY, 0.0);
+			icp    = vec3_t(initIcpX, initIcpY, 0.0);
+			comPos = vec3_t(initIcpX, initIcpY, 0.0);
 			phase  = Phase::Dsp;
 			s_sup  = Capt::Foot::Left;
 		}
@@ -126,10 +127,10 @@ void Control(){
 		//input.icp  = (state.footstep[state.footstep.cur + 1].icp - state.footstep[state.footstep.cur].pos) + state.su@;
 		
 		// update swing trajectory and detemine step duration
-		swing->Set(swgPos, swgOri, landPos, landOri);
-		duration = swing->GetDuration();
-		printf("swg : %f %f %f\n", swgPos.x(), swgPos.y(), swgPos.z());
-		printf("land: %f %f\n"   , landPos.x(), landPos.y());
+		swing.Set(swgPos, swgOri, landPos, landOri);
+		duration = swing.GetDuration();
+		printf("swg : %f %f %f\n", swgPos .x, swgPos .y, swgPos.z);
+		printf("land: %f %f\n"   , landPos.x, landPos.y);
 		//printf("icp : %f %f\n"   , input.icp.x(), input.icp.y());
 		printf("duration: %f\n"  , duration);
 
@@ -141,7 +142,7 @@ void Control(){
 	case Phase::Ssp:
 		cnt++;
 		// do not check too frequently, do not check right before landing
-		if(cnt % 10 == 0 && swing->IsDescending(elapsed)){
+		if(cnt % 10 == 0 && swing.IsDescending(elapsed)){
 			// support foot
 			printf("------ SSP (%c) ------\n", s_sup == Capt::Foot::Right ? 'R' : 'L');
 			//printf("elapsed: %f\n", elapsed);
@@ -156,7 +157,7 @@ void Control(){
 			bool modified;
 			State st;
 			Input in;
-			bool ret = cap->Check(st, in, modified);
+			bool ret = cap.Check(st, in, modified);
 			if(ret && !modified){
 				printf("monitor: success\n");
 			}
@@ -167,20 +168,19 @@ void Control(){
 				vec3_t pland(in.land[0], in.land[1], in.land[2]);
 				real_t rland = in.land[3];
 
-				swing->Set(pswg, rswg, pland, rland);
-				duration = swing->GetDuration();
+				swing.Set(pswg, rswg, pland, rland);
+				duration = swing.GetDuration();
 
-				printf("land: %f,%f  duration: %f\n", in.land.x(), in.land.y(), duration);
+				printf("land: %f,%f  duration: %f\n", in.land.x, in.land.y, duration);
 				elapsed = 0.0f;
 			}
 			if(!ret){
 				printf("monitor: fail\n");
 			}
-			fprintf(fpTime, "%lf, %lf\n", t, timer.CountUS());
 		}
 
 		// update swing foot position
-		swing->GetTraj(elapsed, swgPos, swgOri);
+		swing.GetTraj(elapsed, swgPos, swgOri);
 		//printf("swg: %f,%f,%f\n", state.swg.x(), state.swg.y(), state.swg.z());
 
 		// switch to DSP if step duration has elapsed
@@ -200,10 +200,10 @@ void Control(){
 		// simulation 1
 		//force.x() = -5000;
 		// simulation 2
-		force.y() = 5000;
+		force.y = 5000;
 	}else{
-		force.x() = 0;
-		force.y() = 0;
+		force.x = 0;
+		force.y = 0;
 	}
 	/*if(4.5f <= t && t <= 5.0f) {
 	// simulation 3
@@ -217,14 +217,14 @@ void Control(){
 	
     // simulation step
 	if(phase == Phase::Ssp || phase == Phase::Dsp){
-    	comPos       += comVel * dt;
-		comPos.z()    = cap->h;
-		comVel       += comAcc * dt;
-		comVel.z()    = 0.0;
-		comAcc        = (1.0/(cap->T*cap->T))*(comPos - cop) + force;
-		comAcc.z()    = 0.0;
-		icp           = comPos + cap->T*comVel;
-		icp.z()       = 0.0;	
+    	comPos   += comVel * dt;
+		comPos.z  = cap.h;
+		comVel   += comAcc * dt;
+		comVel.z  = 0.0;
+		comAcc    = (1.0/(cap.T*cap.T))*(comPos - cop) + force;
+		comAcc.z  = 0.0;
+		icp       = comPos + cap.T*comVel;
+		icp.z     = 0.0;	
 	}
 	
     t       += dt;

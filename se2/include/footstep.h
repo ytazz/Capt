@@ -15,12 +15,15 @@ struct Footstep{
 		real_t ori;
 		vec3_t cop;
 		vec3_t icp;
+
+		void Read(Scenebuilder::XMLNode* node);
 	};
 
 	std::vector<Step> steps;
 
 	int cur;  //< current footstep index
 
+	void Read(Scenebuilder::XMLNode* node);
 	void Calc(Capturability* cap, Swing* swing);
 
 };

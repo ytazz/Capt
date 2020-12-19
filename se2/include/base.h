@@ -1,20 +1,12 @@
 ﻿#pragma once
 
-#include <Eigen/Core>
-#include <Eigen/Geometry>
 #include <vector>
 #include <cmath>
 
 #include <sbxml.h>
+using namespace Scenebuilder;
 
 namespace Capt {
-
-// Eigen typedefs
-typedef float           real_t;
-typedef Eigen::Vector2i vec2i_t;
-typedef Eigen::Vector2f vec2_t;
-typedef Eigen::Vector3f vec3_t;
-typedef Eigen::Vector4f vec4_t;
 
 //#define EPSILON 0.001
 const real_t pi = 3.14159265358979f;

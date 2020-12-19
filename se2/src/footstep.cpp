@@ -4,6 +4,21 @@
 
 namespace Capt {
 
+void Footstep::Step::Read(Scenebuilder::XMLNode* node){
+	node->Get(pos, ".pos");
+	node->Get(ori, ".ori");
+}
+
+void Footstep::Read(Scenebuilder::XMLNode* node){
+	for(int i = 0; ; i++) try{
+		Scenebuilder::XMLNode* stepNode = node->GetNode("step", i);
+		Step step;
+		step.Read(stepNode);
+		steps.push_back(step);
+	}
+	catch(Scenebuilder::Exception&){ break; }
+}
+
 void Footstep::Calc(Capturability* cap, Swing* swing){
 	int i = (int)steps.size() - 1;
 

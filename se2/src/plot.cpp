@@ -58,7 +58,7 @@ void Plot::PrintLandingRegion(const string& filename){
 
 	FILE *fp = fopen(filename.c_str(), "w");
 	for(int i = 0; i < vertex.size(); i++) {
-		fprintf(fp, "%f %f\n", vertex[i].x(), vertex[i].y() );
+		fprintf(fp, "%f %f\n", vertex[i].x, vertex[i].y);
 	}
 	fclose(fp);
 }
@@ -66,7 +66,7 @@ void Plot::PrintLandingRegion(const string& filename){
 void Plot::PrintIcp(const string& filename, const vec2_t& icp){
 	vec2_t point = CartesianToGraph(icp);
 	FILE  *fp    = fopen(filename.c_str(), "w");
-	fprintf(fp, "%f %f\n", point.x(), point.y() );
+	fprintf(fp, "%f %f\n", point.x, point.y);
 	fclose(fp);
 }
 
@@ -81,8 +81,8 @@ void Plot::PrintFoot(const string& filename, const vec4_t& pose){
 	fp = fopen(filename.c_str(), "w");
 	vec2_t point;
 	for (size_t i = 0; i <= 4; i++) {
-		point = CartesianToGraph(vec2_t(pose[0], pose[1]) + Eigen::Rotation2D<real_t>(pose[3])*pt[i%4]);
-		fprintf(fp, "%f %f\n", point.x(), point.y());
+		point = CartesianToGraph(vec2_t(pose[0], pose[1]) + mat2_t::Rot(pose[3])*pt[i%4]);
+		fprintf(fp, "%f %f\n", point.x, point.y);
 	}
 	fclose(fp);
 }
@@ -98,16 +98,16 @@ void Plot::Print(const string& basename){
 	fp = fopen((basename + "data.dat").c_str(), "w");
 
 	for(int i = 0; i < (int)cap_input.size(); i++){
-		vec2_t cop  = CartesianToGraph(cap_input[i].first.cop .x(), cap_input[i].first.cop .y());
-		vec2_t land = CartesianToGraph(cap_input[i].first.land.x(), cap_input[i].first.land.y());
-		fprintf(fp, "%f %f %f %f %d\n", cop.x(), cop.y(), land.x(), land.y(), cap_input[i].second);
+		vec2_t cop  = CartesianToGraph(cap_input[i].first.cop .x, cap_input[i].first.cop .y);
+		vec2_t land = CartesianToGraph(cap_input[i].first.land.x, cap_input[i].first.land.y);
+		fprintf(fp, "%f %f %f %f %d\n", cop.x, cop.y, land.x, land.y, cap_input[i].second);
 	}
 
 	fclose(fp);
 }
 
 vec2_t Plot::CartesianToGraph(vec2_t point){
-  return vec2_t(-point.y(), point.x());
+  return vec2_t(-point.y, point.x);
 }
 
 vec2_t Plot::CartesianToGraph(float x, float y){

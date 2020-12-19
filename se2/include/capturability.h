@@ -41,7 +41,7 @@ public:
 	Grid1D icp_x;  //< cop support region
 	Grid1D icp_y;
 
-	float g, h, T;
+	real_t g, h, T;
  
 	Grid*     grid;
 	Swing*    swing;
@@ -52,12 +52,12 @@ public:
 	std::vector< int >                        swg_to_xyzr;   //< array of valid swg_id in [x,y,z,r]
 	std::vector< int >                        xyzr_to_swg;   //< [x,y,z,r] -> index to swg_id_valid or -1
 
-	float  step_weight;
-	float  swg_weight;
-	float  icp_weight;
+	real_t step_weight;
+	real_t swg_weight;
+	real_t icp_weight;
 
 	bool  IsSteppable         (vec2_t p_swg, real_t r_swg);
-	bool  IsInsideSupport     (vec2_t cop, float margin = 1.0e-5f);
+	bool  IsInsideSupport     (vec2_t cop, real_t margin = 1.0e-5);
 	void  CalcFeasibleIcpRange(int swg, const CaptureState& csnext, std::pair<vec2_t, vec2_t>& icp_range);
 	State CalcNextState       (const State& st, const Input& in    );
 	Input CalcInput           (const State& st, const State& stnext);

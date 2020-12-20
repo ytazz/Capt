@@ -10,13 +10,19 @@ class Swing;
 // trajectory decision variables
 struct Footstep{
 	struct Step {
-		Foot   s_suf;
-		vec3_t pos;
-		real_t ori;
-		vec3_t cop;
-		vec3_t icp;
+		real_t  stride;
+		real_t  spacing;
+		real_t  turn;
+		
+		int     side;
+		vec3_t  footPos[2];
+		real_t  footOri[2];
+		vec3_t  cop;
+		vec3_t  icp;
+		real_t  duration;
 
-		void Read(Scenebuilder::XMLNode* node);
+		void Read (Scenebuilder::XMLNode* node);
+		void Print();
 	};
 
 	std::vector<Step> steps;

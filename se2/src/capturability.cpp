@@ -540,26 +540,6 @@ bool Capturability::Check(const State& st, Input& in, bool& modified){
 	else{
 		printf("next state is not capturable\n");
 	}
-	/*
-	bool next_ok;
-	bool cop_ok;
-	// calculate cop
-	Input in  = CalcInput(st, stnext);
-	// check if cop is inside support region
-	printf("cop(local): %f,%f\n", in.cop.x(), in.cop.y());
-	if( isInsideSupport(in.cop, 0.01) ){
-		printf("cop is inside support\n");
-		cop_ok = true;
-	}
-	else{
-		printf("cop is outside support\n");
-		cop_ok = false;
-	}
-	if(next_ok && cop_ok){
-		input.cop = state.suf + vec3_t(in.cop.x(), sign*in.cop.y(), 0.0);
-		return true;
-	}
-	*/
 	
 	// find modified next state that can be transitioned from current state and is capturable
 	CaptureState cs;

@@ -2,10 +2,10 @@
 
 <sim>
   <footstep>
-    <step/>
-    <step/>
-    <step/>
-    <step/>
-    <step/>
+    <step stride="0.0" spacing="0.2" turn="0.0"/>
+    <step stride="0.3" spacing="0.2" turn="0.0"/>
+    <step stride="0.3" spacing="0.2" turn="0.0"/>
+    <step stride="0.0" spacing="0.2" turn="0.0"/>
+    <step stride="0.0" spacing="0.2" turn="0.0"/>
   </footstep>
 </sim>

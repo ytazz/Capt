@@ -17,9 +17,9 @@ struct Phase{
 	};
 };
 
-real_t        t;
 real_t        dt;
-real_t        elapsed;
+real_t        t;
+real_t        tphase;
 int           phase;
 
 Swing           swing;
@@ -32,8 +32,12 @@ vec3_t          comAcc;
 vec3_t          cop;
 vec3_t          icp;
 vec3_t          force;
-
+bool            modified;
+bool            succeeded;
+			
 Footstep::Step  steps[2];
+
+FILE*           file;
 
 //int             s_sup;
 //vec3_t          supPos;
@@ -66,11 +70,11 @@ void Init(){
 
 	// generate footstepa
 	footstep.Calc(&cap, &swing);
-    steps[0] = footstep.steps[0];
-    steps[1] = footstep.steps[1];
+	footstep.cur = 0;
+    steps[1] = footstep.steps[0];
     
-    t       = 0.0;
-    elapsed = 0.0;
+    t      = 0.0;
+    tphase = 0.0;
 
     comPos = vec3_t(steps[1].icp.x, steps[1].icp.y, cap.h);
 	comVel = vec3_t(0.0, 0.0, 0.0  );
@@ -79,10 +83,23 @@ void Init(){
 	icp    = vec3_t(steps[1].icp.x, steps[1].icp.y, 0.0);
 	force  = vec3_t(0.0, 0.0, 0.0  );
 
+	file = fopen("data/log.csv", "w");
+	fprintf(file, 
+		"count, time, "
+		"com_pos_x, com_pos_y, com_pos_z, "
+		"cop_x, cop_y, cop_z, "
+		"icp_x, icp_y, icp_z, "
+		"foot0_x, foot0_y, foot0_z, "
+		"foot1_x, foot1_y, foot1_z, "
+		"succeeded, modified\n"
+		);
+
 	phase  = Phase::Dsp;
 }
 
 void Control(){
+	printf("control: t %f\n", t);
+
 	if(phase == Phase::Dsp){
 		// support foot exchange
 		steps[0] = steps[1];
@@ -104,7 +121,7 @@ void Control(){
 			steps[1].footPos[sup] = steps[0].footPos[sup];
 			steps[1].footOri[sup] = steps[0].footOri[sup];
 			
-			mat2_t R = mat2_t::Rot(steps[1].footOri[sup] - st1.footOri[sup]);
+			mat3_t R = mat3_t::Rot(steps[1].footOri[sup] - st1.footOri[sup], 'z');
 			steps[1].footPos[swg] = R*(st1.footPos[swg] - st1.footPos[sup]) + steps[1].footPos[sup];
 			steps[1].footOri[swg] =   (st1.footOri[swg] - st1.footOri[sup]) + steps[1].footOri[sup];
 			
@@ -120,9 +137,9 @@ void Control(){
 			steps[0].Print();
 			steps[1].Print();
 			
-			phase   = Phase::Ssp;
-			elapsed = 0.0f;
-			cnt     = 0;
+			phase  = Phase::Ssp;
+			tphase = 0.0;
+			cnt    = 0;
 		}
 	}
 	if(phase == Phase::Ssp){
@@ -132,7 +149,7 @@ void Control(){
 		int swg = !steps[0].side;
 		
 		// do not check too frequently, do not check right before landing
-		if(cnt % 10 == 0 && swing.IsDescending(elapsed)){
+		if(cnt % 10 == 0 && swing.IsDescending(tphase)){
 			timer.CountUS();
 
 			// convert state and input to support-foot local coordinate
@@ -147,18 +164,17 @@ void Control(){
 			vec3_t cop   = S*(Rsup.trans()*(steps[0].cop          - steps[0].footPos[sup]));
 			State st;
 			Input in;
-			bool modified;
-
+			
 			st.swg  = vec4_t(pswg [0], pswg [1], pswg[2], rswg);
 			st.icp  = vec2_t(icp  [0], icp  [1]);
 			in.cop  = vec2_t(cop  [0], cop  [1]);
 			in.land = vec3_t(pland[0], pland[1], rland);
 
-			bool ret = cap.Check(st, in, modified);
-			if(ret && !modified){
+			succeeded = cap.Check(st, in, modified);
+			if(succeeded && !modified){
 				printf("monitor: success\n");
 			}
-			if(ret && modified){
+			if(succeeded && modified){
 				printf("monitor: modified\n");
 				// convert back to global coordinate
 				pswg  = vec3_t(st.swg[0], st.swg[1], st.swg[2]);
@@ -175,20 +191,19 @@ void Control(){
 				steps[0].duration = swing.GetDuration();
 
 				printf("land: %f,%f  duration: %f\n", in.land.x, in.land.y, steps[0].duration);
-				elapsed = 0.0f;
 			}
-			if(!ret){
+			if(!succeeded){
 				printf("monitor: fail\n");
 			}
 		}
 
 		// update swing foot position
-		swing.GetTraj(elapsed, steps[0].footPos[swg], steps[0].footOri[swg]);
+		swing.GetTraj(tphase, steps[0].footPos[swg], steps[0].footOri[swg]);
 
 		//printf("swg: %f,%f,%f\n", state.swg.x(), state.swg.y(), state.swg.z());
 
 		// switch to DSP if step duration has elapsed
-		if(elapsed > steps[0].duration)
+		if(tphase >= steps[0].duration)
 			phase = Phase::Dsp;
 
     }
@@ -224,18 +239,37 @@ void Control(){
 		icp       = comPos + cap.T*comVel;
 		icp.z     = 0.0;	
 	}
+
+	fprintf(file, 
+		"%d, %f, "
+		"%f, %f, %f, "
+		"%f, %f, %f, "
+		"%f, %f, %f, "
+		"%f, %f, %f, "
+		"%f, %f, %f, "
+		"%d, %d\n",
+		cnt, t,
+		comPos.x, comPos.y, comPos.z,
+		cop.x, cop.y, cop.z,
+		icp.x, icp.y, icp.z,
+		steps[0].footPos[0].x, steps[0].footPos[0].x, steps[0].footPos[0].x, 
+		steps[0].footPos[1].x, steps[0].footPos[1].x, steps[0].footPos[1].x,
+		(int)succeeded, (int)modified
+		);
 	
-    t       += dt;
-    elapsed += dt;
+    t      += dt;
+    tphase += dt;
 
 }
 
 int main(int argc, char const *argv[]) {
 	Init();
 
-	while(true){
+	while(phase != Phase::Stop){
 		Control();
 	}
+	
+	fclose(file);
 
 	return 0;
 }

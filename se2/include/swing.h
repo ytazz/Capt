@@ -10,7 +10,7 @@ public:
 	real_t  r_swg, r_land;
 	real_t  dist, dist_x, dist_y;
 	real_t  turn;
-	real_t  tau_ascend, tau_travel, tau_turn, tau_descend;
+	real_t  tau_ascend, tau_travel, tau_descend;
 	real_t  v_const, w_const, z_max;
 
 public:

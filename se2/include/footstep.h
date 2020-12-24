@@ -20,9 +20,12 @@ struct Footstep{
 		vec3_t  cop;
 		vec3_t  icp;
 		real_t  duration;
+		real_t  telapsed;
 
 		void Read (Scenebuilder::XMLNode* node);
 		void Print();
+
+		Step();
 	};
 
 	std::vector<Step> steps;

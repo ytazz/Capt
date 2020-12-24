@@ -39,13 +39,12 @@ void Swing::Set(vec3_t _p_swg, real_t _r_swg, vec3_t _p_land, real_t _r_land){
 	turn = WrapRadian(r_land - r_swg);
   
 	tau_ascend  = (z_max - p_swg.z)/v_const;
-	tau_travel  = dist/v_const;
-	tau_turn    = std::abs(turn)/w_const;
+	tau_travel  = std::max( dist/v_const, std::abs(turn)/w_const );
 	tau_descend = z_max/v_const;
 }
 
 real_t Swing::GetDuration() {
-	return tau_ascend + std::max(tau_travel, tau_turn) + tau_descend;
+	return tau_ascend + tau_travel + tau_descend;
 }
 
 bool Swing::IsDescending(real_t t){
@@ -62,12 +61,12 @@ void Swing::GetTraj(real_t t, vec3_t& p, real_t& r) {
 		r = r_swg;
 	}
 	// traveling to landing position
-	if(tau_ascend <= t && t < tau_ascend + std::max(tau_travel, tau_turn)) {
-		p.x = p_swg.x + v_const * (dist_x/dist)*(t - tau_ascend);
-		p.y = p_swg.y + v_const * (dist_y/dist)*(t - tau_ascend);
+	if(tau_ascend <= t && t < tau_ascend + tau_travel) {
+		p.x = p_swg.x + dist_x*(t - tau_ascend)/tau_travel;
+		p.y = p_swg.y + dist_y*(t - tau_ascend)/tau_travel;
 		p.z = z_max;
 
-		r = r_swg + w_const * (t - tau_ascend);
+		r = r_swg + turn * (t - tau_ascend)/tau_travel;
 	}
 	// descending
 	if(tau_ascend + tau_travel <= t && t < tau_ascend + tau_travel + tau_descend) {

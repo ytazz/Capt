@@ -1,5 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.0)
 
+find_package(GLEW)
 find_package(EXPAT REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Springhead)
@@ -35,6 +36,7 @@ ${CAPT_HEADERS}
 )
 
 target_link_libraries(capt_lib ${EXPAT_LIBRARIES})
+
 target_link_libraries(capt_lib Springhead::Springhead)
 target_link_libraries(capt_lib Scenebuilder)
 

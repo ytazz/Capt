@@ -193,6 +193,13 @@ void Control(){
 		if(steps[0].duration - steps[0].telapsed > 0.001){
 			real_t alpha = exp((steps[0].duration - steps[0].telapsed)/cap.T);
 			steps[0].cop = (steps[1].icp - alpha*steps[0].icp)/(1.0 - alpha);
+
+			// limit cop to support region
+			mat3_t Rsup      = mat3_t::Rot(steps[0].footOri[sup], 'z');
+			vec3_t cop_local = Rsup.trans()*(steps[0].cop - steps[0].footPos[sup]);
+			cop_local.x      = std::min(std::max(cap.cop_x.min, cop_local.x), cap.cop_x.max);
+			cop_local.y      = std::min(std::max(cap.cop_y.min, cop_local.y), cap.cop_y.max);
+			steps[0].cop     = Rsup*cop_local + steps[0].footPos[sup];
 		}
 
 	    // simulation step
@@ -215,15 +222,8 @@ void Control(){
 		}
     }
 
-	if(4.5 <= t && t <= 4.51) {
-		// simulation 1
-		//force.x() = -5000;
-		// simulation 2
-		force.y = 5000;
-	}
-	else{
-		force.x = 0;
-		force.y = 0;
+	if(1.5 <= t && t <= 1.5 + dt) {
+		comVel.y += 0.2;	
 	}
 	/*if(4.5f <= t && t <= 5.0f) {
 	// simulation 3

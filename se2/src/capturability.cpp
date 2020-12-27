@@ -518,7 +518,7 @@ bool Capturability::FindNearest(const State& st, const State& stnext, CaptureSta
 	return d_min != inf;
 }
 
-bool Capturability::Check(const State& st, Input& in, bool& modified){
+bool Capturability::Check(const State& st, Input& in, State& st_mod, bool& modified){
 	State stnext = CalcNextState(st, in);
 
 	int next_swg_id = xyzr_to_swg[grid->xyzr.ToIndex(grid->xyzr.Round(stnext.swg))];
@@ -549,10 +549,9 @@ bool Capturability::Check(const State& st, Input& in, bool& modified){
 	}
 	printf("modified next state: %d,%d  %d-step capturable transition\n", cs.swg_id, cs.icp_id, cs.nstep);
 
-	State stmod;
-	stmod.swg = grid->xyzr[swg_to_xyzr[cs.swg_id]];
-	stmod.icp = grid->xy  [cs.icp_id];
-	in = CalcInput(st, stmod);
+	st_mod.swg = grid->xyzr[swg_to_xyzr[cs.swg_id]];
+	st_mod.icp = grid->xy  [cs.icp_id];
+	in = CalcInput(st, st_mod);
 	
 	modified = true;
 	return true;

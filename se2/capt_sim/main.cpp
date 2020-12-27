@@ -145,7 +145,7 @@ void Control(){
 			real_t rland =            sign*(steps[1].footOri[swg] - steps[0].footOri[sup]);
 			vec3_t icp   = S*(Rsup.trans()*(steps[0].icp          - steps[0].footPos[sup]));
 			vec3_t cop   = S*(Rsup.trans()*(steps[0].cop          - steps[0].footPos[sup]));
-			State st;
+			State st, st_mod;
 			Input in, in_mod;
 			
 			st.swg  = vec4_t(pswg [0], pswg [1], pswg[2], rswg);
@@ -154,7 +154,7 @@ void Control(){
 			in.land = vec3_t(pland[0], pland[1], rland);
 			in_mod  = in;
 
-			succeeded = cap.Check(st, in_mod, modified);
+			succeeded = cap.Check(st, in_mod, st_mod, modified);
 			if(succeeded && !modified){
 				printf("monitor: success\n");
 			}
@@ -167,6 +167,8 @@ void Control(){
 
 				steps[1].footPos[swg] = Rsup*S*pland + steps[0].footPos[sup];
 				steps[1].footOri[swg] =   sign*rland + steps[0].footOri[sup];
+
+				steps[1].icp = Rsup*S*vec3_t(st_mod.icp[0], st_mod.icp[1], 0.0) + steps[0].footPos[sup];
 
 				swing.Set(
 					steps[0].footPos[swg], steps[0].footOri[swg],

@@ -4,6 +4,8 @@
 
 namespace Capt {
 
+const real_t eps = 1.0e-10;
+
 Footstep::Step::Step(){
 	stride  = 0.0;
 	spacing = 0.0;
@@ -59,12 +61,25 @@ void Footstep::Calc(Capturability* cap, Swing* swing){
 		int sup =  steps[i].side;
 		int swg = !steps[i].side;
 		steps[i+1].footPos[sup] = steps[i].footPos[sup];
-		steps[i+1].footPos[swg] = vec3_t(
-			steps[i].footPos[sup].x + steps[i].stride,
-			steps[i].footPos[sup].y + (steps[i].side == 0 ? 1.0 : -1.0)*steps[i].spacing,
-			0.0
-		);
 		steps[i+1].footOri[sup] = steps[i].footOri[sup];
+		
+		mat3_t R = mat3_t::Rot(steps[i].footOri[sup], 'z');
+		vec3_t dp;
+		real_t theta = steps[i].turn;
+		real_t l = steps[i].stride;
+		real_t w = (steps[i].side == 0 ? 1.0 : -1.0)*steps[i].spacing;
+			
+		if(std::abs(theta) < eps){
+			dp = vec3_t(l, w, 0.0);
+		}
+		else{
+			real_t r = l/theta;
+			dp = vec3_t(
+				(r - w/2.0)*sin(theta),
+				(r + w/2.0) - (r - w/2.0)*cos(theta),
+				0.0);
+		}
+		steps[i+1].footPos[swg] = R*dp + steps[i].footPos[sup];
 		steps[i+1].footOri[swg] = steps[i].footOri[sup] + steps[i].turn;
 	}
 

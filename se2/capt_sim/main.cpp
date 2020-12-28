@@ -225,7 +225,7 @@ void Control(){
     }
 
 	if(1.5 <= t && t <= 1.5 + dt) {
-		comVel.y += 0.2;	
+		comVel.y += 0.0;	
 	}
 	/*if(4.5f <= t && t <= 5.0f) {
 	// simulation 3

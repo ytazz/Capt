@@ -17,18 +17,26 @@ struct Phase{
 	};
 };
 
+struct Impulse{
+	real_t  time;
+	vec3_t  deltaVel;
+};
+
 real_t        dt;
 real_t        t;
 int           phase;
 
-Swing           swing;
-Capturability   cap;
-Footstep        footstep;
+Swing            swing;
+Capturability    cap;
+Footstep         footstep;
+
+vector<Impulse>  disturbance;
 			    
 vec3_t          comPos;
 vec3_t          comVel;
 vec3_t          comAcc;
 vec3_t          force;
+int             nstep;
 bool            modified;
 bool            succeeded;
 			
@@ -51,6 +59,16 @@ void Init(){
 	cap     .Read(xmlCapt.GetRootNode());
 	swing   .Read(xmlCapt.GetRootNode()->GetNode("swing"   ));
 	footstep.Read(xmlSim .GetRootNode()->GetNode("footstep"));
+
+	XMLNode* distNode = xmlSim.GetRootNode()->GetNode("disturbance");
+	for(int i = 0; ; i++)try{
+		XMLNode* imNode = distNode->GetNode("impulse", i);
+		Impulse im;
+		imNode->Get(im.time    , ".time"     );
+		imNode->Get(im.deltaVel, ".delta_vel");
+		disturbance.push_back(im);
+	}
+	catch(Exception&){ break; }
 
 	// load capturability database
 	cap.Load("data/");
@@ -76,7 +94,7 @@ void Init(){
 		"icp_x, icp_y, icp_z, "
 		"foot0_x, foot0_y, foot0_z, "
 		"foot1_x, foot1_y, foot1_z, "
-		"succeeded, modified\n"
+		"nstep, succeeded, modified\n"
 		);
 
 	phase  = Phase::Dsp;
@@ -140,9 +158,9 @@ void Control(){
 			mat3_t S     = mat3_t::Diag(1.0, sign, 1.0);
 			mat3_t Rsup  = mat3_t::Rot(steps[0].footOri[sup], 'z');
 			vec3_t pswg  = S*(Rsup.trans()*(steps[0].footPos[swg] - steps[0].footPos[sup]));
-			real_t rswg  =            sign*(steps[0].footOri[swg] - steps[0].footOri[sup]);
+			real_t rswg  = WrapRadian(sign*(steps[0].footOri[swg] - steps[0].footOri[sup]));
 			vec3_t pland = S*(Rsup.trans()*(steps[1].footPos[swg] - steps[0].footPos[sup]));
-			real_t rland =            sign*(steps[1].footOri[swg] - steps[0].footOri[sup]);
+			real_t rland = WrapRadian(sign*(steps[1].footOri[swg] - steps[0].footOri[sup]));
 			vec3_t icp   = S*(Rsup.trans()*(steps[0].icp          - steps[0].footPos[sup]));
 			vec3_t cop   = S*(Rsup.trans()*(steps[0].cop          - steps[0].footPos[sup]));
 			State st, st_mod;
@@ -154,7 +172,7 @@ void Control(){
 			in.land = vec3_t(pland[0], pland[1], rland);
 			in_mod  = in;
 
-			succeeded = cap.Check(st, in_mod, st_mod, modified);
+			succeeded = cap.Check(st, in_mod, st_mod, nstep, modified);
 			if(succeeded && !modified){
 				printf("monitor: success\n");
 			}
@@ -224,18 +242,11 @@ void Control(){
 		}
     }
 
-	if(1.5 <= t && t <= 1.5 + dt) {
-		comVel.y += 0.0;	
+	for(Impulse& im : disturbance){
+		if(im.time <= t && t <= im.time + dt){
+			comVel += im.deltaVel;
+		}
 	}
-	/*if(4.5f <= t && t <= 5.0f) {
-	// simulation 3
-	force.x() = -200.0f * sin( ( t - 5.5f ) * 3.14159f / 0.5f);
-	force.y() = +150.0f * sin( ( t - 5.5f ) * 3.14159f / 0.5f);
-	//printf("force %f,%f\n", force.x(), force.y());
-	}else{
-	force.x() = 0.0f;
-	force.y() = 0.0f;
-	}*/
 	
 	fprintf(file, 
 		"%d, %f, "
@@ -244,14 +255,14 @@ void Control(){
 		"%f, %f, %f, "
 		"%f, %f, %f, "
 		"%f, %f, %f, "
-		"%d, %d\n",
+		"%d, %d, %d\n",
 		cnt, t,
 		comPos.x, comPos.y, comPos.z,
 		steps[0].cop.x, steps[0].cop.y, steps[0].cop.z,
 		steps[0].icp.x, steps[0].icp.y, steps[0].icp.z,
 		steps[0].footPos[0].x, steps[0].footPos[0].y, steps[0].footPos[0].z, 
 		steps[0].footPos[1].x, steps[0].footPos[1].y, steps[0].footPos[1].z,
-		(int)succeeded, (int)modified
+		nstep, (int)succeeded, (int)modified
 		);
 	
     t += dt;

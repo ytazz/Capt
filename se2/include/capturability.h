@@ -61,7 +61,7 @@ public:
 	void  CalcFeasibleIcpRange(int swg, const CaptureState& csnext, std::pair<vec2_t, vec2_t>& icp_range);
 	State CalcNextState       (const State& st, const Input& in    );
 	Input CalcInput           (const State& st, const State& stnext);
-	bool  Check               (const State& st, Input& in, State& st_mod, bool& modified);
+	bool  Check               (const State& st, Input& in, State& st_mod, int& nstep, bool& modified);
 
 	void  CalcDurationMap();
 	void  CalcIcpMap();
@@ -76,7 +76,7 @@ public:
 	// otherwise N specified by nstep is checked
 	bool  IsCapturable(int swg_id, int icp_id, int& nstep);
 
-	bool  FindNearest(const State& st, const State& stnext, CaptureState& cs);
+	bool  FindNearest(const State& st, const State& stnext, CaptureState& cs, int& nstep);
 
 	void  Read(Scenebuilder::XMLNode* node);
 

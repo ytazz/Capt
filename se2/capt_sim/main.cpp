@@ -133,7 +133,7 @@ void Control(){
 				steps[0].footPos[swg], steps[0].footOri[swg],
 				steps[1].footPos[swg], steps[1].footOri[swg]);
 
-			steps[0].duration = swing.GetDuration();
+			steps[0].duration = swing.duration;
 			steps[0].telapsed = 0.0;
 			
 			steps[0].Print();
@@ -194,7 +194,7 @@ void Control(){
 				);
 
 				// modified step duration
-				steps[0].duration = swing.GetDuration();
+				steps[0].duration = swing.duration;
 				steps[0].telapsed = 0.0;
 
 				printf("land: %f,%f  duration: %f\n", in.land.x, in.land.y, steps[0].duration);
@@ -205,7 +205,9 @@ void Control(){
 		}
 		
 		// update swing foot position
-		swing.GetTraj(steps[0].telapsed, steps[0].footPos[swg], steps[0].footOri[swg]);
+		vec3_t v;
+		real_t w;
+		swing.GetTraj(steps[0].telapsed, steps[0].footPos[swg], steps[0].footOri[swg], v, w);
 
 		//printf("swg: %f,%f,%f\n", state.swg.x(), state.swg.y(), state.swg.z());
 

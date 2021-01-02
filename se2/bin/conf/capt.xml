@@ -32,9 +32,11 @@
   </grid>
 
   <swing
+    type   ="spline"
     v_const="1.0"
     w_const="1.0"
     z_max  ="0.05"
+    slope  ="1.0"
     />
 
 </capt>

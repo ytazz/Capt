@@ -98,7 +98,7 @@ void Footstep::Calc(Capturability* cap, Swing* swing){
 			steps[i+0].footPos[swg], steps[i+0].footOri[swg],
 			steps[i+1].footPos[swg], steps[i+1].footOri[swg]
 		);
-		steps[i].duration = swing->GetDuration();
+		steps[i].duration = swing->duration;
 		steps[i].cop = steps[i].footPos[sup];
 		steps[i].icp = steps[i].cop + exp(-steps[i].duration/cap->T)*(steps[i+1].icp - steps[i].cop);
 	}

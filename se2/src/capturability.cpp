@@ -111,7 +111,7 @@ State Capturability::CalcNextState(const State& st, const Input& in){
 	mat2_t R = mat2_t::Rot(r_land);
 	
 	swing->Set(p_swg, r_swg, vec3_t(p_land[0], p_land[1], 0.0), r_land);
-	real_t tau   = swing->GetDuration();
+	real_t tau   = swing->duration;
 	real_t alpha = exp(tau/T);
 
 	vec2_t tmp = R.trans()*p_land;
@@ -138,7 +138,7 @@ Input Capturability::CalcInput(const State& st, const State& stnext){
 	swing->Set(
 		vec3_t(st.swg .x, st.swg .y, st.swg.z), st.swg[3],
 		vec3_t(in.land.x, in.land.y, 0.0     ), in.land[2]);
-	real_t tau   = swing->GetDuration();
+	real_t tau   = swing->duration;
 	real_t alpha = exp(tau/T);
 	vec2_t diff  = R*vec2_t(stnext.icp.x - stnext.swg.x, -(stnext.icp.y - stnext.swg.y));
 
@@ -171,7 +171,7 @@ void Capturability::CalcDurationMap(){
 				vec3_t(swg0.x, swg0.y, swg0.z ), swg0[3],
 				vec3_t(p_land.x, p_land.y, 0.0), swg1[3]);
 
-			duration_map[nswg*i + j] = grid->t.Round(swing->GetDuration());
+			duration_map[nswg*i + j] = grid->t.Round(swing->duration);
 		}
 	}
 
@@ -471,7 +471,7 @@ bool Capturability::FindNearest(const State& st, const State& stnext, CaptureSta
 	real_t d_swg = 0.0;
 	real_t d_icp = 0.0;
 	real_t d     = 0.0;
-	int    n_min;
+	int    n_min = 0;
 	int    swg_id_prev;
 	int    ntested = 0;
 	int    ncomped = 0;

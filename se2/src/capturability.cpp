@@ -448,24 +448,24 @@ void Capturability::GetCaptureBasin(State st, int nstepMin, int nstepMax, Captur
 }
 
 bool Capturability::IsCapturable(int swg_id, int icp_id, int& nstep) {
-  for(int n = 0; n < nmax; n++){
-    if(nstep != -1 && nstep != n)
-      continue;
-    if(cap_basin[n].swg_index.empty())
-      continue;
+	for(int n = 0; n < nmax; n++){
+		if(nstep != -1 && nstep != n)
+			continue;
+		if(cap_basin[n].swg_index.empty())
+			continue;
 
-    pair<int,int> idx = cap_basin[n].swg_index[swg_id];
+		pair<int,int> idx = cap_basin[n].swg_index[swg_id];
 
-    for(int i = idx.first; i < idx.second; i++){
-      CaptureState& cs = cap_basin[n][i];
-      if( cs.icp_id == icp_id ){
-        if(nstep == -1)
-          nstep = n;
-        return true;
-      }
-    }
-  }
-  return false;
+		for(int i = idx.first; i < idx.second; i++){
+			CaptureState& cs = cap_basin[n][i];
+			if( cs.icp_id == icp_id ){
+				if(nstep == -1)
+					nstep = n;
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 bool Capturability::FindNearest(const State& st, const State& stnext_ref, CaptureState& cs, int& nstep){
@@ -523,15 +523,15 @@ bool Capturability::FindNearest(const State& st, const State& stnext_ref, Captur
 			ntested++;
 		}
 	}
-	printf("d_min: %f\n", d_min);
+	printf("d_min: %f  n_min: %d\n", d_min, n_min);
 
 	nstep = n_min;
 
 	return d_min != inf;
 }
 
-bool Capturability::Check(const State& st, Input& in, State& st_mod, int& nstep, bool& modified){
-	State stnext = CalcNextState(st, in);
+bool Capturability::Check(const State& st, Input& in, State& stnext, int& nstep, bool& modified){
+	modified = false;
 
 	int next_swg_id = xyzr_to_swg[grid->xyzr.ToIndex(grid->xyzr.Round(stnext.swg))];
 	int next_icp_id = grid->xy.ToIndex(grid->xy.Round(stnext.icp));
@@ -542,15 +542,35 @@ bool Capturability::Check(const State& st, Input& in, State& st_mod, int& nstep,
 		return false;
 	}
 
+	bool next_ok;
+	bool cop_ok;
+
 	// check if next state is in capture basin
 	nstep = -1;
 	if(IsCapturable(next_swg_id, next_icp_id, nstep)){
 		printf("next state is %d-step capturable\n", nstep);
-		modified = false;
-		return true;
+		next_ok = true;
 	}
 	else{
 		printf("next state is not capturable\n");
+		next_ok = false;
+	}
+
+	// calculate cop
+	in = CalcInput(st, stnext);
+	// check if cop is inside support region
+	//printf("cop(local): %f,%f\n", in.cop.x(), in.cop.y());
+	if(IsInsideSupport(in.cop, 0.01)){
+		printf("cop is inside support\n");
+		cop_ok = true;
+	}
+	else{
+		printf("cop is outside support\n");
+		cop_ok = false;
+	}
+
+	if(next_ok && cop_ok){
+		return true;
 	}
 	
 	// find modified next state that can be transitioned from current state and is capturable
@@ -561,9 +581,9 @@ bool Capturability::Check(const State& st, Input& in, State& st_mod, int& nstep,
 	}
 	printf("modified next state: %d,%d  %d-step capturable transition\n", cs.swg_id, cs.icp_id, cs.nstep);
 
-	st_mod.swg = grid->xyzr[swg_to_xyzr[cs.swg_id]];
-	st_mod.icp = grid->xy  [cs.icp_id];
-	in = CalcInput(st, st_mod);
+	stnext.swg = grid->xyzr[swg_to_xyzr[cs.swg_id]];
+	stnext.icp = grid->xy  [cs.icp_id];
+	in = CalcInput(st, stnext);
 	
 	modified = true;
 	return true;

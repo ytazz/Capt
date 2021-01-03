@@ -92,8 +92,8 @@ void Init(){
 		"com_pos_x, com_pos_y, com_pos_z, "
 		"cop_x, cop_y, cop_z, "
 		"icp_x, icp_y, icp_z, "
-		"foot0_x, foot0_y, foot0_z, "
-		"foot1_x, foot1_y, foot1_z, "
+		"foot0_x, foot0_y, foot0_z, foot0_r, "
+		"foot1_x, foot1_y, foot1_z, foot1_r, "
 		"nstep, succeeded, modified\n"
 		);
 
@@ -154,25 +154,40 @@ void Control(){
 			timer.CountUS();
 
 			// convert state and input to support-foot local coordinate
-			real_t sign  = (sup == 0 ? 1.0 : -1.0);
-			mat3_t S     = mat3_t::Diag(1.0, sign, 1.0);
-			mat3_t Rsup  = mat3_t::Rot(steps[0].footOri[sup], 'z');
-			vec3_t pswg  = S*(Rsup.trans()*(steps[0].footPos[swg] - steps[0].footPos[sup]));
-			real_t rswg  = WrapRadian(sign*(steps[0].footOri[swg] - steps[0].footOri[sup]));
-			vec3_t pland = S*(Rsup.trans()*(steps[1].footPos[swg] - steps[0].footPos[sup]));
-			real_t rland = WrapRadian(sign*(steps[1].footOri[swg] - steps[0].footOri[sup]));
-			vec3_t icp   = S*(Rsup.trans()*(steps[0].icp          - steps[0].footPos[sup]));
-			vec3_t cop   = S*(Rsup.trans()*(steps[0].cop          - steps[0].footPos[sup]));
-			State st, st_mod;
-			Input in, in_mod;
+			real_t s[2];
+			mat3_t S[2];
+			mat3_t R[2];
+			s[sup] = (sup == 0 ? 1.0 : -1.0);
+			s[swg] = (swg == 0 ? 1.0 : -1.0);
+			S[sup] = mat3_t::Diag(1.0, s[sup], 1.0);
+			S[swg] = mat3_t::Diag(1.0, s[swg], 1.0);
+			R[sup] = mat3_t::Rot(steps[0].footOri[sup], 'z');
+			R[swg] = mat3_t::Rot(steps[1].footOri[swg], 'z');
+			vec3_t pswg      = S[sup]*(R[sup].trans()*(steps[0].footPos[swg] - steps[0].footPos[sup]));
+			vec3_t pland     = S[sup]*(R[sup].trans()*(steps[1].footPos[swg] - steps[0].footPos[sup]));
+			vec3_t pswg_next = S[swg]*(R[swg].trans()*(steps[1].footPos[sup] - steps[1].footPos[swg]));
+			real_t rswg      = WrapRadian(s[sup]*(steps[0].footOri[swg] - steps[0].footOri[sup]));
+			real_t rland     = WrapRadian(s[sup]*(steps[1].footOri[swg] - steps[0].footOri[sup]));
+			real_t rswg_next = WrapRadian(s[swg]*(steps[1].footOri[sup] - steps[1].footOri[swg]));
+			vec3_t icp       = S[sup]*(R[sup].trans()*(steps[0].icp - steps[0].footPos[sup]));
+			vec3_t icp_next  = S[swg]*(R[swg].trans()*(steps[1].icp - steps[1].footPos[swg]));
+			vec3_t cop       = S[sup]*(R[sup].trans()*(steps[0].cop - steps[0].footPos[sup]));
 			
-			st.swg  = vec4_t(pswg [0], pswg [1], pswg[2], rswg);
-			st.icp  = vec2_t(icp  [0], icp  [1]);
-			in.cop  = vec2_t(cop  [0], cop  [1]);
-			in.land = vec3_t(pland[0], pland[1], rland);
-			in_mod  = in;
-
-			succeeded = cap.Check(st, in_mod, st_mod, nstep, modified);
+			State st;
+			State stnext;
+			Input in;
+			
+			st    .swg  = vec4_t(pswg [0], pswg [1], pswg[2], rswg);
+			st    .icp  = vec2_t(icp  [0], icp  [1]);
+			in    .cop  = vec2_t(cop  [0], cop  [1]);
+			in    .land = vec3_t(pland[0], pland[1], rland);
+			stnext.swg  = vec4_t(pswg_next [0], pswg_next [1], pswg_next[2], rswg_next);
+			stnext.icp  = vec2_t(icp_next  [0], icp_next  [1]);
+			
+			Input in_mod     = in;
+			State stnext_mod = stnext;
+			
+			succeeded = cap.Check(st, in_mod, stnext_mod, nstep, modified);
 			if(succeeded && !modified){
 				printf("monitor: success\n");
 			}
@@ -183,10 +198,12 @@ void Control(){
 				pland = vec3_t(in_mod.land[0], in_mod.land[1], 0.0);
 				rland = in_mod.land[2];
 
-				steps[1].footPos[swg] = Rsup*S*pland + steps[0].footPos[sup];
-				steps[1].footOri[swg] =   sign*rland + steps[0].footOri[sup];
+				steps[1].footPos[swg] = R[sup]*S[sup]*pland + steps[0].footPos[sup];
+				steps[1].footOri[swg] =        s[sup]*rland + steps[0].footOri[sup];
 
-				steps[1].icp = Rsup*S*vec3_t(st_mod.icp[0], st_mod.icp[1], 0.0) + steps[0].footPos[sup];
+				// next icp should be converted from next support foot's local coordinate
+				R[swg] = mat3_t::Rot(steps[1].footOri[swg], 'z');
+				steps[1].icp = R[swg]*S[swg]*vec3_t(stnext_mod.icp[0], stnext_mod.icp[1], 0.0) + steps[1].footPos[swg];
 
 				swing.Set(
 					steps[0].footPos[swg], steps[0].footOri[swg],
@@ -255,15 +272,15 @@ void Control(){
 		"%f, %f, %f, "
 		"%f, %f, %f, "
 		"%f, %f, %f, "
-		"%f, %f, %f, "
-		"%f, %f, %f, "
+		"%f, %f, %f, %f, "
+		"%f, %f, %f, %f, "
 		"%d, %d, %d\n",
 		cnt, t,
 		comPos.x, comPos.y, comPos.z,
 		steps[0].cop.x, steps[0].cop.y, steps[0].cop.z,
 		steps[0].icp.x, steps[0].icp.y, steps[0].icp.z,
-		steps[0].footPos[0].x, steps[0].footPos[0].y, steps[0].footPos[0].z, 
-		steps[0].footPos[1].x, steps[0].footPos[1].y, steps[0].footPos[1].z,
+		steps[0].footPos[0].x, steps[0].footPos[0].y, steps[0].footPos[0].z, steps[0].footOri[0],
+		steps[0].footPos[1].x, steps[0].footPos[1].y, steps[0].footPos[1].z, steps[0].footOri[1],
 		nstep, (int)succeeded, (int)modified
 		);
 	

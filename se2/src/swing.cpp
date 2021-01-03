@@ -115,8 +115,8 @@ void Swing::GetTraj(real_t t, vec3_t& p, real_t& r, vec3_t& v, real_t& w) {
 			duration, p2_land, vec2_t(),
 			Interpolate::Cubic);
 
-		real_t d0 = (p - p2_swg ).norm();
-		real_t d1 = (p - p2_land).norm();
+		real_t d0 = (p2 - p2_swg ).norm();
+		real_t d1 = (p2 - p2_land).norm();
 		real_t z0 = p_swg.z + slope*d0;
 		real_t z1 = slope*d1;
 		real_t pz = std::min(std::min(z0, z1), z_max);

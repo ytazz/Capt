@@ -51,14 +51,6 @@ void Capturability::Read(Scenebuilder::XMLNode* node){
 	node->Get(swg_far  , ".swg_far"  );
 	node->Get(swg_angle, ".swg_angle");
 	
-	// exc
-	//swg_x.Read(node->GetNode("swg_x"));
-	//swg_y.Read(node->GetNode("swg_y"));
-	//swg_z.Read(node->GetNode("swg_z"));
-	//swg_r.Read(node->GetNode("swg_r"));
-	// exc
-	//exc_x.Read(node->GetNode("exc_x"));
-	//exc_y.Read(node->GetNode("exc_y"));
 	// cop
 	cop_x.Read(node->GetNode("cop_x"));
 	cop_y.Read(node->GetNode("cop_y"));
@@ -83,15 +75,6 @@ bool Capturability::IsSteppable(vec2_t p_swg, real_t r_swg){
 	real_t angle = atan2(p_swg[1], p_swg[0]);
 	return ( swg_near           - eps <= dist          && dist          < swg_far          + eps &&
 		     pi/2.0 - swg_angle - eps <= angle - r_swg && angle - r_swg < pi/2 + swg_angle + eps );
-	/*
-	// steppable if swg is inside swing region and outside the exc region
-	return  ( (swg_x.min - eps <= p_swg.x() && p_swg.x() <= swg_x.max + eps) &&
-			(swg_y.min - eps <= p_swg.y() && p_swg.y() <= swg_y.max + eps) &&
-			(swg_r.min - eps <= r_swg     && r_swg     <= swg_r.max + eps))
-				&&
-			!( (exc_x.min + eps <= p_swg.x() && p_swg.x() <= exc_x.max - eps) &&
-			(exc_y.min + eps <= p_swg.y() && p_swg.y() <= exc_y.max - eps) );
-    */
 }
 
 bool Capturability::IsInsideSupport(vec2_t cop, real_t margin){
@@ -147,11 +130,30 @@ Input Capturability::CalcInput(const State& st, const State& stnext){
 	return in;
 }
 
-void Capturability::CalcFeasibleIcpRange(int swg_id, const CaptureState& csnext, pair<vec2_t, vec2_t>& icp_range){
-	int tau_id = duration_map[swg_to_xyzr.size()*swg_id + csnext.swg_id];
-	icp_range = icp_map[grid->xy.Num()*tau_id + csnext.mu_id];
+void Capturability::CalcFeasibleIcpRange(const vec4_t& swg, const State& stnext, pair<vec2_t, vec2_t>& icp_range){
+	real_t tau       = CalcDuration(swg, stnext.swg);
+	real_t alpha     = exp(tau/T);
+	real_t alpha_inv = 1.0/alpha;
+	vec2_t mu        = mat2_t::Rot(stnext.swg[3])*vec2_t(stnext.icp.x - stnext.swg.x, -1.0*(stnext.icp.y - stnext.swg.y));
+	
+	icp_range.first  = (1.0 - alpha_inv)*vec2_t(cop_x.min, cop_y.min) + (alpha_inv)*mu;
+	icp_range.second = (1.0 - alpha_inv)*vec2_t(cop_x.max, cop_y.max) + (alpha_inv)*mu;
+
+	//int tau_id = duration_map[swg_to_xyzr.size()*swg_id + csnext.swg_id];
+	//icp_range = icp_map[grid->xy.Num()*tau_id + csnext.mu_id];
 }
 
+real_t Capturability::CalcDuration(const vec4_t& swg0, const vec4_t& swg1){
+	mat2_t R      = mat2_t::Rot(swg1[3]);
+	vec2_t p_land = -(R*vec2_t(swg1.x, -swg1.y));
+
+	swing->Set(
+		vec3_t(swg0.x, swg0.y, swg0.z ), swg0[3],
+		vec3_t(p_land.x, p_land.y, 0.0), swg1[3]);
+
+	return swing->duration;
+}
+/*
 void Capturability::CalcDurationMap(){
 	printf(" calc duration map\n");
 
@@ -164,20 +166,14 @@ void Capturability::CalcDurationMap(){
 		for(int j = 0; j < nswg; j++){
 			swg1 = grid->xyzr[swg_to_xyzr[j]];
 
-			mat2_t R      = mat2_t::Rot(swg1[3]);
-			vec2_t p_land = -(R*vec2_t(swg1.x, -swg1.y));
-
-			swing->Set(
-				vec3_t(swg0.x, swg0.y, swg0.z ), swg0[3],
-				vec3_t(p_land.x, p_land.y, 0.0), swg1[3]);
-
-			duration_map[nswg*i + j] = grid->t.Round(swing->duration);
+			duration_map[nswg*i + j] = grid->t.Round(CalcDuration(swg0, swg1));
 		}
 	}
 
 	printf(" done: %d x %d entries\n", nswg, nswg);
 }
-
+*/
+/*
 void Capturability::CalcIcpMap(){
 	vec2_t cop_min(cop_x.min, cop_y.min);
 	vec2_t cop_max(cop_x.max, cop_y.max);
@@ -229,7 +225,7 @@ void Capturability::CalcIcpMap(){
 	
 	printf(" done: %d entries\n", (int)icp_map.size());
 }
-
+*/
 void Capturability::Analyze(){
 	printf(" Analysing ...... \n");
 	printf(" grid size: x %d  y %d  z %d  t %d\n", grid->x.num, grid->y.num, grid->z.num, grid->t.num);
@@ -257,8 +253,8 @@ void Capturability::Analyze(){
 	}
 	printf(" done: %d entries\n", (int)swg_to_xyzr.size());
 
-	CalcDurationMap();
-	CalcIcpMap();
+	//CalcDurationMap();
+	//CalcIcpMap();
 
 	// (swg_id, icp_id) -> nstep
 	typedef map< pair<int,int>, int> NstepMap;
@@ -288,7 +284,8 @@ void Capturability::Analyze(){
 	}
 	printf(" done: %d entries\n", (int)cap_basin[0].size());
 
-	State st, stnext;
+	vec4_t swg;
+	State  stnext;
 	pair<vec2_t, vec2_t> icp_range;
 	std::set<int>  icp_id_valid;
 	int n = 1;
@@ -298,14 +295,16 @@ void Capturability::Analyze(){
 
 		// enumerate possible current swing foot pos
 		for(int swg_id = 0; swg_id < (int)swg_to_xyzr.size(); swg_id++){
-
-			DSTR << "swg_id: " << swg_id << endl;
+			swg = grid->xyzr[swg_to_xyzr[swg_id]];
 
 			icp_id_valid.clear();
 			for(int basin_id = 0; basin_id < (int)cap_basin[n-1].size(); basin_id++){
 				CaptureState& csnext = cap_basin[n-1][basin_id];
+				stnext.swg = grid->xyzr[swg_to_xyzr[csnext.swg_id]];
+				stnext.icp = grid->xy  [csnext.icp_id];
 
-				CalcFeasibleIcpRange(swg_id, csnext, icp_range);
+				//CalcFeasibleIcpRange(swg_id, csnext, icp_range);
+				CalcFeasibleIcpRange(swg, stnext, icp_range);
 
 				grid->x.IndexRange(icp_range.first.x, icp_range.second.x, icp_x_id_min, icp_x_id_max);
 				grid->y.IndexRange(icp_range.first.y, icp_range.second.y, icp_y_id_min, icp_y_id_max);
@@ -317,8 +316,6 @@ void Capturability::Analyze(){
 					icp_id_valid.insert(icp_id);
 				}
 			}
-
-			DSTR << "icp valid: " << icp_id_valid.size() << endl;
 
 			Index4D swg_idx4;
 			grid->xyzr.FromIndex(swg_to_xyzr[swg_id], swg_idx4);
@@ -383,8 +380,8 @@ void Capturability::Save(const string& basename){
 	}
 	SaveArray(basename + "swg_to_xyzr.bin"  , swg_to_xyzr);
 	SaveArray(basename + "xyzr_to_swg.bin"  , xyzr_to_swg);
-	SaveArray(basename + "duration_map.bin", duration_map);
-	SaveArray(basename + "icp_map.bin"     , icp_map     );
+	//SaveArray(basename + "duration_map.bin", duration_map);
+	//SaveArray(basename + "icp_map.bin"     , icp_map     );
 }
 
 void Capturability::Load(const string& basename) {
@@ -416,19 +413,20 @@ void Capturability::Load(const string& basename) {
 
 	LoadArray(basename + "swg_to_xyzr.bin" , swg_to_xyzr );
 	LoadArray(basename + "xyzr_to_swg.bin" , xyzr_to_swg );
-	LoadArray(basename + "duration_map.bin", duration_map);
-	LoadArray(basename + "icp_map.bin"     , icp_map     );
+	//LoadArray(basename + "duration_map.bin", duration_map);
+	//LoadArray(basename + "icp_map.bin"     , icp_map     );
 }
 
 void Capturability::GetCaptureBasin(State st, int nstepMin, int nstepMax, CaptureBasin& basin){
 	basin.clear();
 
-	Index4D swg_idx4 = grid->xyzr.Round(st.swg);
-	int swg_id = xyzr_to_swg[grid->xyzr.ToIndex(swg_idx4)];
-	if(swg_id == -1)
-		return;
+	//Index4D swg_idx4 = grid->xyzr.Round(st.swg);
+	//int swg_id = xyzr_to_swg[grid->xyzr.ToIndex(swg_idx4)];
+	//if(swg_id == -1)
+	//	return;
 
 	pair<vec2_t, vec2_t> icp_range;
+	State stnext;
 
 	for(int n = nstepMin; n <= nstepMax; n++){
 		//printf("n: %d\n", n);
@@ -437,7 +435,11 @@ void Capturability::GetCaptureBasin(State st, int nstepMin, int nstepMax, Captur
 
 		for(int basin_id = 0; basin_id < (int)cap_basin[n].size(); basin_id++){
 			CaptureState& csnext = cap_basin[n][basin_id];
-			CalcFeasibleIcpRange(swg_id, csnext, icp_range);
+			stnext.swg = grid->xyzr[swg_to_xyzr[csnext.swg_id]];
+			stnext.icp = grid->xy  [csnext.icp_id];
+
+			//CalcFeasibleIcpRange(swg_id, csnext, icp_range);
+			CalcFeasibleIcpRange(st.swg, stnext, icp_range);
 			if( icp_range.first.x <= st.icp.x && st.icp.x <= icp_range.second.x &&
 				icp_range.first.y <= st.icp.y && st.icp.y <= icp_range.second.y )
 				basin.push_back(csnext);
@@ -466,7 +468,7 @@ bool Capturability::IsCapturable(int swg_id, int icp_id, int& nstep) {
   return false;
 }
 
-bool Capturability::FindNearest(const State& st, const State& stnext, CaptureState& cs, int& nstep){
+bool Capturability::FindNearest(const State& st, const State& stnext_ref, CaptureState& cs, int& nstep){
 	real_t d_min = inf;
 	real_t d_swg = 0.0;
 	real_t d_icp = 0.0;
@@ -475,11 +477,13 @@ bool Capturability::FindNearest(const State& st, const State& stnext, CaptureSta
 	int    swg_id_prev;
 	int    ntested = 0;
 	int    ncomped = 0;
+	State  stnext;
+	pair<vec2_t,vec2_t> icp_range;
 
-	Index4D swg_idx4 = grid->xyzr.Round(st.swg);
-	int swg_id = xyzr_to_swg[grid->xyzr.ToIndex(swg_idx4)];
-	if(swg_id == -1)
-		return false;
+	//Index4D swg_idx4 = grid->xyzr.Round(st.swg);
+	//int swg_id = xyzr_to_swg[grid->xyzr.ToIndex(swg_idx4)];
+	//if(swg_id == -1)
+	//	return false;
 
 	for(int n = 0; n < nmax; n++){
 		if(step_weight*n >= d_min)
@@ -488,22 +492,26 @@ bool Capturability::FindNearest(const State& st, const State& stnext, CaptureSta
 			continue;
 
 		swg_id_prev = -1;
-		int tau_id = -1;
+		//int tau_id = -1;
 		for(int basin_id = 0; basin_id < (int)cap_basin[n].size(); basin_id++){
 			CaptureState& csnext = cap_basin[n][basin_id];
+			stnext.swg = grid->xyzr[swg_to_xyzr[csnext.swg_id]];
+			stnext.icp = grid->xy  [csnext.icp_id];
+
 			if(csnext.swg_id != swg_id_prev){
-				d_swg  = (grid->xyzr[swg_to_xyzr[csnext.swg_id]] - stnext.swg).square();
-				tau_id = duration_map[swg_to_xyzr.size()*swg_id + csnext.swg_id];
+				d_swg  = (stnext.swg - stnext_ref.swg).square();
+				//tau_id = duration_map[swg_to_xyzr.size()*swg_id + csnext.swg_id];
 				swg_id_prev = csnext.swg_id;
 			}
 			if(step_weight*n + swg_weight*d_swg >= d_min)
 				continue;
 
-			pair<vec2_t,vec2_t>& icp_range = icp_map[grid->xy.Num()*tau_id + csnext.mu_id];
+			//pair<vec2_t,vec2_t>& icp_range = icp_map[grid->xy.Num()*tau_id + csnext.mu_id];
+			CalcFeasibleIcpRange(st.swg, stnext, icp_range);
 
 			if( icp_range.first.x <= st.icp.x && st.icp.x < icp_range.second.x &&
 				icp_range.first.y <= st.icp.y && st.icp.y < icp_range.second.y ){
-				d_icp = (grid->xy[csnext.icp_id] - stnext.icp).square();
+				d_icp = (stnext.icp - stnext_ref.icp).square();
 				d     = step_weight*n + swg_weight*d_swg + icp_weight*d_icp;
 				if( d < d_min ){
 					cs    = csnext;

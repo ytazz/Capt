@@ -47,8 +47,8 @@ public:
 	Swing*    swing;
 
 	std::vector< CaptureBasin >               cap_basin;
-	std::vector< int >                        duration_map;  //< [swg_id0, swg_id1]   (stepping) -> t  (step duration)
-	std::vector< std::pair<vec2_t, vec2_t> >  icp_map;       //< [x,y,t] (relative icp, step duration) -> allowable icp range
+	//std::vector< int >                        duration_map;  //< [swg_id0, swg_id1]   (stepping) -> t  (step duration)
+	//std::vector< std::pair<vec2_t, vec2_t> >  icp_map;       //< [x,y,t] (relative icp, step duration) -> allowable icp range
 	std::vector< int >                        swg_to_xyzr;   //< array of valid swg_id in [x,y,z,r]
 	std::vector< int >                        xyzr_to_swg;   //< [x,y,z,r] -> index to swg_id_valid or -1
 
@@ -56,15 +56,17 @@ public:
 	real_t swg_weight;
 	real_t icp_weight;
 
-	bool  IsSteppable         (vec2_t p_swg, real_t r_swg);
-	bool  IsInsideSupport     (vec2_t cop, real_t margin = 1.0e-5);
-	void  CalcFeasibleIcpRange(int swg, const CaptureState& csnext, std::pair<vec2_t, vec2_t>& icp_range);
-	State CalcNextState       (const State& st, const Input& in    );
-	Input CalcInput           (const State& st, const State& stnext);
-	bool  Check               (const State& st, Input& in, State& st_mod, int& nstep, bool& modified);
+	bool   IsSteppable         (vec2_t p_swg, real_t r_swg);
+	bool   IsInsideSupport     (vec2_t cop, real_t margin = 1.0e-5);
+	//void  CalcFeasibleIcpRange(int swg, const CaptureState& csnext, std::pair<vec2_t, vec2_t>& icp_range);
+	void   CalcFeasibleIcpRange(const vec4_t& swg, const State& stnext, std::pair<vec2_t, vec2_t>& icp_range);
+	real_t CalcDuration        (const vec4_t& swg0, const vec4_t& swg1);
+	State  CalcNextState       (const State& st, const Input& in    );
+	Input  CalcInput           (const State& st, const State& stnext);
+	bool   Check               (const State& st, Input& in, State& st_mod, int& nstep, bool& modified);
 
-	void  CalcDurationMap();
-	void  CalcIcpMap();
+	//void  CalcDurationMap();
+	//void  CalcIcpMap();
 	void  Analyze();
 	void  Save(const std::string& basename);
 	void  Load(const std::string& basename);

@@ -3,24 +3,24 @@
 <sim>
   <footstep>
     <step stride="0.0" spacing="0.2" turn="0.0deg"/>
-    <step stride="0.2" spacing="0.2" turn="30.0deg"/>
-    <step stride="0.2" spacing="0.2" turn="30.0deg"/>
-    <step stride="0.2" spacing="0.2" turn="30.0deg"/>
-    <step stride="0.2" spacing="0.2" turn="30.0deg"/>
-    <step stride="0.2" spacing="0.2" turn="30.0deg"/>
-    <step stride="0.2" spacing="0.2" turn="30.0deg"/>
-    <step stride="0.2" spacing="0.2" turn="30.0deg"/>
-    <step stride="0.2" spacing="0.2" turn="30.0deg"/>
-    <step stride="0.2" spacing="0.2" turn="30.0deg"/>
-    <step stride="0.2" spacing="0.2" turn="30.0deg"/>
-    <step stride="0.2" spacing="0.2" turn="30.0deg"/>
+    <step stride="0.2" spacing="0.2" turn="0.0deg"/>
+    <step stride="0.2" spacing="0.2" turn="0.0deg"/>
+    <step stride="0.2" spacing="0.2" turn="0.0deg"/>
+    <step stride="0.2" spacing="0.2" turn="0.0deg"/>
+    <step stride="0.2" spacing="0.2" turn="0.0deg"/>
+    <step stride="0.2" spacing="0.2" turn="0.0deg"/>
+    <step stride="0.2" spacing="0.2" turn="0.0deg"/>
+    <step stride="0.2" spacing="0.2" turn="0.0deg"/>
+    <step stride="0.2" spacing="0.2" turn="0.0deg"/>
+    <step stride="0.2" spacing="0.2" turn="0.0deg"/>
+    <step stride="0.2" spacing="0.2" turn="0.0deg"/>
     <step stride="0.0" spacing="0.2" turn="0.0deg"/>
     <step stride="0.0" spacing="0.2" turn="0.0deg"/>
   </footstep>
   <disturbance>
-    <impulse time="1.0" delta_vel="0.0 0.2 0"/>
-    <impulse time="2.0" delta_vel="0.2 0.0 0"/>
-    <impulse time="3.0" delta_vel="0.0 0.2 0"/>
+    <impulse time="1.0" delta_vel="0.0 0.15 0"/>
+    <impulse time="2.0" delta_vel="0.0 0.0 0"/>
+    <impulse time="3.0" delta_vel="0.0 0.0 0"/>
     <impulse time="4.0" delta_vel="0.0 0.0 0"/>
   </disturbance>
 </sim>

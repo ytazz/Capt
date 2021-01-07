@@ -10,6 +10,7 @@ namespace Capt {
 class Plot{
 public:
 	State  st;
+	Input  in;
 	int    nmax;
 	int    angle_div;
 

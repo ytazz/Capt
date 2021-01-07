@@ -23,9 +23,10 @@ Footstep::Step::Step(){
 }
 
 void Footstep::Step::Read(Scenebuilder::XMLNode* node){
-	node->Get(stride , ".stride" );
-	node->Get(spacing, ".spacing");
-	node->Get(turn   , ".turn"   );
+	node->Get(stride  , ".stride"  );
+	node->Get(spacing , ".spacing" );
+	node->Get(turn    , ".turn"    );
+	node->Get(duration, ".duration");
 }
 
 void Footstep::Step::Print(){
@@ -93,12 +94,6 @@ void Footstep::Calc(Capturability* cap, Swing* swing){
 	// calc N-1 to 0 step's state
 	for( ; i >= 0; i--) {
 		int sup =  steps[i].side;
-		int swg = !steps[i].side;
-		swing->Set(
-			steps[i+0].footPos[swg], steps[i+0].footOri[swg],
-			steps[i+1].footPos[swg], steps[i+1].footOri[swg]
-		);
-		steps[i].duration = swing->duration;
 		steps[i].cop = steps[i].footPos[sup];
 		steps[i].icp = steps[i].cop + exp(-steps[i].duration/cap->T)*(steps[i+1].icp - steps[i].cop);
 	}

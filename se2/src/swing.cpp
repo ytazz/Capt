@@ -21,6 +21,8 @@ Swing::Swing() {
 	z_max        = 0.0;
 	slope        = 1.0;
 	dsp_duration = 0.0;
+
+	ready = false;
 }
 
 void Swing::Read(Scenebuilder::XMLNode* node){
@@ -34,35 +36,67 @@ void Swing::Read(Scenebuilder::XMLNode* node){
 	node->Get(str, ".type");
 	if(str == "rectangle") type = Type::Rectangle;
 	if(str == "spline"   ) type = Type::Spline;
+
+	ready = false;
 }
 
 Swing::~Swing() {
 }
 
-void Swing::Set(vec3_t _p_swg, real_t _r_swg, vec3_t _p_land, real_t _r_land){
-	p_swg  = _p_swg ;
-	r_swg  = _r_swg ;
+void Swing::SetSwg(vec3_t _p_swg, real_t _r_swg){
+	p_swg = _p_swg ;
+	r_swg = _r_swg ;
+	ready = false;
+}
+
+void Swing::SetLand(vec3_t _p_land, real_t _r_land){
 	p_land = _p_land;
 	r_land = _r_land;
+	ready  = false;
+}
 
-	dist_x =  p_land.x - p_swg.x;
-	dist_y =  p_land.y - p_swg.y;
-	dist   = sqrt( dist_x * dist_x + dist_y * dist_y );
+void Swing::SetDuration(real_t _tau){
+	duration = _tau;
+	ready    = false;
+}
 
-	turn = WrapRadian(r_land - r_swg);
+void Swing::Init(){
+	move.x = p_land.x - p_swg.x;
+	move.y = p_land.y - p_swg.y;
+	turn   = WrapRadian(r_land - r_swg);
   
 	if(type == Type::Rectangle){
+		travel = (z_max - p_swg.z) + move.norm() + z_max;
+		v_const= travel        /duration;
+		w_const= std::abs(turn)/duration;
+
 		tau_ascend  = (z_max - p_swg.z)/v_const;
-		tau_travel  = std::max( dist/v_const, std::abs(turn)/w_const );
-		tau_descend = z_max/v_const;
-		duration    = tau_ascend + tau_travel + tau_descend + dsp_duration;
+		tau_travel  = move.norm()      /v_const;
+		tau_descend = z_max            /v_const;
+		//duration    = tau_ascend + tau_travel + tau_descend + dsp_duration;
+	}
+
+	ready = true;
+}
+
+real_t Swing::GetMinDuration(){
+	if(!ready)
+		Init();
+
+	if(type == Type::Rectangle){
+		return travel/v_max + dsp_duration;
 	}
 	if(type == Type::Spline){
-		duration = 1.5*dist/v_const + dsp_duration;
+		return 1.5*move.norm()/v_max + dsp_duration;
 	}
+
+	return 0.0;
 }
 
 bool Swing::IsDescending(real_t t){
+	if(!ready)
+		Init();
+
 	if(type == Type::Rectangle)
 		return t > duration - (tau_descend + dsp_duration);
 	
@@ -70,6 +104,9 @@ bool Swing::IsDescending(real_t t){
 }
 
 void Swing::GetTraj(real_t t, vec3_t& p, real_t& r, vec3_t& v, real_t& w) {
+	if(!ready)
+		Init();
+
 	if(type == Type::Rectangle){
 		// ascending
 		if(0 <= t && t < tau_ascend) {
@@ -81,10 +118,10 @@ void Swing::GetTraj(real_t t, vec3_t& p, real_t& r, vec3_t& v, real_t& w) {
 		// traveling to landing position
 		if(tau_ascend <= t && t < tau_ascend + tau_travel) {
 			p = vec3_t(
-				p_swg.x + dist_x*(t - tau_ascend)/tau_travel,
-				p_swg.y + dist_y*(t - tau_ascend)/tau_travel,
+				p_swg.x + move.x*(t - tau_ascend)/tau_travel,
+				p_swg.y + move.y*(t - tau_ascend)/tau_travel,
 				z_max);
-			v = vec3_t(dist_x/tau_travel, dist_y/tau_travel, 0.0);
+			v = vec3_t(move.x/tau_travel, move.y/tau_travel, 0.0);
 			r = r_swg + turn * (t - tau_ascend)/tau_travel;
 			w = turn/tau_travel;
 		}

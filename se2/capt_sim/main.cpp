@@ -129,11 +129,11 @@ void Control(){
 			//input.icp  = (state.footstep[state.footstep.cur + 1].icp - state.footstep[state.footstep.cur].pos) + state.su@;
 		
 			// update swing trajectory and detemine step duration
-			swing.Set(
-				steps[0].footPos[swg], steps[0].footOri[swg],
-				steps[1].footPos[swg], steps[1].footOri[swg]);
+			swing.SetSwg     (steps[0].footPos[swg], steps[0].footOri[swg]);
+			swing.SetLand    (steps[1].footPos[swg], steps[1].footOri[swg]);
+			swing.SetDuration(st0.duration);
 
-			steps[0].duration = swing.duration;
+			steps[0].duration = st0.duration;
 			steps[0].telapsed = 0.0;
 			
 			steps[0].Print();
@@ -205,10 +205,8 @@ void Control(){
 				R[swg] = mat3_t::Rot(steps[1].footOri[swg], 'z');
 				steps[1].icp = R[swg]*S[swg]*vec3_t(stnext_mod.icp[0], stnext_mod.icp[1], 0.0) + steps[1].footPos[swg];
 
-				swing.Set(
-					steps[0].footPos[swg], steps[0].footOri[swg],
-					steps[1].footPos[swg], steps[1].footOri[swg]
-				);
+				swing.SetSwg (steps[0].footPos[swg], steps[0].footOri[swg]);
+				swing.SetLand(steps[1].footPos[swg], steps[1].footOri[swg]);
 
 				// modified step duration
 				steps[0].duration = swing.duration;

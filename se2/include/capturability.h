@@ -54,15 +54,16 @@ public:
 
 	real_t step_weight;
 	real_t swg_weight;
+	real_t tau_weight;
 	real_t icp_weight;
 
 	bool   IsSteppable         (vec2_t p_swg, real_t r_swg);
 	bool   IsInsideSupport     (vec2_t cop, real_t margin = 1.0e-5);
 	//void  CalcFeasibleIcpRange(int swg, const CaptureState& csnext, std::pair<vec2_t, vec2_t>& icp_range);
-	void   CalcFeasibleIcpRange(const vec4_t& swg, const State& stnext, std::pair<vec2_t, vec2_t>& icp_range);
-	real_t CalcDuration        (const vec4_t& swg0, const vec4_t& swg1);
-	State  CalcNextState       (const State& st, const Input& in    );
-	Input  CalcInput           (const State& st, const State& stnext);
+	void   CalcFeasibleIcpRange(const vec4_t& swg, const State& stnext, real_t tau, std::pair<vec2_t, vec2_t>& icp_range);
+	//real_t CalcDuration        (const vec4_t& swg0, const vec4_t& swg1);
+	//State  CalcNextState       (const State& st, const Input& in    );
+	Input  CalcInput           (const State& st, const State& stnext, real_t tau);
 	bool   Check               (const State& st, Input& in, State& st_mod, int& nstep, bool& modified);
 
 	//void  CalcDurationMap();
@@ -71,14 +72,14 @@ public:
 	void  Save(const std::string& basename);
 	void  Load(const std::string& basename);
 
-	void  GetCaptureBasin (State st, int nstepMin, int nstepMax, CaptureBasin& basin);
+	void  GetCaptureBasin (const State& st, const Input& in, int nstepMin, int nstepMax, CaptureBasin& basin);
 
 	// checks is given state is capturable
 	// if nstep is -1, then all N is checked and capturable N is stored in nstep
 	// otherwise N specified by nstep is checked
 	bool  IsCapturable(int swg_id, int icp_id, int& nstep);
 
-	bool  FindNearest(const State& st, const State& stnext, CaptureState& cs, int& nstep);
+	bool  FindNearest(const State& st, const Input& in_ref, const State& stnext_ref, CaptureState& cs_opt, real_t& tau_opt, int& n_opt);
 
 	void  Read(Scenebuilder::XMLNode* node);
 

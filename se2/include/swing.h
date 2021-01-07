@@ -16,6 +16,7 @@ public:
 	int     type;
 	real_t  v_const, w_const, z_max;
 	real_t  slope;
+	real_t  dsp_duration;
 
 	vec3_t  p_swg, p_land;
 	real_t  r_swg, r_land;

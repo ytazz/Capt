@@ -16,17 +16,19 @@ Swing::Swing() {
 	tau_travel  = 0.0;
 	tau_descend = 0.0;
 
-	v_const = 1.0;
-	w_const = 1.0;
-	z_max   = 0.0;
-	slope   = 1.0;
+	v_const      = 1.0;
+	w_const      = 1.0;
+	z_max        = 0.0;
+	slope        = 1.0;
+	dsp_duration = 0.0;
 }
 
 void Swing::Read(Scenebuilder::XMLNode* node){
-	node->Get(v_const, ".v_const");
-	node->Get(w_const, ".w_const");
-	node->Get(z_max  , ".z_max"  );
-	node->Get(slope  , ".slope"  );
+	node->Get(v_const     , ".v_const"     );
+	node->Get(w_const     , ".w_const"     );
+	node->Get(z_max       , ".z_max"       );
+	node->Get(slope       , ".slope"       );
+	node->Get(dsp_duration, ".dsp_duration");
 
 	string str;
 	node->Get(str, ".type");
@@ -53,16 +55,16 @@ void Swing::Set(vec3_t _p_swg, real_t _r_swg, vec3_t _p_land, real_t _r_land){
 		tau_ascend  = (z_max - p_swg.z)/v_const;
 		tau_travel  = std::max( dist/v_const, std::abs(turn)/w_const );
 		tau_descend = z_max/v_const;
-		duration    = tau_ascend + tau_travel + tau_descend;
+		duration    = tau_ascend + tau_travel + tau_descend + dsp_duration;
 	}
 	if(type == Type::Spline){
-		duration = 1.5*dist/v_const;
+		duration = 1.5*dist/v_const + dsp_duration;
 	}
 }
 
 bool Swing::IsDescending(real_t t){
 	if(type == Type::Rectangle)
-		return t > duration - tau_descend;
+		return t > duration - (tau_descend + dsp_duration);
 	
 	return false;
 }

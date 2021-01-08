@@ -57,11 +57,12 @@ public:
 	real_t tau_weight;
 	real_t icp_weight;
 
-	bool   IsSteppable         (vec2_t p_swg, real_t r_swg);
-	bool   IsInsideSupport     (vec2_t cop, real_t margin = 1.0e-5);
+	bool   IsSteppable         (const vec2_t& p_swg, real_t r_swg);
+	bool   IsInsideSupport     (const vec2_t& cop, real_t margin = 1.0e-5);
 	//void  CalcFeasibleIcpRange(int swg, const CaptureState& csnext, std::pair<vec2_t, vec2_t>& icp_range);
-	void   CalcFeasibleIcpRange(const vec4_t& swg, const State& stnext, real_t tau, std::pair<vec2_t, vec2_t>& icp_range);
-	//real_t CalcDuration        (const vec4_t& swg0, const vec4_t& swg1);
+	bool   CalcFeasibleDurationRange(const State& stnext, const vec2_t& icp, vec2_t& tau_range);
+	void   CalcFeasibleIcpRange(const State& stnext, const vec2_t& tau_range, std::pair<vec2_t, vec2_t>& icp_range);
+	real_t CalcMinDuration     (const vec4_t& swg0, const vec4_t& swg1);
 	//State  CalcNextState       (const State& st, const Input& in    );
 	Input  CalcInput           (const State& st, const State& stnext, real_t tau);
 	bool   Check               (const State& st, Input& in, State& st_mod, int& nstep, bool& modified);

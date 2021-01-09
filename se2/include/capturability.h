@@ -18,7 +18,7 @@ class Capturability;
 struct CaptureState{
 	int      swg_id;
 	int      icp_id;
-	int      mu_id;
+	//int      mu_id;
 	//int      swg_to_icp_id;
 	int      nstep;
 
@@ -73,7 +73,7 @@ public:
 	void  Save(const std::string& basename);
 	void  Load(const std::string& basename);
 
-	void  GetCaptureBasin (const State& st, const Input& in, int nstepMin, int nstepMax, CaptureBasin& basin);
+	void  GetCaptureBasin (const State& st, int nstepMin, int nstepMax, CaptureBasin& basin);
 
 	// checks is given state is capturable
 	// if nstep is -1, then all N is checked and capturable N is stored in nstep

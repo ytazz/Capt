@@ -16,8 +16,8 @@ Swing::Swing() {
 	tau_travel  = 0.0;
 	tau_descend = 0.0;
 
-	v_const      = 1.0;
-	w_const      = 1.0;
+	v_max        = 1.0;
+	w_max        = 1.0;
 	z_max        = 0.0;
 	slope        = 1.0;
 	dsp_duration = 0.0;
@@ -26,8 +26,8 @@ Swing::Swing() {
 }
 
 void Swing::Read(Scenebuilder::XMLNode* node){
-	node->Get(v_const     , ".v_const"     );
-	node->Get(w_const     , ".w_const"     );
+	node->Get(v_max       , ".v_max"       );
+	node->Get(w_max       , ".w_max"       );
 	node->Get(z_max       , ".z_max"       );
 	node->Get(slope       , ".slope"       );
 	node->Get(dsp_duration, ".dsp_duration");

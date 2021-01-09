@@ -24,7 +24,7 @@ int main(int argc, char const *argv[]) {
 
 	printf("get cap regions\n");
 	CaptureBasin basin;
-	cap.GetCaptureBasin(plot.st, plot.in, 0, plot.nmax, basin);
+	cap.GetCaptureBasin(plot.st, 0, plot.nmax, basin);
 	printf("get done: %d\n", basin.size());
 
 	for(CaptureState& cs : basin){

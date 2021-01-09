@@ -17,7 +17,6 @@ void Plot::Read(Scenebuilder::XMLNode* node){
 	node->Get(st.swg[3], ".swg_r"    );
 	node->Get(st.icp[0], ".icp_x"    );
 	node->Get(st.icp[1], ".icp_y"    );
-	node->Get(in.tau   , ".duration" );
 	node->Get(nmax     , ".nmax"     );
 	node->Get(angle_div, ".angle_div");
 }

@@ -67,8 +67,8 @@ void Swing::Init(){
   
 	if(type == Type::Rectangle){
 		travel = (z_max - p_swg.z) + move.norm() + z_max;
-		v_const= travel        /duration;
-		w_const= std::abs(turn)/duration;
+		v_const= travel        /(duration - dsp_duration);
+		w_const= std::abs(turn)/(duration - dsp_duration);
 
 		tau_ascend  = (z_max - p_swg.z)/v_const;
 		tau_travel  = move.norm()      /v_const;

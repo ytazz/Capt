@@ -7,9 +7,10 @@ namespace Capt {
 const real_t eps = 1.0e-10;
 
 Footstep::Step::Step(){
-	stride  = 0.0;
-	spacing = 0.0;
-	turn    = 0.0;
+	stride   = 0.0;
+	spacing  = 0.0;
+	turn     = 0.0;
+	duration = 0.0;
 		
 	side       = 0;
 	footPos[0] = vec3_t(0.0, 0.0, 0.0);
@@ -18,7 +19,6 @@ Footstep::Step::Step(){
 	footOri[1] = 0.0;
 	cop        = vec3_t(0.0, 0.0, 0.0);
 	icp        = vec3_t(0.0, 0.0, 0.0);
-	duration = 0.0;
 	telapsed = 0.0;
 }
 

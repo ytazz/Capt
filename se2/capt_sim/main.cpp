@@ -94,6 +94,7 @@ void Init(){
 		"icp_x, icp_y, icp_z, "
 		"foot0_x, foot0_y, foot0_z, foot0_r, "
 		"foot1_x, foot1_y, foot1_z, foot1_r, "
+		"duration, elapsed, "
 		"nstep, succeeded, modified\n"
 		);
 
@@ -181,6 +182,7 @@ void Control(){
 			st    .icp  = vec2_t(icp  [0], icp  [1]);
 			in    .cop  = vec2_t(cop  [0], cop  [1]);
 			in    .land = vec3_t(pland[0], pland[1], rland);
+			in    .tau  = (steps[0].duration - steps[0].telapsed);
 			stnext.swg  = vec4_t(pswg_next [0], pswg_next [1], pswg_next[2], rswg_next);
 			stnext.icp  = vec2_t(icp_next  [0], icp_next  [1]);
 			
@@ -205,11 +207,12 @@ void Control(){
 				R[swg] = mat3_t::Rot(steps[1].footOri[swg], 'z');
 				steps[1].icp = R[swg]*S[swg]*vec3_t(stnext_mod.icp[0], stnext_mod.icp[1], 0.0) + steps[1].footPos[swg];
 
-				swing.SetSwg (steps[0].footPos[swg], steps[0].footOri[swg]);
-				swing.SetLand(steps[1].footPos[swg], steps[1].footOri[swg]);
+				swing.SetSwg     (steps[0].footPos[swg], steps[0].footOri[swg]);
+				swing.SetLand    (steps[1].footPos[swg], steps[1].footOri[swg]);
+				swing.SetDuration(in_mod.tau);
 
 				// modified step duration
-				steps[0].duration = swing.duration;
+				steps[0].duration = in_mod.tau;
 				steps[0].telapsed = 0.0;
 
 				printf("land: %f,%f  duration: %f\n", in.land.x, in.land.y, steps[0].duration);
@@ -272,6 +275,7 @@ void Control(){
 		"%f, %f, %f, "
 		"%f, %f, %f, %f, "
 		"%f, %f, %f, %f, "
+		"%f, %f, "
 		"%d, %d, %d\n",
 		cnt, t,
 		comPos.x, comPos.y, comPos.z,
@@ -279,6 +283,7 @@ void Control(){
 		steps[0].icp.x, steps[0].icp.y, steps[0].icp.z,
 		steps[0].footPos[0].x, steps[0].footPos[0].y, steps[0].footPos[0].z, steps[0].footOri[0],
 		steps[0].footPos[1].x, steps[0].footPos[1].y, steps[0].footPos[1].z, steps[0].footOri[1],
+		steps[0].duration, steps[0].telapsed,
 		nstep, (int)succeeded, (int)modified
 		);
 	

@@ -27,11 +27,13 @@ int main(int argc, char const *argv[]) {
 	cap.GetCaptureBasin(plot.st, 0, plot.nmax, basin);
 	printf("get done: %d\n", basin.size());
 
+	Input in;
 	for(CaptureState& cs : basin){
 		State stnext;
 		stnext.swg = cap.grid->xyzr[cap.swg_to_xyzr[cs.swg_id]];
 		stnext.icp = cap.grid->xy  [cs.icp_id];
-		Input in   = cap.CalcInput(plot.st, stnext, in.tau);
+		in.tau = cap.CalcMinDuration(plot.st.swg, stnext.swg);
+		cap.CalcInput(plot.st, stnext, in);
 		plot.SetCaptureInput(in, cs.nstep);
 	}
 

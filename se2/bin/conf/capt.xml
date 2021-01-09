@@ -8,6 +8,7 @@
   swg_angle  = "60deg"
   step_weight= "0.0"
   swg_weight = "1.0"
+  tau_weight = "0.0"
   icp_weight = "10.0"
   >
   <!--

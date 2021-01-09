@@ -111,10 +111,7 @@ State Capturability::CalcNextState(const State& st, const Input& in){
 	return stnext;
 }
 */
-Input Capturability::CalcInput(const State& st, const State& stnext, real_t tau){
-	Input in;
-	in.tau = tau;
-
+void Capturability::CalcInput(const State& st, const State& stnext, Input& in){
 	mat2_t R       = mat2_t::Rot(stnext.swg[3]);
 	vec2_t p_land  = -(R*vec2_t(stnext.swg.x, -stnext.swg.y));
 	real_t r_land  =  stnext.swg[3];
@@ -126,10 +123,7 @@ Input Capturability::CalcInput(const State& st, const State& stnext, real_t tau)
 	//real_t tau   = swing->duration;
 	real_t alpha = exp(in.tau/T);
 	vec2_t diff  = R*vec2_t(stnext.icp.x - stnext.swg.x, -(stnext.icp.y - stnext.swg.y));
-
 	in.cop = (1.0/(1.0 - alpha))*(diff - alpha*st.icp);
-
-	return in;
 }
 
 bool UpdateDurationRange(real_t mu, real_t cop, real_t icp, bool min_or_max, vec2_t& ainv_range){
@@ -154,50 +148,47 @@ bool UpdateDurationRange(real_t mu, real_t cop, real_t icp, bool min_or_max, vec
 	return true;
 }
 
-bool Capturability::CalcFeasibleDurationRange(const State& stnext, const vec2_t& icp, vec2_t& tau_range){
-	vec2_t mu = mat2_t::Rot(stnext.swg[3])*vec2_t(stnext.icp.x - stnext.swg.x, -1.0*(stnext.icp.y - stnext.swg.y));
+void Capturability::CalcMu(const State& stnext, vec2_t& mu){
+	mu = mat2_t::Rot(stnext.swg[3])*vec2_t(stnext.icp.x - stnext.swg.x, -1.0*(stnext.icp.y - stnext.swg.y));
+}
 
-	vec2_t ainv_range(
-		exp(-tau_range[1]/T),
-		exp(-tau_range[0]/T)
-	);
+void Capturability::CalcTauRange(const vec2_t& ainv_range, vec2_t& tau_range){
+	tau_range[0] = -T*log(ainv_range[1]);
+	tau_range[1] = -T*log(ainv_range[0]);
+}
 
+void Capturability::CalcAinvRange(const vec2_t& tau_range, vec2_t& ainv_range){
+	ainv_range[0] = exp(-tau_range[1]/T);
+	ainv_range[1] = exp(-tau_range[0]/T);
+}
+
+bool Capturability::CalcFeasibleTauRange(const vec2_t& mu, const vec2_t& icp, vec2_t& ainv_range){
 	if(!UpdateDurationRange(mu.x, cop_x.min, icp.x, true , ainv_range)) return false;
 	if(!UpdateDurationRange(mu.x, cop_x.max, icp.x, false, ainv_range)) return false;
 	if(!UpdateDurationRange(mu.y, cop_y.min, icp.y, true , ainv_range)) return false;
 	if(!UpdateDurationRange(mu.y, cop_y.max, icp.y, false, ainv_range)) return false;
 
-	tau_range[0] = -T*log(ainv_range[1]);
-	tau_range[1] = -T*log(ainv_range[0]);
-	
-	return tau_range[0] < tau_range[1];
-
+	return ainv_range[0] < ainv_range[1];
 }
 
-void Capturability::CalcFeasibleIcpRange(const State& stnext, const vec2_t& tau_range, pair<vec2_t, vec2_t>& icp_range){
+void Capturability::CalcFeasibleIcpRange(const vec2_t& mu, const vec2_t& ainv_range, pair<vec2_t, vec2_t>& icp_range){
 	//real_t tau       = CalcDuration(swg, stnext.swg);
-	vec2_t ainv(
-		exp(-tau_range[1]/T),
-		exp(-tau_range[0]/T)
-	);
 
-	vec2_t mu = mat2_t::Rot(stnext.swg[3])*vec2_t(stnext.icp.x - stnext.swg.x, -1.0*(stnext.icp.y - stnext.swg.y));
-	
 	icp_range.first = vec2_t(
 		std::min(
-			(1.0 - ainv[0])*cop_x.min + (ainv[0])*mu.x,
-			(1.0 - ainv[1])*cop_x.min + (ainv[1])*mu.x ),
+			(1.0 - ainv_range[0])*cop_x.min + (ainv_range[0])*mu.x,
+			(1.0 - ainv_range[1])*cop_x.min + (ainv_range[1])*mu.x ),
 		std::min(
-			(1.0 - ainv[0])*cop_y.min + (ainv[0])*mu.y,
-			(1.0 - ainv[1])*cop_y.min + (ainv[1])*mu.y )
+			(1.0 - ainv_range[0])*cop_y.min + (ainv_range[0])*mu.y,
+			(1.0 - ainv_range[1])*cop_y.min + (ainv_range[1])*mu.y )
 		);
 	icp_range.second = vec2_t(
 		std::max(
-			(1.0 - ainv[0])*cop_x.max + (ainv[0])*mu.x,
-			(1.0 - ainv[1])*cop_x.max + (ainv[1])*mu.x ),
+			(1.0 - ainv_range[0])*cop_x.max + (ainv_range[0])*mu.x,
+			(1.0 - ainv_range[1])*cop_x.max + (ainv_range[1])*mu.x ),
 		std::max(
-			(1.0 - ainv[0])*cop_y.max + (ainv[0])*mu.y,
-			(1.0 - ainv[1])*cop_y.max + (ainv[1])*mu.y )
+			(1.0 - ainv_range[0])*cop_y.max + (ainv_range[0])*mu.y,
+			(1.0 - ainv_range[1])*cop_y.max + (ainv_range[1])*mu.y )
 		);
 
 	//int tau_id = duration_map[swg_to_xyzr.size()*swg_id + csnext.swg_id];
@@ -347,11 +338,13 @@ void Capturability::Analyze(){
 
 	vec4_t swg;
 	vec2_t icp;
+	vec2_t mu;
 	State  stnext;
 	pair<vec2_t, vec2_t> icp_range;
 	std::set<int>  icp_id_valid;
 	vec2_t tau_range;
-	vec2_t tau_range_tmp;
+	vec2_t ainv_range;
+	vec2_t ainv_range_mod;
 
 	int n = 1;
 	while(n < nmax){
@@ -381,7 +374,9 @@ void Capturability::Analyze(){
 
 				//CalcFeasibleIcpRange(swg_id, csnext, icp_range);
 				// calc outer approximation of feasible icp range
-				CalcFeasibleIcpRange(stnext, tau_range, icp_range);
+				CalcMu(stnext, mu);
+				CalcAinvRange(tau_range, ainv_range);
+				CalcFeasibleIcpRange(mu, ainv_range, icp_range);
 
 				grid->x.IndexRange(icp_range.first.x, icp_range.second.x, icp_x_id_min, icp_x_id_max);
 				grid->y.IndexRange(icp_range.first.y, icp_range.second.y, icp_y_id_min, icp_y_id_max);
@@ -394,8 +389,8 @@ void Capturability::Analyze(){
 					if(IsInsideSupport(icp, eps)){
 						continue;
 					}
-					tau_range_tmp = tau_range;
-					if(CalcFeasibleDurationRange(stnext, icp, tau_range_tmp)){
+					ainv_range_mod = ainv_range;
+					if(CalcFeasibleTauRange(mu, icp, ainv_range_mod)){
 						int icp_id = grid->xy.ToIndex(idx2);
 						icp_id_valid.insert(icp_id);
 					}
@@ -506,6 +501,8 @@ void Capturability::GetCaptureBasin(const State& st, int nstepMin, int nstepMax,
 
 	//pair<vec2_t, vec2_t> icp_range;
 	vec2_t tau_range;
+	vec2_t ainv_range;
+	vec2_t mu;
 	State  stnext;
 
 	for(int n = nstepMin; n <= nstepMax; n++){
@@ -523,7 +520,10 @@ void Capturability::GetCaptureBasin(const State& st, int nstepMin, int nstepMax,
 			//	icp_range.first.y <= st.icp.y && st.icp.y <= icp_range.second.y ){
 			tau_range[0] = CalcMinDuration(st.swg, stnext.swg);
 			tau_range[1] = grid->t.max;
-			if(CalcFeasibleDurationRange(stnext, st.icp, tau_range)){
+			CalcMu(stnext, mu);
+			CalcAinvRange(tau_range, ainv_range);
+
+			if(CalcFeasibleTauRange(mu, st.icp, ainv_range)){
 				basin.push_back(csnext);
 			}
 		}
@@ -562,8 +562,11 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 	int    ncomped = 0;
 	State  stnext;
 	//pair<vec2_t,vec2_t> icp_range;
+	vec2_t mu;
 	vec2_t tau_range;
 	vec2_t tau_range_mod;
+	vec2_t ainv_range;
+	vec2_t ainv_range_mod;
 
 	tau_opt = 0.0;
 	n_opt   = 0;
@@ -594,14 +597,19 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 			if(step_weight*n + swg_weight*d_swg >= d_opt)
 				continue;
 
+			CalcMu(stnext, mu);
+			
 			//pair<vec2_t,vec2_t>& icp_range = icp_map[grid->xy.Num()*tau_id + csnext.mu_id];
 			tau_range[0]  = CalcMinDuration(st.swg, stnext.swg);
 			tau_range[1]  = grid->t.max;
-			tau_range_mod = tau_range;
+			CalcAinvRange(tau_range, ainv_range);
+			ainv_range_mod = tau_range;
 			
 			//if( icp_range.first.x <= st.icp.x && st.icp.x < icp_range.second.x &&
 			//	icp_range.first.y <= st.icp.y && st.icp.y < icp_range.second.y ){
-			if(CalcFeasibleDurationRange(stnext, st.icp, tau_range_mod)){
+			if(CalcFeasibleTauRange(mu, st.icp, ainv_range_mod)){
+				CalcTauRange(ainv_range_mod, tau_range_mod);
+
 				real_t tau = std::min(std::max(tau_range_mod[0], in_ref.tau), tau_range_mod[1]);
 				d_tau = (tau - in_ref.tau)*(tau - in_ref.tau);
 				d_icp = (stnext.icp - stnext_ref.icp).square();
@@ -650,7 +658,7 @@ bool Capturability::Check(const State& st, Input& in, State& stnext, int& nstep,
 	}
 
 	// calculate cop
-	//CalcInput(st, stnext, in);
+	CalcInput(st, stnext, in);
 	// check if cop is inside support region
 	//printf("cop(local): %f,%f\n", in.cop.x(), in.cop.y());
 	if(IsInsideSupport(in.cop, 0.01)){
@@ -661,7 +669,7 @@ bool Capturability::Check(const State& st, Input& in, State& stnext, int& nstep,
 		printf("cop is outside support\n");
 		cop_ok = false;
 	}
-
+	
 	// check duration
 	swing->SetSwg (vec3_t(st.swg .x, st.swg .y, st.swg.z), st.swg[3] );
 	swing->SetLand(vec3_t(in.land.x, in.land.y, 0.0     ), in.land[2]);
@@ -690,7 +698,8 @@ bool Capturability::Check(const State& st, Input& in, State& stnext, int& nstep,
 	stnext.swg = grid->xyzr[swg_to_xyzr[cs_opt.swg_id]];
 	stnext.icp = grid->xy  [cs_opt.icp_id];
 	
-	//in = CalcInput(st, stnext);
+	in.tau = tau_opt;
+	CalcInput(st, stnext, in);
 	
 	modified = true;
 	return true;

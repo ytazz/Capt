@@ -13,13 +13,13 @@ struct Footstep{
 		real_t  stride;
 		real_t  spacing;
 		real_t  turn;
+		real_t  duration;
 		
 		int     side;
 		vec3_t  footPos[2];
 		real_t  footOri[2];
 		vec3_t  cop;
 		vec3_t  icp;
-		real_t  duration;
 		real_t  telapsed;
 
 		void Read (Scenebuilder::XMLNode* node);

@@ -59,14 +59,16 @@ public:
 
 	bool   IsSteppable         (const vec2_t& p_swg, real_t r_swg);
 	bool   IsInsideSupport     (const vec2_t& cop, real_t margin = 1.0e-5);
-	//void  CalcFeasibleIcpRange(int swg, const CaptureState& csnext, std::pair<vec2_t, vec2_t>& icp_range);
-	bool   CalcFeasibleDurationRange(const State& stnext, const vec2_t& icp, vec2_t& tau_range);
-	void   CalcFeasibleIcpRange(const State& stnext, const vec2_t& tau_range, std::pair<vec2_t, vec2_t>& icp_range);
+	void   CalcMu              (const State& stnext, vec2_t& mu);
+	void   CalcTauRange        (const vec2_t& ainv_range, vec2_t& tau_range);
+	void   CalcAinvRange       (const vec2_t& tau_range, vec2_t& ainv_range);
+	bool   CalcFeasibleTauRange(const vec2_t& mu, const vec2_t& icp, vec2_t& ainv_range);
+	void   CalcFeasibleIcpRange(const vec2_t& mu, const vec2_t& ainv_range, std::pair<vec2_t, vec2_t>& icp_range);
 	real_t CalcMinDuration     (const vec4_t& swg0, const vec4_t& swg1);
-	//State  CalcNextState       (const State& st, const Input& in    );
-	Input  CalcInput           (const State& st, const State& stnext, real_t tau);
+	void   CalcInput           (const State& st, const State& stnext, Input& in);
 	bool   Check               (const State& st, Input& in, State& st_mod, int& nstep, bool& modified);
-
+	//State  CalcNextState       (const State& st, const Input& in    );
+	
 	//void  CalcDurationMap();
 	//void  CalcIcpMap();
 	void  Analyze();

@@ -122,8 +122,9 @@ void Capturability::CalcInput(const State& st, const State& stnext, Input& in){
 	//	vec3_t(in.land.x, in.land.y, 0.0     ), in.land[2]);
 	//real_t tau   = swing->duration;
 	real_t alpha = exp(in.tau/T);
-	vec2_t diff  = R*vec2_t(stnext.icp.x - stnext.swg.x, -(stnext.icp.y - stnext.swg.y));
-	in.cop = (1.0/(1.0 - alpha))*(diff - alpha*st.icp);
+	vec2_t mu;
+	CalcMu(stnext, mu);
+	in.cop = (alpha*st.icp - mu)/(alpha - 1.0);
 }
 
 bool UpdateDurationRange(real_t mu, real_t cop, real_t icp, bool min_or_max, vec2_t& ainv_range){
@@ -491,7 +492,7 @@ void Capturability::Load(const string& basename) {
 	//LoadArray(basename + "icp_map.bin"     , icp_map     );
 }
 
-void Capturability::GetCaptureBasin(const State& st, int nstepMin, int nstepMax, CaptureBasin& basin){
+void Capturability::GetCaptureBasin(const State& st, int nstepMin, int nstepMax, CaptureBasin& basin, vector<vec2_t>& tau_range_valid){
 	basin.clear();
 
 	//Index4D swg_idx4 = grid->xyzr.Round(st.swg);
@@ -524,7 +525,9 @@ void Capturability::GetCaptureBasin(const State& st, int nstepMin, int nstepMax,
 			CalcAinvRange(tau_range, ainv_range);
 
 			if(CalcFeasibleTauRange(mu, st.icp, ainv_range)){
+				CalcTauRange(ainv_range, tau_range);
 				basin.push_back(csnext);
+				tau_range_valid.push_back(tau_range);
 			}
 		}
 	}
@@ -670,22 +673,23 @@ bool Capturability::Check(const State& st, Input& in, State& stnext, int& nstep,
 		cop_ok = false;
 	}
 	
+	/*
 	// check duration
 	swing->SetSwg (vec3_t(st.swg .x, st.swg .y, st.swg.z), st.swg[3] );
 	swing->SetLand(vec3_t(in.land.x, in.land.y, 0.0     ), in.land[2]);
-
-	if(in.tau >= swing->GetMinDuration()){
+	real_t tau_min = swing->GetMinDuration();
+	if(in.tau >= tau_min){
 		tau_ok = true;
 	}
 	else{
 		tau_ok = false;
 		printf("step duration too small\n");
 	}
-	
-	if(next_ok && cop_ok && tau_ok){
+	*/
+	if(next_ok && cop_ok /*&& tau_ok*/){
 		return true;
 	}
-	
+
 	// find modified next state that can be transitioned from current state and is capturable
 	CaptureState cs_opt;
 	real_t tau_opt;

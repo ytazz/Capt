@@ -75,7 +75,7 @@ public:
 	void  Save(const std::string& basename);
 	void  Load(const std::string& basename);
 
-	void  GetCaptureBasin (const State& st, int nstepMin, int nstepMax, CaptureBasin& basin);
+	void  GetCaptureBasin (const State& st, int nstepMin, int nstepMax, CaptureBasin& basin, vector<vec2_t>& tau_range_valid);
 
 	// checks is given state is capturable
 	// if nstep is -1, then all N is checked and capturable N is stored in nstep

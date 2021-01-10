@@ -97,8 +97,13 @@ bool Swing::IsDescending(real_t t){
 	if(!ready)
 		Init();
 
-	if(type == Type::Rectangle)
+	if(type == Type::Rectangle){
 		return t > duration - (tau_descend + dsp_duration);
+	}
+	if(type == Type::Spline){
+		return t > duration - dsp_duration;
+	}
+
 	
 	return false;
 }
@@ -106,6 +111,15 @@ bool Swing::IsDescending(real_t t){
 void Swing::GetTraj(real_t t, vec3_t& p, real_t& r, vec3_t& v, real_t& w) {
 	if(!ready)
 		Init();
+
+	// no swing movement if foothold does not change
+	if(p_swg == p_land && r_swg == r_land){
+		p = p_swg;
+		r = r_swg;
+		v = vec3_t();
+		w = 0.0;
+		return;
+	}
 
 	if(type == Type::Rectangle){
 		// ascending

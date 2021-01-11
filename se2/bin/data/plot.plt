@@ -9,7 +9,8 @@ set output 'plot.svg'
 #set output 'plot.eps'
 
 # グラフサイズ設定
-set size square
+#set size square
+set size ratio -1
 
 # 軸ラベル設定
 set xlabel 'y [m]'
@@ -28,17 +29,18 @@ set mytics 2
 set xtics scale 0,0.001
 set ytics scale 0,0.001
 
-set xrange [-0.45:0.45]
+set xrange [-0.60:0.15]
 set yrange [-0.45:0.45]
 
 # カラーバーの設定
 set palette gray negative
 set palette defined ( 0 '#ffffff', 1 '#cbfeff', 2 '#68fefe', 3 '#0097ff', 4 '#0000ff')
-set cbrange [0:5]
-set cbtics 0.5
-set palette maxcolors 5
-set cbtics scale 0,0.001
-set cblabel "N-step capture point"
+#set cbrange [0:5]
+#set cbtics 0.5
+#set palette maxcolors 5
+#set cbtics scale 0,0.001
+#set cblabel "N-step capture point"
+unset colorbox
 
 # 描画
 plot "data.dat" using ($1):($2):($5+1) with points palette pt 5 ps 0.1 notitle,\

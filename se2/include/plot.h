@@ -28,7 +28,7 @@ public:
 
 	void PrintLandingRegion(const string& filename);
 	void PrintIcp          (const string& filename, const vec2_t& icp );
-	void PrintFoot         (const string& filename, const vec4_t& pose);
+	void PrintFoot         (const string& filename, const vec3_t& pose);
 	void Print             (const string& basename);
 
 	void Read(Scenebuilder::XMLNode* node);

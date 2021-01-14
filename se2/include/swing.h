@@ -42,6 +42,9 @@ public:
 	// get minimum step duration
 	real_t GetMinDuration();
 
+	// get reachable radius
+	void GetReachableRadius(real_t tau, real_t& dp, real_t& dr);
+
 	// get swing foot position
 	// t is elapsed time after set() is called
 	void  GetTraj(real_t t, vec3_t& p, real_t& r, vec3_t& v, real_t& w);

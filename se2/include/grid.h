@@ -15,11 +15,13 @@ struct Grid1D{
 	real_t  max;
 	real_t  stp;
 	int     num;
+	std::vector<int>    idx;
 	std::vector<real_t> val;
 
 	void  Init ();
 	void  Read (Scenebuilder::XMLNode* node);
 	int   Round(real_t v);
+	void  Neighbors(real_t v, vector<int>& idxs);
 	void  IndexRange(real_t fmin, real_t fmax, int& imin, int& imax);
 
 	Grid1D();
@@ -58,7 +60,8 @@ struct Grid2D{
 	int      Num      ();
 	int      ToIndex  (Index2D idx2);
 	void     FromIndex(int idx, Index2D& idx2);
-	Index2D  Round    (vec2_t v);
+	Index2D  Round    (const vec2_t& v);
+	void     Neighbors(const vec2_t& v, vector<Index2D>& idxs);
 
 	vec2_t operator[](int idx);
 	vec2_t operator[](Index2D idx2);
@@ -70,7 +73,8 @@ struct Grid3D{
 	int      Num      ();
 	int      ToIndex  (Index3D idx3);
 	void     FromIndex(int idx, Index3D& idx3);
-	Index3D  Round    (vec3_t v);
+	Index3D  Round    (const vec3_t& v);
+	void     Neighbors(const vec3_t& v, vector<Index3D>& idxs);
 
 	vec3_t operator[](int idx);
 	vec3_t operator[](Index3D idx3);
@@ -92,14 +96,16 @@ class Grid {
 public:
 	Grid1D x;
 	Grid1D y;
-	Grid1D z;
+	//Grid1D z;
 	Grid1D r;
-	Grid1D t;
+	//Grid1D t;
+	Grid1D ainv;
 
 	Grid2D xy;
 	//Grid3D xyz;
 	//Grid3D xyt;
-	Grid4D xyzr;
+	//Grid4D xyzr;
+	Grid3D xyr;
 
 public:
 	void Read(Scenebuilder::XMLNode* node);

@@ -84,13 +84,27 @@ real_t Swing::GetMinDuration(){
 		Init();
 
 	if(type == Type::Rectangle){
-		return travel/v_max + dsp_duration;
+		return std::max(travel/v_max, std::abs(turn)/w_max) + dsp_duration;
 	}
 	if(type == Type::Spline){
-		return 1.5*move.norm()/v_max + dsp_duration;
+		return 1.5*std::max(move.norm()/v_max, std::abs(turn)/w_max) + dsp_duration;
 	}
 
 	return 0.0;
+}
+
+void Swing::GetReachableRadius(real_t tau, real_t& dp, real_t& dr){
+	if(!ready)
+		Init();
+
+	if(type == Type::Rectangle){
+		dp = std::max(0.0, v_max*(tau - dsp_duration) - 2.0*z_max);
+		dr = std::max(0.0, w_max*(tau - dsp_duration));
+	}
+	if(type == Type::Spline){
+		dp = std::max(0.0, v_max*(tau - dsp_duration)/1.5);
+		dr = std::max(0.0, w_max*(tau - dsp_duration)/1.5);
+	}
 }
 
 bool Swing::IsDescending(real_t t){

@@ -7,17 +7,17 @@
 namespace Capt {
 
 struct State{
+	vec3_t swg;  //< swing foot pose x,y,r
 	vec2_t icp;  //< icp  x,y
-	vec4_t swg;  //< swing foot pose x,y,z,r
 
-	void Set(vec2_t _icp, vec4_t _swg){
-		icp = _icp;
+	void Set(const vec3_t& _swg, const vec2_t& _icp){
 		swg = _swg;
+		icp = _icp;
 	}
 
 	State(){}
-	State(vec2_t _icp, vec4_t _swg){
-		Set(_icp, _swg);
+	State(const vec3_t& _swg, const vec2_t& _icp){
+		Set(_swg, _icp);
 	}
 };
 

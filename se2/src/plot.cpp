@@ -13,8 +13,7 @@ Plot::~Plot() {
 void Plot::Read(Scenebuilder::XMLNode* node){
 	node->Get(st.swg[0], ".swg_x"    );
 	node->Get(st.swg[1], ".swg_y"    );
-	node->Get(st.swg[2], ".swg_z"    );
-	node->Get(st.swg[3], ".swg_r"    );
+	node->Get(st.swg[2], ".swg_r"    );
 	node->Get(st.icp[0], ".icp_x"    );
 	node->Get(st.icp[1], ".icp_y"    );
 	node->Get(nmax     , ".nmax"     );
@@ -42,17 +41,7 @@ void Plot::PrintLandingRegion(const string& filename){
 		angle -= dangle;
 	}
 	vertex.push_back(vertex.front());
-	/*
-	vertex[0] << cap->swg_x.min, cap->swg_y.min;
-	vertex[1] << cap->exc_x.min, cap->swg_y.min;
-	vertex[2] << cap->exc_x.min, cap->exc_y.max;
-	vertex[3] << cap->exc_x.max, cap->exc_y.max;
-	vertex[4] << cap->exc_x.max, cap->swg_y.min;
-	vertex[5] << cap->swg_x.max, cap->swg_y.min;
-	vertex[6] << cap->swg_x.max, cap->swg_y.max;
-	vertex[7] << cap->swg_x.min, cap->swg_y.max;
-	vertex[8] << cap->swg_x.min, cap->swg_y.min;
-	*/
+
 	for(int i = 0; i < vertex.size(); i++)
 		vertex[i] = CartesianToGraph(vertex[i]);
 
@@ -70,7 +59,7 @@ void Plot::PrintIcp(const string& filename, const vec2_t& icp){
 	fclose(fp);
 }
 
-void Plot::PrintFoot(const string& filename, const vec4_t& pose){
+void Plot::PrintFoot(const string& filename, const vec3_t& pose){
 	vec2_t pt[4];
 	pt[0] = vec2_t(cap->cop_x.min, cap->cop_y.min);
 	pt[1] = vec2_t(cap->cop_x.max, cap->cop_y.min);
@@ -81,7 +70,7 @@ void Plot::PrintFoot(const string& filename, const vec4_t& pose){
 	fp = fopen(filename.c_str(), "w");
 	vec2_t point;
 	for (size_t i = 0; i <= 4; i++) {
-		point = CartesianToGraph(vec2_t(pose[0], pose[1]) + mat2_t::Rot(pose[3])*pt[i%4]);
+		point = CartesianToGraph(vec2_t(pose[0], pose[1]) + mat2_t::Rot(pose[2])*pt[i%4]);
 		fprintf(fp, "%f %f\n", point.x, point.y);
 	}
 	fclose(fp);
@@ -89,9 +78,9 @@ void Plot::PrintFoot(const string& filename, const vec4_t& pose){
 
 void Plot::Print(const string& basename){
 	PrintLandingRegion(basename + "landing.dat");
-	PrintFoot(basename + "sup.dat", vec4_t(0.0, 0.0, 0.0, 0.0));
-	PrintFoot(basename + "swg.dat", st.swg                    );
-	PrintIcp (basename + "icp.dat", st.icp                    );
+	PrintFoot(basename + "sup.dat", vec3_t(0.0, 0.0, 0.0));
+	PrintFoot(basename + "swg.dat", st.swg               );
+	PrintIcp (basename + "icp.dat", st.icp               );
 
 	// mapをグラフ上の対応する点に変換
 	FILE *fp;

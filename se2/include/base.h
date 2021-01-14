@@ -19,17 +19,17 @@ inline real_t WrapRadian(real_t theta){
 }
 
 // round to the nearest integer
-inline int Round(float f){
+inline int Round(real_t f){
 	int i = (int)f;
 
-	float d = f - i;
-	if(d > 0.0f) {
-		if (d >= 0.5f) {
+	real_t d = f - i;
+	if(d > 0.0) {
+		if (d >= 0.5) {
 			i++;
 		}
 	}
 	else{
-		if (d <= -0.5f) {
+		if (d <= -0.5) {
 			i--;
 		}
 	}

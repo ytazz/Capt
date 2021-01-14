@@ -39,6 +39,7 @@ vec3_t          force;
 int             nstep;
 bool            modified;
 bool            succeeded;
+int             tcheck;
 			
 Footstep::Step  steps[2];
 
@@ -95,7 +96,7 @@ void Init(){
 		"foot0_x, foot0_y, foot0_z, foot0_r, "
 		"foot1_x, foot1_y, foot1_z, foot1_r, "
 		"duration, elapsed, "
-		"nstep, succeeded, modified\n"
+		"nstep, succeeded, modified, tcheck\n"
 		);
 
 	phase  = Phase::Dsp;
@@ -189,7 +190,10 @@ void Control(){
 			Input in_mod     = in;
 			State stnext_mod = stnext;
 			
+			timer.CountUS();
 			succeeded = cap.Check(st, in_mod, stnext_mod, nstep, modified);
+			tcheck = timer.CountUS();
+
 			if(succeeded && !modified){
 				printf("monitor: success\n");
 			}
@@ -276,7 +280,7 @@ void Control(){
 		"%f, %f, %f, %f, "
 		"%f, %f, %f, %f, "
 		"%f, %f, "
-		"%d, %d, %d\n",
+		"%d, %d, %d, %d\n",
 		cnt, t,
 		comPos.x, comPos.y, comPos.z,
 		steps[0].cop.x, steps[0].cop.y, steps[0].cop.z,
@@ -284,7 +288,7 @@ void Control(){
 		steps[0].footPos[0].x, steps[0].footPos[0].y, steps[0].footPos[0].z, steps[0].footOri[0],
 		steps[0].footPos[1].x, steps[0].footPos[1].y, steps[0].footPos[1].z, steps[0].footOri[1],
 		steps[0].duration, steps[0].telapsed,
-		nstep, (int)succeeded, (int)modified
+		nstep, (int)succeeded, (int)modified, tcheck
 		);
 	
     t += dt;

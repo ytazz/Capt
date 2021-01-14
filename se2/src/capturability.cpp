@@ -20,12 +20,7 @@ const real_t eps = 1.0e-5f;
 CaptureState::CaptureState(int _swg_id, int _icp_id, int _nstep, Capturability* cap){
 	swg_id = _swg_id;
 	icp_id = _icp_id;
-	//mu_id  = _mu_id;
 	nstep  = _nstep;
-	//vec4_t swg = cap->grid->xyzr[cap->swg_to_xyzr[swg_id]];
-	//vec2_t icp = cap->grid->xy  [icp_id];
-	//vec2_t mu  = mat2_t::Rot(swg[3])*vec2_t(icp.x - swg.x, -1.0*(icp.y - swg.y));
-	//mu_id = cap->grid->xy.ToIndex(cap->grid->xy.Round(mu));
 }
 
 Capturability::Capturability() {
@@ -88,33 +83,7 @@ bool Capturability::IsInsideSupport(const vec2_t& cop, real_t margin){
           cop.y >= cop_y.min - margin &&
           cop.y <= cop_y.max + margin );
 }
-/*
-State Capturability::CalcNextState(const State& st, const Input& in){
-	State stnext;
 
-	vec3_t p_swg (st.swg[0], st.swg[1], st.swg[2]);
-	real_t r_swg  = st.swg[3];
-	vec2_t p_land(in.land[0], in.land[1]);
-	real_t r_land = in.land[2];
-	mat2_t R = mat2_t::Rot(r_land);
-	
-	swing->Set(p_swg, r_swg, vec3_t(p_land[0], p_land[1], 0.0), r_land);
-	real_t tau   = swing->duration;
-	real_t alpha = exp(tau/T);
-
-	vec2_t tmp = R.trans()*p_land;
-	stnext.swg[0] = -tmp[0];
-	stnext.swg[1] =  tmp[1];
-	stnext.swg[2] =  0.0;
-	stnext.swg[3] =  r_land;
-
-	tmp = R.trans()*(alpha*(st.icp - in.cop) + in.cop - p_land);
-	stnext.icp[0] =  tmp[0];
-	stnext.icp[1] = -tmp[1];
-	
-	return stnext;
-}
-*/
 void Capturability::CalcInput(const State& st, const State& stnext, Input& in){
 	mat2_t R       = mat2_t::Rot(stnext.swg[2]);
 	vec2_t p_land  = -(R*vec2_t(stnext.swg.x, -stnext.swg.y));
@@ -171,7 +140,7 @@ bool Capturability::CalcFeasibleAinvRange(const vec2_t& mu, const vec2_t& icp, v
 
 	return ainv_range[0] < ainv_range[1];
 }
-
+/*
 void Capturability::CalcFeasibleIcpRange(const vec2_t& mu, real_t ainv, pair<vec2_t, vec2_t>& icp_range){
 	icp_range.first = vec2_t(
 		(1.0 - ainv)*cop_x.min + (ainv)*mu.x,
@@ -182,7 +151,7 @@ void Capturability::CalcFeasibleIcpRange(const vec2_t& mu, real_t ainv, pair<vec
 		(1.0 - ainv)*cop_y.max + (ainv)*mu.y
 		);
 }
-
+*/
 void Capturability::CalcFeasibleIcpRange(const vec2_t& mu, const vec2_t& ainv_range, pair<vec2_t, vec2_t>& icp_range){
 	icp_range.first = vec2_t(
 		std::min(
@@ -200,9 +169,30 @@ void Capturability::CalcFeasibleIcpRange(const vec2_t& mu, const vec2_t& ainv_ra
 			(1.0 - ainv_range[0])*cop_y.max + (ainv_range[0])*mu.y,
 			(1.0 - ainv_range[1])*cop_y.max + (ainv_range[1])*mu.y )
 		);
-	//int tau_id = duration_map[swg_to_xyzr.size()*swg_id + csnext.swg_id];
-	//icp_range = icp_map[grid->xy.Num()*tau_id + csnext.mu_id];
 }
+
+void Capturability::CalcFeasibleMuRange(const vec2_t& icp, const vec2_t& ainv_range, std::pair<vec2_t, vec2_t>& mu_range ){
+	vec2_t a_range;
+	a_range[0] = 1.0/ainv_range[1];
+	a_range[1] = 1.0/ainv_range[0];
+
+	mu_range.first = vec2_t(
+		std::min(
+			(1.0 - a_range[0])*cop_x.max + (a_range[0])*icp.x,
+			(1.0 - a_range[1])*cop_x.max + (a_range[1])*icp.x ),
+		std::min(
+			(1.0 - a_range[0])*cop_y.max + (a_range[0])*icp.y,
+			(1.0 - a_range[1])*cop_y.max + (a_range[1])*icp.y )
+		);
+	mu_range.second = vec2_t(
+		std::max(
+			(1.0 - a_range[0])*cop_x.min + (a_range[0])*icp.x,
+			(1.0 - a_range[1])*cop_x.min + (a_range[1])*icp.x ),
+		std::max(
+			(1.0 - a_range[0])*cop_y.min + (a_range[0])*icp.y,
+			(1.0 - a_range[1])*cop_y.min + (a_range[1])*icp.y )
+		);
+}	
 
 real_t Capturability::CalcMinDuration(const vec3_t& swg0, const vec3_t& swg1){
 	mat2_t R      = mat2_t::Rot(swg1[2]);
@@ -213,39 +203,7 @@ real_t Capturability::CalcMinDuration(const vec3_t& swg0, const vec3_t& swg1){
 
 	return swing->GetMinDuration();
 }
-/*
-void Capturability::EnumReachable(const vec3_t& swg1, real_t tau_min, vector<bool>& swg_id_array){
-	mat2_t R      = mat2_t::Rot(swg1[2]);
-	vec2_t p_land = -(R*vec2_t(swg1.x, -swg1.y));
-	real_t r_land = swg1[2];
 
-	real_t dp;
-	real_t dr;
-	swing->GetReachableRadius(tau_min, dp, dr);
-
-	real_t dx, dy;
-	int    ix0, ix1;
-	int    iy0, iy1;
-	int    ir0, ir1;
-	int    swg_id;
-
-	Index3D idx3;
-	grid->x.IndexRange(p_land.x - dp, p_land.x + dp, ix0, ix1);
-	grid->r.IndexRange(r_land   - dr, r_land   + dr, ir0, ir1);
-	for(idx3[0] = ix0; idx3[0] < ix1; idx3[0]++){
-		dx = (grid->x.val[idx3[0]] - p_land.x);
-		dy = sqrt(dp*dp - dx*dx);
-		grid->y.IndexRange(p_land.y - dy, p_land.y + dy, iy0, iy1);
-		for(idx3[1] = iy0; idx3[1] < iy1; idx3[1]++){
-			for(idx3[2] = ir0; idx3[2] < ir1; idx3[2]++){
-				swg_id = xyr_to_swg[grid->xyr.ToIndex(idx3)];
-				if(swg_id != -1)
-					swg_id_array[swg_id] = true;
-			}
-		}
-	}
-}
-*/
 void Capturability::EnumReachable(const vector< pair<int, real_t> >& seed, vector<bool>& swg_id_array){
 	struct CompByTau{
 		const vector<real_t>& _tau_map;
@@ -612,7 +570,6 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 	real_t d_tau = 0.0;
 	real_t d_icp = 0.0;
 	real_t d     = 0.0;
-	//int    swg_id_prev;
 	int    ntested = 0;
 	int    ncomped = 0;
 	State  stnext;
@@ -620,94 +577,73 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 	real_t tau_min;
 	vec2_t tau_range;
 	vec2_t ainv_range;
-	//pair<vec2_t,vec2_t> icp_range;
-	//vec2_t tau_range_mod;
-	//vec2_t ainv_range_mod;
-
+	
 	tau_opt = 0.0;
 	n_opt   = 0;
 
-	for(int mu_x_id : grid->x.idx)
-	for(int mu_y_id : grid->y.idx){
-		Index2D mu_idx2(mu_x_id, mu_y_id);
-		int     mu_id = grid->xy.ToIndex(mu_idx2);
-		mu = grid->xy[mu_idx2];
+	pair<vec2_t, vec2_t>  mu_range;
 
-		if(!CalcFeasibleAinvRange(mu, st.icp, ainv_range))
-			continue;
+	ainv_range[0] = 0.01;
+	ainv_range[1] = exp(-swing->dsp_duration/T);
+	CalcFeasibleMuRange(st.icp, ainv_range, mu_range);
+	//grid->x.IndexRange(mu_range.first.x, mu_range.second.x, mu_x_id_min, mu_x_id_max);
+	//grid->y.IndexRange(mu_range.first.y, mu_range.second.y, mu_y_id_min, mu_y_id_max);
 
-		CalcTauRange(ainv_range, tau_range);
-
-		for(int n = 0; n < nmax; n++){
-			if(step_weight*n >= d_opt)
-				break;
-
-			/*
-			for(int basin_id = cap_basin[n].mu_index[mu_id].first; basin_id < cap_basin[n].mu_index[mu_id].second; basin_id++){
-				CaptureState& csnext = cap_basin[n][basin_id];
-				stnext.swg = grid->xyr[swg_to_xyr[csnext.swg_id]];
-				stnext.icp = grid->xy [csnext.icp_id];
-
-				tau_min = CalcMinDuration(st.swg, stnext.swg);
-				if(tau_range[0] <= tau_min && tau_min <= tau_range[1]){
-
-				}
-			}
-			*/
-		}	
-	}
-	/*
 	for(int n = 0; n < nmax; n++){
 		if(step_weight*n >= d_opt)
-			continue;
+			break;
 		if((int)cap_basin.size() < n+1 || cap_basin[n].empty())
-			continue;
+			break;
 
-		swg_id_prev = -1;
-		//int tau_id = -1;
+		int swg_id_prev = -1;
 		for(int basin_id = 0; basin_id < (int)cap_basin[n].size(); basin_id++){
 			CaptureState& csnext = cap_basin[n][basin_id];
+			//grid->xy.FromIndex(csnext.mu_id, mu_idx2);
+			//if( !(mu_x_id_min <= mu_idx2[0] && mu_idx2[0] < mu_x_id_max) ||
+			//	!(mu_y_id_min <= mu_idx2[1] && mu_idx2[1] < mu_y_id_max) )
+			//	continue;
+
 			stnext.swg = grid->xyr[swg_to_xyr[csnext.swg_id]];
 			stnext.icp = grid->xy [csnext.icp_id];
+			CalcMu(stnext.swg, stnext.icp, mu);
+
+			if( !(mu_range.first[0] <= mu.x && mu.x <= mu_range.second[0]) ||
+				!(mu_range.first[1] <= mu.y && mu.y <= mu_range.second[1]) )
+				continue;
 
 			if(csnext.swg_id != swg_id_prev){
 				d_swg  = (stnext.swg - stnext_ref.swg).square();
-				//tau_id = duration_map[swg_to_xyzr.size()*swg_id + csnext.swg_id];
 				swg_id_prev = csnext.swg_id;
 			}
 			if(step_weight*n + swg_weight*d_swg >= d_opt)
 				continue;
 
-			CalcMu(stnext, mu);
-			
-			//pair<vec2_t,vec2_t>& icp_range = icp_map[grid->xy.Num()*tau_id + csnext.mu_id];
-			tau_range[0]  = CalcMinDuration(st.swg, stnext.swg);
-			tau_range[1]  = grid->t.max;
-			CalcAinvRange(tau_range, ainv_range);
-			ainv_range_mod = tau_range;
-			
-			//if( icp_range.first.x <= st.icp.x && st.icp.x < icp_range.second.x &&
-			//	icp_range.first.y <= st.icp.y && st.icp.y < icp_range.second.y ){
-			if(CalcFeasibleTauRange(mu, st.icp, ainv_range_mod)){
-				CalcTauRange(ainv_range_mod, tau_range_mod);
+			ainv_range = vec2_t(0.0, 1.0);
+			if(!CalcFeasibleAinvRange(mu, st.icp, ainv_range))
+				continue;
 
-				real_t tau = std::min(std::max(tau_range_mod[0], in_ref.tau), tau_range_mod[1]);
-				d_tau = (tau - in_ref.tau)*(tau - in_ref.tau);
-				d_icp = (stnext.icp - stnext_ref.icp).square();
-				d     = step_weight*n + swg_weight*d_swg + tau_weight*d_tau + icp_weight*d_icp;
-				if( d < d_opt ){
-					cs_opt  = csnext;
-					tau_opt = tau;
-					d_opt   = d;
-					n_opt   = n;
-				}
-				ncomped++;
+			CalcTauRange(ainv_range, tau_range);
+			tau_min = CalcMinDuration(st.swg, stnext.swg);
+			
+			if( tau_min > tau_range[1] )
+				continue;
+			
+			real_t tau = std::min(std::max(tau_range[0], in_ref.tau), tau_range[1]);
+			d_tau = (tau - in_ref.tau)*(tau - in_ref.tau);
+			d_icp = (stnext.icp - stnext_ref.icp).square();
+			d     = step_weight*n + swg_weight*d_swg + tau_weight*d_tau + icp_weight*d_icp;
+			if( d < d_opt ){
+				cs_opt  = csnext;
+				tau_opt = tau;
+				d_opt   = d;
+				n_opt   = n;
 			}
-			ntested++;
+			ncomped++;
 		}
+		ntested++;
 	}
+
 	printf("d_opt: %f  n_opt: %d\n", d_opt, n_opt);
-	*/
 
 	return d_opt != inf;
 }

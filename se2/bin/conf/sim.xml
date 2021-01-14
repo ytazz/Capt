@@ -18,8 +18,8 @@
     <step stride="0.0" spacing="0.2" turn="0.0deg" duration="0.7"/>
   </footstep>
   <disturbance>
-    <impulse time="1.2" delta_vel="0.2 -0.2 0"/>
-    <impulse time="2.0" delta_vel="0.0 0.0 0"/>
+    <impulse time="1.2" delta_vel="0.0 0.0 0"/>
+    <impulse time="2.5" delta_vel="0.3 0.0 0"/>
     <impulse time="3.0" delta_vel="0.0 0.0 0"/>
     <impulse time="4.0" delta_vel="0.0 0.0 0"/>
   </disturbance>

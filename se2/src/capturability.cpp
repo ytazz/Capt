@@ -208,7 +208,7 @@ void Capturability::EnumReachable(const vector< pair<int, real_t> >& seed, vecto
 	struct CompByTau{
 		const vector<real_t>& _tau_map;
 
-		bool operator()(int lhs, int rhs){ return _tau_map[lhs] > _tau_map[rhs]; }
+		bool operator()(int lhs, int rhs) const { return _tau_map[lhs] > _tau_map[rhs]; }
 
 		CompByTau(const vector<real_t>& _map):_tau_map(_map){}
 	};
@@ -570,8 +570,7 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 	real_t d_tau = 0.0;
 	real_t d_icp = 0.0;
 	real_t d     = 0.0;
-	int    ntested = 0;
-	int    ncomped = 0;
+	int    n0 = 0, n1 = 0, n2 = 0, n3 = 0, n4 = 0;
 	State  stnext;
 	vec2_t mu;
 	real_t tau_min;
@@ -606,11 +605,13 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 			stnext.swg = grid->xyr[swg_to_xyr[csnext.swg_id]];
 			stnext.icp = grid->xy [csnext.icp_id];
 			CalcMu(stnext.swg, stnext.icp, mu);
+			n0++;
 
 			if( !(mu_range.first[0] <= mu.x && mu.x <= mu_range.second[0]) ||
 				!(mu_range.first[1] <= mu.y && mu.y <= mu_range.second[1]) )
 				continue;
 
+			n1++;
 			if(csnext.swg_id != swg_id_prev){
 				d_swg  = (stnext.swg - stnext_ref.swg).square();
 				swg_id_prev = csnext.swg_id;
@@ -618,16 +619,19 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 			if(step_weight*n + swg_weight*d_swg >= d_opt)
 				continue;
 
+			n2++;
 			ainv_range = vec2_t(0.0, 1.0);
 			if(!CalcFeasibleAinvRange(mu, st.icp, ainv_range))
 				continue;
 
+			n3++;
 			CalcTauRange(ainv_range, tau_range);
 			tau_min = CalcMinDuration(st.swg, stnext.swg);
 			
 			if( tau_min > tau_range[1] )
 				continue;
 			
+			n4++;
 			real_t tau = std::min(std::max(tau_range[0], in_ref.tau), tau_range[1]);
 			d_tau = (tau - in_ref.tau)*(tau - in_ref.tau);
 			d_icp = (stnext.icp - stnext_ref.icp).square();
@@ -638,12 +642,10 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 				d_opt   = d;
 				n_opt   = n;
 			}
-			ncomped++;
 		}
-		ntested++;
 	}
 
-	printf("d_opt: %f  n_opt: %d\n", d_opt, n_opt);
+	printf("d_opt: %f  n_opt: %d  %d %d %d %d %d\n", d_opt, n_opt, n0, n1, n2, n3, n4);
 
 	return d_opt != inf;
 }

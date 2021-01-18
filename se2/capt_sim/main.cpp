@@ -37,7 +37,8 @@ vec3_t          comVel;
 vec3_t          comAcc;
 vec3_t          force;
 int             nstep;
-bool            modified;
+bool            duration_modified;
+bool            step_modified;
 bool            succeeded;
 int             tcheck;
 			
@@ -96,7 +97,7 @@ void Init(){
 		"foot0_x, foot0_y, foot0_z, foot0_r, "
 		"foot1_x, foot1_y, foot1_z, foot1_r, "
 		"duration, elapsed, "
-		"nstep, succeeded, modified, tcheck\n"
+		"nstep, succeeded, duration_modified, step_modified, tcheck\n"
 		);
 
 	phase  = Phase::Dsp;
@@ -131,9 +132,10 @@ void Control(){
 			//input.icp  = (state.footstep[state.footstep.cur + 1].icp - state.footstep[state.footstep.cur].pos) + state.su@;
 		
 			// update swing trajectory and detemine step duration
-			swing.SetSwg     (steps[0].footPos[swg], steps[0].footOri[swg]);
-			swing.SetLand    (steps[1].footPos[swg], steps[1].footOri[swg]);
-			swing.SetDuration(st0.duration);
+			swing.SetSwingPose    (vec2_t(steps[0].footPos[swg].x, steps[0].footPos[swg].y), steps[0].footOri[swg]);
+			swing.SetSwingVelocity(vec2_t(0.0, 0.0), 0.0);
+			swing.SetLandingPose  (vec2_t(steps[1].footPos[swg].x, steps[1].footPos[swg].y), steps[1].footOri[swg]);
+			swing.SetDuration     (st0.duration);
 
 			steps[0].duration = st0.duration;
 			steps[0].telapsed = 0.0;
@@ -152,7 +154,7 @@ void Control(){
 		int swg = !steps[0].side;
 		
 		// do not check too frequently, do not check right before landing
-		if(cnt % 10 == 0 && !swing.IsDescending(steps[0].telapsed)){
+		if(cnt % 10 == 0 && (steps[0].telapsed < swing.duration - swing.dsp_duration)){
 			timer.CountUS();
 
 			// convert state and input to support-foot local coordinate
@@ -179,47 +181,59 @@ void Control(){
 			State stnext;
 			Input in;
 			
-			st    .swg  = vec4_t(pswg [0], pswg [1], pswg[2], rswg);
+			st    .swg  = vec3_t(pswg [0], pswg [1], rswg);
 			st    .icp  = vec2_t(icp  [0], icp  [1]);
 			in    .cop  = vec2_t(cop  [0], cop  [1]);
 			in    .land = vec3_t(pland[0], pland[1], rland);
 			in    .tau  = (steps[0].duration - steps[0].telapsed);
-			stnext.swg  = vec4_t(pswg_next [0], pswg_next [1], pswg_next[2], rswg_next);
+			stnext.swg  = vec3_t(pswg_next [0], pswg_next [1], rswg_next);
 			stnext.icp  = vec2_t(icp_next  [0], icp_next  [1]);
 			
 			Input in_mod     = in;
 			State stnext_mod = stnext;
 			
 			timer.CountUS();
-			succeeded = cap.Check(st, in_mod, stnext_mod, nstep, modified);
+			succeeded = cap.Check(st, in_mod, stnext_mod, nstep, duration_modified, step_modified);
 			tcheck = timer.CountUS();
 
-			if(succeeded && !modified){
-				printf("monitor: success\n");
-			}
-			if(succeeded && modified){
-				printf("monitor: modified\n");
+			if(succeeded){
+				if(!duration_modified && !step_modified){
+					printf("monitor: success\n");
+				}
+				if(duration_modified && !step_modified){
+					printf("monitor: duration modified\n");
+					swing.SetSwingPose    (vec2_t(steps[0].footPos[swg].x, steps[0].footPos[swg].y), steps[0].footOri   [swg]);
+					swing.SetSwingVelocity(vec2_t(steps[0].footVel[swg].x, steps[0].footVel[swg].y), steps[0].footAngvel[swg]);
+					swing.SetDuration(in_mod.tau);
+		
+					steps[0].duration = in_mod.tau;
+					steps[0].telapsed = 0.0;
+				}
+				if(duration_modified && step_modified){
+					printf("monitor: modified\n");
 				
-				// convert back to global coordinate
-				pland = vec3_t(in_mod.land[0], in_mod.land[1], 0.0);
-				rland = in_mod.land[2];
+					// convert back to global coordinate
+					pland = vec3_t(in_mod.land[0], in_mod.land[1], 0.0);
+					rland = in_mod.land[2];
 
-				steps[1].footPos[swg] = R[sup]*S[sup]*pland + steps[0].footPos[sup];
-				steps[1].footOri[swg] =        s[sup]*rland + steps[0].footOri[sup];
+					steps[1].footPos[swg] = R[sup]*S[sup]*pland + steps[0].footPos[sup];
+					steps[1].footOri[swg] =        s[sup]*rland + steps[0].footOri[sup];
 
-				// next icp should be converted from next support foot's local coordinate
-				R[swg] = mat3_t::Rot(steps[1].footOri[swg], 'z');
-				steps[1].icp = R[swg]*S[swg]*vec3_t(stnext_mod.icp[0], stnext_mod.icp[1], 0.0) + steps[1].footPos[swg];
+					// next icp should be converted from next support foot's local coordinate
+					R[swg] = mat3_t::Rot(steps[1].footOri[swg], 'z');
+					steps[1].icp = R[swg]*S[swg]*vec3_t(stnext_mod.icp[0], stnext_mod.icp[1], 0.0) + steps[1].footPos[swg];
 
-				swing.SetSwg     (steps[0].footPos[swg], steps[0].footOri[swg]);
-				swing.SetLand    (steps[1].footPos[swg], steps[1].footOri[swg]);
-				swing.SetDuration(in_mod.tau);
+					swing.SetSwingPose    (vec2_t(steps[0].footPos[swg].x, steps[0].footPos[swg].y), steps[0].footOri   [swg]);
+					swing.SetSwingVelocity(vec2_t(steps[0].footVel[swg].x, steps[0].footVel[swg].y), steps[0].footAngvel[swg]);
+					swing.SetLandingPose  (vec2_t(steps[1].footPos[swg].x, steps[1].footPos[swg].y), steps[1].footOri   [swg]);
+					swing.SetDuration     (in_mod.tau);
 
-				// modified step duration
-				steps[0].duration = in_mod.tau;
-				steps[0].telapsed = 0.0;
+					// modified step duration
+					steps[0].duration = in_mod.tau;
+					steps[0].telapsed = 0.0;
 
-				printf("land: %f,%f  duration: %f\n", in.land.x, in.land.y, steps[0].duration);
+					printf("land: %f,%f,%f  duration: %f\n", in_mod.land.x, in_mod.land.y, in_mod.land[2], in_mod.tau);
+				}
 			}
 			if(!succeeded){
 				printf("monitor: fail\n");
@@ -227,10 +241,15 @@ void Control(){
 		}
 		
 		// update swing foot position
-		vec3_t v;
-		real_t w;
-		swing.GetTraj(steps[0].telapsed, steps[0].footPos[swg], steps[0].footOri[swg], v, w);
-
+		vec2_t p, v;
+		real_t r, w;
+		real_t vz;
+		swing.GetTraj(steps[0].telapsed, p, r, v, w);
+		swing.GetVerticalVelocity(p, v, steps[0].footPos[swg].z, vz);
+		steps[0].footPos[swg].x  = p.x;
+		steps[0].footPos[swg].y  = p.y;
+		steps[0].footPos[swg].z += vz*dt;
+		steps[0].footOri[swg]    = r;
 		//printf("swg: %f,%f,%f\n", state.swg.x(), state.swg.y(), state.swg.z());
 
 		// calc cop 
@@ -280,7 +299,7 @@ void Control(){
 		"%f, %f, %f, %f, "
 		"%f, %f, %f, %f, "
 		"%f, %f, "
-		"%d, %d, %d, %d\n",
+		"%d, %d, %d, %d, %d\n",
 		cnt, t,
 		comPos.x, comPos.y, comPos.z,
 		steps[0].cop.x, steps[0].cop.y, steps[0].cop.z,
@@ -288,7 +307,7 @@ void Control(){
 		steps[0].footPos[0].x, steps[0].footPos[0].y, steps[0].footPos[0].z, steps[0].footOri[0],
 		steps[0].footPos[1].x, steps[0].footPos[1].y, steps[0].footPos[1].z, steps[0].footOri[1],
 		steps[0].duration, steps[0].telapsed,
-		nstep, (int)succeeded, (int)modified, tcheck
+		nstep, (int)succeeded, (int)duration_modified, (int)step_modified, tcheck
 		);
 	
     t += dt;

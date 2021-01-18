@@ -16,8 +16,10 @@ struct Footstep{
 		real_t  duration;
 		
 		int     side;
-		vec3_t  footPos[2];
-		real_t  footOri[2];
+		vec3_t  footPos   [2];
+		vec3_t  footVel   [2];
+		real_t  footOri   [2];
+		real_t  footAngvel[2];
 		vec3_t  cop;
 		vec3_t  icp;
 		real_t  telapsed;

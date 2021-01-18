@@ -16,6 +16,7 @@ void Plot::Read(Scenebuilder::XMLNode* node){
 	node->Get(st.swg[2], ".swg_r"    );
 	node->Get(st.icp[0], ".icp_x"    );
 	node->Get(st.icp[1], ".icp_y"    );
+	node->Get(nmin     , ".nmin"     );
 	node->Get(nmax     , ".nmax"     );
 	node->Get(angle_div, ".angle_div");
 }
@@ -24,30 +25,37 @@ void Plot::SetCaptureInput(Input in, int nstep){
 	cap_input.push_back(make_pair(in, nstep));
 }
 
-void Plot::PrintLandingRegion(const string& filename){
+void Plot::PrintLandingRegion(const string& filename, const Capturability::Region& r){
 	vector<vec2_t> vertex;
-
-	real_t dangle = 2.0*cap->swg_angle/(real_t)angle_div;
-	real_t angle  = pi/2.0 - cap->swg_angle;
-	real_t dist   = cap->swg_near;
-	int    i = 0;
-	for( ; i <= angle_div; i++){
-		vertex.push_back(dist*vec2_t(cos(angle), sin(angle)));
-		angle += dangle;
+	if(r.type == Capturability::Region::Type::Rectangle){
+		vertex.push_back(vec2_t(r.min.x, r.min.y));
+		vertex.push_back(vec2_t(r.min.x, r.max.y));
+		vertex.push_back(vec2_t(r.max.x, r.max.y));
+		vertex.push_back(vec2_t(r.max.x, r.min.y));
+		vertex.push_back(vec2_t(r.min.x, r.min.y));
 	}
-	dist = cap->swg_far;
-	for( ; i >= 0; i--){
-		vertex.push_back(dist*vec2_t(cos(angle), sin(angle)));
-		angle -= dangle;
+	if(r.type == Capturability::Region::Type::Radial){
+		real_t dangle = 2.0*r.angle/(real_t)angle_div;
+		real_t angle  = pi/2.0 - r.angle;
+		real_t dist   = r.near;
+		int    i = 0;
+		for( ; i <= angle_div; i++){
+			vertex.push_back(dist*vec2_t(cos(angle), sin(angle)));
+			angle += dangle;
+		}
+		dist = r.far;
+		for( ; i >= 0; i--){
+			vertex.push_back(dist*vec2_t(cos(angle), sin(angle)));
+			angle -= dangle;
+		}
+		vertex.push_back(vertex.front());
 	}
-	vertex.push_back(vertex.front());
-
-	for(int i = 0; i < vertex.size(); i++)
-		vertex[i] = CartesianToGraph(vertex[i]);
+	for(vec2_t& v : vertex)
+		v = CartesianToGraph(v);
 
 	FILE *fp = fopen(filename.c_str(), "w");
-	for(int i = 0; i < vertex.size(); i++) {
-		fprintf(fp, "%f %f\n", vertex[i].x, vertex[i].y);
+	for(vec2_t& v : vertex) {
+		fprintf(fp, "%f %f\n", v.x, v.y);
 	}
 	fclose(fp);
 }
@@ -77,7 +85,12 @@ void Plot::PrintFoot(const string& filename, const vec3_t& pose){
 }
 
 void Plot::Print(const string& basename){
-	PrintLandingRegion(basename + "landing.dat");
+	stringstream ss;
+	for(int i = 0; i < cap->regions.size(); i++){
+		ss.str("");
+		ss << basename << "landing" << i << ".dat";
+		PrintLandingRegion(ss.str(), cap->regions[i]);
+	}
 	PrintFoot(basename + "sup.dat", vec3_t(0.0, 0.0, 0.0));
 	PrintFoot(basename + "swg.dat", st.swg               );
 	PrintIcp (basename + "icp.dat", st.icp               );

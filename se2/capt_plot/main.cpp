@@ -25,7 +25,7 @@ int main(int argc, char const *argv[]) {
 	printf("get cap regions\n");
 	CaptureBasin    basin;
 	vector<vec2_t>  tau_range_valid;
-	cap.GetCaptureBasin(plot.st, 0, plot.nmax, basin, tau_range_valid);
+	cap.GetCaptureBasin(plot.st, plot.nmin, plot.nmax, basin, tau_range_valid);
 	printf("get done: %d\n", basin.size());
 
 	Input in;

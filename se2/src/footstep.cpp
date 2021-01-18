@@ -12,14 +12,18 @@ Footstep::Step::Step(){
 	turn     = 0.0;
 	duration = 0.0;
 		
-	side       = 0;
-	footPos[0] = vec3_t(0.0, 0.0, 0.0);
-	footPos[1] = vec3_t(0.0, 0.0, 0.0);
-	footOri[0] = 0.0;
-	footOri[1] = 0.0;
-	cop        = vec3_t(0.0, 0.0, 0.0);
-	icp        = vec3_t(0.0, 0.0, 0.0);
-	telapsed = 0.0;
+	side          = 0;
+	footPos   [0] = vec3_t(0.0, 0.0, 0.0);
+	footPos   [1] = vec3_t(0.0, 0.0, 0.0);
+	footVel   [0] = vec3_t(0.0, 0.0, 0.0);
+	footVel   [1] = vec3_t(0.0, 0.0, 0.0);
+	footOri   [0] = 0.0;
+	footOri   [1] = 0.0;
+	footAngvel[0] = 0.0;
+	footAngvel[1] = 0.0;
+	cop           = vec3_t(0.0, 0.0, 0.0);
+	icp           = vec3_t(0.0, 0.0, 0.0);
+	telapsed      = 0.0;
 }
 
 void Footstep::Step::Read(Scenebuilder::XMLNode* node){

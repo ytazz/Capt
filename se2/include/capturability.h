@@ -29,16 +29,36 @@ struct CaptureBasin : public std::vector< CaptureState >{
 
 class Capturability {
 public:
-	real_t swg_near ;
-	real_t swg_far  ;
-	real_t swg_angle;
+	struct Region{
+		struct Type{
+			enum{
+				Rectangle,
+				Radial,
+			};
+		};
+		int     type;
+		vec2_t  min;
+		vec2_t  max;
+		real_t  near ;
+		real_t  far  ;
+		real_t  angle;
+
+		void Read       (XMLNode* node);
+		bool IsSteppable(const vec2_t& p_swg, real_t r_swg);
+	
+	};
 	
 	Grid1D cop_x;  //< cop support region
 	Grid1D cop_y;
-	Grid1D icp_x;  //< cop support region
-	Grid1D icp_y;
 
 	real_t g, h, T;
+	real_t cop_margin;
+	real_t step_weight;
+	real_t swg_weight;
+	real_t tau_weight;
+	real_t icp_weight;
+
+	vector<Region>  regions;
  
 	Grid*     grid;
 	Swing*    swing;
@@ -47,24 +67,19 @@ public:
 	std::vector< int >           swg_to_xyr;    //< array of valid swg_id in [x,y,r]
 	std::vector< int >           xyr_to_swg;    //< [x,y,r] -> index to swg_id_valid or -1
 
-	real_t step_weight;
-	real_t swg_weight;
-	real_t tau_weight;
-	real_t icp_weight;
-
 	bool   IsSteppable         (const vec2_t& p_swg, real_t r_swg);
-	bool   IsInsideSupport     (const vec2_t& cop, real_t margin = 1.0e-5);
+	bool   IsInsideSupport     (const vec2_t& cop, real_t margin);
 	void   CalcMu              (const vec3_t& swg, const vec2_t& icp, vec2_t& mu);
 	void   CalcTauRange        (const vec2_t& ainv_range, vec2_t& tau_range);
 	void   CalcAinvRange       (const vec2_t& tau_range, vec2_t& ainv_range);
-	bool   CalcFeasibleAinvRange(const vec2_t& mu, const vec2_t& icp, vec2_t& ainv_range);
+	bool   CalcFeasibleAinvRange(const vec2_t& mu, const vec2_t& icp, real_t margin, vec2_t& ainv_range);
 	//void   CalcFeasibleIcpRange(const vec2_t& mu, real_t ainv, std::pair<vec2_t, vec2_t>& icp_range);
-	void   CalcFeasibleIcpRange(const vec2_t& mu,  const vec2_t& ainv_range, std::pair<vec2_t, vec2_t>& icp_range);
-	void   CalcFeasibleMuRange (const vec2_t& icp, const vec2_t& ainv_range, std::pair<vec2_t, vec2_t>& mu_range );
+	void   CalcFeasibleIcpRange(const vec2_t& mu,  const vec2_t& ainv_range, real_t margin, std::pair<vec2_t, vec2_t>& icp_range);
+	void   CalcFeasibleMuRange (const vec2_t& icp, const vec2_t& ainv_range, real_t margin, std::pair<vec2_t, vec2_t>& mu_range );
 	real_t CalcMinDuration     (const vec3_t& swg0, const vec3_t& swg1);
 	void   EnumReachable       (const vector< pair<int, real_t> >& seed, vector<bool>& swg_id_array);
 	void   CalcInput           (const State& st, const State& stnext, Input& in);
-	bool   Check               (const State& st, Input& in, State& st_mod, int& nstep, bool& modified);
+	bool   Check               (const State& st, Input& in, State& st_mod, int& nstep, bool& duration_modified, bool& step_modified);
 	
 	void  Analyze();
 	void  Save(const std::string& basename);

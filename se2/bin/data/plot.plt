@@ -5,6 +5,8 @@ set encoding utf8
 #set output 'plot.gif'
 set terminal svg
 set output 'plot.svg'
+#set terminal png size 400,400
+#set output 'plot.png'
 #set terminal postscript eps enhanced
 #set output 'plot.eps'
 
@@ -45,7 +47,8 @@ unset colorbox
 # 描画
 plot "data.dat" using ($1):($2):($5+1) with points palette pt 5 ps 0.1 notitle,\
      "data.dat" using ($3):($4):($5+1) with points palette pt 5 ps 0.1 notitle,\
-     "landing.dat" with lines  lw 1 lc "dark-blue" notitle,\
+     "landing0.dat" with lines  lw 1 lc "dark-blue" notitle,\
+     "landing1.dat" with lines  lw 1 lc "dark-blue" notitle,\
      "sup.dat"     with lines  lw 1 lc "black"     notitle,\
      "swg.dat"     with lines  lt 0 dt 1 lw 2 lc "black" notitle,\
      "icp.dat"     with points pt 1 lc 1 ps 2            notitle

@@ -64,8 +64,8 @@ public:
 	Swing*    swing;
 
 	std::vector< CaptureBasin >  cap_basin;
-	std::vector< int >           swg_to_xyr;    //< array of valid swg_id in [x,y,r]
-	std::vector< int >           xyr_to_swg;    //< [x,y,r] -> index to swg_id_valid or -1
+	std::vector< int >           swg_to_xyr;     //< array of valid swg_id in [x,y,r]
+	std::vector< int >           xyr_to_swg;     //< [x,y,r] -> index to swg_id_valid or -1
 
 	bool   IsSteppable         (const vec2_t& p_swg, real_t r_swg);
 	bool   IsInsideSupport     (const vec2_t& cop, real_t margin);

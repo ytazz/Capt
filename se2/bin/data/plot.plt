@@ -31,7 +31,7 @@ set mytics 2
 set xtics scale 0,0.001
 set ytics scale 0,0.001
 
-set xrange [-0.60:0.15]
+set xrange [-0.55:0.10]
 set yrange [-0.45:0.45]
 
 # カラーバーの設定
@@ -45,8 +45,8 @@ set palette defined ( 0 '#ffffff', 1 '#cbfeff', 2 '#68fefe', 3 '#0097ff', 4 '#00
 unset colorbox
 
 # 描画
-plot "data.dat" using ($1):($2):($5+1) with points palette pt 5 ps 0.1 notitle,\
-     "data.dat" using ($3):($4):($5+1) with points palette pt 5 ps 0.1 notitle,\
+plot "data.dat" using ($1):($2):($5+1) with points palette pt 5 ps 0.2 notitle,\
+     "data.dat" using ($3):($4):($5+1) with points palette pt 5 ps 0.2 notitle,\
      "landing0.dat" with lines  lw 1 lc "dark-blue" notitle,\
      "landing1.dat" with lines  lw 1 lc "dark-blue" notitle,\
      "sup.dat"     with lines  lw 1 lc "black"     notitle,\

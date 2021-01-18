@@ -341,19 +341,20 @@ void Capturability::EnumReachable(const vector< pair<int, real_t> >& seed, vecto
 
 void Capturability::Analyze(){
 	printf(" Analysing ...... \n");
-	printf(" grid size: x %d  y %d  r %d  ainv %d\n", grid->x.num, grid->y.num, grid->r.num, grid->ainv.num);
+	printf(" grid size: x %d  y %d  r %d\n", grid->x.num, grid->y.num, grid->r.num);
 
 	printf(" enum valid stepping positions\n");
 	{
-		swg_to_xyr.clear();
-		xyr_to_swg.clear();
+		swg_to_xyr   .clear();
+		xyr_to_swg   .clear();
 
 		Index3D idx3;
 		for(idx3[0] = 0; idx3[0] < grid->x.num; idx3[0]++)
 		for(idx3[1] = 0; idx3[1] < grid->y.num; idx3[1]++)
 		for(idx3[2] = 0; idx3[2] < grid->r.num; idx3[2]++) {
-			if( IsSteppable( vec2_t(grid->x.val[idx3[0]], grid->y.val[idx3[1]]), grid->r.val[idx3[2]]) ){
-				swg_to_xyr.push_back(grid->xyr.ToIndex(idx3));
+			vec3_t v = grid->xyr[idx3];
+			if(IsSteppable( vec2_t(v.x, v.y), v[2])){
+				swg_to_xyr   .push_back(grid->xyr   .ToIndex(idx3   ));
 			}
 		}
 
@@ -691,7 +692,7 @@ bool Capturability::Check(const State& st, Input& in, State& stnext, int& nstep,
 	// check if target state is reachable by modifying cop and duration only
 	CalcMu(stnext.swg, stnext.icp, mu);
 	ainv_range = vec2_t(0.0, 1.0);
-	CalcFeasibleAinvRange(mu, st.icp, 0.01, ainv_range);
+	CalcFeasibleAinvRange(mu, st.icp, 0.005, ainv_range);
 	CalcTauRange(ainv_range, tau_range);
 	//tau_range[0] = std::max(tau_range[0], CalcMinDuration(st.swg, stnext.swg));
 

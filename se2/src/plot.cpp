@@ -39,10 +39,11 @@ void Plot::PrintLandingRegion(const string& filename, const Capturability::Regio
 		real_t angle  = pi/2.0 - r.angle;
 		real_t dist   = r.near;
 		int    i = 0;
-		for( ; i <= angle_div; i++){
+		for( ; i < angle_div; i++){
 			vertex.push_back(dist*vec2_t(cos(angle), sin(angle)));
 			angle += dangle;
 		}
+		vertex.push_back(dist*vec2_t(cos(angle), sin(angle)));
 		dist = r.far;
 		for( ; i >= 0; i--){
 			vertex.push_back(dist*vec2_t(cos(angle), sin(angle)));

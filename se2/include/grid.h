@@ -96,17 +96,11 @@ class Grid {
 public:
 	Grid1D x;
 	Grid1D y;
-	//Grid1D z;
 	Grid1D r;
-	//Grid1D t;
-	Grid1D ainv;
-
+	
 	Grid2D xy;
-	//Grid3D xyz;
-	//Grid3D xyt;
-	//Grid4D xyzr;
 	Grid3D xyr;
-
+	
 public:
 	void Read(Scenebuilder::XMLNode* node);
 

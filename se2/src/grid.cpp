@@ -183,35 +183,17 @@ void Grid::Read(Scenebuilder::XMLNode* node){
 	x.Read(node->GetNode("x"));
 	y.Read(node->GetNode("y"));
 	r.Read(node->GetNode("r"));
-	ainv.Read(node->GetNode("ainv"));
-	//z.Read(node->GetNode("z"));
-	//t.Read(node->GetNode("t"));
-
+	
 	x.Init();
 	y.Init();
-	//z.Init();
 	r.Init();
-	//t.Init();
-	ainv.Init();
 
 	xy.axis[0] = &x;
 	xy.axis[1] = &y;
 
-	//xyz.axis[0] = &x;
-	//xyz.axis[1] = &y;
-	//xyz.axis[2] = &z;
-
-	//xyzr.axis[0] = &x;
-	//xyzr.axis[1] = &y;
-	//xyzr.axis[2] = &z;
-	//xyzr.axis[3] = &r;
 	xyr.axis[0] = &x;
 	xyr.axis[1] = &y;
 	xyr.axis[2] = &r;
-	
-	//xyt.axis[0] = &x;
-	//xyt.axis[1] = &y;
-	//xyt.axis[2] = &t;
 
 }
 

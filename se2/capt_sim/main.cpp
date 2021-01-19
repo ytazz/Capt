@@ -178,8 +178,8 @@ void Control(){
 			vec3_t cop       = S[sup]*(R[sup].trans()*(steps[0].cop - steps[0].footPos[sup]));
 			
 			State st;
-			State stnext;
-			Input in;
+			State stnext, stnext_mod;
+			Input in, in_mod;
 			
 			st    .swg  = vec3_t(pswg [0], pswg [1], rswg);
 			st    .icp  = vec2_t(icp  [0], icp  [1]);
@@ -189,11 +189,8 @@ void Control(){
 			stnext.swg  = vec3_t(pswg_next [0], pswg_next [1], rswg_next);
 			stnext.icp  = vec2_t(icp_next  [0], icp_next  [1]);
 			
-			Input in_mod     = in;
-			State stnext_mod = stnext;
-			
 			timer.CountUS();
-			succeeded = cap.Check(st, in_mod, stnext_mod, nstep, duration_modified, step_modified);
+			succeeded = cap.Check(st, in, stnext, in_mod, stnext_mod, nstep, duration_modified, step_modified);
 			tcheck = timer.CountUS();
 
 			if(succeeded){

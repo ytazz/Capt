@@ -79,7 +79,7 @@ public:
 	real_t CalcMinDuration     (const vec3_t& swg0, const vec3_t& swg1);
 	void   EnumReachable       (const vector< pair<int, real_t> >& seed, vector<bool>& swg_id_array);
 	void   CalcInput           (const State& st, const State& stnext, Input& in);
-	bool   Check               (const State& st, Input& in, State& st_mod, int& nstep, bool& duration_modified, bool& step_modified);
+	bool   Check               (const State& st, const Input& in_ref, const State& stnext_ref, Input& in, State& st_mod, int& nstep, bool& duration_modified, bool& step_modified);
 	
 	void  Analyze();
 	void  Save(const std::string& basename);

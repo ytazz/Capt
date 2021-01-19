@@ -681,52 +681,51 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 	return d_opt != inf;
 }
 
-bool Capturability::Check(const State& st, Input& in, State& stnext, int& nstep, bool& duration_modified, bool& step_modified){
+bool Capturability::Check(const State& st, const Input& in_ref, const State& stnext_ref, Input& in_mod, State& stnext_mod, int& nstep, bool& duration_modified, bool& step_modified){
 	duration_modified = false;
 	step_modified     = false;
+	in_mod     = in_ref;
+	stnext_mod = stnext_ref;
 
 	vec2_t mu;
 	vec2_t ainv_range;
 	vec2_t tau_range;
 	
 	// check if target state is reachable by modifying cop and duration only
-	CalcMu(stnext.swg, stnext.icp, mu);
+	CalcMu(stnext_ref.swg, stnext_ref.icp, mu);
 	ainv_range = vec2_t(0.0, 1.0);
 	CalcFeasibleAinvRange(mu, st.icp, 0.005, ainv_range);
 	CalcTauRange(ainv_range, tau_range);
 	//tau_range[0] = std::max(tau_range[0], CalcMinDuration(st.swg, stnext.swg));
 
-	if(tau_range[0] <= in.tau && in.tau <= tau_range[1]){
+	if(tau_range[0] <= in_ref.tau && in_ref.tau <= tau_range[1]){
 		// no need for modification
-		CalcInput(st, stnext, in);
+		CalcInput(st, stnext_ref, in_mod);
 		return true;
 	}
 
 	// duration need modification
 	if(tau_range[0] < tau_range[1]){
 		// duration modifiable
-		printf("duration modified: %f", in.tau);
-		in.tau = std::min(std::max(tau_range[0], in.tau), tau_range[1]);
-		CalcInput(st, stnext, in);
+		in_mod.tau = std::min(std::max(tau_range[0], in_ref.tau), tau_range[1]);
+		CalcInput(st, stnext_ref, in_mod);
 		duration_modified = true;
-		printf(" -> %f\n", in.tau);
 		return true;
 	}
 
 	// find modified next state that can be transitioned from current state and is capturable
 	CaptureState cs_opt;
 	real_t tau_opt;
-	if(!FindNearest(st, in, stnext, cs_opt, tau_opt, nstep)){
-		printf("no capturable state found\n");
+	if(!FindNearest(st, in_ref, stnext_ref, cs_opt, tau_opt, nstep)){
 		return false;
 	}
-	printf("modified next state: %d,%d  %d-step capturable transition\n", cs_opt.swg_id, cs_opt.icp_id, cs_opt.nstep);
+	//printf("modified next state: %d,%d  %d-step capturable transition\n", cs_opt.swg_id, cs_opt.icp_id, cs_opt.nstep);
 
-	stnext.swg = grid->xyr[swg_to_xyr[cs_opt.swg_id]];
-	stnext.icp = grid->xy [cs_opt.icp_id];
+	stnext_mod.swg = grid->xyr[swg_to_xyr[cs_opt.swg_id]];
+	stnext_mod.icp = grid->xy [cs_opt.icp_id];
 	
-	in.tau = tau_opt;
-	CalcInput(st, stnext, in);
+	in_mod.tau = tau_opt;
+	CalcInput(st, stnext_mod, in_mod);
 	
 	duration_modified = true;
 	step_modified     = true;

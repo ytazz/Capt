@@ -35,8 +35,8 @@ set xrange [-0.55:0.10]
 set yrange [-0.45:0.45]
 
 # カラーバーの設定
-set palette gray negative
-set palette defined ( 0 '#ffffff', 1 '#cbfeff', 2 '#68fefe', 3 '#0097ff', 4 '#0000ff')
+#set palette gray negative
+set palette defined ( 0 '#cbfeff', 1 '#68fefe', 2 '#0097ff', 3 '#0000ff')
 #set cbrange [0:5]
 #set cbtics 0.5
 #set palette maxcolors 5
@@ -45,8 +45,14 @@ set palette defined ( 0 '#ffffff', 1 '#cbfeff', 2 '#68fefe', 3 '#0097ff', 4 '#00
 unset colorbox
 
 # 描画
-plot "data.dat" using ($1):($2):($5+1) with points palette pt 5 ps 0.2 notitle,\
-     "data.dat" using ($3):($4):($5+1) with points palette pt 5 ps 0.2 notitle,\
+plot "data3.dat" using 1:2:5 with points palette pt 5 ps 0.2 notitle,\
+     "data3.dat" using 3:4:5 with points palette pt 5 ps 0.2 notitle,\
+     "data2.dat" using 1:2:5 with points palette pt 5 ps 0.2 notitle,\
+     "data2.dat" using 3:4:5 with points palette pt 5 ps 0.2 notitle,\
+     "data1.dat" using 1:2:5 with points palette pt 5 ps 0.2 notitle,\
+     "data1.dat" using 3:4:5 with points palette pt 5 ps 0.2 notitle,\
+     "data0.dat" using 1:2:5 with points palette pt 5 ps 0.2 notitle,\
+     "data0.dat" using 3:4:5 with points palette pt 5 ps 0.2 notitle,\
      "landing0.dat" with lines  lw 1 lc "dark-blue" notitle,\
      "landing1.dat" with lines  lw 1 lc "dark-blue" notitle,\
      "sup.dat"     with lines  lw 1 lc "black"     notitle,\

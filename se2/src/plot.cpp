@@ -97,16 +97,22 @@ void Plot::Print(const string& basename){
 	PrintIcp (basename + "icp.dat", st.icp               );
 
 	// mapをグラフ上の対応する点に変換
-	FILE *fp;
-	fp = fopen((basename + "data.dat").c_str(), "w");
+	for(int n = 0; n < 10; n++){
+		stringstream ss;
+		ss << basename << "data" << n << ".dat";
+		FILE* file;
+		file = fopen(ss.str().c_str(), "w");
 
-	for(int i = 0; i < (int)cap_input.size(); i++){
-		vec2_t cop  = CartesianToGraph(cap_input[i].first.cop .x, cap_input[i].first.cop .y);
-		vec2_t land = CartesianToGraph(cap_input[i].first.land.x, cap_input[i].first.land.y);
-		fprintf(fp, "%f %f %f %f %d\n", cop.x, cop.y, land.x, land.y, cap_input[i].second);
+		for(int i = 0; i < (int)cap_input.size(); i++){
+			if(cap_input[i].second == n){
+				vec2_t cop  = CartesianToGraph(cap_input[i].first.cop .x, cap_input[i].first.cop .y);
+				vec2_t land = CartesianToGraph(cap_input[i].first.land.x, cap_input[i].first.land.y);
+				fprintf(file, "%f %f %f %f %d\n", cop.x, cop.y, land.x, land.y, cap_input[i].second);
+			}
+		}
+
+		fclose(file);
 	}
-
-	fclose(fp);
 }
 
 vec2_t Plot::CartesianToGraph(vec2_t point){

@@ -696,7 +696,7 @@ bool Capturability::Check(const State& st, const Input& in_ref, const State& stn
 	ainv_range = vec2_t(0.0, 1.0);
 	CalcFeasibleAinvRange(mu, st.icp, 0.005, ainv_range);
 	CalcTauRange(ainv_range, tau_range);
-	//tau_range[0] = std::max(tau_range[0], CalcMinDuration(st.swg, stnext.swg));
+	tau_range[0] = std::max(tau_range[0], CalcMinDuration(st.swg, stnext_ref.swg));
 
 	if(tau_range[0] <= in_ref.tau && in_ref.tau <= tau_range[1]){
 		// no need for modification

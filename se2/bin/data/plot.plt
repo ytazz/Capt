@@ -53,13 +53,17 @@ plot "data.dat" using ($1):($2):($5+1) with points palette pt 5 ps 0.2 notitle,\
      "swg.dat"     with lines  lt 0 dt 1 lw 2 lc "black" notitle,\
      "icp.dat"     with points pt 1 lc 1 ps 2            notitle
 
+set size ratio 0.5
 set xlabel 'N'
 set ylabel ''
 set xrange [-0.5:10.5]
-set yrange [0:3000000]
-set boxwidth 0.5 relative
+set yrange [0:0.025]
+set ytics 0.005
+set boxwidth 0.2 relative
 set style fill solid
 set output 'basin_size.svg'
-plot "basin_size_mid.csv" with boxes,\
-     "basin_size_low.csv" with boxes
+plot "basin_size_verylow.csv" using ($1-0.3):($3)   with boxes title '0.080[m] x 0.080[m] x 0.20[rad]',\
+     "basin_size_low.csv" using ($1-0.1):($3)       with boxes title '0.040[m] x 0.040[m] x 0.10[rad]',\
+     "basin_size_mid.csv" using ($1+0.1):($3)       with boxes title '0.020[m] x 0.020[m] x 0.05[rad]',\
+     "basin_size_midhigh.csv" using ($1+0.3):($3)   with boxes title '0.015[m] x 0.015[m] x 0.05[rad]'
 

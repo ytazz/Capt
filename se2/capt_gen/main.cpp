@@ -38,7 +38,7 @@ int main(int argc, char const *argv[]) {
 		int    sz      = cap.cap_basin[n].size();
 		real_t vol     = ((real_t)sz)*dv;
 		real_t log_vol = (vol == 0.0 ? 0.0 : log(vol));
-		fprintf(file, "%d, %f, %f\n", sz, vol, log_vol);
+		fprintf(file, "%d, %d, %f, %f\n", n, sz, vol, log_vol);
 	}
 	fclose(file);
 

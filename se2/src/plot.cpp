@@ -21,10 +21,6 @@ void Plot::Read(Scenebuilder::XMLNode* node){
 	node->Get(angle_div, ".angle_div");
 }
 
-void Plot::SetCaptureInput(Input in, int nstep){
-	cap_input.push_back(make_pair(in, nstep));
-}
-
 void Plot::PrintLandingRegion(const string& filename, const Capturability::Region& r){
 	vector<vec2_t> vertex;
 	if(r.type == Capturability::Region::Type::Rectangle){
@@ -85,20 +81,10 @@ void Plot::PrintFoot(const string& filename, const vec3_t& pose){
 	fclose(fp);
 }
 
-void Plot::Print(const string& basename){
-	stringstream ss;
-	for(int i = 0; i < cap->regions.size(); i++){
-		ss.str("");
-		ss << basename << "landing" << i << ".dat";
-		PrintLandingRegion(ss.str(), cap->regions[i]);
-	}
-	PrintFoot(basename + "sup.dat", vec3_t(0.0, 0.0, 0.0));
-	PrintFoot(basename + "swg.dat", st.swg               );
-	PrintIcp (basename + "icp.dat", st.icp               );
-
+void Plot::PrintBasin(const string& filename){
 	// mapをグラフ上の対応する点に変換
 	FILE *fp;
-	fp = fopen((basename + "data.dat").c_str(), "w");
+	fp = fopen(filename.c_str(), "w");
 
 	for(int i = 0; i < (int)cap_input.size(); i++){
 		vec2_t cop  = CartesianToGraph(cap_input[i].first.cop .x, cap_input[i].first.cop .y);
@@ -107,6 +93,19 @@ void Plot::Print(const string& basename){
 	}
 
 	fclose(fp);
+}
+
+void Plot::Print(const string& basename){
+	stringstream ss;
+	for(int i = 0; i < cap->regions.size(); i++){
+		ss.str("");
+		ss << basename << "landing" << i << ".dat";
+		PrintLandingRegion(ss.str(), cap->regions[i]);
+	}
+	PrintFoot (basename + "sup.dat", vec3_t(0.0, 0.0, 0.0));
+	PrintFoot (basename + "swg.dat", st.swg               );
+	PrintIcp  (basename + "icp.dat", st.icp               );
+	PrintBasin(basename + "data.dat");
 }
 
 vec2_t Plot::CartesianToGraph(vec2_t point){

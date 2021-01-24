@@ -38,7 +38,7 @@ int main(int argc, char const *argv[]) {
 		//in.tau = cap.CalcMinDuration(plot.st.swg, stnext.swg);
 		in.tau = tau_range_valid[i][0];
 		cap.CalcInput(plot.st, stnext, in);
-		plot.SetCaptureInput(in, cs.nstep);
+		plot.cap_input.push_back(make_pair(in, cs.nstep));
 	}
 
 	plot.Print("data/");

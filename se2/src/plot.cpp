@@ -82,17 +82,17 @@ void Plot::PrintFoot(const string& filename, const vec3_t& pose){
 }
 
 void Plot::PrintBasin(const string& filename){
+	FILE* file = fopen(filename.c_str(), "w");
 	// mapをグラフ上の対応する点に変換
-	FILE *fp;
-	fp = fopen(filename.c_str(), "w");
-
-	for(int i = 0; i < (int)cap_input.size(); i++){
-		vec2_t cop  = CartesianToGraph(cap_input[i].first.cop .x, cap_input[i].first.cop .y);
-		vec2_t land = CartesianToGraph(cap_input[i].first.land.x, cap_input[i].first.land.y);
-		fprintf(fp, "%f %f %f %f %d\n", cop.x, cop.y, land.x, land.y, cap_input[i].second);
+		for(int i = 0; i < (int)cap_input.size(); i++){
+			if(cap_input[i].second == n){
+				vec2_t cop  = CartesianToGraph(cap_input[i].first.cop .x, cap_input[i].first.cop .y);
+				vec2_t land = CartesianToGraph(cap_input[i].first.land.x, cap_input[i].first.land.y);
+				fprintf(file, "%f %f %f %f %d\n", cop.x, cop.y, land.x, land.y, cap_input[i].second);
+			}
+		}
 	}
-
-	fclose(fp);
+	fclose(file);
 }
 
 void Plot::Print(const string& basename){

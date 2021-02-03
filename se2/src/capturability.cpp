@@ -3,8 +3,6 @@
 #include "capturability.h"
 
 #include <limits>
-#include <map>
-#include <set>
 using namespace std;
 
 #include <sbtimer.h>
@@ -235,7 +233,7 @@ real_t Capturability::CalcMinDuration(const vec3_t& swg0, const vec3_t& swg1){
 	return swing->GetMinDuration();
 }
 
-void Capturability::EnumReachable(const vector< pair<int, real_t> >& seed, vector<bool>& swg_id_array){
+void Capturability::EnumReachable(const unordered_map< int, real_t >& seed, vector<bool>& swg_id_array){
 	struct CompByTau{
 		const vector<real_t>& _tau_map;
 
@@ -406,8 +404,9 @@ void Capturability::Analyze(){
 
 		printf("  first phase\n");
 		
-		vector< vector< pair<int, real_t> > > swg_tau_array;
-		swg_tau_array.resize(grid->xy.Num());
+		//vector< vector< pair<int, real_t> > > swg_tau_array;
+		vector< unordered_map< int, real_t > > swg_tau_map;
+		swg_tau_map.resize(grid->xy.Num());
 
 		for(int basin_id = 0; basin_id < (int)cap_basin[n-1].size(); basin_id++){
 			CaptureState& csnext = cap_basin[n-1][basin_id];
@@ -436,12 +435,19 @@ void Capturability::Analyze(){
 				tau = -T*log(ainv_range[0]);
 
 				int icp_id = grid->xy.ToIndex(idx2);
-				if(!swg_tau_array[icp_id].empty() && swg_tau_array[icp_id].back().first == csnext.swg_id){
-					swg_tau_array[icp_id].back().second = std::max(swg_tau_array[icp_id].back().second, tau);
+				unordered_map<int, real_t>::iterator it = swg_tau_map[icp_id].find(csnext.swg_id);
+				if(it == swg_tau_map[icp_id].end()){
+					swg_tau_map[icp_id].insert( make_pair(csnext.swg_id, tau) );
 				}
 				else{
-					swg_tau_array[icp_id].push_back(make_pair(csnext.swg_id, tau));
+					it->second = std::max(it->second, tau);
 				}
+				//if(!swg_tau_array[icp_id].empty() && swg_tau_array[icp_id].back().first == csnext.swg_id){
+				//	swg_tau_array[icp_id].back().second = std::max(swg_tau_array[icp_id].back().second, tau);
+				//}
+				//else{
+				//	swg_tau_array[icp_id].push_back(make_pair(csnext.swg_id, tau));
+				//}
 			}
 		}
 
@@ -454,7 +460,7 @@ void Capturability::Analyze(){
 		for(int icp_id = 0; icp_id < grid->xy.Num(); icp_id++){
 			timer.CountUS();
 			// create bitmap of swg
-			EnumReachable(swg_tau_array[icp_id], swg_id_array);
+			EnumReachable(swg_tau_map[icp_id], swg_id_array);
 			//for(pair<int, real_t>& swg_tau : swg_tau_array[icp_id]){
 			//	EnumReachable(grid->xyr[swg_to_xyr[swg_tau.first]], swg_tau.second, swg_id_array);
 			//}
@@ -543,6 +549,15 @@ void Capturability::Load(const string& basename) {
 	LoadArray(basename + "xyr_to_swg.bin" , xyr_to_swg );
 	//LoadArray(basename + "duration_map.bin", duration_map);
 	//LoadArray(basename + "icp_map.bin"     , icp_map     );
+
+	// calc cache
+	for(int n = 0; n < cap_basin.size(); n++){
+		for(CaptureState& cs : cap_basin[n]){
+			cs.swg = grid->xyr[swg_to_xyr[cs.swg_id]];
+			cs.icp = grid->xy [cs.icp_id];
+			CalcMu(cs.swg, cs.icp, cs.mu);
+		}
+	}
 }
 
 void Capturability::GetCaptureBasin(const State& st, int nstepMin, int nstepMax, CaptureBasin& basin, vector<vec2_t>& tau_range_valid){
@@ -580,28 +595,6 @@ void Capturability::GetCaptureBasin(const State& st, int nstepMin, int nstepMax,
 	}
 }
 
-/*
-bool Capturability::IsCapturable(int swg_id, int icp_id, int& nstep) {
-	for(int n = 0; n < nmax; n++){
-		if(nstep != -1 && nstep != n)
-			continue;
-		if(cap_basin[n].swg_index.empty())
-			continue;
-
-		pair<int,int> idx = cap_basin[n].swg_index[swg_id];
-
-		for(int i = idx.first; i < idx.second; i++){
-			CaptureState& cs = cap_basin[n][i];
-			if( cs.icp_id == icp_id ){
-				if(nstep == -1)
-					nstep = n;
-				return true;
-			}
-		}
-	}
-	return false;
-}
-*/
 bool Capturability::FindNearest(const State& st, const Input& in_ref, const State& stnext_ref, CaptureState& cs_opt, real_t& tau_opt, int& n_opt){
 	real_t d_opt = inf;
 	real_t d_swg = 0.0;
@@ -609,8 +602,6 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 	real_t d_icp = 0.0;
 	real_t d     = 0.0;
 	int    n0 = 0, n1 = 0, n2 = 0, n3 = 0, n4 = 0;
-	State  stnext;
-	vec2_t mu;
 	real_t tau_min;
 	vec2_t tau_range;
 	vec2_t ainv_range;
@@ -633,18 +624,18 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 		int swg_id_prev = -1;
 		for(int basin_id = 0; basin_id < (int)cap_basin[n].size(); basin_id++){
 			CaptureState& csnext = cap_basin[n][basin_id];
-			stnext.swg = grid->xyr[swg_to_xyr[csnext.swg_id]];
-			stnext.icp = grid->xy [csnext.icp_id];
-			CalcMu(stnext.swg, stnext.icp, mu);
+			//stnext.swg = grid->xyr[swg_to_xyr[csnext.swg_id]];
+			//stnext.icp = grid->xy [csnext.icp_id];
+			//CalcMu(stnext.swg, stnext.icp, mu);
 			n0++;
 
-			if( !(mu_range.first[0] <= mu.x && mu.x <= mu_range.second[0]) ||
-				!(mu_range.first[1] <= mu.y && mu.y <= mu_range.second[1]) )
+			if( !(mu_range.first[0] <= csnext.mu.x && csnext.mu.x <= mu_range.second[0]) ||
+				!(mu_range.first[1] <= csnext.mu.y && csnext.mu.y <= mu_range.second[1]) )
 				continue;
 
 			n1++;
 			if(csnext.swg_id != swg_id_prev){
-				d_swg  = (stnext.swg - stnext_ref.swg).square();
+				d_swg  = (csnext.swg - stnext_ref.swg).square();
 				swg_id_prev = csnext.swg_id;
 			}
 			if(step_weight*n + swg_weight*d_swg >= d_opt)
@@ -652,12 +643,12 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 
 			n2++;
 			ainv_range = vec2_t(0.0, 1.0);
-			if(!CalcFeasibleAinvRange(mu, st.icp, cop_margin, ainv_range))
+			if(!CalcFeasibleAinvRange(csnext.mu, st.icp, cop_margin, ainv_range))
 				continue;
 
 			n3++;
 			CalcTauRange(ainv_range, tau_range);
-			tau_min = CalcMinDuration(st.swg, stnext.swg);
+			tau_min = CalcMinDuration(st.swg, csnext.swg);
 			
 			if( tau_min > tau_range[1] )
 				continue;
@@ -665,7 +656,7 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 			n4++;
 			real_t tau = std::min(std::max(std::max(tau_min, tau_range[0]), in_ref.tau), tau_range[1]);
 			d_tau = (tau - in_ref.tau)*(tau - in_ref.tau);
-			d_icp = (stnext.icp - stnext_ref.icp).square();
+			d_icp = (csnext.icp - stnext_ref.icp).square();
 			d     = step_weight*n + swg_weight*d_swg + tau_weight*d_tau + icp_weight*d_icp;
 			if( d < d_opt ){
 				cs_opt  = csnext;

@@ -494,14 +494,17 @@ void Capturability::Analyze(){
 	printf("Done!\n");
 }
 
-template<class T>
+template<class T, class TBASE>
 void SaveArray(const string& filename, const vector<T>& arr){
 	FILE* fp = fopen(filename.c_str(), "wb");
-	fwrite(&arr[0], sizeof(T), arr.size(), fp);
+	//fwrite(&arr[0], sizeof(T), arr.size(), fp);
+    for(const T& v : arr){
+        fwrite((const TBASE*)&v, sizeof(TBASE), 1, fp);
+    }
 	fclose(fp);
 }
 
-template<class T>
+template<class T, class TBASE>
 bool LoadArray(const string& filename, vector<T>& arr){
 	FILE* fp = fopen(filename.c_str(), "rb");
 	if(!fp)
@@ -511,9 +514,12 @@ bool LoadArray(const string& filename, vector<T>& arr){
 	int sz = ftell(fp);
 	fseek(fp, 0, SEEK_SET);
 
-	int nelem = sz/(sizeof(T));
+	int nelem = sz/(sizeof(TBASE));
 	arr.resize(nelem);
-	fread(&arr[0], sizeof(T), arr.size(), fp);
+	//fread(&arr[0], sizeof(T), arr.size(), fp);
+    for(T& v : arr){
+        fread((TBASE*)&v, sizeof(TBASE), 1, fp);
+    }
 	fclose(fp);
 	
 	return true;
@@ -527,10 +533,10 @@ void Capturability::Save(const string& basename){
 
 		ss.str("");
 		ss << basename << "basin" << n << ".bin";
-		SaveArray(ss.str(), cap_basin[n]);
+		SaveArray<CaptureState, CaptureStateBase>(ss.str(), cap_basin[n]);
 	}
-	SaveArray(basename + "swg_to_xyr.bin"  , swg_to_xyr);
-	SaveArray(basename + "xyr_to_swg.bin"  , xyr_to_swg);
+	SaveArray<int, int>(basename + "swg_to_xyr.bin"  , swg_to_xyr);
+	SaveArray<int, int>(basename + "xyr_to_swg.bin"  , xyr_to_swg);
 	//SaveArray(basename + "duration_map.bin", duration_map);
 	//SaveArray(basename + "icp_map.bin"     , icp_map     );
 }
@@ -540,13 +546,13 @@ void Capturability::Load(const string& basename) {
 	for(int n = 0; n < nmax; n++){
 		ss.str("");
 		ss << basename << "basin" << n << ".bin";
-		LoadArray(ss.str(), cap_basin[n]);
+		LoadArray<CaptureState, CaptureStateBase>(ss.str(), cap_basin[n]);
 
 		//CreateMuIndex(cap_basin[n]);
 	}
 
-	LoadArray(basename + "swg_to_xyr.bin" , swg_to_xyr );
-	LoadArray(basename + "xyr_to_swg.bin" , xyr_to_swg );
+	LoadArray<int, int>(basename + "swg_to_xyr.bin" , swg_to_xyr );
+	LoadArray<int, int>(basename + "xyr_to_swg.bin" , xyr_to_swg );
 	//LoadArray(basename + "duration_map.bin", duration_map);
 	//LoadArray(basename + "icp_map.bin"     , icp_map     );
 

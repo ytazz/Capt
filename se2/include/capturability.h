@@ -12,11 +12,13 @@ namespace Capt {
 
 class Capturability;
 
-struct CaptureState{
+struct CaptureStateBase{
 	int      swg_id;
 	int      icp_id;
 	int      nstep;
+};
 
+struct CaptureState : public CaptureStateBase{
 	// cache
 	vec3_t   swg;
 	vec2_t   icp;

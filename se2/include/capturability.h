@@ -52,6 +52,19 @@ public:
 		bool IsSteppable(const vec2_t& p_swg, real_t r_swg);
 	
 	};
+
+    struct CheckOption{
+        int  nstep_max;
+        bool modify_duration;
+        bool modify_step;
+    };
+
+    struct CheckReport{
+        bool success;
+        int  nstep;
+        bool duration_modified;
+        bool step_modified;
+    };
 	
 	Grid1D cop_x;  //< cop support region
 	Grid1D cop_y;
@@ -83,7 +96,7 @@ public:
 	real_t CalcMinDuration     (const vec3_t& swg0, const vec3_t& swg1);
 	void   EnumReachable       (const unordered_map< int, real_t >& seed, vector<bool>& swg_id_array);
 	void   CalcInput           (const State& st, const State& stnext, Input& in);
-	bool   Check               (const State& st, const Input& in_ref, const State& stnext_ref, Input& in, State& st_mod, int& nstep, bool& duration_modified, bool& step_modified);
+	bool   Check               (const State& st, const Input& in_ref, const State& stnext_ref, Input& in, State& st_mod, const CheckOption& opt, CheckReport& report);
 	
 	void  Analyze();
 	void  Save(const std::string& basename);
@@ -91,7 +104,7 @@ public:
 
 	void  GetCaptureBasin (const State& st, int nstepMin, int nstepMax, CaptureBasin& basin, vector<vec2_t>& tau_range_valid);
 
-	bool  FindNearest(const State& st, const Input& in_ref, const State& stnext_ref, CaptureState& cs_opt, real_t& tau_opt, int& n_opt);
+	bool  FindNearest(const State& st, const Input& in_ref, const State& stnext_ref, CaptureState& cs_opt, real_t& tau_opt, int& n_opt, int nlim);
 
 	void  Read(Scenebuilder::XMLNode* node);
 

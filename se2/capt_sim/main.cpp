@@ -36,10 +36,9 @@ vec3_t          comPos;
 vec3_t          comVel;
 vec3_t          comAcc;
 vec3_t          force;
-int             nstep;
-bool            duration_modified;
-bool            step_modified;
-bool            succeeded;
+
+Capturability::CheckOption  opt;
+Capturability::CheckReport  report;
 int             tcheck;
 			
 Footstep::Step  steps[2];
@@ -190,14 +189,17 @@ void Control(){
 			stnext.icp  = vec2_t(icp_next  [0], icp_next  [1]);
 			
 			timer.CountUS();
-			succeeded = cap.Check(st, in, stnext, in_mod, stnext_mod, nstep, duration_modified, step_modified);
+            opt.nstep_max       = 10;
+            opt.modify_duration = true;
+            opt.modify_step     = true;
+			cap.Check(st, in, stnext, in_mod, stnext_mod, opt, report);
 			tcheck = timer.CountUS();
 
-			if(succeeded){
-				if(!duration_modified && !step_modified){
+			if(report.success){
+				if(!report.duration_modified && !report.step_modified){
 					printf("monitor: success\n");
 				}
-				if(duration_modified && !step_modified){
+				if(report.duration_modified && !report.step_modified){
 					printf("monitor: duration modified\n");
 					swing.SetSwingPose    (vec2_t(steps[0].footPos[swg].x, steps[0].footPos[swg].y), steps[0].footOri   [swg]);
 					swing.SetSwingVelocity(vec2_t(steps[0].footVel[swg].x, steps[0].footVel[swg].y), steps[0].footAngvel[swg]);
@@ -206,7 +208,7 @@ void Control(){
 					steps[0].duration = in_mod.tau;
 					steps[0].telapsed = 0.0;
 				}
-				if(duration_modified && step_modified){
+				if(report.duration_modified && report.step_modified){
 					printf("monitor: modified\n");
 				
 					// convert back to global coordinate
@@ -232,7 +234,7 @@ void Control(){
 					printf("land: %f,%f,%f  duration: %f\n", in_mod.land.x, in_mod.land.y, in_mod.land[2], in_mod.tau);
 				}
 			}
-			if(!succeeded){
+			if(!report.success){
 				printf("monitor: fail\n");
 			}
 		}
@@ -304,7 +306,7 @@ void Control(){
 		steps[0].footPos[0].x, steps[0].footPos[0].y, steps[0].footPos[0].z, steps[0].footOri[0],
 		steps[0].footPos[1].x, steps[0].footPos[1].y, steps[0].footPos[1].z, steps[0].footOri[1],
 		steps[0].duration, steps[0].telapsed,
-		nstep, (int)succeeded, (int)duration_modified, (int)step_modified, tcheck
+		report.nstep, (int)report.success, (int)report.duration_modified, (int)report.step_modified, tcheck
 		);
 	
     t += dt;

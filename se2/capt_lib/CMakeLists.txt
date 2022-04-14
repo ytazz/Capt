@@ -5,6 +5,7 @@ find_package(EXPAT REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Springhead)
 find_package(Scenebuilder)
+find_package(SuiteSparse)
 
 include_directories(${EXPAT_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIR})

@@ -6,28 +6,31 @@
 using namespace std;
 using namespace Capt;
 
+CheckRequest   req;
+CheckResult    res;
+Capturability  cap;
+
+UDPReceiver    udpReceiver;
+UDPSender      udpSender;
+
 class MyCallback : public UDPReceiveCallback{
 public:
 	virtual void OnUDPReceive(const byte* buf, size_t len){
+		if(len == sizeof(CheckRequest)){
+			copy(buf, buf + len, (byte*)&req);
 
+			cap.Check(req, res);
+
+			udpSender.Send((const byte*)&res, sizeof(CheckResult));
+		}
 	}
 };
 
-UDPReceiver  udpReceiver;
-//UDPSender    udpSender;
-//MyCallback   udpCallback;
+MyCallback    udpCallback;
 
 int    portRx;
 int    portTx;
 string address;
-
-struct RxData{
-
-};
-
-struct TxData{
-
-};
 
 int main(int argc, char const *argv[]) {
 	Scenebuilder::XML xmlCapt;
@@ -38,18 +41,16 @@ int main(int argc, char const *argv[]) {
 	xmlCom.Get(portRx , ".port_rx");
 	xmlCom.Get(portTx , ".port_tx");
 	xmlCom.Get(address, ".address");
-
-	Capturability cap;
 	
 	cap.Read(xmlCapt.GetRootNode());
 	
 	cap.Load("data/");
 	printf("load done\n");
 
-	//udpReceiver.SetCallback(&udpCallback);
-	//udpReceiver.Connect    (portRx);
-	//
-	//udpSender.Connect(address.c_str(), portTx, false);
+	udpReceiver.SetCallback(&udpCallback);
+	udpReceiver.Connect    (portRx);
+	
+	udpSender.Connect(address.c_str(), portTx, false);
 
 	while(true){
 

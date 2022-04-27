@@ -683,71 +683,72 @@ bool Capturability::FindNearest(const State& st, const Input& in_ref, const Stat
 	return d_opt != inf;
 }
 
-bool Capturability::Check(const State& st, const Input& in_ref, const State& stnext_ref, Input& in_mod, State& stnext_mod, const Capturability::CheckOption& opt, Capturability::CheckReport& report){
-	report.duration_modified = false;
-	report.step_modified     = false;
-    report.nstep             = 0;
-    in_mod                   = in_ref;
-	stnext_mod               = stnext_ref;
+//bool Capturability::Check(const State& st, const Input& in_ref, const State& stnext_ref, Input& in_mod, State& stnext_mod, const CheckOption& opt, CheckReport& report){
+bool Capturability::Check(const CheckRequest& req, CheckResult& res){
+	res.duration_modified = false;
+	res.step_modified     = false;
+    res.nstep             = 0;
+    res.in_mod            = req.in_ref;
+	res.stnext_mod        = req.stnext_ref;
 
 	vec2_t mu;
 	vec2_t ainv_range;
 	vec2_t tau_range;
 	
 	// check if target state is reachable by modifying cop and duration only
-	CalcMu(stnext_ref.swg, stnext_ref.icp, mu);
+	CalcMu(req.stnext_ref.swg, req.stnext_ref.icp, mu);
 	ainv_range = vec2_t(0.0, 1.0);
-	CalcFeasibleAinvRange(mu, st.icp, 0.005, ainv_range);
+	CalcFeasibleAinvRange(mu, req.st.icp, 0.005, ainv_range);
 	CalcTauRange(ainv_range, tau_range);
-	tau_range[0] = std::max(tau_range[0], CalcMinDuration(st.swg, stnext_ref.swg));
+	tau_range[0] = std::max(tau_range[0], CalcMinDuration(req.st.swg, req.stnext_ref.swg));
 
-	if(tau_range[0] <= in_ref.tau && in_ref.tau <= tau_range[1]){
+	if(tau_range[0] <= req.in_ref.tau && req.in_ref.tau <= tau_range[1]){
 		// no need for modification
-		CalcInput(st, stnext_ref, in_mod);
-		report.success = true;
+		CalcInput(req.st, req.stnext_ref, res.in_mod);
+		res.success = true;
 		return true;
 	}
 
     // abort if timing adaptation is not allowed
-    if(!opt.modify_duration){
-        report.success = false;
+    if(!req.modify_duration){
+        res.success = false;
 		return false;
     }
 
 	// duration needs modification
 	if(tau_range[0] < tau_range[1]){
 		// duration modifiable
-		in_mod.tau = std::min(std::max(tau_range[0], in_ref.tau), tau_range[1]);
-		CalcInput(st, stnext_ref, in_mod);
-		report.duration_modified = true;
-		report.success = true;
+		res.in_mod.tau = std::min(std::max(tau_range[0], req.in_ref.tau), tau_range[1]);
+		CalcInput(req.st, req.stnext_ref, res.in_mod);
+		res.duration_modified = true;
+		res.success = true;
 		return true;
 	}
 
     // abort if step adaptation is not allowed
-    if(!opt.modify_step){
-        report.success = false;
+    if(!req.modify_step){
+        res.success = false;
 		return false;
     }
 
 	// find modified next state that can be transitioned from current state and is capturable
 	CaptureState cs_opt;
 	real_t tau_opt;
-	if(!FindNearest(st, in_ref, stnext_ref, cs_opt, tau_opt, report.nstep, opt.nstep_max)){
-		report.success = false;
+	if(!FindNearest(req.st, req.in_ref, req.stnext_ref, cs_opt, tau_opt, res.nstep, req.nstep_max)){
+		res.success = false;
 		return false;
 	}
 	//printf("modified next state: %d,%d  %d-step capturable transition\n", cs_opt.swg_id, cs_opt.icp_id, cs_opt.nstep);
 
-	stnext_mod.swg = grid->xyr[swg_to_xyr[cs_opt.swg_id]];
-	stnext_mod.icp = grid->xy [cs_opt.icp_id];
+	res.stnext_mod.swg = grid->xyr[swg_to_xyr[cs_opt.swg_id]];
+	res.stnext_mod.icp = grid->xy [cs_opt.icp_id];
 	
-	in_mod.tau = tau_opt;
-	CalcInput(st, stnext_mod, in_mod);
+	res.in_mod.tau = tau_opt;
+	CalcInput(req.st, res.stnext_mod, res.in_mod);
 	
-	report.duration_modified = true;
-	report.step_modified     = true;
-    report.success           = true;
+	res.duration_modified = true;
+	res.step_modified     = true;
+    res.success           = true;
 	return true;
 }
 

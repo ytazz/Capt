@@ -37,8 +37,8 @@ vec3_t          comVel;
 vec3_t          comAcc;
 vec3_t          force;
 
-Capturability::CheckOption  opt;
-Capturability::CheckReport  report;
+CheckRequest    req;
+CheckResult     res;
 int             tcheck;
 			
 Footstep::Step  steps[2];
@@ -176,65 +176,70 @@ void Control(){
 			vec3_t icp_next  = S[swg]*(R[swg].trans()*(steps[1].icp - steps[1].footPos[swg]));
 			vec3_t cop       = S[sup]*(R[sup].trans()*(steps[0].cop - steps[0].footPos[sup]));
 			
-			State st;
-			State stnext, stnext_mod;
-			Input in, in_mod;
+			//State st;
+			//State stnext, stnext_mod;
+			//Input in, in_mod;
 			
-			st    .swg  = vec3_t(pswg [0], pswg [1], rswg);
-			st    .icp  = vec2_t(icp  [0], icp  [1]);
-			in    .cop  = vec2_t(cop  [0], cop  [1]);
-			in    .land = vec3_t(pland[0], pland[1], rland);
-			in    .tau  = (steps[0].duration - steps[0].telapsed);
-			stnext.swg  = vec3_t(pswg_next [0], pswg_next [1], rswg_next);
-			stnext.icp  = vec2_t(icp_next  [0], icp_next  [1]);
+			req.st        .swg  = vec3_t(pswg [0], pswg [1], rswg);
+			req.st        .icp  = vec2_t(icp  [0], icp  [1]);
+			req.in_ref    .cop  = vec2_t(cop  [0], cop  [1]);
+			req.in_ref    .land = vec3_t(pland[0], pland[1], rland);
+			req.in_ref    .tau  = (steps[0].duration - steps[0].telapsed);
+			req.stnext_ref.swg  = vec3_t(pswg_next [0], pswg_next [1], rswg_next);
+			req.stnext_ref.icp  = vec2_t(icp_next  [0], icp_next  [1]);
 			
 			timer.CountUS();
-            opt.nstep_max       = 10;
-            opt.modify_duration = true;
-            opt.modify_step     = true;
-			cap.Check(st, in, stnext, in_mod, stnext_mod, opt, report);
+            req.nstep_max       = 10;
+            req.modify_duration = true;
+            req.modify_step     = true;
+			cap.Check(req, res);
+			//cap.Check(st, in, stnext, in_mod, stnext_mod, opt, report);
 			tcheck = timer.CountUS();
 
-			if(report.success){
-				if(!report.duration_modified && !report.step_modified){
+			if(res.success){
+				if(!res.duration_modified && !res.step_modified){
 					printf("monitor: success\n");
 				}
-				if(report.duration_modified && !report.step_modified){
+				if(res.duration_modified && !res.step_modified){
 					printf("monitor: duration modified\n");
 					swing.SetSwingPose    (vec2_t(steps[0].footPos[swg].x, steps[0].footPos[swg].y), steps[0].footOri   [swg]);
 					swing.SetSwingVelocity(vec2_t(steps[0].footVel[swg].x, steps[0].footVel[swg].y), steps[0].footAngvel[swg]);
-					swing.SetDuration(in_mod.tau);
+					swing.SetDuration(res.in_mod.tau);
 		
-					steps[0].duration = in_mod.tau;
+					steps[0].duration = res.in_mod.tau;
 					steps[0].telapsed = 0.0;
 				}
-				if(report.duration_modified && report.step_modified){
+				if(res.duration_modified && res.step_modified){
 					printf("monitor: modified\n");
 				
 					// convert back to global coordinate
-					pland = vec3_t(in_mod.land[0], in_mod.land[1], 0.0);
-					rland = in_mod.land[2];
+					pland = vec3_t(res.in_mod.land[0], res.in_mod.land[1], 0.0);
+					rland = res.in_mod.land[2];
 
 					steps[1].footPos[swg] = R[sup]*S[sup]*pland + steps[0].footPos[sup];
 					steps[1].footOri[swg] =        s[sup]*rland + steps[0].footOri[sup];
 
 					// next icp should be converted from next support foot's local coordinate
 					R[swg] = mat3_t::Rot(steps[1].footOri[swg], 'z');
-					steps[1].icp = R[swg]*S[swg]*vec3_t(stnext_mod.icp[0], stnext_mod.icp[1], 0.0) + steps[1].footPos[swg];
+					steps[1].icp = R[swg]*S[swg]*vec3_t(res.stnext_mod.icp[0], res.stnext_mod.icp[1], 0.0) + steps[1].footPos[swg];
 
 					swing.SetSwingPose    (vec2_t(steps[0].footPos[swg].x, steps[0].footPos[swg].y), steps[0].footOri   [swg]);
 					swing.SetSwingVelocity(vec2_t(steps[0].footVel[swg].x, steps[0].footVel[swg].y), steps[0].footAngvel[swg]);
 					swing.SetLandingPose  (vec2_t(steps[1].footPos[swg].x, steps[1].footPos[swg].y), steps[1].footOri   [swg]);
-					swing.SetDuration     (in_mod.tau);
+					swing.SetDuration     (res.in_mod.tau);
 
 					// modified step duration
-					steps[0].duration = in_mod.tau;
+					steps[0].duration = res.in_mod.tau;
 					steps[0].telapsed = 0.0;
 
-					printf("land: %f,%f,%f  duration: %f\n", in_mod.land.x, in_mod.land.y, in_mod.land[2], in_mod.tau);
+					printf("land: %f,%f,%f  duration: %f\n", 
+						res.in_mod.land.x,
+						res.in_mod.land.y,
+						res.in_mod.land.z,
+						res.in_mod.tau);
 				}
 			}
-			if(!report.success){
+			if(!res.success){
 				printf("monitor: fail\n");
 			}
 		}
@@ -306,7 +311,7 @@ void Control(){
 		steps[0].footPos[0].x, steps[0].footPos[0].y, steps[0].footPos[0].z, steps[0].footOri[0],
 		steps[0].footPos[1].x, steps[0].footPos[1].y, steps[0].footPos[1].z, steps[0].footOri[1],
 		steps[0].duration, steps[0].telapsed,
-		report.nstep, (int)report.success, (int)report.duration_modified, (int)report.step_modified, tcheck
+		res.nstep, (int)res.success, (int)res.duration_modified, (int)res.step_modified, tcheck
 		);
 	
     t += dt;

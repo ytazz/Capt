@@ -32,6 +32,24 @@ struct CaptureBasin : public std::vector< CaptureState >{
 
 };
 
+struct CheckRequest{
+    int    nstep_max;
+    bool   modify_duration;
+    bool   modify_step;
+	State  st;
+	Input  in_ref;
+	State  stnext_ref;
+};
+
+struct CheckResult{
+    bool   success;
+    int    nstep;
+    bool   duration_modified;
+    bool   step_modified;
+    Input  in_mod;
+	State  stnext_mod;
+};
+
 class Capturability {
 public:
 	struct Region{
@@ -52,19 +70,6 @@ public:
 		bool IsSteppable(const vec2_t& p_swg, real_t r_swg);
 	
 	};
-
-    struct CheckOption{
-        int  nstep_max;
-        bool modify_duration;
-        bool modify_step;
-    };
-
-    struct CheckReport{
-        bool success;
-        int  nstep;
-        bool duration_modified;
-        bool step_modified;
-    };
 	
 	Grid1D cop_x;  //< cop support region
 	Grid1D cop_y;
@@ -96,7 +101,8 @@ public:
 	real_t CalcMinDuration     (const vec3_t& swg0, const vec3_t& swg1);
 	void   EnumReachable       (const unordered_map< int, real_t >& seed, vector<bool>& swg_id_array);
 	void   CalcInput           (const State& st, const State& stnext, Input& in);
-	bool   Check               (const State& st, const Input& in_ref, const State& stnext_ref, Input& in, State& st_mod, const CheckOption& opt, CheckReport& report);
+	//bool   Check               (const State& st, const Input& in_ref, const State& stnext_ref, Input& in, State& st_mod, const CheckOption& opt, CheckReport& report);
+	bool   Check               (const CheckRequest& req, CheckResult& res);
 	
 	void  Analyze();
 	void  Save(const std::string& basename);

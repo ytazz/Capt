@@ -17,11 +17,13 @@ class MyCallback : public UDPReceiveCallback{
 public:
 	virtual void OnUDPReceive(const byte* buf, size_t len){
 		if(len == sizeof(CheckRequest)){
+			printf("received request\n");
 			copy(buf, buf + len, (byte*)&req);
 
 			cap.Check(req, res);
 
 			udpSender.Send((const byte*)&res, sizeof(CheckResult));
+			printf("sent result\n");
 		}
 	}
 };

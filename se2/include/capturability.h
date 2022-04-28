@@ -32,6 +32,7 @@ struct CaptureBasin : public std::vector< CaptureState >{
 
 };
 
+#pragma pack(push,1)
 struct CheckRequest{
     int    nstep_max;
     bool   modify_duration;
@@ -49,6 +50,7 @@ struct CheckResult{
     Input  in_mod;
 	State  stnext_mod;
 };
+#pragma pack(pop)
 
 class Capturability {
 public:

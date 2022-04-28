@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<com
+  address="127.0.0.1"
+  port_rx="60112"
+  port_tx="60111"
+  >
+</com>

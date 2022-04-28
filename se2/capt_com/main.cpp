@@ -16,6 +16,7 @@ UDPSender      udpSender;
 class MyCallback : public UDPReceiveCallback{
 public:
 	virtual void OnUDPReceive(const byte* buf, size_t len){
+		printf("received %d\n", len);
 		if(len == sizeof(CheckRequest)){
 			printf("received request\n");
 			copy(buf, buf + len, (byte*)&req);
